@@ -41,11 +41,8 @@ export default function ConfigSettingsGeneral() {
       >
         <Box paddingBlock="300">
           <InlineStack gap="400" align="center">
-            <SubTabItem to="product"> Produit</SubTabItem>
-            <SubTabItem to="output"> output</SubTabItem>
-            <SubTabItem to="mobile-option">
-              Mobile Option
-            </SubTabItem>
+            <SubTabItem to=""> Choose your customizer appearance</SubTabItem>
+
           </InlineStack>
         </Box>
       </SpacingBackground>

@@ -54,26 +54,29 @@ export default function Materiels(){
 export const SettingTabheader = () => {
     
   return (
-      <Box paddingInline="300" background="bg-surface">
+    <SpacingBackground width="100%" height="auto" border="1px solid #DDDDDD">
+        <Box paddingInline="300" background="bg-surface">
         <InlineStack gap="100" align="center">
           <TabItems to="general">
             {" "}
             <RoundManageHistorySvg /> General
           </TabItems>
-          <TabItems to="/app/configuration/materiels/border">
+          <TabItems to="customizer-sign">
             {" "}
             <RoundManageHistorySvg /> Customizer sign 
           </TabItems>
-          <TabItems to="/app/configuration/materiels/color">
+          <TabItems to="language-text">
             {" "}
             <TextImageSvg /> Language & image
           </TabItems>
-          <TabItems to="/app/configuration/materiels/fixing-method">
+          <TabItems to="theme-color">
             {" "}
             <ColorPaletteSvg /> Theme & Color
           </TabItems>
         </InlineStack>
-      </Box>)
+      </Box>
+    </SpacingBackground>
+      )
 };
 
 

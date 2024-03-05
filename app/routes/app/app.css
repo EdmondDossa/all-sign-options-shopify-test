@@ -225,3 +225,75 @@
     color:  rgb(1, 100, 100);
     background-color: #01646414;
 }
+
+.react-switch{
+    height: auto;
+}
+
+.react-switch .react-switch-bg{
+    border: 1px solid black;
+}
+
+
+.activatable-item{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #3D3D3D;
+    align-items: center
+}
+
+.activatable-item .activatable-item-child{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  margin-bottom: 6px;
+  border: 0.5px solid #BBBBBB;
+  border-radius: 2px;
+  background-color: white;
+}
+
+.activatable-item path{
+    stroke: black;
+}
+
+.activatable-item.no-troke path{
+    stroke: white;
+}
+
+.activatable-item.fill path{
+    fill: black;
+}
+
+.activatable-item .activatable-item-title{
+    text-align: center;
+    font-weight: 600;
+    font-size: 9px;
+    line-height: 1;
+    word-break: break;
+    max-width: 10px;
+   display: flex;
+   justify-content: center;
+}
+
+.activatable-item.active{
+    color: #016464 !important;
+}
+
+.activatable-item.active path{
+    stroke:#016464 ;
+}
+
+.activatable-item.active.fill path{
+    fill:#016464 !important;
+}
+
+
+.activatable-item.active  .activatable-item-child{
+    border: 1px solid #016464;
+}
+
+.activatable-item.no-troke.active path{
+    stroke: white;
+}

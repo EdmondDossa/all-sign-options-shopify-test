@@ -41,10 +41,13 @@ export default function ConfigSettingsGeneral() {
       >
         <Box paddingBlock="300">
           <InlineStack gap="400" align="center">
-            <SubTabItem to="product"> Produit</SubTabItem>
-            <SubTabItem to="output"> output</SubTabItem>
-            <SubTabItem to="mobile-option">
-              Mobile Option
+            <SubTabItem to="customizer-options"> Customizer options</SubTabItem>
+            <SubTabItem to="sign-part"> Sign part</SubTabItem>
+            <SubTabItem to="text">
+              Text
+            </SubTabItem>
+            <SubTabItem to="image">
+              Image
             </SubTabItem>
           </InlineStack>
         </Box>

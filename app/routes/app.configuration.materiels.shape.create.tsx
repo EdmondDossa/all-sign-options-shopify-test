@@ -252,7 +252,6 @@ export const MultiCombobox = ({
                       
                         <SpacingBackground width="100%" height="100%" margin="20px 0 0 0">
                       <InlineGrid alignItems="center" >
-
                         <span className={selectedOptions.includes(value)?"check-span check":"check-span"}>
                             <CircleNotCheckIcon/>
                         </span>
