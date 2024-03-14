@@ -2,6 +2,7 @@ import {
   BlockStack,
   Box,
   Button,
+  InlineError,
   InlineStack,
   Text,
   Thumbnail,
@@ -12,12 +13,14 @@ import { DeleteIconBtn } from "../buttons/DeleteIconBtn";
 
 export const FileInput = ({
   title,
+  error,
   helperText,
   path,
   handlePath,
   buttonTitle,
 }: {
   title?: string;
+  error?: string;
   helperText?: string;
   buttonTitle?: string;
   path: string;
@@ -26,7 +29,7 @@ export const FileInput = ({
   return (
     <BlockStack gap="050">
       {title && <Text as="span"> {title} </Text>}
-      <Box borderRadius="100" borderWidth="025" padding="200">
+      <Box borderRadius="100" borderWidth="025" padding="200" >
         <InlineStack blockAlign="center" align="space-between">
           <FileUploader
             fileData={[path]}
@@ -56,6 +59,9 @@ export const FileInput = ({
         <Text as="span" tone="subdued">
           {helperText}
         </Text>
+      )}
+        {error && (
+        <InlineError message={error||""} fieldID="myFieldID" />
       )}
     </BlockStack>
   );

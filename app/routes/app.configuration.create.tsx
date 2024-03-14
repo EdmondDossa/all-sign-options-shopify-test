@@ -5,6 +5,7 @@ import {
   Checkbox,
   Divider,
   Grid,
+  Icon,
   IndexTable,
   InlineGrid,
   InlineStack,
@@ -25,8 +26,10 @@ import {
   Outlet,
   json,
   redirect,
+  useActionData,
   useLoaderData,
   useNavigate,
+  useNavigation,
   useSubmit,
 } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
@@ -42,6 +45,11 @@ import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import ConfigurationService from "~/models/Configuration.service";
+import z from "zod";
+import { parseWithZod } from "@conform-to/zod";
+
+
+
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
@@ -59,6 +67,9 @@ export const loader = async ({request, params }:LoaderFunctionArgs) => {
 
 export default function ConfigurationEdit() {
   const submit = useSubmit();
+  const navigation = useNavigation()
+  const actionData = useActionData<typeof action>();
+  console.log('action data :', actionData);
   let {configuration} = useLoaderData<typeof loader>()
   const [formData, setFormData] = useState<ConfigurationType>((configuration as ConfigurationType)||{
     name: "",
@@ -66,6 +77,9 @@ export default function ConfigurationEdit() {
     icon: "",
     popupImg: ""
   });
+
+  let isLoading = navigation.state == "loading";
+  let isSubmitting = navigation.state == "submitting";
 
   
   const handleName = (value: string) => setFormData({...formData, name:value})
@@ -110,7 +124,8 @@ export default function ConfigurationEdit() {
                 label="Name configuration"
                 value={formData.name}
                 onChange={handleName}
-                autoComplete="on"
+                    autoComplete="on"
+                   error={actionData?.errors?.name?actionData.errors.name[0]:""}
               />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
@@ -118,14 +133,15 @@ export default function ConfigurationEdit() {
                 label="Description"
                 value={formData.description}
                 onChange={handleDescription}
-                autoComplete="on"
+                    autoComplete="on"
+                    error={actionData?.errors?.description?actionData.errors.description[0]:""}
               />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
-                <FileInput title="Upload icon" path={formData.icon} handlePath={handleIcon} />
+                <FileInput error={actionData?.errors?.icon?actionData.errors.icon[0]:""}  title="Upload icon" path={formData.icon} handlePath={handleIcon} />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
-                <FileInput title="Upload Popupimg" path={formData.popupImg} handlePath={handlePopupImg} />
+                <FileInput  error={actionData?.errors?.popupImg?actionData.errors.popupImg[0]:""} title="Upload Popupimg" path={formData.popupImg} handlePath={handlePopupImg} />
                 </Grid.Cell>
 
              
@@ -140,15 +156,18 @@ export default function ConfigurationEdit() {
             <InlineStack align="end" gap="600">
                 <button className="back-large-btn" type="button" onClick={onBack}>
                   <Box paddingInline="1000">
-                      <InlineStack gap="300">
+                    <InlineStack gap="300">
+                          
                           <RayStartArrowIcon /> <span style={{color: "black", fontWeight:"bold" }} > Back</span>
                       </InlineStack>
                   </Box>
                 </button>
-                <button  className="next-large-btn" type="submit">
+                <button disabled={isLoading} className="next-large-btn" type="submit">
                   <Box paddingInline="1000"  >
-                      <InlineStack gap="300"  >
-                      <span style={{color: "white", fontWeight:"bold" }} > Next</span><RayEndArrowIcon/>
+                    <InlineStack gap="300"  blockAlign="center" >
+                      {isSubmitting && <img width="22" height="22"  src="/loading/ic_loading_gray.svg"/>}
+                      <span style={{ color: "white", fontWeight: "bold" }} > Next</span>
+                      {!isSubmitting && <RayEndArrowIcon />}
                       </InlineStack>
                   </Box>
                 </button>
@@ -160,6 +179,35 @@ export default function ConfigurationEdit() {
     </Page>
   );
 }
+ 
+const formSchema = z.object({
+  name: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .string({ required_error: 'Name is required' })
+      .min(3, 'Name is too short')
+      .max(100, 'Name is too long'),
+  ),
+  description:z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .string({ required_error: 'Description is required' })
+      .min(3, 'Description is fale is too short')
+      .max(500, 'Description is too long'),
+  ),
+  icon: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .string({ required_error: 'File is required' })
+     
+  ),
+  popupImg:z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .string({ required_error: 'File is required' })
+    
+  )
+});
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 
@@ -167,18 +215,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
+  const submission = parseWithZod(formData, {schema:formSchema});
 
-  const configuration: ConfigurationType = {
-    name: formData.get('name') as string,
-    description: formData.get('description') as string,
-    icon: formData.get('icon') as string,
-    popupImg: formData.get('popupImg') as string,
+  if (submission.status !== 'success') {
+    return json({status:false, errors:submission.error})
   }
+
+  let configuration: ConfigurationType = submission.value as ConfigurationType;
+  
   if (id) {
     configuration.id = parseInt(id);
     await ConfigurationService.updateConfiguration(configuration, session.id)
 
-    return redirect("..");
+    return redirect("..",301);
   } else {
     await ConfigurationService.addConfiguration(configuration, session.id)
   }
