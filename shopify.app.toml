@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Option"
-application_url = "https://bosnia-resistance-mart-database.trycloudflare.com"
+application_url = "https://ca-drivers-yahoo-drinks.trycloudflare.com"
 embedded = true
 
 [build]
@@ -12,9 +12,9 @@ include_config_on_deploy = true
 
 [auth]
 redirect_urls = [
-  "https://bosnia-resistance-mart-database.trycloudflare.com/auth/callback",
-  "https://bosnia-resistance-mart-database.trycloudflare.com/auth/shopify/callback",
-  "https://bosnia-resistance-mart-database.trycloudflare.com/api/auth/callback"
+  "https://ca-drivers-yahoo-drinks.trycloudflare.com/auth/callback",
+  "https://ca-drivers-yahoo-drinks.trycloudflare.com/auth/shopify/callback",
+  "https://ca-drivers-yahoo-drinks.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

@@ -22,14 +22,55 @@ import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Link, useNavigate } from "@remix-run/react";
+import { Link, json, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
+import { SpacingBackground } from "~/components/layouts/SpacingBackground";
+import { authenticate } from "~/shopify.server";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import prisma from "~/db.server";
+import ConfigurationService from "~/models/Configuration.service";
+
+
+export const loader = async ({request}:LoaderFunctionArgs) => { 
+  const { session, admin } = await authenticate.admin(request);
+  const configurations = await prisma.configuration.findMany({
+    where: {
+      sessionId: session.id
+    }
+  });
+
+  return  json({configurations})
+}
+
+export const action = async ({ request }:ActionFunctionArgs) => {
+  const { session,admin } = await authenticate.admin(request);
+  const formData = await request.formData();
+  const id = formData.get("id") as string;
+  const method = request.method;
+  console.log(" config deleeting :", id,method);
+  
+  switch (method) {
+    case "DELETE": {
+      console.log("start deleting")
+      await ConfigurationService.deleteConfiguration(parseInt(id), session.id)
+      
+      return json({ status: true, message: "Configuration is deleted correctly" })
+      break;
+    }
+  
+    default:
+      break;
+  }
+
+  return null
+}
 
 
 // This example is for guidance purposes. Copying it will come with caveats.
 export default function Configuration() {
- 
+  const submit = useSubmit();
+  let { configurations } = useLoaderData<typeof loader>();
  
 
 
@@ -38,78 +79,38 @@ export default function Configuration() {
     navigate('/app/configuration/create');
   };
   
- 
-  
-  
+  const handeleDelete = (id: number) => {
+    submit({ id: id }, { method: "DELETE" });
+  };
 
+  const handleUpdate = (id: number) => {
+    
+    submit({id:id},{method:"GET", action:"create"});
+  }
 
+  configurations = configurations || [];
 
-  const products = [
-    {
-      id: "1",
-      product: "Acrylic signs",
-      description: "Acrylic signs, also known .....",
-      icon: "/acrylsign-icon.png",
-      poppupimg: "/acrylsign-poppupimg.png"
-    },
-    {
-      id: "2",
-      product: "Acrylic signs",
-      description: "Acrylic signs, also known .....",
-      icon: "/acrylsign-icon.png",
-      poppupimg: "/acrylsign-poppupimg.png"
-    },
-    {
-      id: "3",
-      product: "Acrylic signs",
-      description: "Acrylic signs, also known .....",
-      icon: "/acrylsign-icon.png",
-      poppupimg: "/acrylsign-poppupimg.png"
-    },
-    {
-      id: "4",
-      product: "Acrylic signs",
-      description: "Acrylic signs, also known .....",
-      icon: "/acrylsign-icon.png",
-      poppupimg: "/acrylsign-poppupimg.png"
-    },
-    {
-      id: "5",
-      product: "Acrylic signs",
-      description: "Acrylic signs, also known .....",
-      icon: "/acrylsign-icon.png",
-      poppupimg: "/acrylsign-poppupimg.png"
-    },
-    {
-      id: "6",
-      product: "Acrylic signs",
-      description: "Acrylic signs, also known .....",
-      icon: "/acrylsign-icon.png",
-      poppupimg: "/acrylsign-poppupimg.png"
-    },
-  ];
   const resourceName = {
     singular: "Configuration",
     plural: "Configurations",
   };
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
-    useIndexResourceState(products);
-  const rowMarkup = products.map(
+    useIndexResourceState(configurations);
+  const rowMarkup = configurations.map(
     (
-      { id, product, description, icon, poppupimg },
+      { id, name, description, icon, popupImg },
       index,
     ) => (
       <IndexTable.Row
-        id={id}
+        id={`${id}`}
         key={id}
-        selected={selectedResources.includes(id)}
+        selected={selectedResources.includes(`${id}`)}
         position={index}
       >
         
-        <IndexTable.Cell></IndexTable.Cell>
         <IndexTable.Cell>
           <InlineStack blockAlign="center" gap="300">
-             <BorderCircleText /> {product}
+             <BorderCircleText text={name} /> {name}
           </InlineStack>
          
         </IndexTable.Cell>
@@ -117,21 +118,21 @@ export default function Configuration() {
         <IndexTable.Cell>
           <img style={{height: "30px"}}
             src={icon}
-            alt={"product thumbnail" + product}
+            alt={"product thumbnail" + name}
           />
         </IndexTable.Cell>
         <IndexTable.Cell>
           <img style={{height: "30px"}}
-            src={poppupimg}
-            alt={"product thumbnail" + product}
+            src={popupImg}
+            alt={"product thumbnail" + name}
           />
         </IndexTable.Cell>
       
         <IndexTable.Cell>
           <ButtonGroup gap="loose" >
-            <ViewIconBtn  size="micro" />
-            <EditIconBtn  size="micro"  />
-            <DeleteIconBtn  size="micro" />
+            <ViewIconBtn  size="micro" onClick={()=>navigate("materials")} />
+            <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
+            <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>
         </IndexTable.Cell>
       </IndexTable.Row>
@@ -141,7 +142,7 @@ export default function Configuration() {
     <Page
       fullWidth
     >
-      <Card padding="0">
+      <SpacingBackground >
         <BoxBackground>
           <Box padding="300">
           <BlockStack gap="300">
@@ -187,14 +188,9 @@ export default function Configuration() {
         </BoxBackground>
         <IndexTable
           resourceName={resourceName}
-          itemCount={products.length}
-          selectedItemsCount={
-            allResourcesSelected ? "All" : selectedResources.length
-          }
-          onSelectionChange={handleSelectionChange}
-          sortable={[false, true, true, true, true, true, true]}
+          itemCount={configurations.length}
+      selectable={false}
           headings={[
-            { title: "" },
             { title: "Name configuration" },
             { title: "Desciption"},
             { title: "Icon" },
@@ -204,23 +200,24 @@ export default function Configuration() {
         >
           {rowMarkup}
         </IndexTable>
-        <Divider borderWidth="050"/>
+        <Divider borderWidth="050" />
+        {/* <SpacingBackground backgroundColor="#FFFFFF">
         <Box padding="300">
           <FooterLabel/>
         </Box>
-      </Card>
+        </SpacingBackground> */}
+      </SpacingBackground>
     </Page>
   );
 }
 
 
-export const BorderCircleText = () => {
-  
+export const BorderCircleText = ({text}:{text?:string}) => {
+  text = getFirstLetters(text||"AS")
   return (<Box padding="150"  borderColor="border-brand" borderWidth="025" borderRadius="full" background="bg-surface-secondary" width="34px" minHeight="34px">
-    AS
+    {text}
   </Box>)
 }
-
 
 export const FooterLabel = () => {
   const [selected, setSelected] = useState('10');
@@ -264,6 +261,25 @@ export const FooterLabel = () => {
       </InlineStack>
   </InlineStack>)
 }
+
+
+
+function getFirstLetters(text:string) {
+  text = text.replace(/\s+/g, " ");
+  const sentences = text.split(" ");
+
+  if (sentences.length < 2) {
+    text = (sentences[0].length > 0 ? sentences[0].charAt(0) : "") + (sentences[0].length > 1 ? sentences[0].charAt(1) : "");
+    return text.toLowerCase();
+  }
+
+  const firstLetter1 = sentences[0].length>0 ? sentences[0].charAt(0):"";
+  const firstLetter2 =  sentences[1].length>0 ? sentences[1].charAt(0):"";
+
+  text = firstLetter1 + firstLetter2;
+  return text.toUpperCase() ;
+}
+
 
 
 
