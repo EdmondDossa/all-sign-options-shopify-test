@@ -21,6 +21,10 @@ model Session {
   accessToken String
   userId      BigInt?
   configurations  Configuration[]
+  fonts       Font[]
+  sizes       Size[]
+  colors      Color[]
+  clipartsGroup   ClipartsGroup[]
 }
 
 model Upload{
@@ -40,3 +44,51 @@ model Configuration {
   sessionId   String
   data        Json?
 }
+
+model Size {
+  id          Int      @id @default(autoincrement())
+  label       String?
+  width       Int 
+  height      Int
+  thickness   Json
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+}
+
+model Font {
+  id            Int      @id @default(autoincrement())
+  label         String
+  url           String
+  isGoogleFont  Boolean
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+}
+
+model Color{
+  id            Int      @id @default(autoincrement())
+  name              String
+  textColor         String
+  backgroundColor   String
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+}
+
+model ClipartsGroup{
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  cliparts      Clipart[] 
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+}
+
+
+model Clipart{
+    id                Int      @id @default(autoincrement())
+    title             String
+    url               String
+    additionalPrice   Float
+    clipartsGroup     ClipartsGroup @relation(fields: [clipartsGroupId], references: [id])
+    clipartsGroupId   Int 
+}
+

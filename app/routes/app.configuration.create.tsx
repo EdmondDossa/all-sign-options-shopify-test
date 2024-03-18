@@ -47,6 +47,7 @@ import { ConfigurationType } from "~/types/ConfigurationType";
 import ConfigurationService from "~/models/Configuration.service";
 import z from "zod";
 import { parseWithZod } from "@conform-to/zod";
+import { flashMessage } from "~/utils/message-flash";
 
 
 
@@ -211,14 +212,17 @@ const formSchema = z.object({
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 
-  const { session,admin } = await authenticate.admin(request);
+  const { session, admin } = await authenticate.admin(request);
+
+
+
   const formData = await request.formData();
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
   const submission = parseWithZod(formData, {schema:formSchema});
 
   if (submission.status !== 'success') {
-    return json({status:false, errors:submission.error})
+    return json({status:false,message:null,errors:submission.error})
   }
 
   let configuration: ConfigurationType = submission.value as ConfigurationType;
@@ -226,13 +230,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (id) {
     configuration.id = parseInt(id);
     await ConfigurationService.updateConfiguration(configuration, session.id)
-
-    return redirect("..",301);
+    return redirect(`..${flashMessage("Configuration  updated is completed successfully")}`);
   } else {
     await ConfigurationService.addConfiguration(configuration, session.id)
+    return redirect(`..${flashMessage("Configuration  added is completed successfully")}`);
   }
  
-
-
-  return redirect("../demo");
 };

@@ -8,69 +8,81 @@ import {
 } from "@shopify/polaris";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, useNavigate } from "@remix-run/react";
+import { Form, Link, NavLink, Outlet, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { authenticate } from "~/shopify.server";
+import { jFlashMessage } from "~/utils/message-flash";
+import ColorService from "~/models/Color.service";
+
+
+
+export const loader = async ({request}:LoaderFunctionArgs) => { 
+  const { session, admin } = await authenticate.admin(request);
+
+  const colors = await ColorService.getColors(session.id);
+
+  return  json({colors})
+}
+
+export const action = async ({ request }:ActionFunctionArgs) => {
+  const { session, admin } = await authenticate.admin(request);
+  
+  const formData = await request.formData();
+  const id = formData.get("id") as string;
+  const method = request.method;
+  
+  switch (method) {
+    case "DELETE": {
+      console.log("start deleting")
+      await ColorService.deleteColor(parseInt(id), session.id)
+      return json({...jFlashMessage("Color deleting is completed successfull")})
+    }
+  
+    default:
+      break;
+  }
+
+  return null
+}
 
 export default function ColorPaletteIndex() {
 
+  const submit = useSubmit()
+  let { colors } = useLoaderData<typeof loader>();
+  useHandleFlashMessage();
+ 
 
   const navigate = useNavigate();
-  const onHandleCreate = () => {
-    navigate("create");
+  const onHandleEdit = () => {
+    navigate("edit");
   };
 
-  const colors = [
-    {
-      id: "1",
-      title: "col-a",
-      textColor: "#EF5A35",
-      BackgroundColor: "#EF5A35",
-    },  
-    {
-      id: "2",
-      title: "col-a",
-      textColor: "#EF5A35",
-      BackgroundColor: "#EF5A35",
-    },  
-    {
-      id: "3",
-      title: "col-a",
-      textColor: "#EF5A35",
-      BackgroundColor: "#EF5A35",
-    },  
-    {
-      id: "4",
-      title: "col-a",
-      textColor: "#EF5A35",
-      BackgroundColor: "#EF5A35",
-    },  
-    {
-      id: "5",
-      title: "col-a",
-      textColor: "#EF5A35",
-      BackgroundColor: "#EF5A35",
-    },  
-    {
-      id: "6",
-      title: "col-a",
-      textColor: "#EF5A35",
-      BackgroundColor: "#EF5A35",
-    },
-       
-  ];
+  const handeleDelete = (id: number) => {
+    submit({ id: id }, { method: "DELETE" });
+  };
+
+  const handleUpdate = (id: number) => {
+    
+    submit({id:id},{method:"GET", action:"edit"});
+  }
+
+  
+
   const resourceName = {
     singular: "Color",
     plural: "Colors",
   };
  
-  const rowMarkup = colors.map(
-    ({ id, title, textColor, BackgroundColor }, index) => (
+  const rowMarkup = colors?.map(
+    ({ id, name, textColor, backgroundColor }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
-            {title}
+            {name}
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell>
@@ -78,14 +90,14 @@ export default function ColorPaletteIndex() {
                       <Badge tone="critical" >{textColor}</Badge>
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell><Badge >{BackgroundColor}</Badge></IndexTable.Cell>
+        <IndexTable.Cell><Badge >{backgroundColor}</Badge></IndexTable.Cell>
        
      
 
         <IndexTable.Cell>
           <ButtonGroup gap="loose">
-            <EditIconBtn size="micro" />
-            <DeleteIconBtn size="micro" />
+          <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
+            <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>
         </IndexTable.Cell>
       </IndexTable.Row>
@@ -100,7 +112,7 @@ export default function ColorPaletteIndex() {
               <button
                 className="primary-btn"
                 type="button"
-                onClick={onHandleCreate}
+                onClick={onHandleEdit}
               >
                 <Box paddingInline="300">
                   <InlineStack gap="300">
@@ -115,7 +127,7 @@ export default function ColorPaletteIndex() {
         </BoxBackground>
         <IndexTable
           resourceName={resourceName}
-          itemCount={colors.length}
+          itemCount={colors?colors.length:0}
           sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },

@@ -17,5 +17,5 @@ module.exports = {
   serverModuleFormat: "cjs",
   dev: { port: process.env.HMR_SERVER_PORT || 8002 },
   future: {},
-  serverDependenciesToBundle: ["remix-params-helper"]
+  serverDependenciesToBundle: [/^remix-utils.*/, "remix-params-helper"],
 };

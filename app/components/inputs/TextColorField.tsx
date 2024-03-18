@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 
 
-export function TextColorField({ label, color, setColor,helpText }: { helpText?: string; label?: string; color?: string | undefined;  setColor?:React.Dispatch<React.SetStateAction<string | undefined>>}) {
+export function TextColorField({ label, color, setColor, helpText, error }: { error?:string; helpText?: string; label?: string; color?: string | undefined;  setColor?:Function}) {
     const [popoverActive, setPopoverActive] = useState(true);
     const [colorHex, setColorHex] = useState<string>(color||"#FFFFFF");
     let hsv = ColorConvertor.hex.hsv(color||"#FFFFFF")
@@ -64,6 +64,7 @@ export function TextColorField({ label, color, setColor,helpText }: { helpText?:
         }
         label={label}
         helpText={helpText}
+        error={error}
         value={color}
         onChange={handleColor}
         onFocus={togglePopoverActive}

@@ -24,81 +24,88 @@ import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, useNavigate } from "@remix-run/react";
+import { Form, Link, NavLink, Outlet, json, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
+import { jFlashMessage } from "~/utils/message-flash";
+import FontService from "~/models/Font.service";
+import { authenticate } from "~/shopify.server";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 
-export default function MaterialSizeIndex() {
-  const [checked, setChecked] = useState(false);
-  const handleChangeCheck = useCallback(
-    (newChecked: boolean) => setChecked(newChecked),
-    [],
-  );
-  const [value, setValue] = useState("Jaded Pixel");
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
-  );
+
+export const loader = async ({request}:LoaderFunctionArgs) => { 
+  const { session, admin } = await authenticate.admin(request);
+
+  const fonts = await FontService.getFonts(session.id);
+
+  return  json({fonts})
+}
+
+export const action = async ({ request }:ActionFunctionArgs) => {
+  const { session, admin } = await authenticate.admin(request);
+  
+  const formData = await request.formData();
+  const id = formData.get("id") as string;
+  const method = request.method;
+  
+  switch (method) {
+    case "DELETE": {
+      console.log("start deleting") 
+      await FontService.deleteFont(parseInt(id), session.id)
+      return json({...jFlashMessage("Font deleting is completed successfull")})
+    }
+  
+    default:
+      break;
+  }
+
+  return null
+}
+
+
+export default function ManageFontIndex() {
+  const submit = useSubmit()
+  let { fonts } = useLoaderData<typeof loader>();
+  useHandleFlashMessage();
+ 
+
   const navigate = useNavigate();
-  const onHandleSizeCreate = () => {
-    navigate("create");
+  const onHandleCreate = () => {
+    navigate("edit");
   };
 
-  const sizes = [
-    {
-      id: "1",
-      title: "Mont-1",
-      description: "Plastic, also known .....",
-    },  {
-        id: "2",
-        title: "Mont-1",
-        description: "Plastic, also known .....",
-      },  {
-        id: "3",
-        title: "Mont-1",
-        description: "Plastic, also known .....",
-      },  {
-        id: "4",
-        title: "Mont-1",
-        description: "Plastic, also known .....",
-      },  {
-        id: "5",
-        title: "Mont-1",
-        description: "Plastic, also known .....",
-      },  {
-        id: "6",
-        title: "Mont-1",
-        description: "Plastic, also known .....",
-      },  {
-        id: "7",
-        title: "Mont-1",
-        description: "Plastic, also known .....",
-      },  {
-        id: "8",
-        title: "Mont-1",
-        description: "Plastic, also known .....",
-      },
-  ];
-  const resourceName = {
-    singular: "Size",
-    plural: "sizes",
+  const handeleDelete = (id: number) => {
+    submit({ id: id }, { method: "DELETE" });
   };
-  const { selectedResources, allResourcesSelected, handleSelectionChange } =
-    useIndexResourceState(sizes);
-  const rowMarkup = sizes.map(
-    ({ id, title, description}, index) => (
+
+  const handleUpdate = (id: number) => {
+    
+    submit({id:id},{method:"GET", action:"edit"});
+  }
+
+
+  
+  const resourceName = {
+    singular: "Font",
+    plural: "Fonts",
+  };
+
+  const rowMarkup = fonts?.map(
+    ({ id, label, isGoogleFont}, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
-            {title}
+            {label}
         </IndexTable.Cell>
         <IndexTable.Cell>
-              {description}
+          {isGoogleFont? <Badge tone="info" >Google font</Badge>:<Badge > Custom font</Badge>}
         </IndexTable.Cell>
+       
         <IndexTable.Cell>
           <ButtonGroup gap="loose">
-            <EditIconBtn size="micro" />
-            <DeleteIconBtn size="micro" />
+          <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
+            <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>
         </IndexTable.Cell>
       </IndexTable.Row>
@@ -113,7 +120,7 @@ export default function MaterialSizeIndex() {
               <button
                 className="primary-btn"
                 type="button"
-                onClick={onHandleSizeCreate}
+                onClick={onHandleCreate}
               >
                 <Box paddingInline="300">
                   <InlineStack gap="300">
@@ -128,11 +135,11 @@ export default function MaterialSizeIndex() {
         </BoxBackground>
         <IndexTable
           resourceName={resourceName}
-          itemCount={sizes.length}
+          itemCount={fonts?fonts.length:0}
           sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
-            { title: "Description" },
+            { title: "Font type" },
             { title: "Action" },
           ]}
           selectable={false}

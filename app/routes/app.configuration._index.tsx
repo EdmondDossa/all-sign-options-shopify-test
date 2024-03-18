@@ -18,11 +18,11 @@ import {
   useIndexResourceState,
   useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Link, json, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
+import { Link, json, useLoaderData, useNavigate, useSearchParams, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
@@ -30,24 +30,37 @@ import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import prisma from "~/db.server";
 import ConfigurationService from "~/models/Configuration.service";
+import { getSessionCookie } from "~/sessions";
+import { MessageFlash } from "~/types/MessageFlashType";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { jFlashMessage } from "~/utils/message-flash";
+
 
 
 export const loader = async ({request}:LoaderFunctionArgs) => { 
   const { session, admin } = await authenticate.admin(request);
+
   const configurations = await prisma.configuration.findMany({
     where: {
       sessionId: session.id
     }
   });
 
+  console.log( "my head :", request.headers)
 
   
 
-  return  json({configurations})
+  // let messageFlash = sessionCookie.get("messageFlash")
+
+  
+
+  return  json({configurations, messageFlash:null})
 }
 
 export const action = async ({ request }:ActionFunctionArgs) => {
-  const { session,admin } = await authenticate.admin(request);
+  const { session, admin } = await authenticate.admin(request);
+  
   const formData = await request.formData();
   const id = formData.get("id") as string;
   const method = request.method;
@@ -58,7 +71,7 @@ export const action = async ({ request }:ActionFunctionArgs) => {
       console.log("start deleting")
       await ConfigurationService.deleteConfiguration(parseInt(id), session.id)
       
-      return json({ status: true, message: "Configuration is deleted correctly" })
+      return json({...jFlashMessage("Configution deleting is completed successfull")})
       break;
     }
   
@@ -74,6 +87,7 @@ export const action = async ({ request }:ActionFunctionArgs) => {
 export default function Configuration() {
   const submit = useSubmit();
   let { configurations } = useLoaderData<typeof loader>();
+  useHandleFlashMessage();
  
 
 
