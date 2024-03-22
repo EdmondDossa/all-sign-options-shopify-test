@@ -16,7 +16,7 @@ export const MultiCombobox = ({
     labelHidden?: boolean;
     data: Array<{ label: string; value: any }>;
     selectedOptions: any[];
-    setSelectedOptions: React.Dispatch<React.SetStateAction<any[]>>;
+    setSelectedOptions:Function;
   }) => {
     const deselectedOptions = useMemo(() => data, []);
   

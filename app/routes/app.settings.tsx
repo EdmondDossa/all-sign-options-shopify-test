@@ -49,13 +49,13 @@ export const SettingTabheader = () => {
     <SpacingBackground width="100%" height="auto" border="1px solid #DDDDDD">
         <Box paddingInline="300" background="bg-surface">
         <InlineStack gap="100" align="center">
-          <TabItems to="licence">
+          {/* <TabItems to="licence">
             <LicenceSvg /> Licence
           </TabItems>
           <TabItems to="configuration-page">
             {" "}
             <RoundManageHistorySvg /> Configuration page 
-          </TabItems>
+          </TabItems> */}
           <TabItems to="output">
             {" "}
             <OutputSvg /> Output

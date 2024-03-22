@@ -3,5 +3,6 @@
     name: string;
     description: string;
     icon: string;
-    popupImg: string;
+     popupImg: string;
+     data?: any;
 }

@@ -35,6 +35,8 @@ import { MessageFlash } from "~/types/MessageFlashType";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { jFlashMessage } from "~/utils/message-flash";
+import { BorderCircleText } from "~/components/feactures/BorderCircleText";
+import { ManageBtn } from "~/components/buttons/ManageBtn";
 
 
 
@@ -105,6 +107,17 @@ export default function Configuration() {
     submit({id:id},{method:"GET", action:"create"});
   }
 
+  const handleMaterials = (id: number) => {
+    
+    navigate(`${id}/materials`);
+  }
+  const handleSettings = (id: number) => {
+    
+    navigate(`${id}/settings`);
+  }
+
+
+
   configurations = configurations || [];
 
   const resourceName = {
@@ -147,7 +160,8 @@ export default function Configuration() {
       
         <IndexTable.Cell>
           <ButtonGroup gap="loose" >
-            <ViewIconBtn  size="micro" onClick={()=>navigate("materials")} />
+            <ManageBtn  title="setting" handleClick={()=>handleSettings(id)}/>
+            <ViewIconBtn  size="micro" onClick={()=>handleMaterials(id)} />
             <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
             <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>
@@ -229,12 +243,7 @@ export default function Configuration() {
 }
 
 
-export const BorderCircleText = ({text}:{text?:string}) => {
-  text = getFirstLetters(text||"AS")
-  return (<Box padding="150"  borderColor="border-brand" borderWidth="025" borderRadius="full" background="bg-surface-secondary" width="34px" minHeight="34px">
-    {text}
-  </Box>)
-}
+
 
 export const FooterLabel = () => {
   const [selected, setSelected] = useState('10');
@@ -281,21 +290,6 @@ export const FooterLabel = () => {
 
 
 
-function getFirstLetters(text:string) {
-  text = text.replace(/\s+/g, " ");
-  const sentences = text.split(" ");
-
-  if (sentences.length < 2) {
-    text = (sentences[0].length > 0 ? sentences[0].charAt(0) : "") + (sentences[0].length > 1 ? sentences[0].charAt(1) : "");
-    return text.toLowerCase();
-  }
-
-  const firstLetter1 = sentences[0].length>0 ? sentences[0].charAt(0):"";
-  const firstLetter2 =  sentences[1].length>0 ? sentences[1].charAt(0):"";
-
-  text = firstLetter1 + firstLetter2;
-  return text.toUpperCase() ;
-}
 
 
 

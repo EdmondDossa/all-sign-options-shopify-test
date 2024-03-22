@@ -1,0 +1,142 @@
+{
+   "generals":{
+      "mobile":{
+         "showNavigatorMenu":"off",
+         "showNavigationMenuFirst":"no",
+         "mobileSelectionOptionsDisplay":"scroll"
+      },
+      "output":{
+         "filesFormat":"png",
+         "waterMark":"http:\/\/localhost\/ncpc-free.us\/wp-content\/uploads\/2024\/02\/img14.jpg",
+         "zipOutputFiles":{
+            "active":false,
+            "zipOutFolderPrefix":"aso_"
+         },
+         "designComposition":false
+      },
+      "product":{
+         "designFromScratch":true,
+         "redirectAfterAddingToCart":true,
+         "hideAddToCartButtonOnDetailPage":false,
+         "hideDesignButtonsOnShopPage":true,
+         "hideAddToCartButtonOnShopPage":false
+      }
+   },
+   "customizerSign":{
+      "customizerOptions":{
+         "measurementUnit":"cm",
+         "showHideMeasurements":"none",
+         "decimalFormatMeasurements":"no-decimal",
+         "desktopColumnOrder":"right",
+         "showDayNightButton":"hidden"
+      },
+      "signPart":{
+         "doublePart":{
+            "active":false,
+            "part1":"Face A",
+            "part2":"Face B",
+            "enableCopyDesignFromSide":true
+         }
+      },
+      "text":{
+         "manageFontId":0,
+         "selectFonts":[
+            
+         ],
+         "enableCustomColor":{
+            "active":true,
+            "manageColorId":0,
+            "addColors":[
+               
+            ]
+         },
+         "enableFontSize":{
+            "active":true,
+            "minimumFontSize":12,
+            "maximumFontSize":30,
+            "defaultFontSize":16
+         },
+         "enableColorPicker":true,
+         "enableBold":true,
+         "enableUnderline":true,
+         "enableOverline":true,
+         "enableStrike":true,
+         "enableItalic":true,
+         "enableOpacity":true,
+         "enableBorder":true,
+         "enableTextAlignment":false,
+         "enableCurvedUp":false,
+         "enableCurvedDown":false,
+         "s":[
+            0
+         ],
+         "addColors":[
+            0
+         ]
+      },
+      "images":{
+         "enableUploadImage":true,
+         "fileUploadScript":{
+            "customWithGraphical":false,
+            "uploadMinWidth":100,
+            "uploadMaxWidth":100,
+            "uploadMinHeight":1024,
+            "uploadMaxHeight":1024,
+            "allowedUploadsExtentions":[
+               "png",
+               "jpeg",
+               "webp",
+               "svg",
+               "gif"
+            ]
+         },
+         "enableClipart":{
+            "active":true,
+            "selectClipartGroups":[
+               0,
+               1
+            ]
+         },
+         "filter":{
+            "active":true,
+            "enableGreyscale":false,
+            "enableOpacity":true,
+            "enableEmbross":true,
+            "enableBlur":true,
+            "enableSepia":true,
+            "enableSharpen":true
+         },
+         "selectClipartGroups":[
+            0
+         ]
+      }
+   },
+   "languageImages":{
+      "uploadDesign":{
+         "activate":false,
+         "link":"",
+         "phraseSubmitCustom":"Take a customization"
+      },
+      "images":[
+         
+      ],
+      "main":[
+         
+      ],
+      "reviewScreen":[
+         
+      ],
+      "visualizer":[
+         
+      ]
+   },
+   "themes":{
+      "skin":"default",
+      "colors":[
+         
+      ]
+   },
+   "sortOptions":[
+      
+   ]
+}

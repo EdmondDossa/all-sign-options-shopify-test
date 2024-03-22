@@ -13,31 +13,31 @@ export const Tabheader = () => {
     return (
         <Box paddingInline="300" background="bg-surface">
           <InlineStack gap="100" align="center">
-            <TabItems to="/app/configuration/materiels/size">
+            <TabItems to="size">
               {" "}
               <SizeSvg /> Size
             </TabItems>
-            <TabItems to="/app/configuration/materiels/border">
+            <TabItems to="border">
               {" "}
               <BorderSvg /> Border
             </TabItems>
-            <TabItems to="/app/configuration/materiels/color">
+            <TabItems to="color">
               {" "}
               <ColorPaletteSvg /> Material color
             </TabItems>
-            <TabItems to="/app/configuration/materiels/fixing-method">
+            <TabItems to="fixing-method">
               {" "}
               <FixingMethodSvg /> Fixing method
             </TabItems>
-            <TabItems to="/app/configuration/materiels/shape">
+            <TabItems to="shape">
               {" "}
               <ShapeSvg /> Shape
             </TabItems>
-            <TabItems to="/app/configuration/materiels/text-image">
+            <TabItems to="text-image">
               {" "}
               <TextImageSvg /> Text/Image
             </TabItems>
-            <TabItems to="/app/configuration/materiels/additional-option">
+            <TabItems to="additional-option">
               <AdditinalOptionSvg /> Additional Options
             </TabItems>
           </InlineStack>

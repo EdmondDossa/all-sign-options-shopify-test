@@ -232,7 +232,7 @@ type ?: "image" | "video" | "font" | 'icon'| "all";
       >
         {children || <div> Upload file</div>}
       </div>
-      <Modal id={`${id}`} >
+      <Modal variant="large" id={`${id}`} >
      
 
           <Box>
