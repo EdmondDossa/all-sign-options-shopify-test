@@ -9,46 +9,92 @@ import {
   TextField,
 } from "@shopify/polaris";
 import { useCallback, useState } from "react";
-import { Form, NavLink, redirect, useNavigate } from "@remix-run/react";
+import { Form, NavLink, redirect, useActionData, useLoaderData, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
-import uploadIcon from "~/components/icons/uploadIcon";
+import { settingAction, settingLoader } from "~/custom-action-loader/config-action-loader";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { z } from "zod";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { FileInput } from "~/components/inputs/FileInput";
+import { getError } from "~/utils/error-getting";
+import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+
+
+const settingParams: [string, string] = ["generals", "output"];
+const formSchema = z.object({
+  filesFormat:z.string(),
+  waterMark:z.string({required_error:"Files format is required"}),
+  zipOutputFiles:z.any().transform(jsonTransform).pipe(z.object({
+    active:z.any().transform(booleanTransform).pipe(z.boolean()),
+    zipOutFolderPrefix:z.string()
+ })),
+  designComposition:z.any().transform(booleanTransform).pipe(z.boolean()),     
+});
+
+export const loader = async (agrs: LoaderFunctionArgs) => {
+   return await settingLoader(agrs, settingParams);
+}
+
+export const action = async (args: ActionFunctionArgs) => {
+  return await settingAction(args, settingParams, formSchema);
+}
 
 export default function ConfigSettingsGeneral() {
-  const [checked, setChecked] = useState(false);
-  const [value, setValue] = useState("");
-  const [selected, setSelected] = useState("1");
 
+  const submit = useSubmit();
+  let  {settingData } = useLoaderData<typeof loader>();
+  useHandleFlashMessage();
+  const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+  let isSubmitting = navigation.state == "submitting";
 
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
-  );
-
-  const handleSelectChange = useCallback(
-    (value: string) => setSelected(value),
-    [],
-  );
-
+  console.log('setting data :', settingData);
   const options = [
-    { label: "PNG", value: "1" },
-    { label: "JPEG", value: "2" },
-    { label: "SVG", value: "3" },
-    { label: "PNG + SVG", value: "4" },
-    { label: "JPEG + SVG", value: "5" },
-    { label: "PNG+ JPEG", value: "6" },
+    { label: "PNG", value: "png" },
+    { label: "JPEG", value: "jpeg" },
+    { label: "SVG", value: "svg" },
+    { label: "PNG + SVG", value: "png,svg" },
+    { label: "JPEG + SVG", value: "jpeg,svg" },
+    { label: "PNG+ JPEG", value: "png,jpeg" },
   ];
+  
 
-  const navigate = useNavigate();
-  const onBack = () => {
-    navigate("..");
-  };
+  const [formData, setFormData] = useState<any>(
+    settingData || {
+      filesFormat:options[0].value,
+      waterMark:"",
+      zipOutputFiles:{
+         active:false,
+         zipOutFolderPrefix:"aso_"
+      },
+      designComposition:false
+      }
+  );
+
+  const handleInputChange = (inputName: string, value: any) => {
+        setFormData((prevData:any) => ({
+        ...prevData,
+        [inputName]: value
+    }));
+  }
+
+  
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const data = {...formData,zipOutputFiles:JSON.stringify(formData.zipOutputFiles)};
+
+    submit(data, { method: "POST" });
+  }
+  
+
 
   return (
     <>
-      <Form method="POST">
+      <Form onSubmit={handleFormSubmit} method="POST">
         <SpacingBackground border="1px solid #DDDDDD">
           <BoxBackground>
           <Box paddingInline="300" paddingBlock="1000">
@@ -59,27 +105,18 @@ export default function ConfigSettingsGeneral() {
                   <Select
                     label="What is your desired output files format ?"
                     options={options}
-                    onChange={handleSelectChange}
-                    value={selected}
+                    onChange={( value ) => handleInputChange("filesFormat", value)}
+                      value={formData.filesFormat}
+                      error={getError(actionData, "filesFormat")}
                   />
                   </BlockStack>
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                   <BlockStack gap="300">
                   <Text as="strong" fontWeight="bold" variant="bodyLg">Watermark</Text>
-                  <TextField
-                size="medium"
-                      label="Upload image"
-                      labelHidden
-                value={value}
-                onChange={handleChange}
-                autoComplete="off"
-                prefix={
-                  <Button size="slim"  icon={uploadIcon} tone="success" variant="primary">
-                    Upload image
-                  </Button>
-                }
-              />
+               
+                    <FileInput error={getError(actionData, "waterMark")} title="Upload image" 
+                    path={formData.waterMark} handlePath={(value:any)=>handleInputChange("waterMark",value)}/>
                   </BlockStack>
                 </Grid.Cell>
                
@@ -87,13 +124,20 @@ export default function ConfigSettingsGeneral() {
                   <BlockStack gap="300">
                     <InlineStack gap="300">
                       <Text as="strong" fontWeight="bold" variant="bodyLg">Zip  output files</Text>
-                      <ReactSwitchCustom checked={checked} setChecked={setChecked} />
+                      <ReactSwitchCustom checked={formData.zipOutputFiles.active} setChecked={(value:any) => {
+                        formData.zipOutputFiles.active = value
+                      handleInputChange("zipOutputFiles", formData.zipOutputFiles )
+                    }} />
                     </InlineStack>
                   <TextField
                     size="medium"
                     label="Zip output folder prefix"
-                    value={value}
-                    onChange={handleChange}
+                    value={formData.zipOutputFiles.zipOutFolderPrefix}
+                      onChange={(value) => {
+                        formData.zipOutputFiles.zipOutFolderPrefix = value
+                      handleInputChange("zipOutputFiles", formData.zipOutputFiles )
+                      }}
+                      error={getError(actionData, "zipOutputFiles.zipOutFolderPrefix")} 
                     autoComplete="off"
                   />
                   </BlockStack>
@@ -103,7 +147,7 @@ export default function ConfigSettingsGeneral() {
                   <BlockStack gap="300">
                     <InlineStack gap="300">
                       <Text as="strong" fontWeight="bold" variant="bodyLg">Design composition</Text>
-                      <ReactSwitchCustom checked={checked} setChecked={setChecked} />
+                      <ReactSwitchCustom checked={formData.designComposition} setChecked={(value:any)=>handleInputChange("designComposition",value)} />
                     </InlineStack>
                     <Text as="p"> This option allows you to display or not design composition in the order</Text>
                   </BlockStack>
@@ -118,17 +162,8 @@ export default function ConfigSettingsGeneral() {
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-                <button className="next-large-btn" type="submit">
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        {" "}
-                        Save
-                      </span>
-                      <RayEndArrowIcon />
-                    </InlineStack>
-                  </Box>
-                </button>
+              <BiSaveBtn isLoading={isSubmitting} title="Save" />
+
               </InlineStack>
             </Box>
           </BoxBackground>
@@ -137,9 +172,4 @@ export default function ConfigSettingsGeneral() {
     </>
   );
 }
-
-export const action = () => {
-  return null;
-};
-
 

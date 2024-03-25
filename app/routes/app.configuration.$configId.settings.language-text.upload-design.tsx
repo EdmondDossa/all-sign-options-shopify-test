@@ -9,32 +9,71 @@ import {
   TextField,
 } from "@shopify/polaris";
 import { useCallback, useState } from "react";
-import { Form, NavLink, redirect, useNavigate } from "@remix-run/react";
+import { Form, NavLink, redirect, useActionData, useLoaderData, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
-import uploadIcon from "~/components/icons/uploadIcon";
+import { settingAction, settingLoader } from "~/custom-action-loader/config-action-loader";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { z } from "zod";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { FileInput } from "~/components/inputs/FileInput";
+import { getError } from "~/utils/error-getting";
+import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+
+
+const settingParams: [string, string] = ["languageImages", "uploadDesign"];
+const formSchema = z.object({
+  link:z.string(),
+  phraseSubmitCustom:z.string(),
+ activate:z.any().transform(booleanTransform).pipe(z.boolean()),     
+});
+
+export const loader = async (agrs: LoaderFunctionArgs) => {
+   return await settingLoader(agrs, settingParams);
+}
+
+export const action = async (args: ActionFunctionArgs) => {
+  return await settingAction(args, settingParams, formSchema);
+}
+
 
 export default function ConfigSettingsGeneral() {
-  const [checked, setChecked] = useState(false);
-  const [value, setValue] = useState("");
-  const [selected, setSelected] = useState("1");
-
-
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
+  const submit = useSubmit();
+  let  {settingData } = useLoaderData<typeof loader>();
+  useHandleFlashMessage();
+  const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+  let isSubmitting = navigation.state == "submitting";
+  const [formData, setFormData] = useState<any>(
+    settingData || {
+      "activate":false,
+      "link":"",
+      "phraseSubmitCustom":"Take a customization"
+      }
   );
 
-  const navigate = useNavigate();
-  const onBack = () => {
-    navigate("..");
-  };
+  const handleInputChange = (inputName: string, value: any) => {
+        setFormData((prevData:any) => ({
+        ...prevData,
+        [inputName]: value
+    }));
+  }
+
+  
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const data = {...formData};
+
+    submit(data, { method: "POST" });
+  }
+  
 
   return (
     <>
-      <Form method="POST">
+      <Form  onSubmit={handleFormSubmit} method="POST">
         <SpacingBackground border="1px solid #DDDDDD">
           <BoxBackground>
           <Box paddingInline="300" paddingBlock="1000">
@@ -50,7 +89,7 @@ export default function ConfigSettingsGeneral() {
                   
                 <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyMd">Enable custom design link </Text>
-                      <ReactSwitchCustom checked={checked} setChecked={setChecked} />
+                      <ReactSwitchCustom checked={formData.activate} setChecked={(value:any)=>handleInputChange("activate",value)}  />
                     </InlineStack>
                    
                    <Text as="p" variant="bodySm" tone="subdued" > Enable this to display a link to direct customers to another page on your site, this will display as one of the first options on desktop and mobile.</Text>
@@ -62,9 +101,10 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Custom Design Link"
                     helpText="URL to redirect customers on your store that will allow for more complex graphic design quote submissions."
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
+                    value={formData.link}
+                    onChange={(value) =>  handleInputChange("link", value )}
+                    error={getError(actionData, "link")} 
+                  autoComplete="off"
                   />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
@@ -72,9 +112,10 @@ export default function ConfigSettingsGeneral() {
                   <TextField
                     size="medium"
                     label="Phrase for link to submit custom design page"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
+                    value={formData.phraseSubmitCustom}
+                    onChange={(value) =>  handleInputChange("phraseSubmitCustom", value )}
+                    error={getError(actionData, "phraseSubmitCustom")} 
+                  autoComplete="off"
                   />
                 </Grid.Cell>
 
@@ -88,17 +129,7 @@ export default function ConfigSettingsGeneral() {
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-                <button className="next-large-btn" type="submit">
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        {" "}
-                        Save
-                      </span>
-                      <RayEndArrowIcon />
-                    </InlineStack>
-                  </Box>
-                </button>
+                <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
           </BoxBackground>
@@ -107,9 +138,4 @@ export default function ConfigSettingsGeneral() {
     </>
   );
 }
-
-export const action = () => {
-  return null;
-};
-
 

@@ -10,13 +10,8 @@ import {
   import {NavLink, Outlet} from "@remix-run/react";
   import { BoxBackground } from "~/components/layouts/BoxBackground";
   import NextLtrIcon from "~/components/icons/NextLtrIcon";
-import { AdditinalOptionSvg } from "~/components/svgs/AdditinalOptionSvg";
 import { ColorPaletteSvg } from "~/components/svgs/ColorPaletteSvg";
-import { FixingMethodSvg } from "~/components/svgs/FixingMethodSvg";
-import { ShapeSvg } from "~/components/svgs/ShapeSvg";
 import { TextImageSvg } from "~/components/svgs/TextImageSvg";
-import { BorderSvg } from "~/components/svgs/BorderSvg";
-import { SizeSvg } from "~/components/svgs/SizeSvg";
 import { RoundManageHistorySvg } from "~/components/svgs/RoundManageHistorySvg";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
   
@@ -75,8 +70,9 @@ export const SettingTabheader = () => {
           </TabItems>
         </InlineStack>
       </Box>
+      
     </SpacingBackground>
-      )
+    )
 };
 
 

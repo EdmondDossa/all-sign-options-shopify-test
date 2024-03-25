@@ -1,73 +1,117 @@
 import {
-  BlockStack,
   Box,
-  Button,
   Grid,
   InlineStack,
   Select,
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
-import { Form, NavLink, redirect, useNavigate } from "@remix-run/react";
+import {  useState } from "react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+  useSubmit,
+} from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
+import {
+  settingAction,
+  settingLoader,
+} from "~/custom-action-loader/config-action-loader";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { z } from "zod";
+import { getError } from "~/utils/error-getting";
+import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
-import uploadIcon from "~/components/icons/uploadIcon";
+import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+
+const settingParams: [string, string] = ["customizerSign", "signPart"];
+const formSchema = z.object({
+  doublePart:z.any().transform(jsonTransform).pipe(z.object({
+    active:z.boolean(),
+    part1:z.string(),
+    part2:z.string(),
+    enableCopyDesignFromSide:z.boolean()
+ }))
+});
+
+export const loader = async (agrs: LoaderFunctionArgs) => {
+  return await settingLoader(agrs, settingParams);
+};
+
+
+export const action = async (args: ActionFunctionArgs) => {
+  return await settingAction(args, settingParams, formSchema);
+};
+
 
 export default function ConfigSettingsGeneral() {
-  const [checked, setChecked] = useState(false);
-  const [value, setValue] = useState("");
-  const [selected, setSelected] = useState("1");
+ 
 
+  const submit = useSubmit();
+  let { settingData } = useLoaderData<typeof loader>();
+  useHandleFlashMessage();
+  const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+  let isSubmitting = navigation.state == "submitting";
 
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
+  console.log("setting data :", settingData);
+
+  const [formData, setFormData] = useState<any>(
+    settingData || {
+      doublePart:{
+        active:false,
+        part1:"Face A",
+        part2:"Face B",
+        enableCopyDesignFromSide:true
+     }
+    },
   );
 
-  const handleSelectChange = useCallback(
-    (value: string) => setSelected(value),
-    [],
-  );
+  const handleInputChange = (inputName: string, value: any) => {
+    setFormData((prevData: any) => ({
+      ...prevData,
+      [inputName]: value,
+    }));
+  };
 
-  const options = [
-    { label: "PNG", value: "1" },
-    { label: "JPEG", value: "2" },
-    { label: "SVG", value: "3" },
-    { label: "PNG + SVG", value: "4" },
-    { label: "JPEG + SVG", value: "5" },
-    { label: "PNG+ JPEG", value: "6" },
-  ];
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
 
-  const navigate = useNavigate();
-  const onBack = () => {
-    navigate("..");
+    const data = { doublePart: JSON.stringify(formData.doublePart) };
+
+    submit(data, { method: "POST" });
   };
 
   return (
     <>
-      <Form method="POST">
+      <Form onSubmit={handleFormSubmit} method="POST">
         <SpacingBackground border="1px solid #DDDDDD">
           <BoxBackground>
           <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{lg:"25px"}}>
-
-               
-               
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                     <InlineStack gap="300">
                       <Text as="strong"  variant="bodyMd">Enable SIGN Part</Text>
-                      <ReactSwitchCustom checked={checked} setChecked={setChecked} />
+                      <ReactSwitchCustom checked={formData.doublePart.active} setChecked={(value:any) => {
+                        formData.doublePart.active = value
+                      handleInputChange("doublePart", formData.doublePart )
+                    }}  />
                     </InlineStack>
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                   <TextField
                     size="medium"
                     label="Part 1"
-                    value={value}
-                    onChange={handleChange}
+                    value={formData.doublePart.part1}
+                      onChange={(value) => {
+                        formData.doublePart.part1 = value
+                      handleInputChange("doublePart", formData.doublePart )
+                      }}
+                      error={getError(actionData, "doublePart.part1")} 
                     autoComplete="off"
                   />
                 </Grid.Cell>
@@ -76,16 +120,23 @@ export default function ConfigSettingsGeneral() {
                   <TextField
                     size="medium"
                     label="Part 2"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
+                    value={formData.doublePart.part2}
+                    onChange={(value) => {
+                      formData.doublePart.part2 = value
+                    handleInputChange("doublePart", formData.doublePart )
+                    }}
+                    error={getError(actionData, "doublePart.part2")} 
+                  autoComplete="off"
                   />
                 </Grid.Cell>
 
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                     <InlineStack gap="300">
                       <Text as="strong"  variant="bodyMd">Enable Copy design from side</Text>
-                      <ReactSwitchCustom checked={checked} setChecked={setChecked} />
+                      <ReactSwitchCustom  checked={formData.doublePart.enableCopyDesignFromSide} setChecked={(value:any) => {
+                        formData.doublePart.enableCopyDesignFromSide = value
+                      handleInputChange("doublePart", formData.doublePart )
+                    }} />
                     </InlineStack>            
                 </Grid.Cell>
               
@@ -98,17 +149,7 @@ export default function ConfigSettingsGeneral() {
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-                <button className="next-large-btn" type="submit">
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        {" "}
-                        Save
-                      </span>
-                      <RayEndArrowIcon />
-                    </InlineStack>
-                  </Box>
-                </button>
+              <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
           </BoxBackground>
@@ -118,8 +159,5 @@ export default function ConfigSettingsGeneral() {
   );
 }
 
-export const action = () => {
-  return null;
-};
 
 

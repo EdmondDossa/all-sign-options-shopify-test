@@ -48,9 +48,9 @@ export const MultiCombobox = ({
   
     const updateSelection = useCallback(
       (selected: string) => {
-        if (selectedOptions.includes(selected)) {
+        if (selectedOptions.includes(selected+"")) {
           setSelectedOptions(
-            selectedOptions.filter((option) => option !== selected),
+            selectedOptions.filter((option) => option != selected),
           );
         } else {
           setSelectedOptions([...selectedOptions, selected]);

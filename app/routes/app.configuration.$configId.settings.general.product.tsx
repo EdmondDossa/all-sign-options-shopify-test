@@ -6,29 +6,76 @@ import {
   Text,
 } from "@shopify/polaris";
 import { useCallback, useState } from "react";
-import { Form, NavLink, redirect, useNavigate } from "@remix-run/react";
+import { Form, NavLink, redirect, useActionData, useLoaderData, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { z } from "zod";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { booleanTransform } from "~/utils/transfomerZod";
+import { settingAction, settingLoader } from "~/custom-action-loader/config-action-loader";
+
+const settingParams: [string, string] = ["generals", "product"];
+const formSchema = z.object({
+  designFromScratch: z.any().transform(booleanTransform).pipe(z.boolean()),
+  redirectAfterAddingToCart:  z.any().transform(booleanTransform).pipe(z.boolean()),
+  hideAddToCartButtonOnDetailPage:  z.any().transform(booleanTransform).pipe(z.boolean()),
+  hideDesignButtonsOnShopPage:  z.any().transform(booleanTransform).pipe(z.boolean()),
+  hideAddToCartButtonOnShopPage:  z.any().transform(booleanTransform).pipe(z.boolean())
+});
+
+export const loader = async (agrs: LoaderFunctionArgs) => {
+   return await settingLoader(agrs, settingParams);
+}
+
+export const action = async (args: ActionFunctionArgs) => {
+  return await settingAction(args, settingParams, formSchema);
+}
+
 
 export default function ConfigSettingsGeneral() {
-  const [checked, setChecked] = useState(false);
+  const submit = useSubmit();
+  let  {settingData } = useLoaderData<typeof loader>();
+  useHandleFlashMessage();
+  const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+  let isSubmitting = navigation.state == "submitting";
 
+  console.log('setting data :', settingData);
 
-  const [value, setValue] = useState("");
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
+  
+
+  const [formData, setFormData] = useState<any>(
+    settingData || {
+        designFromScratch:true,
+        redirectAfterAddingToCart:true,
+        hideAddToCartButtonOnDetailPage:false,
+        hideDesignButtonsOnShopPage:true,
+        hideAddToCartButtonOnShopPage:false
+      }
   );
-  const navigate = useNavigate();
-  const onBack = () => {
-    navigate("..");
-  };
+
+  const handleInputChange = (inputName: string, value: any) => {
+        setFormData((prevData:any) => ({
+        ...prevData,
+        [inputName]: value
+    }));
+  }
+
+  
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const data = {...formData};
+
+    submit(data, { method: "POST" });
+  }
 
   return (
     <>
-      <Form method="POST">
+      <Form onSubmit={handleFormSubmit} method="POST">
         <SpacingBackground border="1px solid #DDDDDD">
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="1000">
@@ -36,40 +83,35 @@ export default function ConfigSettingsGeneral() {
                 <Grid.Cell
                   columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}
                 >
-                  <ProductConfigItem title="Enable design from scratch" checked={checked} setChecked={setChecked
-                  }>
+                  <ProductConfigItem title="Enable design from scratch" checked={formData.designFromScratch} setChecked={(value)=>handleInputChange('designFromScratch',value)}>
                   Would you like to allow your clients to design  the product from scratch? Or do you prefer allowing the customization only for templates assigned to the custom product ?
                   </ProductConfigItem>
                 </Grid.Cell>
                 <Grid.Cell
                   columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}
                 >
-                  <ProductConfigItem title="Redirect after adding a custom design to the cart" checked={checked} setChecked={setChecked
-                  }>
+                  <ProductConfigItem title="Redirect after adding a custom design to the cart" checked={formData.redirectAfterAddingToCart} setChecked={(value)=>handleInputChange('redirectAfterAddingToCart',value)}>
                   This options allow  you to define what to do after adding a design to the cart
                   </ProductConfigItem>
                 </Grid.Cell>
                 <Grid.Cell
                   columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}
                 >
-                  <ProductConfigItem title="Hide add to cart button for custom on product detail page" checked={checked} setChecked={setChecked
-                  }>
+                  <ProductConfigItem title="Hide add to cart button for custom on product detail page" checked={formData.hideAddToCartButtonOnDetailPage} setChecked={(value)=>handleInputChange('hideAddToCartButtonOnDetailPage',value)}>
                   This options allow  you to define whether or not you want hide the add to cart button for custom products on the products page.
                   </ProductConfigItem>
                 </Grid.Cell>
                 <Grid.Cell
                   columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}
                 >
-                  <ProductConfigItem title="Hide design buttons on shop page" checked={checked} setChecked={setChecked
-                  }>
+                  <ProductConfigItem title="Hide design buttons on shop page" checked={formData.hideDesignButtonsOnShopPage} setChecked={(value)=>handleInputChange('hideDesignButtonsOnShopPage',value)}>
                     This options allow  you to show/hidethe cart button on the cart button on the customization page
                   </ProductConfigItem>
                 </Grid.Cell>
                 <Grid.Cell
                   columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}
                 >
-                  <ProductConfigItem title="hide to cart buttons for custom product on shop" checked={checked} setChecked={setChecked
-                  }>
+                  <ProductConfigItem title="hide to cart buttons for custom product on shop" checked={formData.hideAddToCartButtonOnShopPage} setChecked={(value)=>handleInputChange('hideAddToCartButtonOnShopPage',value)}>
                     This options allow  you to show/hidethe cart button on the cart button on the customization page
                   </ProductConfigItem>
                 </Grid.Cell>
@@ -83,17 +125,7 @@ export default function ConfigSettingsGeneral() {
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-                <button className="next-large-btn" type="submit">
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        {" "}
-                        Save
-                      </span>
-                      <RayEndArrowIcon />
-                    </InlineStack>
-                  </Box>
-                </button>
+              <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
           </BoxBackground>
@@ -103,9 +135,11 @@ export default function ConfigSettingsGeneral() {
   );
 }
 
-export const action = () => {
-  return null;
-};
+
+
+
+
+
 
 
 export const ProductConfigItem = ({
