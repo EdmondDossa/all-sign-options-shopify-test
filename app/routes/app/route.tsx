@@ -7,6 +7,9 @@ import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { authenticate } from "../../shopify.server";
 import Sidebar from "~/components/layouts/Sidebar";
 import appStyle from './app.css';
+import { useGlobalPendingState } from "remix-utils/use-global-navigation-state";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { useEffect } from "react";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "stylesheet", href: appStyle }];
 
@@ -18,6 +21,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function App() {
   const { apiKey } = useLoaderData<typeof loader>();
+  let globalState = useGlobalPendingState();
+  const shopify = useAppBridge();
+  useEffect(() => {
+    shopify.loading(!(globalState === "idle"))
+  }, [globalState])
+
 
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
