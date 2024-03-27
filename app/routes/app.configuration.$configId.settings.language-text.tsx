@@ -21,15 +21,7 @@ export default function ConfigSettingsGeneral() {
   const [checked, setChecked] = useState(false);
 
 
-  const [value, setValue] = useState("");
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
-  );
-  const navigate = useNavigate();
-  const onBack = () => {
-    navigate("..");
-  };
+ 
 
   return (
     <>
@@ -41,7 +33,6 @@ export default function ConfigSettingsGeneral() {
       >
         <Box paddingBlock="300">
           <InlineStack gap="400" align="center">
-            <SubTabItem to="main"> Main</SubTabItem>
             <SubTabItem to="upload-design">Upload design</SubTabItem>
             <SubTabItem to="visualizer">
             visualizer

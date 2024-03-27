@@ -31,38 +31,35 @@ import {
   TextField,
 } from "@shopify/polaris";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import CircleNotCheckIcon from "~/components/icons/CircleNotCheckIcon";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
-import uploadIcon from "~/components/icons/uploadIcon";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import ColorConvertor from "color-convert";
-import BiSaveIcon from "~/components/icons/BiSaveIcon";
 import { number, string, z } from "zod";
 import { authenticate } from "~/shopify.server";
 import { parseWithZod } from "@conform-to/zod";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { MaterialAdvanceOptionType } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
 import MaterialAdvancedOptionService from "~/models/MaterialAdvancedOption.service";
 import { flashMessage } from "~/utils/message-flash";
 import { getError } from "~/utils/error-getting";
 import { FileInput } from "~/components/inputs/FileInput";
 import { ColorType } from "~/types/ManagePropertyType";
 import { FixingMethodType, ShapeType } from "~/types/SettingsType";
+import { TextColorField } from "~/components/inputs/TextColorField";
+import { MultiCombobox, SelectCombobox } from "~/components/inputs/MulticomboxBorder";
 
 export default function MaterialComponentCreate() {
   const navigate = useNavigate();
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { materialOptions,manageColors,manageShapes,manageFixingsMethods  } = useOutletContext<{
-    materialOptions: MaterialAdvanceOptionType[];
-    manageColors: ColorType[];
-    manageShapes: ShapeType[];
-    manageFixingsMethods: FixingMethodType[]; 
-  }>();
+  const { materialOptions, manageColors, manageShapes, manageFixingsMethods } =
+    useOutletContext<{
+      materialOptions: MaterialAdvanceOptionType[];
+      manageColors: ColorType[];
+      manageShapes: ShapeType[];
+      manageFixingsMethods: FixingMethodType[];
+    }>();
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
   const [searchParams] = useSearchParams();
@@ -77,9 +74,13 @@ export default function MaterialComponentCreate() {
           description: "",
           icon: "",
           image: "",
-          manageColorId:( manageColors?.length )? manageColors[0].id||0:0,
-        fixingMethodId: manageFixingsMethods ? manageFixingsMethods[0]?.type:"",
-          shapeId: manageShapes?.length ? manageShapes[0]?.value:"",
+          color: {
+            name: "",
+            codeHex: "",
+            prevImg: "",
+          },
+          fixingMethods: [],
+          shapeId: 0,
           size: {
             width: 0,
             height: 0,
@@ -101,36 +102,49 @@ export default function MaterialComponentCreate() {
     setFormData({ ...formData, image: value });
   const handleAdditionalPrice = (value: string) =>
     setFormData({ ...formData, additionalPrice: parseFloat(value) });
-  const handleManageColorId = (value: string) =>
-    setFormData({ ...formData, manageColorId: parseInt(value) });
-  const handleFixingMethodId = (value: string) =>
-    setFormData({ ...formData, fixingMethodId: value });
-  const handleShapeId = (value: string) =>
-    setFormData({ ...formData, shapeId: value });
-  
+
+
+
   const handleSizeWidth = (value: string) => {
     formData.size.width = parseInt(value);
-    setFormData({ ...formData})
-  }
+    setFormData({ ...formData });
+  };
 
   const handleSizeHeight = (value: string) => {
     formData.size.height = parseInt(value);
-    setFormData({ ...formData})
-  }
+    setFormData({ ...formData });
+  };
+
+  const handleInputChange = (inputName: string, value: any) => {
+    setFormData((prevData: any) => ({
+      ...prevData,
+      [inputName]: value,
+    }));
+  };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit({ ...formData,size:JSON.stringify(formData.size) }, { method: "POST" });
+    submit(
+      { ...formData, size: JSON.stringify(formData.size), color: JSON.stringify(formData.color), fixingMethods: JSON.stringify(formData.fixingMethods) },
+      { method: "POST" },
+    );
   };
 
-  console.log("actionData",actionData)
+  console.log("actionData", actionData);
 
-  const colors = manageColors.map(manageColor=>({value:`${manageColor.id}`, label:manageColor.name||""}));
-  const shapes =  manageShapes.map(manageShape=>({value:manageShape.value, label:manageShape.name||""}));
-  const fixingMethods =  manageFixingsMethods.map(manageFixingsMethod=>({value:manageFixingsMethod.type, label:manageFixingsMethod.name||""}));
 
-  
+  const shapes = manageShapes.map((manageShape) => ({
+    value: manageShape.value,
+    label: manageShape.name || "",
+  }));
+  const fixingMethods = manageFixingsMethods.map((manageFixingsMethod,index) => ({
+    value: `${index}`,
+    label: manageFixingsMethod.name || "",
+    description: manageFixingsMethod.description || "",
+    image: manageFixingsMethod.icon || "",
+  }));
 
+  console.log("value  of  data" ,formData.fixingMethods)
 
   const onBack = () => {
     navigate("..");
@@ -150,46 +164,58 @@ export default function MaterialComponentCreate() {
           <Box paddingInline="300" paddingBlock="1000">
             <Grid gap={{ lg: "30px" }}>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <TextField
-                label="Name"
+                <TextField
+                  label="Name"
                   value={`${formData.name}`}
                   autoComplete="off"
-                onChange={handleName}
-                error={getError(actionData, "name")}
-              />
+                  onChange={handleName}
+                  error={getError(actionData, "name")}
+                />
               </Grid.Cell>
 
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <TextField
-                label="Description"
-                value={`${formData.description}`}
-                autoComplete="off"
-              onChange={handleDescription}
-              error={getError(actionData, "description")}
-              />
+                <TextField
+                  label="Description"
+                  value={`${formData.description}`}
+                  autoComplete="off"
+                  onChange={handleDescription}
+                  error={getError(actionData, "description")}
+                />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <FileInput error={getError(actionData, "icon")} title="Upload icon"
-                    path={formData.icon} handlePath={handleIcon} />
+                <FileInput
+                  error={getError(actionData, "icon")}
+                  title="Upload icon"
+                  path={formData.icon}
+                  handlePath={handleIcon}
+                />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <FileInput error={getError(actionData, "image")} title="Upload Background Image"
-                    path={formData.image} handlePath={handleImage} />
+                <FileInput
+                  error={getError(actionData, "image")}
+                  title="Upload Background Image"
+                  path={formData.image}
+                  handlePath={handleImage}
+                />
               </Grid.Cell>
 
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-             
-                <Select
-                    label="Select fixing method"
-                    options={fixingMethods}
-                    value={`${formData.fixingMethodId}`}
-                    onChange={handleFixingMethodId}
-                    error={getError(actionData, "fixingMethodId")}
-                  />
+               
+                <MultiCombobox
+                  label="Select fixing method"
+                  placeholder="seach fixing method"
+                  selectedOptions={formData.fixingMethods.map(
+                    (curr) => `${curr}`,
+                  )}
+                  data={fixingMethods}
+                  setSelectedOptions={(value: any) => {
+                    handleInputChange("fixingMethods", value.map((v:string) => parseInt(v)));
+                  }}
+                ></MultiCombobox>
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
                 <BlockStack gap="100">
-                  <Text as="span"> Size</Text>
+                  <Text as="span"> Size (width X height)</Text>
                   <InlineStack
                     wrap={false}
                     align="space-between"
@@ -198,55 +224,94 @@ export default function MaterialComponentCreate() {
                     <TextField
                       label="Size width"
                       type="number"
-                value={`${formData.size.width}`}
-                autoComplete="off"
-              onChange={handleSizeWidth}
-              error={getError(actionData, "size.width")}
+                      labelHidden
+                      value={`${formData.size.width}`}
+                      autoComplete="off"
+                      onChange={handleSizeWidth}
+                      error={getError(actionData, "size.width")}
                     />
                     <Text as="strong" variant="bodyLg">
                       X
                     </Text>
                     <TextField
-                  label="Size height"
-                  type="number"
-                value={`${formData.size.height}`}
-                autoComplete="off"
-              onChange={handleSizeHeight}
-              error={getError(actionData, "size.height")}
-              />
+                      labelHidden
+                      label="Size height"
+                      type="number"
+                      value={`${formData.size.height}`}
+                      autoComplete="off"
+                      onChange={handleSizeHeight}
+                      error={getError(actionData, "size.height")}
+                    />
                   </InlineStack>
                 </BlockStack>
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              
-                 <Select
-                    label="Select shape"
-                    options={shapes}
-                    value={`${formData.shapeId}`}
-                    onChange={handleShapeId}
-                    error={getError(actionData, "shapeId")}
-                  />
+              <SelectCombobox
+                  label="Select shape"
+                  placeholder="seach shape"
+                  selectedOptions={!Number.isNaN(formData.shapeId)?[`${formData.shapeId}`]:[]}
+                  data={fixingMethods}
+                  setSelectedOptions={(value: any) => {
+                    handleInputChange("shapeId", value.length? value[value.length-1]: parseInt(value[0]));
+                  }}
+                  error={getError(actionData, "shapeId")}
+                ></SelectCombobox>
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <TextField
+                <TextField
                   label="Additional  price"
                   type="number"
-                value={`${formData.additionalPrice}`}
-                autoComplete="off"
-              onChange={handleAdditionalPrice}
-              error={getError(actionData, "additionalPrice")}
-              />
+                  value={`${formData.additionalPrice}`}
+                  autoComplete="off"
+                  onChange={handleAdditionalPrice}
+                  error={getError(actionData, "additionalPrice")}
+                />
               </Grid.Cell>
-
               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                <Select
-                    label="Select color"
-                    options={colors}
-                    value={`${formData.manageColorId}`}
-                    onChange={handleManageColorId}
-                    error={getError(actionData, "manageColorId")}
-                  />
+                <BlockStack gap="200">
+                  <Text as="strong" fontWeight="bold" variant="bodyLg">
+                  Color setting
+                  </Text>
+                  <Grid gap={{ lg: "30px" }}>
+                  <Grid.Cell  columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                <TextField
+                  size="medium"
+                  label="Color name"
+                  value={formData.color.name}
+                  onChange={(value) => {
+                    formData.color.name = value;
+                    handleInputChange("color", formData.color);
+                  }}
+                  error={getError(actionData, "color.name")}
+                  autoComplete="on"
+                />
               </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                <TextColorField
+                  label="Color code hex"
+                  color={formData.color.codeHex}
+                  setColor={(value:any) => {
+                    formData.color.codeHex = value;
+                    handleInputChange("color", formData.color);
+                  }}
+                />
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                <FileInput
+                  error={getError(actionData, "color.prevImg")}
+                  title="color image"
+                  buttonTitle="Upload color image"
+                  path={formData.color.prevImg||''}
+                  handlePath={(value:any) => {
+                    formData.color.prevImg = value;
+                    handleInputChange("color", formData.color);
+                  }}
+                />
+              </Grid.Cell>
+                  </Grid>
+                </BlockStack>
+              </Grid.Cell>
+              
             </Grid>
           </Box>
 
@@ -273,8 +338,6 @@ export default function MaterialComponentCreate() {
   );
 }
 
-
-
 const formSchema = z.object({
   name: z
     .string({ required_error: "Title is required" })
@@ -287,16 +350,35 @@ const formSchema = z.object({
   icon: z.string({ required_error: "Icon file is required" }),
   image: z.string({ required_error: "image file is required" }),
   additionalPrice: z.number({ required_error: "Price is required" }),
-  manageColorId: z.number({ required_error: "Color  is required" }),
-  fixingMethodId: z.string({ required_error: "Fixing is required" }),
-  shapeId: z.string({ required_error: "Shape is required" }),
-  size: z.any().transform(value => JSON.parse(value || '')).pipe(
-    z.object({
-      width:z.number({ required_error: "Width  is required" }),
-      height:z.number({ required_error: "Height  is required" })
-    })
-  )
+  fixingMethods: z
+  .any()
+  .transform((value) => JSON.parse(value || ""))
+  .pipe(
+    z.number().array()
+  ),
+  shapeId: z.number({ required_error: "Shape is required", invalid_type_error: "Shape is required" }),
+  size: z
+    .any()
+    .transform((value) => JSON.parse(value || ""))
+    .pipe(
+      z.object({
+        width: z.number({ required_error: "Width  is required" }),
+        height: z.number({ required_error: "Height  is required" }),
+      }),
+  ),
+  color: z
+    .any()
+    .transform((value) => JSON.parse(value || ""))
+    .pipe(
+      z.object({
+        name: z.string({ required_error: "Color name  is required" }),
+        codeHex: z.string({ required_error: "Color code Hex  is required" }),
+        prevImg: z.string({ required_error: "Color image  is required" }),
+      }),
+    )
 });
+
+
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -344,7 +426,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       session.id,
       materialId,
       componentId,
-      materialOption
+      materialOption,
     );
     return res
       ? redirect(
@@ -355,5 +437,3 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         );
   }
 };
-
-

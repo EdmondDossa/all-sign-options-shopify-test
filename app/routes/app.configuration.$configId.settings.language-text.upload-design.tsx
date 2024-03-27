@@ -78,8 +78,6 @@ export default function ConfigSettingsGeneral() {
           <BoxBackground>
           <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{lg:"30px"}}>
-
-               
                
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                       <Text as="strong" fontWeight="bold" variant="bodyLg">Custom design link</Text>
@@ -121,7 +119,7 @@ export default function ConfigSettingsGeneral() {
 
               
               </Grid>
-            </Box>
+          </Box>
           </BoxBackground>
         </SpacingBackground>
 

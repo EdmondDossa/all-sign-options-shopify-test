@@ -18,18 +18,6 @@ import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { SubTabItem } from "~/components/layouts/SubTabItem";
 
 export default function ConfigSettingsGeneral() {
-  const [checked, setChecked] = useState(false);
-
-
-  const [value, setValue] = useState("");
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
-  );
-  const navigate = useNavigate();
-  const onBack = () => {
-    navigate("..");
-  };
 
   return (
     <>
@@ -51,10 +39,6 @@ export default function ConfigSettingsGeneral() {
     </>
   );
 }
-
-export const action = () => {
-  return null;
-};
 
 
 

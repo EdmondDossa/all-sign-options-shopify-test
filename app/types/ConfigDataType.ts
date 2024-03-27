@@ -95,9 +95,13 @@
     description: string;
     icon: string;
     image: string;
-    manageColorId: number;
-    fixingMethodId: string;
-    shapeId: string;
+    color:{
+      name: string;
+      codeHex?: string;
+      prevImg?: string;
+  }
+   fixingMethods: number[];
+    shapeId?: number;
     size: {
       width: number;
       height: number;

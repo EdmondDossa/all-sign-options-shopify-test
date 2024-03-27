@@ -15,6 +15,21 @@ export default class ClipartService {
     }
   }
 
+  static async getClipartsBySessionID(sessionID: string): Promise<any[] | null> {
+    try {
+      return await prisma.clipart.findMany({
+        where: {
+          clipartsGroup: {
+            sessionId: sessionID
+          }
+        },
+      });
+    } catch (error) {
+      console.error("Error retrieving cliparts:", error);
+      return Promise.resolve(null);
+    }
+  }
+
   static async getClipart(
     id: number,
     clipartsGroupId: number,

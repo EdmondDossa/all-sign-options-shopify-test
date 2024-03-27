@@ -2,5 +2,5 @@ import { redirect } from "@remix-run/react"
 
 export const loader = async () => {
   
-  return redirect('main');
+  return redirect('upload-design');
 }

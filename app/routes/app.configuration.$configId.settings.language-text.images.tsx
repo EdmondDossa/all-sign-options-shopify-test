@@ -9,31 +9,101 @@ import {
   TextField,
 } from "@shopify/polaris";
 import { useCallback, useState } from "react";
-import { Form, NavLink, redirect, useNavigate } from "@remix-run/react";
+import { Form, NavLink, redirect, useActionData, useLoaderData, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
-import uploadIcon from "~/components/icons/uploadIcon";
+import { settingAction, settingLoader } from "~/custom-action-loader/config-action-loader";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { z } from "zod";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { FileInput } from "~/components/inputs/FileInput";
+import { getError } from "~/utils/error-getting";
+import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+
+
+const settingParams: [string, string] = ["languageImages", "images"];
+const formSchema = z.object({
+            resetAllIcon: z.string().nullish(),
+            cancelAnAction:z.string().nullish(),
+            icon:z.string().nullish(),
+            changeIconPreview:z.string().nullish(),
+            changeIconImport:z.string().nullish(),
+            changeIconShare:z.string().nullish(),
+            changeIconSaveProject:z.string().nullish(),
+            changeIconShareSideBar:z.string().nullish(),
+            changeIconMaterial:z.string().nullish(),
+            changeIconShape:z.string().nullish(),
+            changeIconFixingMethod:z.string().nullish(),
+            changeIconProduct:z.string().nullish(),
+            changeIconSize:z.string().nullish(),
+            changeIconText:z.string().nullish(),
+            changeIconColor:z.string().nullish(),
+            changeIconSizeMenu:z.string().nullish(),
+            changeIconBorder:z.string().nullish(),
+            changeIconImage:z.string().nullish() 
+});
+
+export const loader = async (agrs: LoaderFunctionArgs) => {
+   return await settingLoader(agrs, settingParams);
+}
+
+export const action = async (args: ActionFunctionArgs) => {
+  return await settingAction(args, settingParams, formSchema);
+}
+
+
 
 export default function ConfigSettingsGeneral() {
-  const [checked, setChecked] = useState(false);
-  const [value, setValue] = useState("");
-  const [selected, setSelected] = useState("1");
-
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
+  const submit = useSubmit();
+  let  {settingData } = useLoaderData<typeof loader>();
+  useHandleFlashMessage();
+  const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+  let isSubmitting = navigation.state == "submitting";
+  const [formData, setFormData] = useState<any>(
+    settingData || {
+            resetAllIcon:'',
+            cancelAnAction:'',
+            icon:'',
+            changeIconPreview:'',
+            changeIconImport:'',
+            changeIconShare:'',
+            changeIconSaveProject:'',
+            changeIconShareSideBar:'',
+            changeIconMaterial:'',
+            changeIconShape:'',
+            changeIconFixingMethod:'',
+            changeIconProduct:'',
+            changeIconSize:'',
+            changeIconText:'',
+            changeIconColor:'',
+            changeIconSizeMenu:'',
+            changeIconBorder:'',
+            changeIconImage:'',
+      }
   );
 
-  const navigate = useNavigate();
-  const onBack = () => {
-    navigate("..");
-  };
+  const handleInputChange = (inputName: string, value: any) => {
+        setFormData((prevData:any) => ({
+        ...prevData,
+        [inputName]: value
+    }));
+  }
+
+  
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const data = {...formData};
+
+    submit(data, { method: "POST" });
+  }
 
   return (
     <>
-      <Form method="POST">
+      <Form onSubmit={handleFormSubmit} method="POST">
         <SpacingBackground border="1px solid #DDDDDD" margin="4px 0px">
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="1000">
@@ -44,65 +114,19 @@ export default function ConfigSettingsGeneral() {
                   </Text>
                 </Grid.Cell>
 
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                  <TextField
-                    size="medium"
-                    label="Reset all"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    prefix={
-                      <Button
-                        size="slim"
-                        icon={uploadIcon}
-                        tone="success"
-                        variant="primary"
-                      >
-                        Upload icon
-                      </Button>
-                    }
-                  />
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "resetAllIcon")} title="Reset All" buttonTitle="Upload icon"
+                    path={formData.resetAllIcon} handlePath={(value:any)=>handleInputChange("resetAllIcon",value)}/>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                  <TextField
-                    size="medium"
-                    label="Cancel an action"
-                    helpText="change icon to cancel action"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    prefix={
-                      <Button
-                        size="slim"
-                        icon={uploadIcon}
-                        tone="success"
-                        variant="primary"
-                      >
-                        Upload undo icon
-                      </Button>
-                    }
-                  />
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "cancelAnAction")} title="Cancel an action"  buttonTitle="Upload icon"
+                    path={formData.cancelAnAction} handlePath={(value:any)=>handleInputChange("cancelAnAction",value)}/>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                  <TextField
-                    size="medium"
-                    label="Cancel an action"
-                    helpText="change icon to cancel action"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    prefix={
-                      <Button
-                        size="slim"
-                        icon={uploadIcon}
-                        tone="success"
-                        variant="primary"
-                      >
-                        Upload undo icon
-                      </Button>
-                    }
-                  />
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "icon")} title="Undo icon"  buttonTitle="Upload icon"
+                    path={formData.icon} handlePath={(value:any)=>handleInputChange("icon",value)}/>
                 </Grid.Cell>
+             
               </Grid>
             </Box>
           </BoxBackground>
@@ -117,105 +141,84 @@ export default function ConfigSettingsGeneral() {
                   </Text>
                 </Grid.Cell>
 
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                  <TextField
-                    size="medium"
-                    label="Change icon Preview"
-                    helpText="Provide further details about your sizes."
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    prefix={
-                      <Button
-                        size="slim"
-                        icon={uploadIcon}
-                        tone="success"
-                        variant="primary"
-                      >
-                        Upload icon
-                      </Button>
-                    }
-                  />
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconPreview")} title="Change Icon  preview"  buttonTitle="Upload icon"
+                    path={formData.changeIconPreview} handlePath={(value:any)=>handleInputChange("changeIconPreview",value)}/>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                  <TextField
-                    size="medium"
-                    label="Change icon Import"
-                    helpText="change icon to import file"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    prefix={
-                      <Button
-                        size="slim"
-                        icon={uploadIcon}
-                        tone="success"
-                        variant="primary"
-                      >
-                        Upload icon
-                      </Button>
-                    }
-                  />
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconImport")} title="Change Icon  Import"  buttonTitle="Upload icon"
+                    path={formData.changeIconImport} handlePath={(value:any)=>handleInputChange("changeIconImport",value)}/>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                  <TextField
-                    size="medium"
-                    label="Change icon share"
-                    helpText="change icon to share project"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    prefix={
-                      <Button
-                        size="slim"
-                        icon={uploadIcon}
-                        tone="success"
-                        variant="primary"
-                      >
-                        Upload icon
-                      </Button>
-                    }
-                  />
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconShare")} title="Change  Icon  share"  buttonTitle="Upload icon"
+                    path={formData.changeIconShare} handlePath={(value:any)=>handleInputChange("changeIconShare",value)}/>
                 </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconSaveProject")} title="Change  Icon  save project"  buttonTitle="Upload icon"
+                    path={formData.changeIconSaveProject} handlePath={(value:any)=>handleInputChange("changeIconSaveProject",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconShareSideBar")} title="Change Icon Share Side bar"  buttonTitle="Upload icon"
+                    path={formData.changeIconShareSideBar} handlePath={(value:any)=>handleInputChange("changeIconShareSideBar",value)}/>
+                </Grid.Cell>
+            
+           
+              </Grid>
+            </Box>
+          </BoxBackground>
+        </SpacingBackground>
 
 
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                  <TextField
-                    size="medium"
-                    label="Change icon save project"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    prefix={
-                      <Button
-                        size="slim"
-                        icon={uploadIcon}
-                        tone="success"
-                        variant="primary"
-                      >
-                        Upload icon
-                      </Button>
-                    }
-                  />
+        <SpacingBackground border="1px solid #DDDDDD" margin="4px 0px">
+          <BoxBackground>
+            <Box paddingInline="300" paddingBlock="1000">
+              <Grid gap={{ lg: "25px" }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <Text as="strong" fontWeight="bold" variant="bodyLg">
+                    Menu
+                  </Text>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                  <TextField
-                    size="medium"
-                    label="Change icon share"
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    prefix={
-                      <Button
-                        size="slim"
-                        icon={uploadIcon}
-                        tone="success"
-                        variant="primary"
-                      >
-                        Upload icon
-                      </Button>
-                    }
-                  />
+
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconMaterial")} title="Change  Icon Material"  buttonTitle="Upload icon"
+                    path={formData.changeIconMaterial} handlePath={(value:any)=>handleInputChange("changeIconMaterial",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconShape")} title="Change Icon shape"  buttonTitle="Upload icon"
+                    path={formData.changeIconShape} handlePath={(value:any)=>handleInputChange("changeIconShape",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconFixingMethod")} title="Change  Icon  fixing method"  buttonTitle="Upload icon"
+                    path={formData.changeIconFixingMethod} handlePath={(value:any)=>handleInputChange("changeIconFixingMethod",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconProduct")} title="Change  Icon  Product"  buttonTitle="Upload icon"
+                    path={formData.changeIconProduct} handlePath={(value:any)=>handleInputChange("changeIconProduct",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconSizeMenu")} title="Change Icon  Size Menu"  buttonTitle="Upload icon"
+                    path={formData.changeIconSizeMenu} handlePath={(value:any)=>handleInputChange("changeIconSizeMenu",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconText")} title="Change Icon Text"  buttonTitle="Upload icon"
+                    path={formData.changeIconText} handlePath={(value:any)=>handleInputChange("changeIconText",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconColor")} title="Change  Icon  color"  buttonTitle="Upload icon"
+                    path={formData.changeIconColor} handlePath={(value:any)=>handleInputChange("changeIconColor",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <FileInput error={getError(actionData, "changeIconSize")} title="Change Icon size"  buttonTitle="Upload icon"
+                    path={formData.changeIconSize} handlePath={(value:any)=>handleInputChange("changeIconSize",value)}/>
+                </Grid.Cell>
+                
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+              <FileInput error={getError(actionData, "changeIconBorder")} title="Change Icon border"  buttonTitle="Upload icon"
+                    path={formData.changeIconBorder} handlePath={(value:any)=>handleInputChange("changeIconBorder",value)}/>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+              <FileInput error={getError(actionData, "changeIconImage")} title="Change Icon image"  buttonTitle="Upload icon"
+                    path={formData.changeIconImage} handlePath={(value:any)=>handleInputChange("changeIconImage",value)}/>
                 </Grid.Cell>
            
               </Grid>
@@ -228,17 +231,7 @@ export default function ConfigSettingsGeneral() {
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-                <button className="next-large-btn" type="submit">
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        {" "}
-                        Save
-                      </span>
-                      <RayEndArrowIcon />
-                    </InlineStack>
-                  </Box>
-                </button>
+              <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
           </BoxBackground>
@@ -248,6 +241,3 @@ export default function ConfigSettingsGeneral() {
   );
 }
 
-export const action = () => {
-  return null;
-};

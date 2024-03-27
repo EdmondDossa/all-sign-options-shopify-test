@@ -22,6 +22,16 @@ export default class ConfigSettingsService {
     }
   }
 
+  static async getMain(sessionId: string, configurationId: number,setting:string): Promise<any| null> {
+    try {
+      let configuration: any = await ConfigurationService.getConfiguration(configurationId, sessionId);
+      let settingData = configuration["data"]["settings"][setting];
+      return settingData;
+    } catch (error) {
+      return Promise.resolve(null);
+    }
+  }
+
  
 
   static async edit(
@@ -61,6 +71,40 @@ export default class ConfigSettingsService {
       return Promise.resolve(null);
     } catch (error) {
       console.error("Error Editing config setting:", error);
+      return Promise.resolve(null);
+    }
+  }
+
+  static async editMain(
+    sessionId: string,
+    configurationId: number,
+    setting: string,
+    item:any
+  ): Promise<any[] | null> {
+    try {
+      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
+      if (configuration === null) {
+        console.log("Configuration not found");
+        return null
+      };
+      console.log('configuration',configuration)
+      let data = configuration?.data
+      if (data instanceof Object && "settings" in data) {
+          configuration["data"]["settings"][setting] = item
+      } else {
+        console.log('data is not an object')
+        configuration["data"] = { ...data||{},'settings':{[setting]:item}}
+      }
+
+      if (configuration["data"]["settings"][setting]) {
+        
+        configuration = await ConfigurationService.updateConfiguration(configuration, sessionId)
+        
+        return Promise.resolve(configuration["data"]["settings"][setting]);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error Editing config setting main:", error);
       return Promise.resolve(null);
     }
   }
