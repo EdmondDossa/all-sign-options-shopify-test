@@ -29,6 +29,7 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
+import { BackBtn } from "~/components/buttons/BackBtn";
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
@@ -129,9 +130,8 @@ export default function ManageClipartCreate() {
               
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-           
+              <BackBtn isLoading={isLoading} title="Back"/>
               <BiSaveBtn isLoading={isSubmitting} title="Save" />
-
               </InlineStack>
             </Box>
               </SpacingBackground>

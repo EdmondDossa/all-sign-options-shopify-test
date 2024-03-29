@@ -6,12 +6,12 @@ import {
     Text,
   } from "@shopify/polaris";
   
-  import {Outlet, useLoaderData} from "@remix-run/react";
+  import {Link, Outlet, useLoaderData, useOutletContext, useParams} from "@remix-run/react";
   import { BoxBackground } from "~/components/layouts/BoxBackground";
   import NextLtrIcon from "~/components/icons/NextLtrIcon";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import { ConfigAdditionalOptionItem, MaterialAdvanceOptionType } from "~/types/ConfigDataType";
+import { ConfigAdditionalOptionItem, MaterialAdvance, MaterialAdvanceComponentType, MaterialAdvanceOptionType } from "~/types/ConfigDataType";
 import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
 import MaterialAdvancedOptionService from "~/models/MaterialAdvancedOption.service";
 import { ColorType } from "~/types/ManagePropertyType";
@@ -19,6 +19,7 @@ import { FixingMethodType, ShapeType } from "~/types/SettingsType";
 import SettingShapesService from "~/models/SettingShapes.service";
 import ColorService from "~/models/Color.service";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
+import { ConfigurationType } from "~/types/ConfigurationType";
   
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -43,32 +44,41 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   
 
 export default function Materiels(){
-  let  {materialOptions,manageColors,manageShapes,manageFixingsMethods  } = useLoaderData<typeof loader>();
+  let { materialOptions, manageColors, manageShapes, manageFixingsMethods } = useLoaderData<typeof loader>();
+  const { materialComponents , material, configuration} = useOutletContext<{
+    materialComponents: MaterialAdvanceComponentType[];
+    material:MaterialAdvance, configuration: ConfigurationType
+  }>();
+
+  const params = useParams();
+  const materialComponent = materialComponents?.find((currMaterialComponent: any,index:number) => index === parseInt(params.cId ?? ""));
+
   return (
     <>
-       <BoxBackground>
+        <BoxBackground>
           <Box paddingInline="300" paddingBlock="600">
             <InlineStack align="start">
               <InlineStack gap="100" align="start" blockAlign="start">
                 <Text as="h2" variant="headingMd">
-                  Name config
+                  {configuration?.name}
                 </Text>
                 <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  Material
-                </Text>
-                <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  Plastic
+                <Link className="link" to="../../materials">
+            <Text as="h2" variant="headingMd">
+              Materials
+            </Text>
+            </Link>
+              <NextLtrIcon />
+              <Link className="link" to="..">
+                <Text as="h2" variant="headingMd" >
+                  {material?.name} (Advance)
               </Text>
+            </Link>
               <NextLtrIcon />
                 <Text as="h2" variant="headingMd" tone="subdued">
-                  components
+                 {materialComponent?.name}
               </Text>
-              <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  options
-                </Text>
+              
               </InlineStack>
             </InlineStack>
           </Box>

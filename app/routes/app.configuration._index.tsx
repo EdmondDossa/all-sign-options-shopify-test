@@ -206,7 +206,7 @@ export default function Configuration() {
                 <Box paddingInline="300">
                   <InlineStack gap="300">
                     <PlusIcon/>
-                    <span className="primary-btn-text"> Add new option</span>
+                    <span className="primary-btn-text"> Add new configuration</span>
                   </InlineStack>
                 </Box>
               </button>

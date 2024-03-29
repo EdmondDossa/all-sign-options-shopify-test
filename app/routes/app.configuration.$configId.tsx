@@ -18,9 +18,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 };
   
 
-export default function Materiels(){
+export default function ConfigurationView() {
   const {configuration} = useLoaderData<typeof loader>();
+    
   return (
-    <Outlet  context={{configuration}} />
+    <Outlet context={{configuration}} />
   );
 }

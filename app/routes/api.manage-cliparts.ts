@@ -13,6 +13,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     let sessionId = "offline_quickstart-5c91f330.myshopify.com";
     let data = await ClipartService.getClipartsBySessionID(sessionId);
     
-    return json({ data });
+    return json(data );
+
 };
   

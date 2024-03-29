@@ -32,6 +32,7 @@ const settingParams: [string, string] = ["customizerSign", "signPart"];
 const formSchema = z.object({
   doublePart:z.any().transform(jsonTransform).pipe(z.object({
     active:z.boolean(),
+    label:z.string(),
     part1:z.string(),
     part2:z.string(),
     enableCopyDesignFromSide:z.boolean()
@@ -63,7 +64,8 @@ export default function ConfigSettingsGeneral() {
   const [formData, setFormData] = useState<any>(
     settingData || {
       doublePart:{
-        active:false,
+        active: false,
+        label:"Switch Face",
         part1:"Face A",
         part2:"Face B",
         enableCopyDesignFromSide:true
@@ -101,6 +103,19 @@ export default function ConfigSettingsGeneral() {
                       handleInputChange("doublePart", formData.doublePart )
                     }}  />
                     </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl:12 }}>
+                  <TextField
+                    size="medium"
+                    label="Label"
+                    value={formData.doublePart.label}
+                      onChange={(value) => {
+                        formData.doublePart.label = value
+                      handleInputChange("doublePart", formData.doublePart )
+                      }}
+                      error={getError(actionData, "doublePart.label")} 
+                    autoComplete="off"
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                   <TextField

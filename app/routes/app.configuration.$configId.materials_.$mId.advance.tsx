@@ -1,11 +1,12 @@
 
 
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import {Outlet, useLoaderData} from "@remix-run/react";
+import {Outlet, useLoaderData, useOutletContext, useParams} from "@remix-run/react";
 import { Page } from "@shopify/polaris";
 import MaterialAdvanceComponent from "~/models/MaterialAdvanceComponent.service";
 import { authenticate } from "~/shopify.server";
 import { MaterialAdvanceComponentType } from "~/types/ConfigDataType";
+import { ConfigurationType } from "~/types/ConfigurationType";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -24,11 +25,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 };
 
 export default function MaterialAdvancedIndex() {
-  let  {materialComponents } = useLoaderData<typeof loader>();
+  let { materialComponents } = useLoaderData<typeof loader>();
+  const { configuration } = useOutletContext<{ configuration: ConfigurationType; }>();
+  const params = useParams();
+  const material = configuration?.data?.materials?.find((currMaterial: any,index:number) => index === parseInt(params.mId ?? ""));
+  console.log(' material configuration', configuration)
   return (
     <Page fullWidth>
         
-    <Outlet context={  {materialComponents }}/>
+    <Outlet context={  {materialComponents , material, configuration}}/>
   </Page>
   );
 }

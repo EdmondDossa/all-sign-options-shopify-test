@@ -1,6 +1,6 @@
 import { parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
-import { Form, Outlet, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSearchParams, useSubmit } from "@remix-run/react";
+import { Form, Link, Outlet, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSearchParams, useSubmit } from "@remix-run/react";
 import {
   Box,
   Button,
@@ -24,16 +24,19 @@ import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import MaterialAdvanceComponentService from "~/models/MaterialAdvanceComponent.service";
 import MaterialAdvanceComponent from "~/models/MaterialAdvanceComponent.service";
 import { authenticate } from "~/shopify.server";
-import { MaterialAdvanceComponentType } from "~/types/ConfigDataType";
+import { MaterialAdvance, MaterialAdvanceComponentType } from "~/types/ConfigDataType";
+import { ConfigurationType } from "~/types/ConfigurationType";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
 
 export default function MaterialComponentCreate() {
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { materialComponents } = useOutletContext<{
+  const { materialComponents , material, configuration} = useOutletContext<{
     materialComponents: MaterialAdvanceComponentType[];
+    material:MaterialAdvance, configuration: ConfigurationType
   }>();
+
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
   const [searchParams] = useSearchParams();
@@ -74,31 +77,31 @@ export default function MaterialComponentCreate() {
 
   return (
     <>
-         <BoxBackground>
+          <BoxBackground>
           <Box paddingInline="300" paddingBlock="600">
-            <InlineStack>
-              <InlineStack gap="100" align="start">
+            <InlineStack align="start">
+              <InlineStack gap="100" align="start" blockAlign="start">
                 <Text as="h2" variant="headingMd">
-                  Name config
+                  {configuration?.name}
                 </Text>
                 <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  Material
-                </Text>
+                <Link className="link" to="../../materials">
+            <Text as="h2" variant="headingMd" tone="subdued">
+              Materials
+            </Text>
+            </Link>
                 <NextLtrIcon />
                 <Text as="h2" variant="headingMd" tone="subdued">
-                  Plastic
+                  {material?.name} (Advance)
               </Text>
-              <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  components
-                </Text>
+              
               </InlineStack>
             </InlineStack>
           </Box>
           <Divider borderWidth="100" />
         </BoxBackground>
         <Divider borderWidth="100" />
+       
     <SpacingBackground width="100%" height="auto">
       <BoxBackground>
         <Box padding="300">

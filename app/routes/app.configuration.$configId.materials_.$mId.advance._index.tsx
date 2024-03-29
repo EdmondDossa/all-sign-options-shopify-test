@@ -21,19 +21,20 @@ import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Link, useNavigate, useOutletContext, useSubmit } from "@remix-run/react";
+import { Link, useNavigate, useOutletContext, useParams, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import RoundManageHistoryIcon from "~/components/icons/RoundManageHistoryIcon";
 import NextLtrIcon from "~/components/icons/NextLtrIcon";
-import { MaterialAdvanceComponentType } from "~/types/ConfigDataType";
+import { MaterialAdvance, MaterialAdvanceComponentType } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { BorderCircleText } from "~/components/feactures/BorderCircleText";
 import MaterialAdvanceComponentService from "~/models/MaterialAdvanceComponent.service";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { jFlashMessage } from "~/utils/message-flash";
+import { ConfigurationType } from "~/types/ConfigurationType";
 
 
 // This example is for guidance purposes. Copying it will come with caveats.
@@ -42,8 +43,9 @@ export default function MaterialAdvancedIndex() {
   const submit = useSubmit();
   const navigate = useNavigate();
 
-  const { materialComponents } = useOutletContext<{
+  const { materialComponents , material, configuration} = useOutletContext<{
     materialComponents: MaterialAdvanceComponentType[];
+    material:MaterialAdvance, configuration: ConfigurationType
   }>();
 
   useHandleFlashMessage();
@@ -122,33 +124,35 @@ export default function MaterialAdvancedIndex() {
       </IndexTable.Row>
     ),
   );
+
+  
   return (
     <>
-        <BoxBackground>
+      <BoxBackground>
           <Box paddingInline="300" paddingBlock="600">
-            <InlineStack>
-              <InlineStack gap="100" align="start">
+            <InlineStack align="start">
+              <InlineStack gap="100" align="start" blockAlign="start">
                 <Text as="h2" variant="headingMd">
-                  Name config
+                  {configuration?.name}
                 </Text>
                 <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  Material
-                </Text>
+                <Link className="link" to="../../materials">
+            <Text as="h2" variant="headingMd" tone="subdued">
+              Materials
+            </Text>
+            </Link>
                 <NextLtrIcon />
                 <Text as="h2" variant="headingMd" tone="subdued">
-                  Plastic
+                  {material?.name} (Advance)
               </Text>
-              <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  components
-                </Text>
+              
               </InlineStack>
             </InlineStack>
           </Box>
           <Divider borderWidth="100" />
         </BoxBackground>
         <Divider borderWidth="100" />
+        
      <SpacingBackground width="100%" height="auto" >
         <BoxBackground>
           <Box padding="300">

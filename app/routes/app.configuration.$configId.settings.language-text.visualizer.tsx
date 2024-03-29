@@ -58,7 +58,10 @@ const formSchema = z.object({
   textOptionText: z.string(),
   textBorder: z.string(),
   textProduct: z.string(),
-  textImage: z.string()
+  textImage: z.string(),
+  customSize: z.string(),
+  customSizeButtonDone: z.string(),
+  thickness: z.string()
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -101,6 +104,9 @@ export default function ConfigSettingsGeneral() {
       textBorder: "Border",
       textProduct: "Product",
       textImage: "Image",
+      customSize:"Custom Size",
+      customSizeButtonDone:"Done",
+      thickness:"Thickness"
     },
   );
 
@@ -312,6 +318,42 @@ export default function ConfigSettingsGeneral() {
                       handleInputChange("textSize", value)
                     }
                     error={getError(actionData, "textSize")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text Custom Size"
+                    value={formData.customSize}
+                    onChange={(value) =>
+                      handleInputChange("customSize", value)
+                    }
+                    error={getError(actionData, "customSize")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text Custom Size Button Done"
+                    value={formData.customSizeButtonDone}
+                    onChange={(value) =>
+                      handleInputChange("customSizeButtonDone", value)
+                    }
+                    error={getError(actionData, "customSizeButtonDone")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text Thickness"
+                    value={formData.thickness}
+                    onChange={(value) =>
+                      handleInputChange("thickness", value)
+                    }
+                    error={getError(actionData, "thickness")}
                     autoComplete="on"
                   />
                 </Grid.Cell>

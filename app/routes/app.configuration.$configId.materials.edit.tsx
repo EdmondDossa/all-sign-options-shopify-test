@@ -17,6 +17,7 @@ import {
 } from "@shopify/polaris";
 import { useCallback, useState } from "react";
 import { z } from "zod";
+import { BackBtn } from "~/components/buttons/BackBtn";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import BiSaveIcon from "~/components/icons/BiSaveIcon";
 import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
@@ -148,6 +149,7 @@ export default function MaterialEdit() {
         <SpacingBackground backgroundColor="#F9F9F9">
           <Box paddingInline="300" paddingBlock="300">
             <InlineStack align="end" gap="600">
+              <BackBtn isLoading={isLoading} title="Back"/>
             <BiSaveBtn isLoading={isSubmitting} title="Save" />
             </InlineStack>
           </Box>

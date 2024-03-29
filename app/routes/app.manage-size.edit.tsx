@@ -31,6 +31,7 @@ import { getError } from "~/utils/error-getting";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import LoadingGray from "~/components/icons/LoadingGray";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { BackBtn } from "~/components/buttons/BackBtn";
 
 
 
@@ -167,6 +168,7 @@ export default function ManageSizeCreate() {
               
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
+                <BackBtn isLoading={isLoading} title="Back"/>
                 <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>

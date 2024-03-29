@@ -31,6 +31,7 @@ import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { BackBtn } from "~/components/buttons/BackBtn";
 
 
 
@@ -134,7 +135,8 @@ export default function ColorPaletteCreate() {
             <SpacingBackground backgroundColor="#F9F9F9">
               
                 <Box paddingInline="300" paddingBlock="300">
-                  <InlineStack align="end" gap="600">
+              <InlineStack align="end" gap="600">
+                  <BackBtn isLoading={isLoading} title="Back"/>
                   <BiSaveBtn isLoading={isSubmitting} title="Save" />
                   </InlineStack>
                 </Box>
