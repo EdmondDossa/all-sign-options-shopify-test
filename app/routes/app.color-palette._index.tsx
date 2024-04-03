@@ -87,7 +87,7 @@ export default function ColorPaletteIndex() {
         </IndexTable.Cell>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
-                      <Badge tone="critical" >{textColor}</Badge>
+                      <Badge tone="critical" >{textColor.codeHex}</Badge>
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell><Badge >{backgroundColor}</Badge></IndexTable.Cell>

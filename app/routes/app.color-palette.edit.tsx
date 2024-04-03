@@ -1,4 +1,5 @@
 import {
+  BlockStack,
   Box,
   Divider,
   Grid,
@@ -32,6 +33,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { BackBtn } from "~/components/buttons/BackBtn";
+import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
 
 
 
@@ -58,7 +60,7 @@ export default function ColorPaletteCreate() {
   let {color} = useLoaderData<typeof loader>()
   const [formData, setFormData] = useState<ColorType>((color as ColorType) || {
     name:"White",
-    textColor: "#FFF",
+    textColor: { active: true, codeHex: "#FFF" },
     backgroundColor: "#FFF"
   });
 
@@ -68,19 +70,14 @@ export default function ColorPaletteCreate() {
   
  
 
-  const handleName = (value: string) => {
-    formData.name = value
-    setFormData({ ...formData}
-  )
-  }
-  const handleTextColor = (value: string) => {
-    formData.textColor = value;
-    setFormData({ ...formData })
-  }
-  const handleBackgroundColor = (value: string) => {
-    formData.backgroundColor = value;
-    setFormData({ ...formData})
-  }
+
+
+  const handleInputChange = (inputName: string, value: any) => {
+    setFormData((prevData:any) => ({
+    ...prevData,
+    [inputName]: value
+}));
+}
 
 
 
@@ -94,7 +91,7 @@ export default function ColorPaletteCreate() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(" log is nt errors");
-    submit({ ...formData }, { method: "POST" });
+    submit({ ...formData, textColor: JSON.stringify(formData.textColor)}, { method: "POST" });
   };
   
 
@@ -117,16 +114,34 @@ export default function ColorPaletteCreate() {
                   <TextField
                     label="Name"
                     value={`${formData.name}`}
-                    onChange={handleName}
+                    onChange={(value)=>handleInputChange("name",value)}
                     autoComplete="on"
                     error={getError(actionData,"name")}
                   />
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                  <TextColorField  error={getError(actionData,"textColor")} label="Text color" color={formData.textColor} setColor={handleTextColor}/>
-                </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <TextColorField  error={getError(actionData,"backgroundColor")} label="Background Color" color={formData.backgroundColor} setColor={handleBackgroundColor}/>
+                  <BlockStack gap="300">
+                    <InlineStack gap="300">
+                      <Text as="strong" fontWeight="bold" variant="bodyLg">Enable text color</Text>
+                      <ReactSwitchCustom checked={formData.textColor.active} setChecked={(value:any) => {
+                        formData.textColor.active = value
+                      handleInputChange("textColor", formData.textColor )
+                    }} />
+                    </InlineStack>
+                  <TextColorField
+                    label="Text color"
+                    color={formData.textColor.codeHex}
+                    setColor={(value:any) => {
+                        formData.textColor.codeHex = value
+                      handleInputChange("textColor", formData.textColor )
+                      }}
+                      error={getError(actionData, "textColor.codeHex")} 
+                  />
+                  </BlockStack>
+                </Grid.Cell>
+            
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <TextColorField  error={getError(actionData,"backgroundColor")} label="Background Color" color={formData.backgroundColor} setColor={(value:any)=>handleInputChange("backgroundColor",value)}/>
                 </Grid.Cell>
               </Grid>
             </Box>
@@ -152,9 +167,11 @@ const formSchema = z.object({
   name: z.string({ required_error: 'Name is required' })
   .min(3, 'Name is too short')
     .max(100, 'Name is too long'),
-    textColor: z.string({ required_error: 'Text color is required' })
-    .min(3, 'Text color is too short')
-    .max(7, 'Text color is too long'),
+    textColor:z.any().transform(jsonTransform).pipe(z.object({
+      active:z.any().transform(booleanTransform).pipe(z.boolean()),
+      codeHex:z.string({required_error :'Code hex is required'}).min(3, 'Code hex is too short').max(7, 'Code hex is too long'),
+   })),
+  
     backgroundColor: z.string({ required_error: 'Bacckground color is required' })
     .min(3, 'Bacckground is too short')
     .max(7, 'Bacckground is too long')

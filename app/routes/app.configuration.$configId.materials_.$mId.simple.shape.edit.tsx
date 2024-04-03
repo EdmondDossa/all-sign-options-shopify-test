@@ -49,15 +49,15 @@ export default function MaterialFixingMethod() {
     configShape
       ? (configShape as ConfigShape)
       : {
-          shapeId: manageShapes[0]?.value || "",
+          shapeId:0,
           additionalPrice: 0
         },
   );
 
   const options = manageShapes
-    ? manageShapes.map((manageShapes) => ({
+    ? manageShapes.map((manageShapes, index) => ({
         label: manageShapes.name || "",
-        value: `${manageShapes.value}`,
+        value: `${index}`,
       }))
     : [];
 
@@ -65,7 +65,7 @@ export default function MaterialFixingMethod() {
   let isSubmitting = navigation.state == "submitting";
 
   const HandleShapeId = (value: string) =>
-    setFormData({ ...formData, shapeId: value });
+    setFormData({ ...formData, shapeId: parseInt(value)  });
   const handleAdditionalPrice = (value: string) =>
     setFormData({ ...formData, additionalPrice: parseFloat(value) });
   
@@ -143,7 +143,7 @@ export default function MaterialFixingMethod() {
 
 
 const formSchema = z.object({
-  shapeId: z.string({ required_error: "Material shape is required" }),
+  shapeId: z.number({ required_error: "Material shape is required" }),
   additionalPrice: z.number({ required_error: "Material shape price is required" }),
 });
 

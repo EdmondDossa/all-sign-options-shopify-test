@@ -75,7 +75,7 @@ export async function action({ request }: ActionFunctionArgs) {
   
   let files = formData.getAll("file") as NodeOnDiskFile[];
 
-  let returnFiles = files.map((file) => ({ name: file.name, url: `/uploads/${file.name}`, createdAt: Date.now() }));
+  let returnFiles = files.map((file) => ({ name: file.name, url: `https://${shop}/apps/aso-proxy/uploads/${file.name}`, createdAt: Date.now() }));
   
   let upload = await prisma.upload.findUnique({
     where:{shop:shop}

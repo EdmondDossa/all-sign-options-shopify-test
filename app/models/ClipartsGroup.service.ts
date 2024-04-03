@@ -7,13 +7,32 @@ export default class ClipartsGroupService {
       return await prisma.clipartsGroup.findMany({
         where: {
           sessionId: sessionId,
-        },
+        }
       });
     } catch (error) {
       console.error("Error retrieving clipartsGroups:", error);
       return Promise.resolve(null);
     }
   }
+
+  
+
+
+  static async getClipartsGroupsCliparts(sessionId: string): Promise<any[] | null> {
+    try {
+      return await prisma.clipartsGroup.findMany({
+        where: {
+          sessionId: sessionId,
+        },
+        include: {cliparts: true}
+      });
+    } catch (error) {
+      console.error("Error retrieving clipartsGroups:", error);
+      return Promise.resolve(null);
+    }
+  }
+
+  
 
   static async getClipartsGroup(
     id: number,

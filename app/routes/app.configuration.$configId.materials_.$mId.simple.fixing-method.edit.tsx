@@ -50,15 +50,15 @@ export default function MaterialFixingMethod() {
     configFixingMethod
       ? (configFixingMethod as ConfigFixingMethod)
       : {
-         fixingMethodId: manageFixingMethods[0]?.type || '',
+         fixingMethodId: 0,
           additionalPrice: 0
         },
   );
 
   const options = manageFixingMethods
-    ? manageFixingMethods.map((manageFixingMethod) => ({
+    ? manageFixingMethods.map((manageFixingMethod, index) => ({
         label: manageFixingMethod.name || "",
-        value: `${manageFixingMethod.type}`,
+        value: `${index}`,
       }))
     : [];
 
@@ -66,7 +66,7 @@ export default function MaterialFixingMethod() {
   let isSubmitting = navigation.state == "submitting";
 
   const HandleFixingMethodId = (value: string) =>
-    setFormData({ ...formData, fixingMethodId: value });
+    setFormData({ ...formData, fixingMethodId: parseInt(value)  });
   const handleAdditionalPrice = (value: string) =>
     setFormData({ ...formData, additionalPrice: parseFloat(value) });
   
@@ -163,7 +163,7 @@ export default function MaterialFixingMethod() {
 }
 
 const formSchema = z.object({
-  fixingMethodId: z.string({ required_error: "Material fixing method is required" }),
+  fixingMethodId: z.number({ required_error: "Material fixing method is required" }),
   additionalPrice: z.number({ required_error: "Material fixing method  price is required" }),
 });
 

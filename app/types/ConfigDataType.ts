@@ -23,7 +23,7 @@
   }
   
  export interface ConfigBorder {
-    manageBorderId: string;
+    manageBorderId: number;
     additionalPrice: number;
     excludeSizes: number[];
     settings: {
@@ -34,7 +34,7 @@
   }
   
  export interface ConfigShape {
-    shapeId: string;
+    shapeId: number;
     additionalPrice: number;
   }
   
@@ -44,7 +44,7 @@
   }
   
  export interface ConfigFixingMethod {
-    fixingMethodId: string;
+    fixingMethodId: number;
     additionalPrice: number;
   }
   

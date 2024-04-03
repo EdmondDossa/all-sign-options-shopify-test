@@ -71,7 +71,7 @@ export default function MaterialBorderIndex() {
 
   const bordersTab = borders ? borders.map((currBorder, index) => {
 
-    let border = manageBorders.find(manageBorder => manageBorder.value == currBorder.manageBorderId)
+    let border = manageBorders.find((manageBorder, manageIndex) => manageIndex == currBorder.manageBorderId)
     return {
       id: `${index}`,
       title: `${border?.name}`,

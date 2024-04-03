@@ -54,7 +54,7 @@ export default function MaterialFixingMethodComponent() {
   console.log("fixingMethods ....",fixingMethods)
   const fixingMethodTab = fixingMethods ? fixingMethods.map((currFixingMethod, index) => {
 
-    let fixingMethod = manageFixingMethods.find(manageFixingMethod => (manageFixingMethod.type == currFixingMethod.fixingMethodId))
+    let fixingMethod = manageFixingMethods.find((manageFixingMethod,manageIndex) => (manageIndex == currFixingMethod.fixingMethodId))
     return {
       id: `${index}`,
       title: `${fixingMethod?.name}`,

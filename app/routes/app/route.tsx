@@ -34,10 +34,8 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
-        <Link to="/app/additional">Additional page</Link>
-        <Link to="/app/configuration/materiels">Material page</Link>
-        <Link to="/app/configuration/materiels-advanced">Material Avanced</Link>
-        <Link to="/app/configuration/settings">Config settings</Link>
+        <Link to="/app/configuration">List of configurations</Link>
+        {/* <Link to="/app/settings"> Settings Generals</Link> */}
       </ui-nav-menu>
       <div style={{ display: 'flex' }}>
         <div style={{ width:"-webkit-fill-available"}}>

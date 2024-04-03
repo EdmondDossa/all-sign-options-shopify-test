@@ -20,7 +20,7 @@ export interface  FontType{
 export interface  ColorType{
     id?: number;
     name: string;
-    textColor: string;
+    textColor: { active: boolean; codeHex: string };
     backgroundColor: string;
 }
 

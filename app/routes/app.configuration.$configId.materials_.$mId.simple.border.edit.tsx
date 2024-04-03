@@ -64,7 +64,7 @@ export default function MaterialBorderCreate() {
     configBorder
       ? (configBorder as ConfigBorder)
       : {
-          manageBorderId: manageBorders[0]?.value || "",
+          manageBorderId: 0,
           additionalPrice: 0,
           excludeSizes: [],
           settings: {
@@ -76,9 +76,9 @@ export default function MaterialBorderCreate() {
   );
 
   const options = manageBorders
-    ? manageBorders.map((manageBorder) => ({
+    ? manageBorders.map((manageBorder,index) => ({
         label: manageBorder.name || "",
-        value: `${manageBorder.value}`,
+        value: `${index}`,
       }))
     : [];
   const sizes = manageSizes ? manageSizes.map((manageSize) => ({ label: manageSize.label||'', value: `${manageSize.id}` })) : [];
@@ -87,7 +87,7 @@ export default function MaterialBorderCreate() {
   let isSubmitting = navigation.state == "submitting";
 
   const HandleManageBorderId = (value: string) =>
-    setFormData({ ...formData, manageBorderId: value });
+    setFormData({ ...formData, manageBorderId: parseInt(value) });
   const handleAdditionalPrice = (value: string) =>
     setFormData({ ...formData, additionalPrice: parseFloat(value) });
   const handleExcludeSizes = (value: any[]) =>
@@ -237,7 +237,7 @@ export default function MaterialBorderCreate() {
 // },
 
 const formSchema = z.object({
-  manageBorderId: z.string({ required_error: "Border is required" }),
+  manageBorderId: z.number({ required_error: "Border is required" }),
   additionalPrice: z.number({ required_error: "price is required" }),
   excludeSizes:  z.any()
   .transform((value) => JSON.parse(value as string) || []).pipe(z.number().array()),

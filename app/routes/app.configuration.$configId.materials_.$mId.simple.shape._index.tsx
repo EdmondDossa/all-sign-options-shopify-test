@@ -67,7 +67,7 @@ export default function MaterialShape() {
 
   const shapesTab = shapes ? shapes.map((currShapes, index) => {
 
-    let shape = manageShapes.find(manageShape => manageShape.value == currShapes.shapeId)
+    let shape = manageShapes?manageShapes[currShapes?.shapeId]:null;
     return {
       id: `${index}`,
       title: `${shape?.name}`,
