@@ -67,10 +67,6 @@ export default function ColorPaletteCreate() {
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
 
-  
- 
-
-
 
   const handleInputChange = (inputName: string, value: any) => {
     setFormData((prevData:any) => ({
@@ -102,7 +98,7 @@ export default function ColorPaletteCreate() {
             <SpacingBackground backgroundColor="#F9F9F9">
               
             <Box paddingInline="300" paddingBlock="600">
-                  <Text as="h6" variant="bodyMd" fontWeight="bold" > Add new color</Text>
+                  <Text as="h6" variant="bodyMd" fontWeight="bold" > {color?'Update color' :"Create new color"} </Text>
             </Box>
           </SpacingBackground>
             <Divider borderWidth="100" />

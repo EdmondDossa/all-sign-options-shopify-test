@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Option"
-application_url = "https://wed-bomb-ham-minimize.trycloudflare.com"
+application_url = "https://fc-sp-exclusive-flux.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://wed-bomb-ham-minimize.trycloudflare.com/auth/callback",
-  "https://wed-bomb-ham-minimize.trycloudflare.com/auth/shopify/callback",
-  "https://wed-bomb-ham-minimize.trycloudflare.com/api/auth/callback"
+  "https://fc-sp-exclusive-flux.trycloudflare.com/auth/callback",
+  "https://fc-sp-exclusive-flux.trycloudflare.com/auth/shopify/callback",
+  "https://fc-sp-exclusive-flux.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

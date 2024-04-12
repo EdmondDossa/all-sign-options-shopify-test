@@ -85,7 +85,8 @@ export default function MaterialAdditionalOptionCreate() {
       <BoxBackground>
         <Box padding="300">
           <Text as="h2" variant="headingMd">
-          Add new option 
+          {Number.isNaN(id)?'Add new option ':'Edit option'}
+          
           </Text>
         </Box>
         <Divider borderWidth="050" />

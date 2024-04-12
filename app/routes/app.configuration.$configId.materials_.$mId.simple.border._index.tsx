@@ -36,6 +36,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import MaterialBorderService from "~/models/MaterialBorderService.service";
 import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs } from "@remix-run/node";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 
 export default function MaterialBorderIndex() {
   const submit = useSubmit();
@@ -58,6 +59,19 @@ export default function MaterialBorderIndex() {
     submit({ id: id }, { method: "DELETE" });
   };
 
+  const handeleDefault = (id: number) => {
+    borders = borders.map((curr, index) => {
+      if (index === id) {
+        curr.isDefault = true;
+      } else {
+        curr.isDefault = false;
+      }
+      return curr;
+    });
+    
+    submit({ id: id }, { method: "PUT" });
+  };
+
   const handleUpdate = (id: number) => {
     submit({ id: id }, { method: "GET", action: "edit" });
   };
@@ -77,6 +91,7 @@ export default function MaterialBorderIndex() {
       title: `${border?.name}`,
       icon: `${border?.icon}`,
       price: `${currBorder.additionalPrice}`,
+      isDefault: currBorder.isDefault
     }
   }) : [];
   
@@ -86,7 +101,7 @@ export default function MaterialBorderIndex() {
   };
 
   const rowMarkup = bordersTab.map(
-    ({ id, title, icon, price }, index) => (
+    ({ id, title, icon, price,isDefault }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
@@ -103,9 +118,10 @@ export default function MaterialBorderIndex() {
         <IndexTable.Cell>
           <Badge tone="critical" >{price}</Badge>
         </IndexTable.Cell>
-
+        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
         <IndexTable.Cell>
           <ButtonGroup gap="loose">
+
           <EditIconBtn
               size="micro"
               onClick={() => {
@@ -153,6 +169,7 @@ export default function MaterialBorderIndex() {
             { title: "Title" },
             { title: "Icon" },
             { title: "Additional Price" },
+            { title: "Default" },
             { title: "Action" },
           ]}
           selectable={false}
@@ -186,6 +203,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
       return json({
         ...jFlashMessage("Border deleting is completed successfull"),
+      });
+      break;
+    }
+    case "PUT": {
+      const id = formData.get("id") as string;
+      await MaterialBorderService.setDefault(
+        configId,
+        session.id,
+        mId,
+        parseInt(id || ""),
+      );
+      return json({
+        ...jFlashMessage("Default border is defined successfull"),
       });
       break;
     }

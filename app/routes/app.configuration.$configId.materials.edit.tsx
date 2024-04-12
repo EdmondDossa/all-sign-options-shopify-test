@@ -88,8 +88,7 @@ export default function MaterialEdit() {
         <SpacingBackground backgroundColor="#F9F9F9">
           <Box paddingInline="300" paddingBlock="600">
             <Text as="h6" variant="bodyMd" fontWeight="bold">
-              {" "}
-              Create new material
+              {material?'Update material' :"Create new material"}
             </Text>
           </Box>
         </SpacingBackground>

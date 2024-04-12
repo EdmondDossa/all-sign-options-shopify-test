@@ -79,7 +79,9 @@ export default function MaterialAdditionalOptionCreate() {
       <BoxBackground>
         <Box padding="300">
           <Text as="h2" variant="headingMd">
-          Add new option group
+           
+          {Number.isNaN(id)?' Add new option group ':'Edit option group'}
+            
           </Text>
         </Box>
         <Divider borderWidth="050" />

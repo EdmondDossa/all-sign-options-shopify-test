@@ -74,6 +74,19 @@ export default function MaterialSizeIndex() {
     submit({ id: id }, { method: "DELETE" });
   };
 
+  const handeleDefault = (id: number) => {
+    allSizes = allSizes.map((curr, index) => {
+      if (index === id) {
+        curr.isDefault = true;
+      } else {
+        curr.isDefault = false;
+      }
+      return curr;
+    });
+    
+    submit({ id: id }, { method: "PUT" });
+  };
+
   const handleUpdate = (id: number) => {
     submit({ id: id }, { method: "GET", action: "edit" });
   };
@@ -155,6 +168,7 @@ export default function MaterialSizeIndex() {
       height: `${manageSize?.height}mm`,
       price: `${currSize?.basePrice}$`,
       thickness: thickness?.active ? `${thickness.value}mm` : "None",
+      isDefault: currSize?.isDefault
     };
   });
   const resourceName = {
@@ -164,7 +178,7 @@ export default function MaterialSizeIndex() {
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
     useIndexResourceState(sizes);
   const rowMarkup = sizes?.map(
-    ({ id, title, width, height, thickness, price }, index) => (
+    ({ id, title, width, height, thickness, price, isDefault  }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
@@ -185,6 +199,7 @@ export default function MaterialSizeIndex() {
         <IndexTable.Cell>
           <Badge tone="critical">{price}</Badge>
         </IndexTable.Cell>
+        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
         <IndexTable.Cell>
           <ButtonGroup gap="loose">
@@ -237,6 +252,7 @@ export default function MaterialSizeIndex() {
             { title: "Height" },
             { title: "Thickness" },
             { title: "price" },
+            { title: "Default" },
             { title: "Action" },
           ]}
           selectable={false}
@@ -402,6 +418,21 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
       break;
     }
+      
+    case "PUT": {
+      const id = formData.get("id") as string;
+      await MaterialSizeService.setDefault(
+        configId,
+        session.id,
+        mId,
+        parseInt(id || ""),
+      );
+      return json({
+        ...jFlashMessage("Default Size is defined successfull"),
+      });
+      break;
+    }
+      
     case "POST": {
       const submission = parseWithZod(formData, { schema: formSchema });
 

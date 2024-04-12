@@ -39,13 +39,14 @@ import { jFlashMessage } from "~/utils/message-flash";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import MaterialAdditionalOptionItemService from "~/models/MaterialAdditionalOptionItem.service";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 
 // This example is for guidance purposes. Copying it will come with caveats.
 export default function MaterialAdditionalOptionIndex() {
   const submit = useSubmit();
   const navigate = useNavigate();
 
-  const { additionalOptionItems } = useOutletContext<{
+  let { additionalOptionItems } = useOutletContext<{
     additionalOptionItems: ConfigAdditionalOptionItem[];
   }>();
 
@@ -54,6 +55,20 @@ export default function MaterialAdditionalOptionIndex() {
 
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
+  };
+
+
+  const handeleDefault = (id: number) => {
+    additionalOptionItems = additionalOptionItems.map((curr, index) => {
+      if (index === id) {
+        curr.isDefault = true;
+      } else {
+        curr.isDefault = false;
+      }
+      return curr;
+    });
+    
+    submit({ id: id }, { method: "PUT" });
   };
 
   const handleUpdate = (id: number) => {
@@ -70,7 +85,7 @@ export default function MaterialAdditionalOptionIndex() {
   };
 
   const rowMarkup = additionalOptionItems?.map(
-    ({ title, description, icon,image ,additionalPrice }, index) => (
+    ({ title, description, icon,image ,additionalPrice, isDefault }, index) => (
       <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
         <IndexTable.Cell>{title}</IndexTable.Cell>
         <IndexTable.Cell>{description}</IndexTable.Cell>
@@ -91,6 +106,8 @@ export default function MaterialAdditionalOptionIndex() {
         <IndexTable.Cell>
         <Badge tone="success" >{`${additionalPrice}$`}</Badge>
         </IndexTable.Cell>
+        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+
         <IndexTable.Cell>
           <ButtonGroup gap="loose">
 
@@ -148,6 +165,7 @@ export default function MaterialAdditionalOptionIndex() {
           { title: "Icon" },
           { title: "Image" },
           { title: "Price" },
+          { title: "Default" },
           { title: "Action" },
         ]}
       >
@@ -181,6 +199,20 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
       return json({
         ...jFlashMessage("Material option deleting is completed successfull"),
+      });
+      break;
+    }
+    case "PUT": {
+      const id = formData.get("id") as string;
+      await MaterialAdditionalOptionItemService.setDefault(
+        configId,
+        session.id,
+        mId,
+        aId,
+        parseInt(id || ""),
+      );
+      return json({
+        ...jFlashMessage("Default Material option  is defined successfull"),
       });
       break;
     }

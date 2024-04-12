@@ -121,7 +121,9 @@ export default function ConfigurationEdit() {
             <Box paddingInline="300" paddingBlock="600">
               <Text as="h6" variant="bodyMd" fontWeight="bold">
                 {" "}
-                Create new configuration
+          {configuration ? 'Update configuration' : 'Create new configuration'}
+                
+               
               </Text>
             </Box>
           </SpacingBackground>
@@ -170,7 +172,7 @@ export default function ConfigurationEdit() {
                         ? actionData.errors.popupImg[0]
                         : ""
                     }
-                    title="Upload Popupimg"
+                    title="Upload image"
                     path={formData.popupImg}
                     handlePath={handlePopupImg}
                   />

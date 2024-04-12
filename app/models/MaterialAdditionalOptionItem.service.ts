@@ -23,6 +23,7 @@ export default class MaterialAdditionalOptionItemService {
     additionalId: number,
     option: ConfigAdditionalOptionItem
   ): Promise<ConfigAdditionalOptionItem[] | null> {
+    option.isDefault = false;
     try {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let additionalOption = configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]
@@ -86,6 +87,34 @@ export default class MaterialAdditionalOptionItemService {
       let options: ConfigAdditionalOptionItem[]|null = configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'];
       if (Array.isArray(options) && options[id]) {
         configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'] = options.filter((curr,index)=> index!= id);
+        configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
+        return Promise.resolve(options);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error updating option:", error);
+      return Promise.resolve(null);
+    }
+  };
+
+
+
+
+  static async  setDefault(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,additionalId:number,
+    id:number
+  ): Promise<ConfigAdditionalOptionItem[] | null> {
+    try {
+      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
+      let options: ConfigAdditionalOptionItem[]|null = configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'];
+      if (Array.isArray(options) && options[id]) {
+        configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'] = options.map((curr, index) =>
+        index == id
+          ? { ...curr, isDefault: true }
+          : { ...curr, isDefault: false },
+      );
         configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
         return Promise.resolve(options);
       }

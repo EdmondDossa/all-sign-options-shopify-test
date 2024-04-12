@@ -18,6 +18,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import { FixingMethodType } from "~/types/SettingsType";
 import { ConfigFixingMethod } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 
 export default function MaterialFixingMethodComponent() {
  
@@ -26,7 +27,7 @@ export default function MaterialFixingMethodComponent() {
   const navigate = useNavigate();
 
 
-  const { manageFixingMethods, fixingMethods } = useOutletContext<{
+  let { manageFixingMethods, fixingMethods } = useOutletContext<{
     manageFixingMethods: FixingMethodType[];
     fixingMethods: ConfigFixingMethod[];
   }>();
@@ -42,6 +43,22 @@ export default function MaterialFixingMethodComponent() {
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
   };
+
+
+
+  const handeleDefault = (id: number) => {
+    fixingMethods = fixingMethods.map((curr, index) => {
+      if (index === id) {
+        curr.isDefault = true;
+      } else {
+        curr.isDefault = false;
+      }
+      return curr;
+    });
+    
+    submit({ id: id }, { method: "PUT" });
+  };
+
 
   const handleUpdate = (id: number) => {
     submit({ id: id }, { method: "GET", action: "edit" });
@@ -59,7 +76,8 @@ export default function MaterialFixingMethodComponent() {
       id: `${index}`,
       title: `${fixingMethod?.name}`,
       image: fixingMethod?.icon,
-      price:  `${currFixingMethod?.additionalPrice}$`
+      price: `${currFixingMethod?.additionalPrice}$`,
+      isDefault: currFixingMethod.isDefault
     }
   }) : [];
 
@@ -71,7 +89,7 @@ export default function MaterialFixingMethodComponent() {
   };
 
   const rowMarkup = fixingMethodTab?.map(
-    ({ id, title, image, price }, index) => (
+    ({ id, title, image, price, isDefault }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
@@ -88,9 +106,11 @@ export default function MaterialFixingMethodComponent() {
         <IndexTable.Cell>
           <Badge tone="critical" >{price}</Badge>
         </IndexTable.Cell>
+        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
         <IndexTable.Cell>
           <ButtonGroup gap="loose">
+
           <EditIconBtn
               size="micro"
               onClick={() => {
@@ -138,6 +158,7 @@ export default function MaterialFixingMethodComponent() {
             { title: "Title" },
             { title: "Image" },
             { title: "Additional Price" },
+            { title: "Default" },
             { title: "Action" },
           ]}
           selectable={false}
@@ -172,6 +193,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
       return json({
         ...jFlashMessage("Material  fixing method  deleting is completed successfull"),
+      });
+      break;
+    }
+    case "PUT": {
+      const id = formData.get("id") as string;
+      await MaterialFixingMethodService.setDefault(
+        configId,
+        session.id,
+        mId,
+        parseInt(id || ""),
+      );
+      return json({
+        ...jFlashMessage("Default fixing method is defined successfull"),
       });
       break;
     }

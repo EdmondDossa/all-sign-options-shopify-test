@@ -185,7 +185,8 @@ export default function MaterialComponentCreate() {
       <BoxBackground>
         <Box padding="300">
           <Text as="h2" variant="headingMd">
-            Add option
+            
+            {Number.isNaN(id)?'Add option':'Edit option'}
           </Text>
         </Box>
         <Divider borderWidth="050" />

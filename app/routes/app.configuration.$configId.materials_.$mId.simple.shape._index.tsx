@@ -34,6 +34,7 @@ import { ActionFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import MaterialShapeService from "~/models/MaterialShape.service";
 import { jFlashMessage } from "~/utils/message-flash";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 
 export default function MaterialShape() {
   const submit = useSubmit();
@@ -56,6 +57,19 @@ export default function MaterialShape() {
     submit({ id: id }, { method: "DELETE" });
   };
 
+  const handeleDefault = (id: number) => {
+    shapes = shapes.map((curr, index) => {
+      if (index === id) {
+        curr.isDefault = true;
+      } else {
+        curr.isDefault = false;
+      }
+      return curr;
+    });
+    
+    submit({ id: id }, { method: "PUT" });
+  };
+
   const handleUpdate = (id: number) => {
     submit({ id: id }, { method: "GET", action: "edit" });
   };
@@ -72,7 +86,8 @@ export default function MaterialShape() {
       id: `${index}`,
       title: `${shape?.name}`,
       image: shape?.icon,
-      price:  `${currShapes?.additionalPrice}$`
+      price: `${currShapes?.additionalPrice}$`,
+      isDefault: currShapes?.isDefault
     }
   }) : [];
 
@@ -84,7 +99,7 @@ export default function MaterialShape() {
   };
 
   const rowMarkup = shapesTab.map(
-    ({ id, title, image, price }, index) => (
+    ({ id, title, image, price , isDefault}, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
@@ -101,9 +116,10 @@ export default function MaterialShape() {
         <IndexTable.Cell>
           <Badge tone="critical" >{price}</Badge>
         </IndexTable.Cell>
-
+        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
         <IndexTable.Cell>
           <ButtonGroup gap="loose">
+
           <EditIconBtn
               size="micro"
               onClick={() => {
@@ -151,6 +167,7 @@ export default function MaterialShape() {
             { title: "Title" },
             { title: "Image" },
             { title: "Additional Price" },
+            { title: "Default" },
             { title: "Action" },
           ]}
           selectable={false}
@@ -184,6 +201,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
       return json({
         ...jFlashMessage("Material  fixing method  deleting is completed successfull"),
+      });
+      break;
+    }
+    case "PUT": {
+      const id = formData.get("id") as string;
+      await MaterialShapeService.setDefault(
+        configId,
+        session.id,
+        mId,
+        parseInt(id || ""),
+      );
+      return json({
+        ...jFlashMessage("Default shape is defined successfull"),
       });
       break;
     }

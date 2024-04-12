@@ -22,6 +22,8 @@ export default class MaterialSizeService {
     materialId: number,
     size: ConfigSize
   ): Promise<any | null> {
+    size.isDefault = false;
+
     try {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let materialData = configuration["data"]["materials"][materialId]["data"];
@@ -130,6 +132,34 @@ export default class MaterialSizeService {
       return Promise.resolve(null);
     }
   };
+
+  static async  setDefault(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,
+    id:number
+  ): Promise<ConfigSize[] | null> {
+    try {
+      let configuration: any = await ConfigurationService.getConfiguration(configurationId, sessionId);
+      let allSizes: ConfigSize[]|null = configuration["data"]["materials"][materialId]["data"]["sizes"]["allSizes"];
+      if (Array.isArray(allSizes) && configuration["data"]["materials"][materialId]["data"]["sizes"]["allSizes"][id]) {
+        configuration["data"]["materials"][materialId]["data"]["sizes"]["allSizes"] = allSizes.map((curr, index) => {
+          if (index === id) {
+            return { ...curr, isDefault: true };
+          } else {
+            return { ...curr, isDefault: false };
+          }
+        });
+        configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
+        return Promise.resolve(allSizes);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error updating output:", error);
+      return Promise.resolve(null);
+    }
+  };
+
 
 
 

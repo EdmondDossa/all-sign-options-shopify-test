@@ -1,43 +1,67 @@
 import { ConfigFixingMethod } from "~/types/ConfigDataType";
 import ConfigurationService from "./Configuration.service";
-import { ConfigurationType } from '~/types/ConfigurationType';
+import { ConfigurationType } from "~/types/ConfigurationType";
 
 export default class MaterialFixingMethodService {
-  static async getAll(sessionId: string, configurationId: number, materialId: number): Promise<ConfigFixingMethod[] | null> {
+  static async getAll(
+    sessionId: string,
+    configurationId: number,
+    materialId: number,
+  ): Promise<ConfigFixingMethod[] | null> {
     try {
-      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
-      let fixingMethods = configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
-      return fixingMethods? fixingMethods as ConfigFixingMethod: fixingMethods;
+      let configuration: ConfigurationType =
+        await ConfigurationService.getConfiguration(configurationId, sessionId);
+      let fixingMethods =
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
+      return fixingMethods
+        ? (fixingMethods as ConfigFixingMethod)
+        : fixingMethods;
     } catch (error) {
       console.error("Error retrieving font:", error);
       return Promise.resolve(null);
     }
   }
 
- 
-
   static async add(
     configurationId: number,
     sessionId: string,
     materialId: number,
-    fixingMethod: ConfigFixingMethod
+    fixingMethod: ConfigFixingMethod,
   ): Promise<ConfigFixingMethod[] | null> {
+    fixingMethod.isDefault = false;
+
     try {
-      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
+      let configuration: ConfigurationType =
+        await ConfigurationService.getConfiguration(configurationId, sessionId);
       let materialData = configuration["data"]["materials"][materialId]["data"];
       if (materialData instanceof Object && "fixingMethods" in materialData) {
-        const fixingMethods = configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
-          configuration["data"]["materials"][materialId]["data"]["fixingMethods"]=[...fixingMethods||[], fixingMethod]
-              
+        const fixingMethods =
+          configuration["data"]["materials"][materialId]["data"][
+            "fixingMethods"
+          ];
+        configuration["data"]["materials"][materialId]["data"][
+          "fixingMethods"
+        ] = [...(fixingMethods || []), fixingMethod];
       } else {
-        configuration["data"]["materials"][materialId]["data"] = { ...materialData||{},'fixingMethods':[fixingMethod]}
+        configuration["data"]["materials"][materialId]["data"] = {
+          ...(materialData || {}),
+          fixingMethods: [fixingMethod],
+        };
       }
 
-      if (configuration["data"]["materials"][materialId]["data"]["fixingMethods"]) {
-        
-        configuration = await ConfigurationService.updateConfiguration(configuration, sessionId);
-        
-        return Promise.resolve(configuration["data"]["materials"][materialId]["data"]["fixingMethods"]);
+      if (
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"]
+      ) {
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
+
+        return Promise.resolve(
+          configuration["data"]["materials"][materialId]["data"][
+            "fixingMethods"
+          ],
+        );
       }
       return Promise.resolve(null);
     } catch (error) {
@@ -46,24 +70,31 @@ export default class MaterialFixingMethodService {
     }
   }
 
-
- 
-
-
-
-  static async  update(
+  static async update(
     configurationId: number,
     sessionId: string,
     materialId: number,
     fixingMethod: ConfigFixingMethod,
-    id:number
+    id: number,
   ): Promise<ConfigFixingMethod[] | null> {
     try {
-      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
-      let fixingMethods: ConfigFixingMethod[]|null = configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
-      if (Array.isArray(fixingMethods) && configuration["data"]["materials"][materialId]["data"]["fixingMethods"][id]) {
-        configuration["data"]["materials"][materialId]["data"]["fixingMethods"][id] = fixingMethod;
-        configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
+      let configuration: ConfigurationType =
+        await ConfigurationService.getConfiguration(configurationId, sessionId);
+      let fixingMethods: ConfigFixingMethod[] | null =
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
+      if (
+        Array.isArray(fixingMethods) &&
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"][
+          id
+        ]
+      ) {
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"][
+          id
+        ] = fixingMethod;
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
         return Promise.resolve(fixingMethods);
       }
       return Promise.resolve(null);
@@ -71,21 +102,34 @@ export default class MaterialFixingMethodService {
       console.error("Error updating fixingMethods:", error);
       return Promise.resolve(null);
     }
-  };
+  }
 
-
-  static async  delete(
+  static async delete(
     configurationId: number,
     sessionId: string,
     materialId: number,
-    id:number
+    id: number,
   ): Promise<ConfigFixingMethod[] | null> {
     try {
-      let configuration: any = await ConfigurationService.getConfiguration(configurationId, sessionId);
-      let fixingMethods: ConfigFixingMethod[]|null = configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
-      if (Array.isArray(fixingMethods) && configuration["data"]["materials"][materialId]["data"]["fixingMethods"][id]) {
-        configuration["data"]["materials"][materialId]["data"]["fixingMethods"] = fixingMethods.filter((curr,index)=> index!= id);
-        configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
+      let configuration: any = await ConfigurationService.getConfiguration(
+        configurationId,
+        sessionId,
+      );
+      let fixingMethods: ConfigFixingMethod[] | null =
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
+      if (
+        Array.isArray(fixingMethods) &&
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"][
+          id
+        ]
+      ) {
+        configuration["data"]["materials"][materialId]["data"][
+          "fixingMethods"
+        ] = fixingMethods.filter((curr, index) => index != id);
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
         return Promise.resolve(fixingMethods);
       }
       return Promise.resolve(null);
@@ -93,9 +137,44 @@ export default class MaterialFixingMethodService {
       console.error("Error updating output:", error);
       return Promise.resolve(null);
     }
-  };
+  }
 
-
-
-
+  static async setDefault(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,
+    id: number,
+  ): Promise<ConfigFixingMethod[] | null> {
+    try {
+      let configuration: any = await ConfigurationService.getConfiguration(
+        configurationId,
+        sessionId,
+      );
+      let fixingMethods: ConfigFixingMethod[] | null =
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
+      if (
+        Array.isArray(fixingMethods) &&
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"][
+          id
+        ]
+      ) {
+        configuration["data"]["materials"][materialId]["data"][
+          "fixingMethods"
+        ] = fixingMethods.map((curr, index) =>
+          index == id
+            ? { ...curr, isDefault: true }
+            : { ...curr, isDefault: false },
+        );
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
+        return Promise.resolve(fixingMethods);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error updating output:", error);
+      return Promise.resolve(null);
+    }
+  }
 }

@@ -21,7 +21,7 @@
     charPrice: number;
    basePrice: number;
    startPriceAtChar: number;
-
+   isDefault?: boolean;
   }
   
  export interface ConfigBorder {
@@ -33,11 +33,13 @@
       enableBorderWidth: boolean;
       enableBorderColor: boolean;
     };
+    isDefault?: boolean;
   }
   
  export interface ConfigShape {
     shapeId: number;
-    additionalPrice: number;
+   additionalPrice: number;
+   isDefault?: boolean;
   }
   
  export interface ConfigTextImages {
@@ -48,11 +50,13 @@
  export interface ConfigFixingMethod {
     fixingMethodId: number;
     additionalPrice: number;
+    isDefault?: boolean;
   }
   
  export interface ConfigColor {
     manageColorId: number;
     additionalPrice: number;
+    isDefault?: boolean;
   }
   
  export interface ConfigAdditionalOption {
@@ -67,7 +71,8 @@
   description: string;
   icon: string;
   image: string;
-  additionalPrice: number;
+   additionalPrice: number;
+   isDefault?: boolean;
 }
   
  export interface MaterialSimple {
@@ -96,7 +101,8 @@
     name: string;
     description: string;
     icon: string;
-    image: string;
+   image: string;
+   isDefault?: boolean;
     color:{
       name: string;
       codeHex?: string;

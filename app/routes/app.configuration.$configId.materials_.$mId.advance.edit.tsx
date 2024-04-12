@@ -106,7 +106,7 @@ export default function MaterialComponentCreate() {
       <BoxBackground>
         <Box padding="300">
           <Text as="h2" variant="headingMd">
-          Add  component
+         {Number.isNaN(id)?' Add  component':'Edit component'}
           </Text>
         </Box>
         <Divider borderWidth="050" />

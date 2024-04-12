@@ -94,7 +94,7 @@ export default function ManageFontCreate() {
           <Form onSubmit={handleSubmit} method="POST">
             <SpacingBackground backgroundColor="#F9F9F9">
             <Box paddingInline="300" paddingBlock="600">
-                  <Text as="h6" variant="bodyMd" fontWeight="bold" >Add new font</Text>
+                  <Text as="h6" variant="bodyMd" fontWeight="bold" > {font?"Update font":"Add new font" } </Text>
             </Box>
             </SpacingBackground>
             <Divider borderWidth="100" />

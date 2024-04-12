@@ -33,6 +33,7 @@ import { authenticate } from "~/shopify.server";
 import MaterialAdditionalOptionItemService from "~/models/MaterialAdditionalOptionItem.service";
 import MaterialAdvancedOptionService from "~/models/MaterialAdvancedOption.service";
 import { jFlashMessage } from "~/utils/message-flash";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 
 
 // This example is for guidance purposes. Copying it will come with caveats.
@@ -41,7 +42,8 @@ export default function MaterialAdvancedIndex() {
   const navigate = useNavigate();
   const submit = useSubmit();
 
-  const { materialOptions } = useOutletContext<{
+
+  let { materialOptions } = useOutletContext<{
     materialOptions: MaterialAdvanceOptionType[];
   }>();
 
@@ -54,6 +56,19 @@ export default function MaterialAdvancedIndex() {
 
   const handleUpdate = (id: number) => {
     submit({ id: id }, { method: "GET", action: "edit" });
+  };
+
+  const handeleDefault = (id: number) => {
+    materialOptions = materialOptions.map((curr, index) => {
+      if (index === id) {
+        curr.isDefault = true;
+      } else {
+        curr.isDefault = false;
+      }
+      return curr;
+    });
+    
+    submit({ id: id }, { method: "PUT" });
   };
 
  
@@ -69,7 +84,7 @@ export default function MaterialAdvancedIndex() {
 
   const rowMarkup = materialOptions?.map(
     (
-      {name, description, icon,image, additionalPrice },
+      {name, description, icon,image, additionalPrice, isDefault },
       index,
     ) => (
       <IndexTable.Row
@@ -83,7 +98,7 @@ export default function MaterialAdvancedIndex() {
         <IndexTable.Cell>
              {name}
         </IndexTable.Cell>
-        <IndexTable.Cell>{description}</IndexTable.Cell>
+        <IndexTable.Cell> <Text as="p">{description}</Text> </IndexTable.Cell>
         <IndexTable.Cell>
           <InlineStack align="center">
 
@@ -103,8 +118,11 @@ export default function MaterialAdvancedIndex() {
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell><Badge tone="success" >{additionalPrice +"$"}</Badge></IndexTable.Cell>
+        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
         <IndexTable.Cell>
           <ButtonGroup gap="loose" >
+          
+
           <EditIconBtn
               size="micro"
               onClick={() => {
@@ -163,6 +181,7 @@ export default function MaterialAdvancedIndex() {
             { title: "Icon" },
             { title: "Image" },
             { title: "Price" },
+            { title: "Default"},
             { title: "Action"},
           ]}
         >
@@ -201,6 +220,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
       break;
     }
+    
+    case "PUT": {
+      const id = formData.get("id") as string;
+      console.log("start deleting");
+      await MaterialAdvancedOptionService.setDefault(
+        configId,
+        session.id,
+        materialId,
+        componentId,
+        parseInt(id || ""),
+      );
+      return json({
+        ...jFlashMessage("Default Material option  is defined successfull"),
+      });
+      break;
+    }
+    
+    
     default:
       break;
   }

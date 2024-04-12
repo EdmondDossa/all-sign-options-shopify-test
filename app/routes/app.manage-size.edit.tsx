@@ -105,7 +105,7 @@ export default function ManageSizeCreate() {
           <Form onSubmit={handleSubmit} method="POST">
             <SpacingBackground backgroundColor="#F9F9F9">
             <Box paddingInline="300" paddingBlock="600">
-                  <Text as="h6" variant="bodyMd" fontWeight="bold" > Create new size</Text>
+                  <Text as="h6" variant="bodyMd" fontWeight="bold" > {size?"Edit Size":" Create Size"} </Text>
             </Box>
           </SpacingBackground>
             <Divider borderWidth="100" />
