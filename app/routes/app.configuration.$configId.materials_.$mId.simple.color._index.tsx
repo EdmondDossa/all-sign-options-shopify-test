@@ -75,7 +75,7 @@ export default function MaterialColorIndex() {
     return {
       id: `${index}`,
       title: `${color?.name}`,
-      textColor: `${color?.textColor}`,
+      textColor: `${color?.textColor.codeHex}`,
       BackgroundColor: `${color?.backgroundColor}`,
       price:  `${currColor?.additionalPrice}$`
     }

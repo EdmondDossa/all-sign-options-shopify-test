@@ -84,6 +84,10 @@ export default function MaterialComponentCreate() {
           size: {
             width: 0,
             height: 0,
+            basePrice:0,
+            startPriceAtChar:1,
+            maxTextChar:-1,
+            charPrice:0
           },
           additionalPrice: 0,
         },
@@ -115,6 +119,30 @@ export default function MaterialComponentCreate() {
     setFormData({ ...formData });
   };
 
+
+  const handleSizeBasePrice = (value: string) => {
+    formData.size.basePrice = parseInt(value);
+    setFormData({ ...formData });
+  };
+
+  const handleSizeStartPriceAtChar = (value: string) => {
+    formData.size.startPriceAtChar = parseInt(value);
+    setFormData({ ...formData });
+  };
+
+
+
+  const handleSizeMaxTextChar= (value: string) => {
+    formData.size.maxTextChar = parseInt(value);
+    setFormData({ ...formData });
+  };
+
+  const handleSizeCharPrice = (value: string) => {
+    formData.size.charPrice = parseInt(value);
+    setFormData({ ...formData });
+  };
+
+
   const handleInputChange = (inputName: string, value: any) => {
     setFormData((prevData: any) => ({
       ...prevData,
@@ -133,9 +161,11 @@ export default function MaterialComponentCreate() {
   console.log("actionData", actionData);
 
 
-  const shapes = manageShapes.map((manageShape) => ({
-    value: manageShape.value,
+  const shapes = manageShapes.map((manageShape,index) => ({
+    value: `${index}`,
     label: manageShape.name || "",
+    description: manageShape.name || "",
+    image: manageShape.icon || "",
   }));
   const fixingMethods = manageFixingsMethods.map((manageFixingsMethod,index) => ({
     value: `${index}`,
@@ -246,11 +276,55 @@ export default function MaterialComponentCreate() {
                 </BlockStack>
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="Max text char"
+                    type="number"
+                    value={`${formData.size.maxTextChar}`}
+                  onChange={handleSizeMaxTextChar}
+                  helpText="Max number of characters in text, for without limit set to -1"
+                    autoComplete="on"
+                    error={getError(actionData, "size.maxTextChar")}
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Base Price"
+                    type="number"
+                    value={`${formData.size.basePrice}`}
+                    onChange={handleSizeBasePrice}
+                    autoComplete="on"
+                    error={getError(actionData, "size.basePrice")}
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Number at start pricing char"
+                    type="number"
+                    value={`${formData.size.startPriceAtChar}`}
+                    onChange={handleSizeStartPriceAtChar}
+                    autoComplete="on"
+                    error={getError(actionData, "size.startPriceAtChar")}
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Char Price"
+                    type="number"
+                    value={`${formData.size.charPrice}`}
+                    onChange={handleSizeCharPrice}
+                    autoComplete="on"
+                    error={getError(actionData, "size.charPrice")}
+                  />
+                </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
               <SelectCombobox
                   label="Select shape"
                   placeholder="seach shape"
                   selectedOptions={!Number.isNaN(formData.shapeId)?[`${formData.shapeId}`]:[]}
-                  data={fixingMethods}
+                  data={shapes}
                   setSelectedOptions={(value: any) => {
                     handleInputChange("shapeId", value.length? value[value.length-1]: parseInt(value[0]));
                   }}
@@ -364,6 +438,10 @@ const formSchema = z.object({
       z.object({
         width: z.number({ required_error: "Width  is required" }),
         height: z.number({ required_error: "Height  is required" }),
+        basePrice:z.number({ required_error: "Base price  is required" }),
+        startPriceAtChar:z.number({ required_error: "Start price at char  is required" }),
+        maxTextChar:z.number({ required_error: " Max text char is required" }),
+        charPrice:z.number({ required_error: "Char price  is required" })
       }),
   ),
   color: z

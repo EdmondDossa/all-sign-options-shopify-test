@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Option"
-application_url = "https://9fa4-137-255-31-48.ngrok-free.app"
+application_url = "https://wed-bomb-ham-minimize.trycloudflare.com"
 embedded = true
 
 [build]
@@ -10,11 +10,15 @@ automatically_update_urls_on_dev = true
 dev_store_url = "quickstart-5c91f330.myshopify.com"
 include_config_on_deploy = true
 
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products,write_products"
+
 [auth]
 redirect_urls = [
-  "https://9fa4-137-255-31-48.ngrok-free.app/auth/callback",
-  "https://9fa4-137-255-31-48.ngrok-free.app/auth/shopify/callback",
-  "https://9fa4-137-255-31-48.ngrok-free.app/api/auth/callback"
+  "https://wed-bomb-ham-minimize.trycloudflare.com/auth/callback",
+  "https://wed-bomb-ham-minimize.trycloudflare.com/auth/shopify/callback",
+  "https://wed-bomb-ham-minimize.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

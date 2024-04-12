@@ -19,7 +19,9 @@
     textNumber: number; 
     maxTextChar: number;
     charPrice: number;
-    basePrice: number;
+   basePrice: number;
+   startPriceAtChar: number;
+
   }
   
  export interface ConfigBorder {
@@ -105,6 +107,10 @@
     size: {
       width: number;
       height: number;
+      basePrice: number;
+      startPriceAtChar: number;
+      maxTextChar: number;
+      charPrice: number;
     };
     additionalPrice: number;
  }

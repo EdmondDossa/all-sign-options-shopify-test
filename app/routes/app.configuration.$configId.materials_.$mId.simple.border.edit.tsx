@@ -276,13 +276,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   let configBorder: ConfigBorder = submission.value as ConfigBorder;
 
-  if (id && configId && mId) {
+  if (!Number.isNaN(parseInt(id||""))   && !Number.isNaN(configId)  && !Number.isNaN(mId) ) {
     let res = await MaterialBorderService.update(
       configId,
       session.id,
       mId,
       configBorder,
-      parseInt(id),
+      parseInt(id||"")
     );
     return res
       ? redirect(

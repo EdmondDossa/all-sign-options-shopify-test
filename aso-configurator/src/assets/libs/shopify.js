@@ -1,9 +1,9 @@
-const shopifyProxyURL = `${window.Shopify.routes.root}apps/aso-proxy/api/`;
+const shopifyProxyURL = `https://lgs84iuzw0j2.share.zrok.io/api/`;
 async function getAsoConfiguration(configurationId) {
     
   
     try {
-      const response = await fetch(`${shopifyProxyURL}configurations/${configurationId}`, {
+      const response = await fetch("https://lgs84iuzw0j2.share.zrok.io/api/configurations/57", {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -25,11 +25,11 @@ async function getAsoConfiguration(configurationId) {
 
 
 
-async function getAsoManagesData(configurationId) {
+async function getAsoManagesData() {
     
   
     try {
-      const response = await fetch(`${shopifyProxyURL}manages-data`, {
+      const response = await fetch(`https://lgs84iuzw0j2.share.zrok.io/api/manages-data`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -45,9 +45,43 @@ async function getAsoManagesData(configurationId) {
     } catch (error) {
       console.error('Error fetching ASO Proxy configuration:', error);
       // Handle the error appropriately in your application (e.g., display an error message to the user)
-      return null; // Or throw an error if necessary
+      return null; // Or throw an error if necessary u_uuhhh
     }
 }
+
+
+
+
+
+
+async function aso_confiurator_dataFunction(){
+  const   currentConfig = await getAsoConfiguration(57);
+  const managesData = await getAsoManagesData();
+  return ( {
+      currentConfig: currentConfig,
+      managesData: managesData
+    })
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

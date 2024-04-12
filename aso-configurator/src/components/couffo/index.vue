@@ -1209,7 +1209,6 @@
         const canvasElementFace1 = canvasFace1Ref.value
         const canvasElementFace2 = canvasFace2Ref.value
 
-        document.addEventListener("DOMContentLoaded", function() {
 
             var canvasContainer = document.getElementById("aso-canvas-containers")
             var canvasWidth = canvasContainer.clientWidth;
@@ -1415,7 +1414,6 @@
             window.addEventListener('resize', checkScreenSize);
     
             // updateBarreSize()
-        });
 
         if(window.innerWidth < 688){
             showOption.value = true

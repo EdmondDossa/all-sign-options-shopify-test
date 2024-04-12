@@ -1,9 +1,245 @@
-<div>
-  <div style="width:100%;height:300px">
-    <h1> All  signs options </h1>
+{% assign asoConfigurationId = block.settings.product.metafields.allSignsOptionsAsoAso.asoConfigurationId.value  %}
+{% assign asoProductId = block.settings.product.id  %}
+<script>
+  var asoConfigurationId = "{{asoConfigurationId}}";
+  var asoProductId = "{{asoProductId}}";
 
+
+  function reloadPageWithAnchor() {
+    // Get the current URL
+    var currentURL = window.location.href;
+    
+    // Append the anchor to the URL
+    var urlWithAnchor = currentURL + '#modal-opened';
+    
+    // Reload the page with the anchor
+    location.href = urlWithAnchor;
+}
+</script>
+
+<script src="{{'shopify.js'|asset_url}}"></script>
+<script src="{{'fabric.min.js'|asset_url}}"></script>
+<script src="{{'editor.script.js'|asset_url }}"></script>
+<script type="module" crossorigin src="{{'index.js' |asset_url }}"></script>
+<link rel="stylesheet" crossorigin href="{{'index.css' |asset_url }}">
+  
+
+{% comment %} <button type="button" onclick="reloadPageWithAnchor()" class="link-1" id="modal-closed">Customize  produc    t </button> {% endcomment %}
+
+
+
+<div class="shopify-app-wrapper">
+  <div class="shopify-app-container">
+    <div id="app">
+      <h1> All  signs options    </h1>     
+  
+    </div>
   </div>
-</div>
+</div> 
+{% comment %} <div class="modal-container" id="modal-opened">
+  <div id="contentModalIn" class="modal">
+   
+  </div>
+</div> {% endcomment %}
+
+<style>
+
+  .modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: none;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background: hsla(0, 0%, 40%, .6);   
+  }
+  
+  /* using :target */
+  .modal-container:target {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .modal {
+
+    height: 100vh;
+    z-index: 6;
+    left: 0;
+    width: 100vw;
+    top: 0;
+    position: fixed;
+    border-radius: .8rem;
+  
+    color: var(--light);
+    background: var(--background);
+    box-shadow: .4rem .4rem 2.4rem .2rem hsla(236, 50%, 50%, 0.3);
+    position: relative;
+  
+    overflow: hidden;
+  }
+  
+  .modal__details {
+    text-align: center;
+  
+    margin-bottom: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid hsla(0, 0%, 100%, .4);
+  }
+  
+  .modal__title {
+    font-size: 3.2rem;
+  }
+  
+  .modal__description {
+    margin-top: 2rem;
+  
+    font-size: 1.6rem;
+    font-style: italic;
+  }
+  
+  .modal__text {
+    padding: 0 4rem;
+    margin-bottom: 4rem;
+  
+    font-size: 1.6rem;
+    line-height: 2;
+  }
+  
+  .modal__text::before {
+    content: '';
+  
+    position: absolute;
+    top: 0%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+  
+    width: 18rem;
+    height: 18rem;
+    border: 1px solid hsla(0, 0%, 100%, .2);
+    border-radius: 100rem;
+  
+    pointer-events: none;
+  }
+  
+  .modal__btn {
+    padding: 1rem 1.6rem;
+    border: 1px solid hsla(0, 0%, 100%, .4);
+    border-radius: 100rem;
+  
+    color: inherit;
+    background: transparent;
+    font-size: 1.4rem;
+    font-family: inherit;
+    letter-spacing: .2rem;
+  
+    transition: .2s;
+    cursor: pointer;
+  }
+  
+  .modal__btn:hover,
+  .modal__btn:focus {
+    border-color: hsla(0, 0%, 100%, .6);
+    transform: translateY(-.2rem);
+  }
+  
+  /* links */
+  /* =============================================== */
+  .link-1 {
+    font-size: 1.8rem;
+  
+    color: var(--light);
+    background: var(--background);
+    box-shadow: .4rem .4rem 2.4rem .2rem hsla(236, 50%, 50%, 0.3);
+    border-radius: 100rem;
+    padding: 1.4rem 3.2rem;
+  
+    transition: .2s;
+  }
+  
+  .link-1:hover,
+  .link-1:focus {
+    transform: translateY(-.2rem);
+    box-shadow: 0 0 4.4rem .2rem hsla(236, 50%, 50%, 0.4);
+  }
+  
+  .link-2 {
+    width: 4rem;
+    height: 4rem;
+    border: 1px solid hsla(0, 0%, 100%, .4);
+    border-radius: 100rem;
+  
+    color: inherit;
+    font-size: 2.2rem;
+  
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    transition: .2s;
+  }
+  
+  .link-2::before {
+    content: '×';
+  
+    transform: translateY(-.1rem);
+  }
+  
+  .link-2:hover,
+  .link-2:focus {
+    border-color: hsla(0, 0%, 100%, .6);
+    transform: translateY(-.2rem);
+  }
+  
+  /* Second Version Link */
+  /* =============================================== */
+  .second-version-link,
+  .second-version-link:link {
+    color: hsl(236, 50%, 50%);
+    padding: .8rem 1.6rem .8rem .2rem;
+    border-bottom: 2px solid hsl(236, 50%, 50%);
+  
+    font-size: 1.4rem;
+    font-weight: bold;
+  
+    position: absolute;
+    top: 4rem;
+    right: 4rem;
+  }
+  
+  .second-version-link::after {
+    content: '\2197';
+  
+    position: absolute;
+    top: 0;
+    right: 0;
+  
+    font-size: .9em;
+  }
+  
+  .abs-site-link {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    color: hsla(0, 0%, 0%, .6);
+    font-size: 1.6rem;
+  }
+
+
+  
+
+</style>
 {% schema %}
 {
   "name": "All  signs options ",
@@ -13,5 +249,5 @@
     { "type": "color", "id": "colour", "label": "Star Colour", "default": "#ff0000" }
   ]
 }
-{% endschema %}
+{% endschema %} 
 

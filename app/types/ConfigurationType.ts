@@ -4,5 +4,6 @@
     description: string;
     icon: string;
      popupImg: string;
-     data?: any;
+    data?: any;
+    product?: any;
 }

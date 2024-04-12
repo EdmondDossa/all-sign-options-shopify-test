@@ -9,7 +9,7 @@ import {
 } from "@shopify/polaris";
 import { FileUploader } from "~/routes/app.upload";
 import uploadIcon from "~/components/icons/uploadIcon";
-import { DeleteIconBtn } from "../buttons/DeleteIconBtn";
+import { DeleteNowIconBtn } from "../buttons/DeleteNowIconBtn";
 
 export const FileInput = ({
   title,
@@ -49,7 +49,7 @@ export const FileInput = ({
             <Thumbnail alt="image" source={uploadIcon} size="small" />
                   ) : (
                           <InlineStack gap="100">
-                               <DeleteIconBtn onClick={()=>{handlePath('')}} size="micro" />
+                               <DeleteNowIconBtn onClick={()=>{handlePath('')}} size="micro" />
                               <Thumbnail alt={path} source={path} size="small" />
                           </InlineStack>
           )}

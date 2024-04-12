@@ -1,13 +1,22 @@
 <template>
-  <Home :bigData="bigData" />
+<div>
+  <div v-if="isLoading">
+    loading ...
+  </div>
+ 
+  <!-- <Home v-if="isLoading" :bigData="bigData" /> -->
+  <Home v-else :bigData="bigData" />
+</div>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
+ <script setup>
+import { ref, onMounted , onBeforeMount} from "vue";
 import Home from "./pages/index.vue";
 
+const isLoading = ref(true);
 
-var bigData = ref({
+
+const seedbigData = {
   skin: "couffo",
   productID: "31",
   product: {},
@@ -619,7 +628,64 @@ var bigData = ref({
   fixing_methods_url:
     "http://localhost/ncpc/wp-content/plugins/all-signs-options/assets/images/fixing-methodes",
   frontend_nonce: "841fba2b18",
+};
+
+
+
+
+var bigData = ref({
+  skin: "couffo",
+  productID: "31",
+  product: {},
+  currentConfig:null,
+  managesData: null,
+  regularPrice: "40",
+  thousandSep: "",
+  decimalSep: ",",
+  decimals: "0",
+  nbDecimals: "0",
+  currencySymbol: "CFA",
+  currency_pos: "right_space",
+  variations: [],
+  fixing_methods_url:
+    "http://localhost/ncpc/wp-content/plugins/all-signs-options/assets/images/fixing-methodes",
+  frontend_nonce: "841fba2b18",
 });
-</script>
+
+onMounted(async () => {
+  const aso_confiurator_data =  await aso_confiurator_dataFunction();
+  const   currentConfig = aso_confiurator_data.currentConfig;
+  const managesData = aso_confiurator_data.managesData;
+  // Update currentConfig
+
+
+
+ bigData.value = {
+  skin: aso_confiurator_data.skin,
+  productID: "31",
+  product: {},
+  currentConfig: currentConfig,
+  managesData: managesData ,
+  regularPrice: "40",
+  thousandSep: "",
+  decimalSep: ",",
+  decimals: "0",
+  nbDecimals: "0",
+  currencySymbol: "CFA",
+  currency_pos: "right_space",
+  variations: [],
+  fixing_methods_url:
+    "http://localhost/ncpc/wp-content/plugins/all-signs-options/assets/images/fixing-methodes",
+  frontend_nonce: "841fba2b18",
+}
+
+
+isLoading.value = false;
+
+console.log('big  data ', bigData.value);
+  
+});
+
+ </script>
 
 <style scoped></style>

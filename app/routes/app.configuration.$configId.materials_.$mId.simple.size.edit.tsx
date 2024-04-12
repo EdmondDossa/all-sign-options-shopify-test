@@ -46,9 +46,10 @@ export default function MaterialSizeIndex() {
   const [formData, setFormData] = useState<ConfigSize>(configSize?(configSize as ConfigSize):{
     manageSizeId: manageSizes[0]?.id||0,
     textNumber: 0,
-    maxTextChar: 0,
+    maxTextChar: -1,
     charPrice: 0,
-    basePrice: 0
+    basePrice: 0,
+    startPriceAtChar: 0
   });
 
   const options = manageSizes.map((currSize => ({ label: currSize.label||'', value: `${currSize.id}` })));
@@ -61,6 +62,7 @@ export default function MaterialSizeIndex() {
   const handleTextNumber = (value: string) => setFormData({...formData, textNumber:parseInt(value)})
 
   const handleMaxTextChar = (value: string) => setFormData({...formData, maxTextChar:parseInt(value)})
+  const handleStartPriceAtChar = (value: string) => setFormData({...formData, startPriceAtChar:parseInt(value)})
 
   const handleCharPrice = (value: string) => setFormData({ ...formData, charPrice: parseFloat(value) })
   const handleBasePrice = (value: string) => setFormData({ ...formData, basePrice: parseFloat(value) })
@@ -107,6 +109,7 @@ export default function MaterialSizeIndex() {
                     type="number"
                     value={`${formData.maxTextChar}`}
                     onChange={handleMaxTextChar}
+                    helpText="Max number of characters in text, for without limit set to -1"
                     autoComplete="on"
                     error={getError(actionData, "maxTextChar")}
                   />
@@ -120,6 +123,17 @@ export default function MaterialSizeIndex() {
                     onChange={handleBasePrice}
                     autoComplete="on"
                     error={getError(actionData, "basePrice")}
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Number at start pricing char"
+                    type="number"
+                    value={`${formData.startPriceAtChar}`}
+                    onChange={handleStartPriceAtChar}
+                    autoComplete="on"
+                    error={getError(actionData, "startPriceAtChar")}
                   />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -167,10 +181,11 @@ export default function MaterialSizeIndex() {
 
 const formSchema = z.object({
   manageSizeId: z.number({ required_error: 'Size is required' }),
-  textNumber: z.number({ required_error: 'Size is required' }),
-  maxTextChar: z.number({ required_error: 'Size is required' }), 
-  charPrice: z.number({ required_error: 'Size is required' }), 
-  basePrice: z.number({ required_error: 'Size is required' }),
+  textNumber: z.number({ required_error: 'Text number is required' }),
+  maxTextChar: z.number({ required_error: 'Max Text char is required' }), 
+  startPriceAtChar: z.number({ required_error: 'price is required' }), 
+  charPrice: z.number({ required_error: 'Price is required' }), 
+  basePrice: z.number({ required_error: 'Price is required' }),
 });
 
 export const action = async ({ request,params}: ActionFunctionArgs) => {
@@ -181,7 +196,7 @@ export const action = async ({ request,params}: ActionFunctionArgs) => {
 
   const formData = await request.formData();
   const url = new URL(request.url);
-  const id = url.searchParams.get("id");
+  const id =   parseInt(url.searchParams.get("id")||"") ;
   const configId = parseInt(params.configId ?? "");
   const mId = parseInt(params.mId ?? "");
   const submission = parseWithZod(formData, {schema:formSchema});
@@ -192,13 +207,13 @@ export const action = async ({ request,params}: ActionFunctionArgs) => {
 
   let configSize: ConfigSize = submission.value as ConfigSize;
   
-  if (id && configId  && mId) {
+  if (!Number.isNaN(id) && !Number.isNaN(configId)  &&  !Number.isNaN(mId)  ) {
     let res = await MaterialSizeService.update(
       configId,
       session.id,
       mId,
       configSize,
-      parseInt(id)
+      id
     ); 
     return res
       ? redirect(`..${flashMessage("Material Size  updated is completed successfully")}`)
