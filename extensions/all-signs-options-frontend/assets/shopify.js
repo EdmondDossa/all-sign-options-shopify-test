@@ -122,6 +122,48 @@ function asoCreateVariantAndAddToCart(price, option) {
 }
 
 
+function asoGetFontFormat(url) {
+  const extension = url.split('.').pop().toLowerCase();
+  switch (extension) {
+    case 'ttf':
+      return 'truetype';
+    case 'otf':
+      return 'truetype';
+    case 'woff': return 'woff';
+    case 'woff2':
+      return 'woff2'; // WOFF2 is preferred for better compression
+    // Add more cases for other font formats (e.g., otf for OpenType)
+    default:
+     
+      return null;
+  }
+}
+
+//  to add  font to  page  ffffffff
+document.addEventListener('DOMContentLoaded', async function () {
+  const managesData = await getAsoManagesData();
+  managesData.fonts.forEach(font => {
+    let style = document.createElement('style');
+    style.textContent = `
+          
+  @font-face {
+    font-family: "${font.label}";
+    font-display: swap;
+    src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
+  }
+      
+      `;
+    document.body.appendChild(style);
+  });
+});
+
+
+
+
+
+// end
+
+
 
 
 

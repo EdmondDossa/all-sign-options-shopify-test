@@ -10,6 +10,9 @@ import {
 import { FileUploader } from "~/routes/app.upload";
 import uploadIcon from "~/components/icons/uploadIcon";
 import { DeleteNowIconBtn } from "../buttons/DeleteNowIconBtn";
+import { getFileType } from "~/utils/file-type";
+import { FileIcon,TextFontIcon, PlayCircleIcon } from "@shopify/polaris-icons";
+
 
 export const FileInput = ({
   title,
@@ -50,7 +53,7 @@ export const FileInput = ({
                   ) : (
                           <InlineStack gap="100">
                                <DeleteNowIconBtn onClick={()=>{handlePath('')}} size="micro" />
-                              <Thumbnail alt={path} source={path} size="small" />
+                               <MediaThumbnail url={path} />
                           </InlineStack>
           )}
         </InlineStack>
@@ -66,3 +69,23 @@ export const FileInput = ({
     </BlockStack>
   );
 };
+
+
+
+const  MediaThumbnail = ({ url }: { url: string }) => {
+  let fileType = getFileType(url)
+  if (fileType=="image" || fileType == "icon") {
+    return <Thumbnail size="small" source={url} alt={'file'}></Thumbnail>;
+  }else if (fileType=="font") {
+    return <Thumbnail size="small" source={TextFontIcon} alt={"file"}></Thumbnail>;
+  }else if (fileType=="video") {
+    return <Thumbnail size="small" source={PlayCircleIcon} alt={"file"}></Thumbnail>;
+  } else {
+    return <Thumbnail size="small" source={FileIcon} alt={"file"}></Thumbnail>;
+  }
+}
+
+
+
+
+

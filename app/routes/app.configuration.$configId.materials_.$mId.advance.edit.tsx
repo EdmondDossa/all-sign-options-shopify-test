@@ -50,7 +50,8 @@ export default function MaterialComponentCreate() {
         name: "",
         description: "",
         icon: "",
-        options:[]
+        options: [],
+        isDefault: false
       }
   );
 

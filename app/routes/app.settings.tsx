@@ -47,7 +47,7 @@ export const SettingTabheader = () => {
     
   return (
     <SpacingBackground width="100%" height="auto" border="1px solid #DDDDDD">
-        <Box paddingInline="300" background="bg-surface">
+        <Box paddingInline="100" background="bg-surface">
         <InlineStack gap="100" align="center">
           {/* <TabItems to="licence">
             <LicenceSvg /> Licence

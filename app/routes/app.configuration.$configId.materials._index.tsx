@@ -41,6 +41,7 @@ import MaterialService from "~/models/Material.service";
 import { Material } from "~/types/ConfigDataType";
 import { jFlashMessage } from "~/utils/message-flash";
 import { BorderCircleText } from "~/components/feactures/BorderCircleText";
+import { truncateText } from "~/utils/truncate-text";
 
 
 
@@ -74,10 +75,10 @@ export default function MaterialIndex() {
       <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="center" gap="300">
-          <BorderCircleText text={name} /> {name}
+          <BorderCircleText text={name} /> {truncateText(name)}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>{description}</IndexTable.Cell>
+        <IndexTable.Cell>{truncateText(description)}</IndexTable.Cell>
         <IndexTable.Cell>
           <img
             style={{ height: "30px" }}

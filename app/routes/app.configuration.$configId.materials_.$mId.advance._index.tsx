@@ -35,6 +35,8 @@ import { ActionFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { jFlashMessage } from "~/utils/message-flash";
 import { ConfigurationType } from "~/types/ConfigurationType";
+import { truncateText } from "~/utils/truncate-text";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 
 
 // This example is for guidance purposes. Copying it will come with caveats.
@@ -43,7 +45,7 @@ export default function MaterialAdvancedIndex() {
   const submit = useSubmit();
   const navigate = useNavigate();
 
-  const { materialComponents , material, configuration} = useOutletContext<{
+  let { materialComponents , material, configuration} = useOutletContext<{
     materialComponents: MaterialAdvanceComponentType[];
     material:MaterialAdvance, configuration: ConfigurationType
   }>();
@@ -57,6 +59,19 @@ export default function MaterialAdvancedIndex() {
 
   const handleUpdate = (id: number) => {
     submit({ id: id }, { method: "GET", action: "edit" });
+  };
+
+  const handeleDefault = (id: number) => {
+    materialComponents = materialComponents.map((curr, index) => {
+      if (index === id) {
+        curr.isDefault = true;
+      } else {
+        curr.isDefault = false;
+      }
+      return curr;
+    });
+    
+    submit({ id: id }, { method: "PUT" });
   };
 
   const onManageOption = (id: number) => {
@@ -76,7 +91,7 @@ export default function MaterialAdvancedIndex() {
 
   const rowMarkup = materialComponents?.map(
     (
-      {  name, description, icon },
+      {  name, description, icon , isDefault},
       index,
     ) => (
       <IndexTable.Row
@@ -88,17 +103,18 @@ export default function MaterialAdvancedIndex() {
         
         <IndexTable.Cell>
            <InlineStack blockAlign="center" gap="300">
-            <BorderCircleText text={ name } /> {name}
+            <BorderCircleText text={ name } /> {truncateText(name)}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>{description}</IndexTable.Cell>
+        <IndexTable.Cell>{truncateText(description)}</IndexTable.Cell>
         <IndexTable.Cell>
           <img style={{height: "30px"}}
             src={icon}
             alt={"product " + name}
           />
         </IndexTable.Cell>
-    
+        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+
         <IndexTable.Cell>
           <ButtonGroup gap="loose" >
             <button className="add-option-btn" onClick={()=>onManageOption(index)}>
@@ -190,6 +206,7 @@ export default function MaterialAdvancedIndex() {
             { title: "Title" },
             { title: "Desciption"},
             { title: "Icon" },
+            { title: "Default" },
             { title: "Action"},
           ]}
         >
@@ -226,6 +243,21 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
       break;
     }
+    case "PUT": {
+  
+      const id = formData.get("id") as string;
+      console.log("start deleting");
+      await MaterialAdvanceComponentService.setDefault(
+        configId,
+        session.id,
+        mId,
+        parseInt(id || ""),
+      );
+      return json({
+        ...jFlashMessage("Material advance component  deleting is completed successfull"),
+      });
+      break;
+      }
     default:
       break;
   }

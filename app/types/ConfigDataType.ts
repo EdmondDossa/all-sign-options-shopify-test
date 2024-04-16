@@ -126,6 +126,7 @@ export interface MaterialAdvanceComponentType{
   description: string;
   icon: string;
   options?: MaterialAdvanceOptionType[];
+  isDefault: boolean;
 }
   
  export interface MaterialAdvance{

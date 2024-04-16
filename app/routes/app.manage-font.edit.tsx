@@ -61,7 +61,7 @@ export default function ManageFontCreate() {
   let {font} = useLoaderData<typeof loader>()
   const [formData, setFormData] = useState<FontType>((font as FontType) || {
     label: "",
-    isGoogleFont: true,
+    isGoogleFont: false,
     url:""
   });
 
@@ -101,13 +101,13 @@ export default function ManageFontCreate() {
              <SpacingBackground backgroundColor="#F8F9FB">
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+              {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyMd">Google font (default) </Text>
                       <ReactSwitchCustom checked={formData.isGoogleFont} setChecked={handleIsGoogleFont} />
                     </InlineStack>
                    
-                </Grid.Cell>
+                </Grid.Cell> */}
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
                   <TextField
                     label="Label"

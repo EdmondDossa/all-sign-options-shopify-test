@@ -34,6 +34,7 @@ import MaterialAdditionalOptionItemService from "~/models/MaterialAdditionalOpti
 import MaterialAdvancedOptionService from "~/models/MaterialAdvancedOption.service";
 import { jFlashMessage } from "~/utils/message-flash";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { truncateText } from "~/utils/truncate-text";
 
 
 // This example is for guidance purposes. Copying it will come with caveats.
@@ -96,9 +97,9 @@ export default function MaterialAdvancedIndex() {
         
         
         <IndexTable.Cell>
-             {name}
+          {truncateText(name)}
         </IndexTable.Cell>
-        <IndexTable.Cell> <Text as="p">{description}</Text> </IndexTable.Cell>
+        <IndexTable.Cell> <Text as="p">{truncateText(description)}</Text> </IndexTable.Cell>
         <IndexTable.Cell>
           <InlineStack align="center">
 
