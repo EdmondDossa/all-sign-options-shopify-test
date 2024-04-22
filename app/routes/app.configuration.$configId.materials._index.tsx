@@ -86,13 +86,7 @@ export default function MaterialIndex() {
             alt={"product thumbnail" + name}
           />
         </IndexTable.Cell>
-        <IndexTable.Cell>
-          <img
-            style={{ height: "30px" }}
-            src={popImg}
-            alt={"product thumbnail" + name}
-          />
-        </IndexTable.Cell>
+       
         <IndexTable.Cell>
           <Badge tone={type == "simple" ? "info" : "success"}>{type}</Badge>
         </IndexTable.Cell>
@@ -162,7 +156,6 @@ export default function MaterialIndex() {
           { title: "Title" },
           { title: "Desciption" },
           { title: "Icon" },
-          { title: "Poppupimg" },
           { title: "Behavior (type)" },
           { title: "Action" },
         ]}

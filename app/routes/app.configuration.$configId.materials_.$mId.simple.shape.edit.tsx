@@ -1,5 +1,6 @@
 import {
   AutoSelection,
+  Bleed,
   BlockStack,
   Box,
   Card,
@@ -32,6 +33,9 @@ import { authenticate } from "~/shopify.server";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage } from "~/utils/message-flash";
 import MaterialShapeService from "~/models/MaterialShape.service";
+import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
+import { BiAddBtn } from "~/components/buttons/BiAddBtn";
+import { jsonTransform } from "~/utils/transfomerZod";
 
 
 export default function MaterialFixingMethod() {
@@ -45,14 +49,51 @@ export default function MaterialFixingMethod() {
   const [searchParams] = useSearchParams();
   const id = parseInt(searchParams.get("id") || "");
   let configShape = shapes?.find((curr, index) => index === id);
-  const [formData, setFormData] = useState<ConfigShape>(
+
+  const [formData, setFormData] = useState<{configShapes: ConfigShape[]}>(
     configShape
-      ? (configShape as ConfigShape)
+      ? 
+      {
+        configShapes: [configShape as ConfigShape]
+      }
       : {
-          shapeId:0,
-          additionalPrice: 0
-        },
+        configShapes: [ {
+       
+          shapeId:  0,
+          additionalPrice: 0,
+          isDefault: false
+        }]
+      },
   );
+
+  const handleAddItem = () => {
+    if (!formData.configShapes) {
+      formData.configShapes = [];
+    } 
+    if (Number.isNaN(id)) {
+      formData.configShapes.push({
+        shapeId:0,
+        additionalPrice: 0,
+        isDefault: false
+        
+      });
+    }
+
+    setFormData({ ...formData });
+  }
+
+  const handleDeleteItem = (index: number) => {
+    if (formData.configShapes.length>1) {
+      formData.configShapes.splice(index, 1);
+      setFormData({ ...formData});
+    }
+
+  }
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    submit({configShapes: JSON.stringify(formData.configShapes)},{ method: "POST" });
+  };
 
   const options = manageShapes
     ? manageShapes.map((manageShapes, index) => ({
@@ -63,20 +104,6 @@ export default function MaterialFixingMethod() {
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
-
-  const HandleShapeId = (value: string) =>
-    setFormData({ ...formData, shapeId: parseInt(value)  });
-  const handleAdditionalPrice = (value: string) =>
-    setFormData({ ...formData, additionalPrice: parseFloat(value) });
-  
-
- 
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    submit({...formData},{ method: "POST" });
-  };
-
  
 
 
@@ -91,26 +118,62 @@ export default function MaterialFixingMethod() {
         <BoxBackground>
           <Form onSubmit={handleSubmit} method="POST">
             <Box paddingInline="300" paddingBlock="1000">
+              
               <Grid gap={{ lg: "30px" }}>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <Select
-                    label="Select shape"
-                    options={options}
-                    value={`${formData.shapeId}`}
-                    onChange={HandleShapeId}
-                    error={getError(actionData, "shapeId")}
-                  />
+              {
+                    formData.configShapes.map((currConfigShape, index) => (
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                      
+                        <InlineStack wrap={false} as="div" gap="400">
+                          <Box width="52%">
+
+                          <Select
+                        label="Select shapes"
+                        options={options}
+                        value={`${currConfigShape.shapeId}`}
+                        onChange={(value) => {
+                          currConfigShape.shapeId = parseFloat(value);
+                          formData.configShapes[index] = currConfigShape;
+                          setFormData({ ...formData });
+                        }}
+                        error={getError(actionData, `configShapes.${index}.shapeId`)}
+                      />
+                          </Box>
+                          <Box width="52%">
+                            
+                      <TextField
+                        label="Additional price"
+                        type="number"
+                        value={`${currConfigShape.additionalPrice}`}
+                        onChange={(value) => {
+                          currConfigShape.additionalPrice = parseFloat(value);
+                          formData.configShapes[index] = currConfigShape;
+                          setFormData({ ...formData });
+                        }}
+                        autoComplete="off"
+                              error={getError(actionData, `configShapes.${index}.additionalPrice`)}
+                        />
+                     
+                          </Box>
+                          <Box width="1%">
+                            <Bleed marginInlineStart="400">
+                              
+                            <RemoveNowIconBtn onClick={() => handleDeleteItem(index)} />
+                          </Bleed>
+                          </Box>
+                             
+                          
+                        </InlineStack>
+                        
+                
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    label="Additional price"
-                    type="number"
-                    value={`${formData.additionalPrice}`}
-                    onChange={handleAdditionalPrice}
-                    autoComplete="off"
-                    error={getError(actionData, "additionalPrice")}
-                  />
-                </Grid.Cell>
+                         ))
+                        }
+               {Number.isNaN(id) && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                <Box width="150px">
+                    <BiAddBtn title="Add shapes" handleClick={()=>handleAddItem()} />
+                  </Box>
+                </Grid.Cell>}
               </Grid>
             </Box>
             <Divider borderWidth="050" />
@@ -143,8 +206,13 @@ export default function MaterialFixingMethod() {
 
 
 const formSchema = z.object({
-  shapeId: z.number({ required_error: "Material shape is required" }),
-  additionalPrice: z.number({ required_error: "Material shape price is required" }),
+  configShapes: z.any().transform(jsonTransform).pipe(
+    z.object({
+      shapeId: z.number({ required_error: "Material shape is required" }),
+      additionalPrice: z.number({ required_error: "Material shape price is required" }),
+      isDefault: z.boolean().optional(),
+    }).array()
+  )
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -161,14 +229,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return json({ status: false, message: null, errors: submission.error });
   }
 
-  let configShape: ConfigShape = submission.value as ConfigShape;
+  let configShapes: ConfigShape[] = submission.value.configShapes as ConfigShape[];
 
   if (id && !Number.isNaN(configId)  && !Number.isNaN(mId) && !Number.isNaN(id)) {
     let res = await MaterialShapeService.update(
       configId,
       session.id,
       mId,
-      configShape,
+      configShapes[0],
       parseInt(id),
     );
     return res
@@ -179,13 +247,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           `..${flashMessage("Material shape updated is  fail", "error")}`,
         );
   } else {
-    let res = await MaterialShapeService.add(
-      configId,
-      session.id,
-      mId,
-      configShape
-    );
-    return res
+    let resTab: any = [];
+    let res;
+    for (const configShape of configShapes) {
+      res = await MaterialShapeService.add(
+        configId,
+        session.id,
+        mId,
+        configShape
+      );
+
+      resTab.push(res);
+    }
+    return resTab?.length > 0
       ? redirect(
           `..${flashMessage("Material shape added is completed successfully")}`,
         )

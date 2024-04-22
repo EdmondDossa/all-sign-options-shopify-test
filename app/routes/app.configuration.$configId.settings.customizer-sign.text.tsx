@@ -58,6 +58,7 @@ import { ColorType, FontType } from "~/types/ManagePropertyType";
 import { TextColorField } from "~/components/inputs/TextColorField";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
+import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
 
 const settingParams: [string, string] = ["customizerSign", "text"];
 const formSchema = z.object({
@@ -166,14 +167,14 @@ export default function ConfigSettingsGeneral() {
   }>();
 
   const colors = manageColors
-    ? manageColors.map((manageColor) => ({
+    ? manageColors?.map((manageColor) => ({
         label: manageColor.name || "",
         value: `${manageColor.id}`,
       }))
     : [];
 
   const fonts = manageFonts
-    ? manageFonts.map((manageFont) => ({
+    ? manageFonts?.map((manageFont) => ({
         label: manageFont.label || "",
         value: `${manageFont.id}`,
       }))
@@ -208,7 +209,8 @@ export default function ConfigSettingsGeneral() {
                   <MultiCombobox
                     label="Select Font"
                     placeholder="Search font"
-                    selectedOptions={formData.selectedFonts}
+                    selectedOptions={formData.selectedFonts.map((curr: any) => `${curr}`)}
+                
                     data={fonts}
                     setSelectedOptions={(value: any) => {
                       if (Array.isArray(value)) {
@@ -246,7 +248,7 @@ export default function ConfigSettingsGeneral() {
                               
                               }}
                               />
-                            <DeleteIconBtn onClick={() => handleDeleteColor(index)} />
+                            <DeleteNowIconBtn onClick={() => handleDeleteColor(index)} />
                           </InlineStack>
 
                           </InlineStack>

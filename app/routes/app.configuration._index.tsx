@@ -152,12 +152,7 @@ export default function Configuration() {
             alt={"product thumbnail" + name}
           />
         </IndexTable.Cell>
-        <IndexTable.Cell>
-          <img style={{height: "30px"}}
-            src={popupImg}
-            alt={"product thumbnail" + name}
-          />
-        </IndexTable.Cell>
+       
       
         <IndexTable.Cell>
           <ButtonGroup gap="loose" >
@@ -184,15 +179,7 @@ export default function Configuration() {
                   List of configurations
                 </Text>
 
-                <InlineStack gap="100">
-
-                  <Text as="strong" variant="bodyMd">
-                    11 
-                  </Text>
-                  <Text as="span" tone="subdued">
-                    configurations
-                  </Text>
-                </InlineStack>
+               
               </InlineGrid>
               
               <InlineGrid columns="1fr auto">
@@ -226,7 +213,6 @@ export default function Configuration() {
             { title: "Name configuration" },
             { title: "Desciption"},
             { title: "Icon" },
-            { title: "Poppupimg" },
             { title: "Action"},
           ]}
         >

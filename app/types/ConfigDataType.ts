@@ -29,7 +29,7 @@
     additionalPrice: number;
     excludeSizes: number[];
     settings: {
-      codeHex: string;
+      colors: Array<{ codeHex: string; name: string; }>;
       enableBorderWidth: boolean;
       enableBorderColor: boolean;
     };

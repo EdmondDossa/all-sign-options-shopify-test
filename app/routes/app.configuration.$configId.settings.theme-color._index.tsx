@@ -33,7 +33,7 @@ import { TextColorField } from "~/components/inputs/TextColorField";
 import { CheckSpan } from "~/components/inputs/CheckSpan";
 import { jsonTransform } from "~/utils/transfomerZod";
 
-const settingParams: [string, string] = ["themes", ""];
+const settingParams: [string, string] = ["themeColors", ""];
 
 const formSchema = z.object({
   skin: z.string(),

@@ -27,7 +27,7 @@ export default function Settings(){
             <InlineStack>
               <InlineStack gap="100" align="start">
                 <Text as="h2" variant="headingMd">
-                  Génarals Settings
+                  Generals Settings
                 </Text>
               </InlineStack>
             </InlineStack>

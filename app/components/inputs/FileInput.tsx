@@ -32,7 +32,7 @@ export const FileInput = ({
   return (
     <BlockStack gap="050">
       {title && <Text as="span"> {title} </Text>}
-      <Box borderRadius="100" borderWidth="025" padding="200" >
+      <Box borderRadius="100" borderWidth="025" padding="025" paddingInline="100" >
         <InlineStack blockAlign="center" align="space-between">
           <FileUploader
             fileData={[path]}
@@ -41,7 +41,7 @@ export const FileInput = ({
           >
             <Button
               icon={uploadIcon}
-              size="large"
+              size="micro"
               tone="success"
               variant="primary"
             >

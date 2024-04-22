@@ -10,11 +10,19 @@ import appStyle from './app.css';
 import { useGlobalPendingState } from "remix-utils/use-global-navigation-state";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useEffect } from "react";
+import SettingService from "~/models/Setting.service";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "stylesheet", href: appStyle }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
+  const {session}=await authenticate.admin(request);
+  try {
+    SettingService.addSetting(session.id, session.shop);
+    console.log("Setting error setting_exist");
+
+  } catch (error) {
+    console.log("Setting error setting_exist", error);
+  }
 
   return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
 };

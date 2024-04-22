@@ -45,8 +45,6 @@ const formSchema = z.object({
     customWithGraphical:z.boolean(),
     uploadMinWidth:z.number(),
     uploadMaxWidth:z.number(),
-    uploadMinHeight:z.number(),
-    uploadMaxHeight: z.number(),
     allowedUploadsExtentions:z.string().array()
   })),
   enableClipart:z.any().transform(jsonTransform).pipe(z.object({
@@ -99,8 +97,6 @@ export default function ConfigSettingsGeneral() {
          "customWithGraphical":false,
          "uploadMinWidth":100,
          "uploadMaxWidth":100,
-         "uploadMinHeight":1024,
-         "uploadMaxHeight":1024,
          "allowedUploadsExtentions":["png"]
       },
       "enableClipart":{
@@ -220,32 +216,7 @@ export default function ConfigSettingsGeneral() {
                   autoComplete="off"
                   />
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                <TextField
-                    size="medium"
-                    label="Upload min height (px)"
-                    value={formData.fileUploadScript.uploadMinHeight}
-                    onChange={(value) => {
-                      formData.fileUploadScript.uploadMinHeight = value
-                    handleInputChange("fileUploadScript", formData.fileUploadScript )
-                    }}
-                    error={getError(actionData, "fileUploadScript.uploadMinHeight")} 
-                  autoComplete="off"
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                <TextField
-                    size="medium"
-                    label="Upload max height (px)"
-                    value={formData.fileUploadScript.uploadMaxHeight}
-                    onChange={(value) => {
-                      formData.fileUploadScript.uploadMaxHeight = value
-                    handleInputChange("fileUploadScript", formData.fileUploadScript )
-                    }}
-                    error={getError(actionData, "fileUploadScript.uploadMaxHeight")} 
-                  autoComplete="off"
-                  />
-                </Grid.Cell>
+               
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <MultiCombobox
                        label="Select allow extension"

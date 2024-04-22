@@ -1,4 +1,5 @@
 import {
+  BlockStack,
   Box,
   ButtonGroup,
   Checkbox,
@@ -44,120 +45,130 @@ import { parseWithZod } from "@conform-to/zod";
 import { jFlashMessage } from "~/utils/message-flash";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 
-
-
-export const loader = async ({request}:LoaderFunctionArgs) => { 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
 
   const output = await SettingOutputService.get(session.id);
- console.log(output);
- 
-  return  json({output})
-}
+  console.log(output);
+
+  return json({ output });
+};
 
 export default function ManageSizeCreate() {
   const submit = useSubmit();
-  const  navigation = useNavigation()
+  const navigation = useNavigation();
   const { output } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
- 
-  const [formData, setFormData] = useState<OutputType>((output as OutputType) || {
-    zipName:true,
-    calculateOutput:true
-  });
+
+  const [formData, setFormData] = useState<OutputType>(
+    (output as OutputType) || {
+      zipName: true,
+      calculateOutput: true,
+    },
+  );
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
 
-  console.log(formData, output)
-  
-  const handleCalculateOutput = useCallback(
-    (value: boolean) => {
-      formData.calculateOutput = value;
-      setFormData({...formData})
-    },
-    []
-  );
+  console.log(formData, output);
 
-  const handleZipName = useCallback(
-    (value: boolean) => {
-      formData.zipName = value;
-      setFormData({...formData})
-    },
-    []
-  );
-  
+  const handleCalculateOutput = useCallback((value: boolean) => {
+    formData.calculateOutput = value;
+    setFormData({ ...formData });
+  }, []);
+
+  const handleZipName = useCallback((value: boolean) => {
+    formData.zipName = value;
+    setFormData({ ...formData });
+  }, []);
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
     submit({ ...formData }, { method: "POST" });
   };
-  
 
   return (
     <div>
       <SpacingBackground width="100%" height="auto" margin="10px 0px ">
-          <Form  onSubmit={handleSubmit} method="POST">
-            <SpacingBackground backgroundColor="#F8F9FB">
-              
+        <Form onSubmit={handleSubmit} method="POST">
+          <SpacingBackground backgroundColor="#F8F9FB">
             <Box paddingInline="300" paddingBlock="1200">
-              <Grid gap={{lg:"30px"}}>
-          
+              <Grid gap={{ lg: "30px" }}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <InlineStack gap="1600" blockAlign="center">
-                    
-                <InlineStack gap="300" blockAlign="center">
-                      <Text as="strong" fontWeight="bold" variant="bodyMd">Use ider id as zip name </Text>
-                      <ReactSwitchCustom checked={formData.zipName} setChecked={handleZipName} />
+                  <BlockStack gap="100" >
+                    <InlineStack gap="300" blockAlign="center">
+                      <Text as="strong" fontWeight="bold" variant="bodyMd">
+                        Use ider id as zip name
+                      </Text>
+                      <ReactSwitchCustom
+                        checked={formData.zipName}
+                        setChecked={handleZipName}
+                      />
                     </InlineStack>
-                <InlineStack gap="300" blockAlign="center">
-                      <Text as="strong" fontWeight="bold" variant="bodyMd">Calculate retina output </Text>
-                      <ReactSwitchCustom checked={formData.calculateOutput} setChecked={handleCalculateOutput} />
-                    </InlineStack>
-                   
-                </InlineStack>
-
+                    <Text as="span" tone="subdued">    Use ider id as zip name </Text>
+                  </BlockStack>
                 </Grid.Cell>
-            
+
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <BlockStack gap="100">
+                    <InlineStack gap="300" blockAlign="center">
+                      <Text as="strong" fontWeight="bold" variant="bodyMd">
+                        Calculate retina output
+                      </Text>
+                      <ReactSwitchCustom
+                        checked={formData.calculateOutput}
+                        setChecked={handleCalculateOutput}
+                      />
+                    </InlineStack>
+                      <Text as="span" tone="subdued">  Calculate retina output </Text>
+                  </BlockStack>
+                </Grid.Cell>
               </Grid>
             </Box>
-              </SpacingBackground>
-            <Divider borderWidth="100" />
-            <SpacingBackground backgroundColor="#F9F9F9">
-              
+          </SpacingBackground>
+          <Divider borderWidth="100" />
+          <SpacingBackground backgroundColor="#F9F9F9">
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-              <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
-              </SpacingBackground>
-          </Form>
+          </SpacingBackground>
+        </Form>
       </SpacingBackground>
     </div>
   );
 }
 
 const formSchema = z.object({
-  calculateOutput: z.any().transform(val => `${val}`.toLowerCase() =="true").pipe(z.boolean()),
-  zipName: z.any().transform(val => `${val}`.toLowerCase() =="true").pipe(z.boolean())
+  calculateOutput: z
+    .any()
+    .transform((val) => `${val}`.toLowerCase() == "true")
+    .pipe(z.boolean()),
+  zipName: z
+    .any()
+    .transform((val) => `${val}`.toLowerCase() == "true")
+    .pipe(z.boolean()),
 });
 
-
-export const action = async ({request}:ActionFunctionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const formData = await request.formData();
 
-  const submission = parseWithZod(formData, {schema:formSchema});
+  const submission = parseWithZod(formData, { schema: formSchema });
 
-  if (submission.status !== 'success') {
-    return json({status:false,message:null,errors:submission.error})
+  if (submission.status !== "success") {
+    return json({ status: false, message: null, errors: submission.error });
   }
 
   let output: OutputType = submission.value as OutputType;
-  console.log("out put ", output)
+  console.log("out put ", output);
   if (output) {
-    let res = await SettingOutputService.update(output, session.id) 
-    return res ? 
-        json({ ...jFlashMessage("Output config  updaping  is completed successful") })
+    let res = await SettingOutputService.update(output, session.id);
+    return res
+      ? json({
+          ...jFlashMessage("Output config  updaping  is completed successful"),
+        })
       : json({ ...jFlashMessage("Output   updaping   failed", "error") });
   }
 };

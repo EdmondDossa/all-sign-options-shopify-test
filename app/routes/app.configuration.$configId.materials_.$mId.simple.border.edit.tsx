@@ -8,6 +8,7 @@ import {
   EmptySearchResult,
   Grid,
   Icon,
+  InlineError,
   InlineStack,
   LegacyStack,
   Listbox,
@@ -46,6 +47,9 @@ import { authenticate } from "~/shopify.server";
 import { parseWithZod } from "@conform-to/zod";
 import MaterialBorderService from "~/models/MaterialBorderService.service";
 import { flashMessage } from "~/utils/message-flash";
+import { BiAddBtn } from "~/components/buttons/BiAddBtn";
+import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
+import { jsonTransform } from "~/utils/transfomerZod";
 
 export default function MaterialBorderCreate() {
   const [selected, setSelected] = useState("1");
@@ -68,7 +72,7 @@ export default function MaterialBorderCreate() {
           additionalPrice: 0,
           excludeSizes: [],
           settings: {
-            codeHex: "",
+            colors: [],
             enableBorderWidth: false,
             enableBorderColor: false,
           },
@@ -93,10 +97,7 @@ export default function MaterialBorderCreate() {
   const handleExcludeSizes = (value: any[]) =>
     setFormData({ ...formData, excludeSizes: value.map(currValue=> parseInt(currValue)) });
 
-  const handleCodeHex = (value: string) => {
-    formData.settings.codeHex = value;
-    setFormData({ ...formData });
-  };
+ 
 
   const handleEnableBorderWidth = (value: boolean) => {
     formData.settings.enableBorderWidth = value;
@@ -119,6 +120,22 @@ export default function MaterialBorderCreate() {
       { method: "POST" },
     );
   };
+  const handleAddColor = () => {
+    if (!formData.settings.colors) {
+      formData.settings.colors = [];
+    } 
+    formData.settings.colors.push({
+      name: "",
+      codeHex: "#FFFFFF"
+    });
+
+    setFormData({ ...formData });
+  }
+
+  const  handleDeleteColor = (index: number) => {
+    formData.settings.colors.splice(index, 1);
+    setFormData({ ...formData});
+  }
   const navigate = useNavigate();
   const onBack = () => {
     navigate("..");
@@ -171,8 +188,51 @@ export default function MaterialBorderCreate() {
                     <Text as="strong" variant="headingMd">
                       Border settings
                     </Text>
-                   
-                  <TextColorField  error={getError(actionData,"settings.codeHex")} label="Border color" color={formData.settings.codeHex} setColor={handleCodeHex}/>
+                    <BlockStack gap="300">
+                    <Text as="h3" variant="bodyMd" fontWeight="bold"> Define text colors</Text>
+                    <Grid gap={{ lg: "30px" }}>
+                      {formData.settings.colors?.map((color: any, index: number) => (
+                          <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 4, xl: 4 }}>
+                          <InlineStack gap={"300"} blockAlign="end" align="space-between" wrap={false}>
+                            <TextField
+                              autoComplete="on"
+                              onChange={(value) => {
+                                color.name = value;
+                                formData.settings.colors[index] = color;
+                                setFormData({ ...formData });
+                              }}
+                              label="Name"
+                              value={color.name} 
+                            />
+                            <InlineStack gap={"300"} blockAlign="center" align="space-between" wrap={false}>
+                              
+                            <TextColorField  color={color.codeHex} setColor={(value: any) => {
+                                color.codeHex = value;
+                                formData.settings.colors[index] = color;
+                              setFormData({ ...formData });
+                              
+                              }}
+                              />
+                            <DeleteNowIconBtn onClick={() => handleDeleteColor(index)} />
+                          </InlineStack>
+
+                          </InlineStack>
+                          {true && (
+                              <InlineError message={getError(
+                                actionData,
+                                `settings.colors[${index}].name`
+                              )||getError(
+                                actionData,
+                                `settings.colors[${index}].codeHex`
+                              )||''} fieldID="myFieldID" />
+                            )}
+                          </Grid.Cell>
+                        ))}
+                    </Grid>  
+                    <Box width="150px">
+                    <BiAddBtn title="Add color" handleClick={()=>handleAddColor()} />
+                    </Box>
+                  </BlockStack>
 
                     <InlineStack gap="600">
                       <InlineStack blockAlign="center" gap="200">
@@ -243,13 +303,16 @@ const formSchema = z.object({
   .transform((value) => JSON.parse(value as string) || []).pipe(z.number().array()),
   settings: z
   .any()
-  .transform((value) => JSON.parse(value as string) || {})
+  .transform(jsonTransform)
   .pipe(
     z.object({
-      codeHex: z
+      colors: z.object({
+        codeHex: z
         .string({ required_error: "Color  is required" })
         .min(3, "Color is too short")
-        .max(7, "Color label is too long"),
+          .max(7, "Color label is too long"),
+        name: z.string({ required_error: "Color name is required" })
+      }).array(),
         enableBorderWidth: z.boolean({
         required_error: "field  is required",
       }),

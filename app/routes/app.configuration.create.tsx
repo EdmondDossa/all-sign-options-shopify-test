@@ -51,6 +51,7 @@ import { flashMessage } from "~/utils/message-flash";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
 import { SelectProducField } from "~/components/inputs/SelectProductFied";
 import { jsonTransform } from "~/utils/transfomerZod";
+import { CustomTinymce } from "~/components/inputs/CustomTinymce";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -165,18 +166,7 @@ export default function ConfigurationEdit() {
                     handlePath={handleIcon}
                   />
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
-                  <FileInput
-                    error={
-                      actionData?.errors?.popupImg
-                        ? actionData.errors.popupImg[0]
-                        : ""
-                    }
-                    title="Upload image"
-                    path={formData.popupImg}
-                    handlePath={handlePopupImg}
-                  />
-                </Grid.Cell>
+              
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
                   <SelectProducField
                     label="Product associated with configuration"
@@ -188,6 +178,23 @@ export default function ConfigurationEdit() {
                     }}
                     selectProductId={formData.product?.id}
                   />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <CustomTinymce  error={
+                      actionData?.errors?.popupImg
+                        ? actionData.errors.popupImg[0]
+                        : ""
+                    } title="Complete description" onEditorChange={handlePopupImg} value={formData.popupImg}/>
+                  {/* <FileInput
+                    error={
+                      actionData?.errors?.popupImg
+                        ? actionData.errors.popupImg[0]
+                        : ""
+                    }
+                    title="Upload image"
+                    path={formData.popupImg}
+                    handlePath={}
+                  /> */}
                 </Grid.Cell>
               </Grid>
             </Box>

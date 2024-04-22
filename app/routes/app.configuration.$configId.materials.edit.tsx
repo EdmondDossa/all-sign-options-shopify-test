@@ -22,6 +22,7 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import BiSaveIcon from "~/components/icons/BiSaveIcon";
 import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
+import { CustomTinymce } from "~/components/inputs/CustomTinymce";
 import { FileInput } from "~/components/inputs/FileInput";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
@@ -123,16 +124,8 @@ export default function MaterialEdit() {
                     handlePath={handleIcon}
                   />
               </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-               
-                <FileInput
-                    error={getError(actionData, "popImg")}
-                    title="Upload poppup Image"
-                    path={formData.popImg}
-                    handlePath={handlePopImg}
-                  />
-                          </Grid.Cell >
-                          <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+             
+                          <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                           <Select
                     label="Behevior (type)"
                   options={types}
@@ -140,7 +133,15 @@ export default function MaterialEdit() {
                     onChange={handleType}
                     value={formData.type}
                   />
-                          </Grid.Cell>
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm:6, md: 6, lg: 12, xl: 12 }}>
+               
+               <CustomTinymce  error={
+                       actionData?.errors?.popImg
+                         ? actionData.errors.popImg[0]
+                         : ""
+                     } title="Complete description" onEditorChange={handlePopImg} value={formData.popImg}/>
+                           </Grid.Cell >
             </Grid>
           </Box>
         </SpacingBackground>
