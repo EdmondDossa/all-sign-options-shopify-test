@@ -7,6 +7,6 @@ import {
 export const RemoveNowIconBtn = (props: ButtonProps) => {
 
     return (
-            <Button icon={XCircleIcon} {...props} variant="tertiary" />
+            <Button icon={XCircleIcon} {...props} tone="critical"  />
     );
 }

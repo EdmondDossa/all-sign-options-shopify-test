@@ -8,7 +8,7 @@ import MaterialColorService from "~/models/MaterialColors.service";
 import SettingBorderService from "~/models/SettingBorder.service";
 import SizeService from "~/models/Size.service";
 import { authenticate } from "~/shopify.server";
-import { ConfigBorder, ConfigColor, ConfigCustomSize, ConfigSize } from "~/types/ConfigDataType";
+import { ConfigBorder, ConfigColor, ConfigCustomColor } from "~/types/ConfigDataType";
 import { ColorType, SizeType } from "~/types/ManagePropertyType";
 import { BorderType } from "~/types/SettingsType";
 
@@ -18,7 +18,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const mId = parseInt(params.mId ?? "");
   console.log('configID materialID', configId, mId);
 
-  let colors: ConfigColor[] | null = null;
+  let colors: {allColors: ConfigColor[], customColors: ConfigCustomColor} | null = null;
   
  
   const manageColors : ColorType[] | null =  await ColorService.getColors(session.id)
@@ -34,6 +34,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function MaterialColors() {
   let  {manageColors, colors } = useLoaderData<typeof loader>();
   return (
-      <Outlet context={  {manageColors, colors }}/>
+      <Outlet context={  {manageColors, colors: colors?.allColors, customColors: colors?.customColors }}/>
   );
 }

@@ -12,7 +12,13 @@
       min: number;
       max: number;
     };
-  }
+ }
+  
+ export interface ConfigCustomColor {
+  active: boolean;
+   label: string;
+   prevImg: string;
+}
   
  export interface ConfigSize {
     manageSizeId: number;
@@ -53,10 +59,22 @@
     isDefault?: boolean;
   }
   
- export interface ConfigColor {
-    manageColorId: number;
+export interface ConfigColor {
+  name: string;
     additionalPrice: number;
-    isDefault?: boolean;
+   isDefault?: boolean;
+    textColor:{
+          active:boolean,
+          sameForBorder:boolean,
+          codeHex: string,
+          name:string
+      },
+      pattern:{
+          active:boolean,
+          codeHex:string,
+          url:string
+      },
+      prevImg:string,
   }
   
  export interface ConfigAdditionalOption {

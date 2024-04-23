@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Option"
-application_url = "https://waiting-nz-spas-countries.trycloudflare.com"
+application_url = "https://kings-models-guns-persian.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://waiting-nz-spas-countries.trycloudflare.com/auth/callback",
-  "https://waiting-nz-spas-countries.trycloudflare.com/auth/shopify/callback",
-  "https://waiting-nz-spas-countries.trycloudflare.com/api/auth/callback"
+  "https://kings-models-guns-persian.trycloudflare.com/auth/callback",
+  "https://kings-models-guns-persian.trycloudflare.com/auth/shopify/callback",
+  "https://kings-models-guns-persian.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

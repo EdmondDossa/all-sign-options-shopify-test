@@ -1,11 +1,14 @@
 import {
   Bleed,
+  BlockStack,
   Box,
+  Collapsible,
   Divider,
   Grid,
   InlineGrid,
   InlineStack,
   Select,
+  Text,
   TextField,
 } from "@shopify/polaris";
 import { useCallback, useState } from "react";
@@ -36,7 +39,11 @@ import { flashMessage } from "~/utils/message-flash";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
 import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
-import { jsonTransform } from "~/utils/transfomerZod";
+import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
+import { FileInput } from "~/components/inputs/FileInput";
+import { TextColorField } from "~/components/inputs/TextColorField";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { ToggleButton } from "~/components/buttons/ToggleButton";
 
 export default function MaterialColorCreate() {
   const submit = useSubmit();
@@ -49,64 +56,81 @@ export default function MaterialColorCreate() {
   const [searchParams] = useSearchParams();
   const id = parseInt(searchParams.get("id") || "");
   let configColor = colors?.find((curr, index) => index === id);
-  const [formData, setFormData] = useState<{colors: ConfigColor[]}>(
+  let [openIndex, setOpenIndex] = useState(new Set([0]));
+  const [formData, setFormData] = useState<{ colors: ConfigColor[] }>(
     configColor
-      ? 
-      {
-        colors: [configColor as ConfigColor]
-      }
+      ? {
+          colors: [configColor as ConfigColor],
+        }
       : {
-        colors: [ {
-       
-          manageColorId: manageColors[0]?.id || 0,
-          additionalPrice: 0,
-          isDefault: false
-        }]
-      },
+          colors: [
+            {
+              additionalPrice: 0,
+              isDefault: false,
+              name: "",
+              textColor: {
+                active: true,
+                sameForBorder: false,
+                codeHex: "#000000",
+                name: "",
+              },
+              pattern: {
+                active: true,
+                codeHex: "#000000",
+                url: "",
+              },
+              prevImg: "",
+            },
+          ],
+        },
   );
+
+  console.log("formData color", actionData);
 
   const handleAddItem = () => {
     if (!formData.colors) {
       formData.colors = [];
-    } 
+    }
     if (Number.isNaN(id)) {
       formData.colors.push({
-        manageColorId:0,
         additionalPrice: 0,
-        isDefault: false
-        
+        isDefault: false,
+        name: "",
+        textColor: {
+          active: true,
+          sameForBorder: false,
+          codeHex: "#000000",
+          name: "",
+        },
+        pattern: {
+          active: true,
+          codeHex: "#000000",
+          url: "",
+        },
+        prevImg: "",
       });
     }
 
     setFormData({ ...formData });
-  }
+  };
 
   const handleDeleteItem = (index: number) => {
-    if (formData.colors.length>1) {
+    if (formData.colors.length > 1) {
       formData.colors.splice(index, 1);
-      setFormData({ ...formData});
+      setFormData({ ...formData });
     }
-
-  }
+  };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit({colors: JSON.stringify(formData.colors)},{ method: "POST" });
+    submit({ colors: JSON.stringify(formData.colors) }, { method: "POST" });
   };
 
-  const options = manageColors
-    ? manageColors.map((manageColors) => ({
-        label: manageColors.name || "",
-        value: `${manageColors.id}`,
-      }))
-    : [];
+
+  
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
-
-
-
-
 
   const navigate = useNavigate();
   const onBack = () => {
@@ -120,60 +144,234 @@ export default function MaterialColorCreate() {
           <Form onSubmit={handleSubmit} method="POST">
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
-              {
-                    formData.colors.map((color, index) => (
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                      
-                        <InlineStack wrap={false} as="div" gap="400">
-                          <Box width="52%">
-
-                          <Select
-                        label="Select color"
-                        options={options}
-                        value={`${color.manageColorId}`}
-                        onChange={(value) => {
-                          color.manageColorId = parseFloat(value);
-                          formData.colors[index] = color;
-                          setFormData({ ...formData });
-                        }}
-                        error={getError(actionData, `colors.${index}.manageColorId`)}
-                      />
-                          </Box>
-                          <Box width="52%">
-                            
-                      <TextField
-                        label="Additional price"
-                        type="number"
-                        value={`${color.additionalPrice}`}
-                        onChange={(value) => {
-                          color.additionalPrice = parseFloat(value);
-                          formData.colors[index] = color;
-                          setFormData({ ...formData });
-                        }}
-                        autoComplete="off"
-                              error={getError(actionData, `colors.${index}.additionalPrice`)}
-                        />
-                     
-                          </Box>
-                          <Box width="1%">
-                            <Bleed marginInlineStart="400">
-                              
-                            <RemoveNowIconBtn onClick={() => handleDeleteItem(index)} />
-                          </Bleed>
-                          </Box>
-                             
-                          
-                        </InlineStack>
+                {formData.colors.map((color, index) => (
+                  
+                  <>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                      <Divider borderWidth="100" />
+                      <Divider borderWidth="100" />
+                    </Grid.Cell>
+                    <Grid.Cell
+                    columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                  >
+                      <BlockStack>
                         
-                
-                </Grid.Cell>
-                         ))
-                        }
-               {Number.isNaN(id) && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                <Box width="150px">
-                    <BiAddBtn title="Add color" handleClick={()=>handleAddItem()} />
-                  </Box>
-                </Grid.Cell>}
+                      <Bleed marginBlockEnd="400">
+                            <InlineStack wrap={false} align="end"  gap="200">
+                          <RemoveNowIconBtn
+                            onClick={() => handleDeleteItem(index)}
+                            />
+                            <ToggleButton buttonProps={{
+                              onClick: () => { 
+                                openIndex.has(index) ? openIndex.delete(index) : openIndex.add(index);
+                                setOpenIndex(new Set([...openIndex]))
+                              
+                             } }}
+                            open={openIndex.has(index)}/>
+                          </InlineStack>
+                        </Bleed>
+                        <Box width="100%">
+                      
+                            
+                        <Grid>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                            <TextField
+                              label="Name"
+                              value={`${color.name}`}
+                              onChange={(value) => {
+                                color.name = value;
+                                formData.colors[index] = color;
+                                setFormData({ ...formData });
+                              }}
+                              autoComplete="off"
+                              error={getError(
+                                actionData,
+                                `colors[${index}].name`,
+                              )}
+                            />
+                          </Grid.Cell>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                            <FileInput
+                              error={getError(
+                                actionData,
+                                `colors[${index}].prevImg`,
+                              )}
+                              title="Preview Image"
+                              path={color.prevImg}
+                              handlePath={(value: string) => {
+                                color.prevImg = value;
+                                formData.colors[index] = color;
+                                setFormData({ ...formData });
+                              }}
+                            />
+                            </Grid.Cell>
+                         {openIndex.has(index) &&   <>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                            <InlineStack blockAlign="center" gap="200">
+                              <Text as="strong" variant="headingMd">
+                                Use pattern color
+                              </Text>
+                              <ReactSwitchCustom
+                                checked={color.pattern.active}
+                                setChecked={(value: boolean) => {
+                                  color.pattern.active = value;
+                                  formData.colors[index] = color;
+                                  setFormData({ ...formData });
+                                }}
+                              />
+                            </InlineStack>
+                          </Grid.Cell>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                            {color.pattern.active ? (
+                              <TextColorField
+                                error={getError(
+                                  actionData,
+                                  `colors[${index}].pattern.codeHex`,
+                                )}
+                                label="Material Background Color"
+                                color={color.pattern.codeHex}
+                                setColor={(value: string) => {
+                                  color.pattern.codeHex = value;
+                                  formData.colors[index] = color;
+                                  setFormData({ ...formData });
+                                }}
+                              />
+                            ) : (
+                              <FileInput
+                                error={getError(
+                                  actionData,
+                                  `colors[${index}].pattern.url`,
+                                )}
+                                title="Preview Image"
+                                path={color.pattern.url}
+                                handlePath={(value: string) => {
+                                  color.pattern.url = value;
+                                  formData.colors[index] = color;
+                                  setFormData({ ...formData });
+                                }}
+                              />
+                            )}
+                          </Grid.Cell>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                            <InlineStack blockAlign="center" gap="200">
+                              <Text as="strong" variant="headingMd">
+                                Enable text color
+                              </Text>
+                              <ReactSwitchCustom
+                                checked={color.textColor.active}
+                                setChecked={(value: boolean) => {
+                                  color.textColor.active = value;
+                                  formData.colors[index] = color;
+                                  setFormData({ ...formData });
+                                }}
+                              />
+                            </InlineStack>
+                          </Grid.Cell>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                            <InlineStack blockAlign="center" gap="200">
+                              <Text as="strong" variant="headingMd">
+                                Use the same color for border
+                              </Text>
+                              <ReactSwitchCustom
+                                checked={color.textColor.sameForBorder}
+                                setChecked={(value: boolean) => {
+                                  color.textColor.sameForBorder = value;
+                                  formData.colors[index] = color;
+                                  setFormData({ ...formData });
+                                }}
+                              />
+                            </InlineStack>
+                          </Grid.Cell>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                            <TextField
+                              label="Text Color Name"
+                              value={`${color.textColor.name}`}
+                              onChange={(value) => {
+                                color.textColor.name = value;
+                                formData.colors[index] = color;
+                                setFormData({ ...formData });
+                              }}
+                              autoComplete="off"
+                              error={getError(
+                                actionData,
+                                `colors[${index}].textColor.name`,
+                              )}
+                            />
+                          </Grid.Cell>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                            <TextColorField
+                              error={getError(
+                                actionData,
+                                `colors[${index}].textColor.codeHex`,
+                              )}
+                              label="Text Color"
+                              color={color.textColor.codeHex}
+                              setColor={(value: string) => {
+                                color.textColor.codeHex = value;
+                                formData.colors[index] = color;
+                                setFormData({ ...formData });
+                              }}
+                            />
+                          </Grid.Cell>
+
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                          >
+                            <TextField
+                              label="Additional price"
+                              type="number"
+                              value={`${color.additionalPrice}`}
+                              onChange={(value) => {
+                                color.additionalPrice = parseFloat(value);
+                                formData.colors[index] = color;
+                                setFormData({ ...formData });
+                              }}
+                              autoComplete="off"
+                              error={getError(
+                                actionData,
+                                `colors[${index}].additionalPrice`,
+                              )}
+                            />
+                          </Grid.Cell>
+                            </>}
+        
+                              
+                        </Grid>
+                      </Box>
+
+                  
+                    </BlockStack>
+                  </Grid.Cell>
+                  </>
+                ))}
+                {Number.isNaN(id) && (
+                  <Grid.Cell
+                    columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                  >
+                    <Box width="150px">
+                      <BiAddBtn
+                        title="Add color"
+                        handleClick={() => handleAddItem()}
+                      />
+                    </Box>
+                  </Grid.Cell>
+                )}
               </Grid>
             </Box>
             <Divider borderWidth="050" />
@@ -205,16 +403,31 @@ export default function MaterialColorCreate() {
 }
 
 const formSchema = z.object({
-  colors:  z.any().transform(jsonTransform).pipe(
-    z.object({
-      manageColorId: z.number({ required_error: "Material color is required" }),
-      additionalPrice: z.number({ required_error: "Material color price is required" }),
-      isDefault: z.boolean().optional(),
-    }).array()
-  )
-  
+  colors: z
+    .any()
+    .transform(jsonTransform)
+    .pipe(
+      z
+        .object({
+          additionalPrice: z.number(),
+          isDefault: z.boolean(),
+          name: z.string(),
+          textColor: z.object({
+            sameForBorder: z.boolean(),
+            active: z.boolean(),
+            codeHex: z.string().nullish().transform(stringTransform),
+            name: z.string().nullish().transform(stringTransform),
+          }),
+          pattern: z.object({
+            active: z.boolean(),
+            codeHex: z.string().nullish().transform(stringTransform),
+            url: z.string().nullish().transform(stringTransform),
+          }),
+          prevImg: z.string().nullish().transform(stringTransform),
+        })
+        .array(),
+    ),
 });
- 
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -232,14 +445,20 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   let configColors: ConfigColor[] = submission.value.colors as ConfigColor[];
 
-  if (id && !Number.isNaN(configId)  && !Number.isNaN(mId) && !Number.isNaN(id)) {
+  if (
+    id &&
+    !Number.isNaN(configId) &&
+    !Number.isNaN(mId) &&
+    !Number.isNaN(id)
+  ) {
     let res = await MaterialColorService.update(
       configId,
       session.id,
       mId,
       configColors[0],
       parseInt(id),
-    );flashMessage
+    );
+    flashMessage;
     return res
       ? redirect(
           `..${flashMessage("Material color  updated is completed successfully")}`,
@@ -250,17 +469,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   } else {
     let resTab: any = [];
     let res;
-    for  (const configColor of configColors) {
+    for (const configColor of configColors) {
       res = await MaterialColorService.add(
         configId,
         session.id,
         mId,
-        configColor
+        configColor,
       );
 
       resTab.push(res);
     }
-   
+
     return resTab?.length > 0
       ? redirect(
           `..${flashMessage("Material color added is completed successfully")}`,

@@ -10,3 +10,7 @@ export const jsonTransform = (value: any) => {
         return value;
     }
 }
+
+
+
+export const stringTransform = (value: any) => { return value || ""; }

@@ -8,6 +8,7 @@ import {
   Checkbox,
   ChoiceList,
   Divider,
+  Grid,
   IndexFilters,
   IndexTable,
   InlineGrid,
@@ -24,30 +25,68 @@ import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, useNavigate, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import { Form, Link, NavLink, Outlet, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { ColorType } from "~/types/ManagePropertyType";
-import { ConfigColor } from "~/types/ConfigDataType";
+import { ConfigColor, ConfigCustomColor, ConfigCustomSize } from "~/types/ConfigDataType";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import MaterialColorService from "~/models/MaterialColors.service";
 import { jFlashMessage } from "~/utils/message-flash";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { getError } from "~/utils/error-getting";
+import { FileInput } from "~/components/inputs/FileInput";
+import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { z } from "zod";
+import { booleanTransform } from "~/utils/transfomerZod";
+import { parseWithZod } from "@conform-to/zod";
 
 export default function MaterialColorIndex() {
   const submit = useSubmit();
   const navigate = useNavigate();
+
+
+  const actionData = useActionData<typeof action>();
+
   const onHandleColorCreate = () => {
     navigate("create");
   };
 
-  let { manageColors, colors } = useOutletContext<{
+
+  let { manageColors, colors, customColors } = useOutletContext<{
     manageColors: ColorType[];
     colors: ConfigColor[];
+    customColors: ConfigCustomColor;
   }>();
+
+
+  const [formData, setFormData] = useState<any>(
+    customColors || {
+      "active":false,
+      "label":"Custom Colors",
+      "prevImg":""
+      }
+  );
+
+  const handleInputChange = (inputName: string, value: any) => {
+        setFormData((prevData:any) => ({
+        ...prevData,
+        [inputName]: value
+    }));
+  }
+
+  
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const data = {...formData};
+
+    submit(data, { method: "POST" });
+  }
+
 
   useHandleFlashMessage();
 
@@ -84,16 +123,16 @@ export default function MaterialColorIndex() {
   };
 
 
-  const colorsTab = colors ? colors.map((currColor, index) => {
+  const colorsTab = colors ? colors.map((color, index) => {
 
-    let color = manageColors.find(manageColor => manageColor.id == currColor.manageColorId)
+    
     return {
       id: `${index}`,
       title: `${color?.name}`,
-      textColor: `${color?.textColor.codeHex}`,
-      BackgroundColor: `${color?.backgroundColor}`,
-      price: `${currColor?.additionalPrice}$`,
-      isDefault: currColor.isDefault
+      textColor: `${color?.textColor?.codeHex}`,
+      BackgroundColor: `${color?.pattern?.codeHex}`,
+      price: `${color?.additionalPrice}$`,
+      isDefault: color.isDefault
     }
   }) : [];
 
@@ -180,11 +219,69 @@ export default function MaterialColorIndex() {
         </IndexTable>
       </BoxBackground>
 
+      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+        <BoxBackground>
+          <Form onSubmit={handleFormSubmit} method="POST">
+            <Box paddingInline="300" paddingBlock="1000">
+              <Box paddingBlockEnd="600">
+                <InlineStack blockAlign="center" gap="200">
+                  <Text as="strong" variant="headingMd">
+                    Custum color
+                  </Text>
+                  <ReactSwitchCustom
+                    checked={formData.active}
+                    setChecked={(value: boolean) => {
+                          handleInputChange('active', value);
+                    }}
+                  />
+                </InlineStack>
+              </Box>
+              {formData.active && (
+                <Grid gap={{ lg: "30px" }}>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                      <TextField
+                        label="Label"
+                        value={`${formData.label}`}
+                        onChange={(value) => {
+                          handleInputChange('label', value);
+                        }}
+                        autoComplete="on"
+                        error={getError(actionData, "label")}
+                      />
+                    
+                  </Grid.Cell>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <FileInput error={getError(actionData, "image")} title="Preview Image"
+                    path={formData.prevImg} handlePath={(value: string) => {
+                      handleInputChange('prevImg', value);
+                    }} />
+                    
+                  </Grid.Cell>
+                 
+                </Grid>
+              )}
+            </Box>
+            <Divider borderWidth="050" />
+            <Box paddingInline="300" paddingBlock="300">
+              <InlineStack align="end" gap="600">
+                <BiSaveBtn isLoading={isSubmitting} title="Save" />
+              </InlineStack>
+            </Box>
+          </Form>
+        </BoxBackground>
+      </SpacingBackground>
     
     </div>
   );
 }
 
+const formSchema = z.object({
+  label: z.string({ required_error: "Label is required" }),
+  prevImg: z.string({ required_error: "Preview image is required" }),
+  active: z.any().transform(booleanTransform).pipe(z.boolean())
+})
+
+  
 
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -222,6 +319,36 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       return json({
         ...jFlashMessage("Default color is defined successfull"),
       });
+      break;
+    }
+    
+    case "POST": {
+      const submission = parseWithZod(formData, { schema: formSchema });
+
+      if (submission.status !== "success") {
+        return json({ status: false, message: null, errors: submission.error });
+      }
+
+      let customColor: ConfigCustomColor = submission.value as ConfigCustomColor;
+      if (customColor) {
+        let res = await MaterialColorService.editCustom(
+          configId,
+          session.id,
+          mId,
+          customColor,
+        ); // Custom Size  updated is completed successfully
+        return res
+          ? json({
+              ...jFlashMessage(
+                "Custom color  updated is completed successfully",
+              ),
+            })
+          : json({
+              ...jFlashMessage("Errors on color updating", "error"),
+            });
+      } else {
+        return;
+      }
       break;
     }
     default:

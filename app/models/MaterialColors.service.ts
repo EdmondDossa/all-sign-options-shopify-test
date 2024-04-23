@@ -1,4 +1,4 @@
-import { ConfigColor } from "~/types/ConfigDataType";
+import { ConfigColor, ConfigCustomColor } from "~/types/ConfigDataType";
 import ConfigurationService from "./Configuration.service";
 import { ConfigurationType } from "~/types/ConfigurationType";
 
@@ -7,7 +7,7 @@ export default class MaterialColorService {
     sessionId: string,
     configurationId: number,
     materialId: number,
-  ): Promise<ConfigColor[] | null> {
+  ): Promise<{allColors: ConfigColor[], customColors: ConfigCustomColor} | null> {
     try {
       let configuration: ConfigurationType =
         await ConfigurationService.getConfiguration(configurationId, sessionId);
@@ -34,15 +34,15 @@ export default class MaterialColorService {
       let materialData = configuration["data"]["materials"][materialId]["data"];
       if (materialData instanceof Object && "colors" in materialData) {
         const colors =
-          configuration["data"]["materials"][materialId]["data"]["colors"];
-        configuration["data"]["materials"][materialId]["data"]["colors"] = [
+          configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"];
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"] = [
           ...(colors || []),
           color,
         ];
       } else {
         configuration["data"]["materials"][materialId]["data"] = {
           ...(materialData || {}),
-          colors: [color],
+          colors: {customColors:{}, allColors: [color]},
         };
       }
 
@@ -53,7 +53,49 @@ export default class MaterialColorService {
         );
 
         return Promise.resolve(
-          configuration["data"]["materials"][materialId]["data"]["colors"],
+          configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"],
+        );
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error colors output:", error);
+      return Promise.resolve(null);
+    }
+  }
+
+  static async editCustom(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,
+    color: ConfigCustomColor,
+  ): Promise<ConfigCustomColor | null> {
+
+    try {
+      let configuration: ConfigurationType =
+        await ConfigurationService.getConfiguration(configurationId, sessionId);
+      let materialData = configuration["data"]["materials"][materialId]["data"];
+      if (materialData instanceof Object && "colors" in materialData) {
+        const colors =
+          configuration["data"]["materials"][materialId]["data"]["colors"]["customColors"];
+        configuration["data"]["materials"][materialId]["data"]["colors"]["customColors"] = {
+          ...(colors || {}),
+          color}
+      
+      } else {
+        configuration["data"]["materials"][materialId]["data"] = {
+          ...(materialData || {}),
+          colors: {customColors:color, allColors:[]},
+        };
+      }
+
+      if (configuration["data"]["materials"][materialId]["data"]["colors"]) {
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
+
+        return Promise.resolve(
+          configuration["data"]["materials"][materialId]["data"]["colors"]["customColors"],
         );
       }
       return Promise.resolve(null);
@@ -74,12 +116,12 @@ export default class MaterialColorService {
       let configuration: ConfigurationType =
         await ConfigurationService.getConfiguration(configurationId, sessionId);
       let colors: ConfigColor[] | null =
-        configuration["data"]["materials"][materialId]["data"]["colors"];
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"];
       if (
         Array.isArray(colors) &&
-        configuration["data"]["materials"][materialId]["data"]["colors"][id]
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"][id]
       ) {
-        configuration["data"]["materials"][materialId]["data"]["colors"][id] =
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"][id] =
           color;
         configuration = await ConfigurationService.updateConfiguration(
           configuration,
@@ -106,12 +148,12 @@ export default class MaterialColorService {
         sessionId,
       );
       let colors: ConfigColor[] | null =
-        configuration["data"]["materials"][materialId]["data"]["colors"];
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"];
       if (
         Array.isArray(colors) &&
-        configuration["data"]["materials"][materialId]["data"]["colors"][id]
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"][id]
       ) {
-        configuration["data"]["materials"][materialId]["data"]["colors"] =
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"] =
           colors.filter((curr, index) => index != id);
         configuration = await ConfigurationService.updateConfiguration(
           configuration,
@@ -138,12 +180,12 @@ export default class MaterialColorService {
         sessionId,
       );
       let colors: ConfigColor[] | null =
-        configuration["data"]["materials"][materialId]["data"]["colors"];
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"];
       if (
         Array.isArray(colors) &&
-        configuration["data"]["materials"][materialId]["data"]["colors"][id]
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"][id]
       ) {
-        configuration["data"]["materials"][materialId]["data"]["colors"] =
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"] =
           colors.map((curr, index) =>
             index == id
               ? { ...curr, isDefault: true }
