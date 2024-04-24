@@ -22,8 +22,8 @@ import { Form, redirect, useActionData, useNavigate, useNavigation, useOutletCon
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
-import { FixingMethodType } from "~/types/SettingsType";
-import { ConfigFixingMethod } from "~/types/ConfigDataType";
+import { FixingMethodType, ShapeType } from "~/types/SettingsType";
+import { ConfigFixingMethod, ConfigSize } from "~/types/ConfigDataType";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";
@@ -35,14 +35,19 @@ import { flashMessage } from "~/utils/message-flash";
 import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { jsonTransform } from "~/utils/transfomerZod";
+import { ToggleButton } from "~/components/buttons/ToggleButton";
+import { MultiCombobox } from "~/components/inputs/MultiCombobox";
 
 export default function MaterialFixingMethod() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  let { manageFixingMethods, fixingMethods } = useOutletContext<{
+  let { manageFixingMethods, fixingMethods,configSizes, manageShapes } = useOutletContext<{
     manageFixingMethods: FixingMethodType[];
     fixingMethods: ConfigFixingMethod[];
+    configSizes: ConfigSize[];
+    manageShapes: ShapeType[];
+
   }>();
   const [searchParams] = useSearchParams();
   const id = parseInt(searchParams.get("id") || "");
@@ -58,6 +63,8 @@ export default function MaterialFixingMethod() {
         configFixingMethods: [ {
           fixingMethodId:  0,
           additionalPrice: 0,
+          excludeSizes: [],
+          excludeShapes: [],
           isDefault: false
         }]
       },
@@ -71,8 +78,9 @@ export default function MaterialFixingMethod() {
       formData.configFixingMethods.push({
         fixingMethodId:0,
         additionalPrice: 0,
-        isDefault: false
-        
+        isDefault: false,
+        excludeSizes: [],
+        excludeShapes: []
       });
     }
 
@@ -101,6 +109,8 @@ export default function MaterialFixingMethod() {
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
+  const sizes = configSizes ? configSizes.map((configSize,index) => ({ label: configSize.label||'', value: `${index}` })) : [];
+  const shapes = manageShapes ? manageShapes.map((manageShape,index) => ({ label: manageShape.name||'', value: `${index}` })) : [];
 
 
  
@@ -117,14 +127,36 @@ export default function MaterialFixingMethod() {
           <Form onSubmit={handleSubmit} method="POST">
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
-              {
-                    formData.configFixingMethods.map((fixingMethod, index) => (
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                      
-                        <InlineStack wrap={false} as="div" gap="400">
-                          <Box width="52%">
 
-                          <Select
+
+              {formData.configFixingMethods.map((fixingMethod, index) => (
+                  
+                  <>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                      <Divider borderWidth="100" />
+                      <Divider borderWidth="100" />
+                    </Grid.Cell>
+                    <Grid.Cell
+                    columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                  >
+                      <BlockStack>
+                        
+                      <Bleed marginBlockEnd="400">
+                            <InlineStack wrap={false} align="end"  gap="200">
+                          <RemoveNowIconBtn
+                            onClick={() => handleDeleteItem(index)}
+                            />
+                          </InlineStack>
+                        </Bleed>
+                        <Box width="100%">
+                      
+                            
+                        <Grid>
+                       
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                                                      <Select
                         label="Select fixing method"
                         options={options}
                         value={`${fixingMethod.fixingMethodId}`}
@@ -135,10 +167,11 @@ export default function MaterialFixingMethod() {
                         }}
                         error={getError(actionData, `manageFixingMethods.${index}.fixingMethodId`)}
                       />
-                          </Box>
-                          <Box width="52%">
-                            
-                      <TextField
+                          </Grid.Cell>
+                          <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                          >
+                             <TextField
                         label="Additional price"
                         type="number"
                         value={`${fixingMethod.additionalPrice}`}
@@ -150,24 +183,61 @@ export default function MaterialFixingMethod() {
                         autoComplete="off"
                               error={getError(actionData, `manageFixingMethods.${index}.additionalPrice`)}
                         />
-                     
-                          </Box>
-                          <Box width="1%">
-                            <Bleed marginInlineStart="400">
-                              
-                            <RemoveNowIconBtn onClick={() => handleDeleteItem(index)} />
-                          </Bleed>
-                          </Box>
-                             
-                          
-                        </InlineStack>
-                        
-                
+                          </Grid.Cell>
+                          <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <BlockStack gap="300">
+                    <Text as="strong" variant="headingMd">
+                      Exclude size
+                    </Text>
+                    <MultiCombobox
+                      labelHidden={true}
+                      helpText="exclude the sizes of this border"
+                      label="Exclude size"
+                      placeholder="Select exclude size"
+                      selectedOptions={fixingMethod.excludeSizes.map((curr) => `${curr}`)}
+                      data={sizes}
+                      setSelectedOptions={(value:any) => {
+                        fixingMethod.excludeSizes = value.map((curr:any) => parseFloat(curr));
+                        formData.configFixingMethods[index] = fixingMethod;
+                        setFormData({ ...formData });
+                      }}
+                    ></MultiCombobox>
+                  </BlockStack>
                 </Grid.Cell>
-                         ))
-                        }
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <BlockStack gap="300">
+                    <Text as="strong" variant="headingMd">
+                      Exclude shapes
+                    </Text>
+                    <MultiCombobox
+                      labelHidden={true}
+                      helpText="exclude the shapes of this border"
+                      label="Exclude shapes"
+                      placeholder="Select excluded shapes"
+                      selectedOptions={fixingMethod.excludeShapes.map((curr) => `${curr}`)}
+                      data={shapes}
+                      setSelectedOptions={(value:any) => {
+                        fixingMethod.excludeShapes = value.map((curr:any) => parseFloat(curr));
+                        formData.configFixingMethods[index] = fixingMethod;
+                        setFormData({ ...formData });
+                      }}
+                    ></MultiCombobox>
+                  </BlockStack>
+                </Grid.Cell>
+                         
+        
+                              
+                        </Grid>
+                      </Box>
+
+                  
+                    </BlockStack>
+                  </Grid.Cell>
+                  </>
+                ))}
+            
                {Number.isNaN(id) && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                <Box width="150px">
+                <Box width="300px">
                     <BiAddBtn title="Add fixing method" handleClick={()=>handleAddItem()} />
                   </Box>
                 </Grid.Cell>}
@@ -206,8 +276,10 @@ const formSchema = z.object({
   configFixingMethods: z.any().transform(jsonTransform).pipe(
     z.object({
       fixingMethodId: z.number({ required_error: "Material fixing method is required" }),
-    additionalPrice: z.number({ required_error: "Material fixing method  price is required" }),
-    isDefault: z.boolean().optional()
+      additionalPrice: z.number({ required_error: "Material fixing method  price is required" }),
+      excludeShapes: z.number().array(),
+      excludeSizes: z.number().array(),
+      isDefault: z.boolean().optional()
     }).array()
   )
 });

@@ -66,6 +66,8 @@ export interface ConfigSize {
  export interface ConfigFixingMethod {
     fixingMethodId: number;
     additionalPrice: number;
+    excludeSizes: number[];
+    excludeShapes: number[];
     isDefault?: boolean;
   }
   
