@@ -1,4 +1,4 @@
-import { ConfigCustomSize, ConfigSize, Material, MaterialSimple } from "~/types/ConfigDataType";
+import { ConfigCustomSize, ConfigSize, Material, MaterialSimple, configSizeThickness } from "~/types/ConfigDataType";
 import ConfigurationService from "./Configuration.service";
 import { ConfigurationType } from '~/types/ConfigurationType';
 
@@ -36,7 +36,7 @@ export default class MaterialSizeService {
           configuration["data"]["materials"][materialId]["data"]["sizes"]={...sizes||{},allSizes:[size]}
         }
       } else {
-        configuration["data"]["materials"][materialId]["data"] = { ...materialData||{},'sizes':{allSizes:[size]}}
+        configuration["data"]["materials"][materialId]["data"] = { ...materialData||{},'sizes':{allSizes:[size], customSize:null, thickness:null}}
       }
 
       if (configuration["data"]["materials"][materialId]["data"]["sizes"]["allSizes"]) {
@@ -53,32 +53,33 @@ export default class MaterialSizeService {
   }
 
 
-  static async addCustomSize(
+  static async addCustomSizeAndThickness(
     configurationId: number,
     sessionId: string,
     materialId: number,
-    size: ConfigCustomSize
-  ): Promise<ConfigCustomSize | null> {
+    size: ConfigCustomSize,
+    thickness: configSizeThickness
+  ): Promise<any | null> {
     try {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let materialData = configuration["data"]["materials"][materialId]["data"];
       if (materialData instanceof Object && "sizes" in materialData) {
         let sizes = configuration["data"]["materials"][materialId]["data"]["sizes"];
         if (sizes instanceof Object && "customSize" in sizes) {
-          const customSize:ConfigCustomSize|null = configuration["data"]["materials"][materialId]["data"]["sizes"]["customSize"];
+          configuration["data"]["materials"][materialId]["data"]["sizes"]["thickness"] = thickness;
           configuration["data"]["materials"][materialId]["data"]["sizes"]["customSize"] = size;
         } else {
-          configuration["data"]["materials"][materialId]["data"]["sizes"]={...sizes||{},customSize:size}
+          configuration["data"]["materials"][materialId]["data"]["sizes"] = { ...sizes || {}, customSize: size, thickness: thickness };
         }
       } else {
-        configuration["data"]["materials"][materialId]["data"] = { ...materialData||{},'sizes':{customSize:size}}
+        configuration["data"]["materials"][materialId]["data"] = { ...materialData||{},'sizes':{customSize:size, thickness:thickness, allSizes:[]}}
       }
 
       if (configuration["data"]["materials"][materialId]["data"]["sizes"]["customSize"]) {
         
         configuration = await ConfigurationService.updateConfiguration(configuration, sessionId);
         
-        return Promise.resolve(configuration["data"]["materials"][materialId]["data"]["sizes"]["customSize"]);
+        return Promise.resolve(configuration["data"]["materials"][materialId]["data"]["sizes"]);
       }
       return Promise.resolve(null);
     } catch (error) {

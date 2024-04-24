@@ -39,7 +39,7 @@ import {
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { ConfigCustomSize, ConfigSize } from "~/types/ConfigDataType";
+import { ConfigCustomSize, ConfigSize, configSizeThickness } from "~/types/ConfigDataType";
 import { SizeType } from "~/types/ManagePropertyType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { getError } from "~/utils/error-getting";
@@ -51,13 +51,17 @@ import { parseWithZod } from "@conform-to/zod";
 import MaterialSizeService from "~/models/MateriaSizeService.service";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
+import { BiAddBtn } from "~/components/buttons/BiAddBtn";
+import { jsonTransform } from "~/utils/transfomerZod";
+import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
 
 export default function MaterialSizeIndex() {
   const submit = useSubmit();
-  let { customSize, allSizes, manageSizes } = useOutletContext<{
+  let { customSize, allSizes, thickness } = useOutletContext<{
     customSize: ConfigCustomSize;
     allSizes: ConfigSize[];
-    manageSizes: SizeType[];
+    thickness: configSizeThickness;
   }>();
 
   useHandleFlashMessage();
@@ -95,79 +99,73 @@ export default function MaterialSizeIndex() {
     navigate("edit");
   };
 
-  const [formData, setFormData] = useState<ConfigCustomSize>(
-    customSize
-      ? (customSize as ConfigCustomSize)
-      : {
-          active: false,
-          width: {
-            label: "",
-            min: 0,
-            max: 0,
-          },
-          height: {
-            label: "",
-            min: 0,
-            max: 0,
-          },
+  const [formData, setFormData] = useState<{thickness: configSizeThickness; customSize: ConfigCustomSize}>(
+    {
+      thickness: thickness || {
+        active: false,
+        values: []
+      },
+      customSize: customSize ||  {
+        active: false,
+        width: {
+          label: "Custom width",
+          min: 0,
+          max: 0,
         },
+        height: {
+          label: "Custom height",
+          min: 0,
+          max: 0,
+        },
+      }
+   }
   );
 
-  const handleActive = (value: boolean) =>
-    setFormData({ ...formData, active: value });
-
-  const handleWidthLabel = (value: string) => {
-    formData.width.label = value;
-    setFormData({ ...formData });
-  };
-  const handleWidthMin = (value: string) => {
-    formData.width.min = parseFloat(value);
-    setFormData({ ...formData });
-  };
-  const handleWidthMax = (value: string) => {
-    formData.width.max = parseFloat(value);
-    setFormData({ ...formData });
+  const handleInputChange = (inputName: string, value: any) => {
+    setFormData((prevData: any) => ({
+      ...prevData,
+      [inputName]: value,
+    }));
   };
 
-  const handleHeightLabel = (value: string) => {
-    formData.height.label = value;
+
+
+
+  const handleAddThickness = () => {
+    if (!formData.thickness.values) {
+      formData.thickness.values = [];
+    } 
+    formData.thickness.values.push(0);
+
     setFormData({ ...formData });
-  };
-  const handleHeightMin = (value: string) => {
-    formData.height.min = parseFloat(value);
-    setFormData({ ...formData });
-  };
-  const handleHeightMax = (value: string) => {
-    formData.height.max = parseFloat(value);
-    setFormData({ ...formData });
-  };
+  }
+  
+
+  const  handleDeleteThickness  = (index: number) => {
+    formData.thickness.values.splice(index, 1);
+    setFormData({ ...formData});
+  }
+
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
     submit(
       {
-        active: formData.active,
-        width: JSON.stringify(formData.width),
-        height: JSON.stringify(formData.height),
+        thickness: JSON.stringify(formData.thickness),
+        customSize: JSON.stringify(formData.customSize),
       },
       { method: "POST" },
     );
   };
 
   const sizes = allSizes?.map((currSize, index) => {
-    let manageSize = manageSizes.find(
-      (currMsize) => currMsize.id == currSize.manageSizeId,
-    );
-    let thickness: { active: boolean; value: number } | undefined =
-      manageSize?.thickness;
     return {
-      id: `${index}mm`,
-      title: manageSize?.label,
-      width: `${manageSize?.width}mm`,
-      height: `${manageSize?.height}mm`,
+      id:`${index}`,
+      title: currSize?.label,
+      width: `${currSize?.width}mm`,
+      height: `${currSize?.height}mm`,
       price: `${currSize?.basePrice}$`,
-      thickness: thickness?.active ? `${thickness.value}mm` : "None",
       isDefault: currSize?.isDefault
     };
   });
@@ -178,7 +176,7 @@ export default function MaterialSizeIndex() {
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
     useIndexResourceState(sizes);
   const rowMarkup = sizes?.map(
-    ({ id, title, width, height, thickness, price, isDefault  }, index) => (
+    ({id,title, width, height, price, isDefault  }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
@@ -193,9 +191,7 @@ export default function MaterialSizeIndex() {
         <IndexTable.Cell>
           <Badge tone="critical">{height}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell>
-          <Badge>{thickness}</Badge>
-        </IndexTable.Cell>
+       
         <IndexTable.Cell>
           <Badge tone="critical">{price}</Badge>
         </IndexTable.Cell>
@@ -250,7 +246,6 @@ export default function MaterialSizeIndex() {
             { title: "Title" },
             { title: "Width" },
             { title: "Height" },
-            { title: "Thickness" },
             { title: "price" },
             { title: "Default" },
             { title: "Action" },
@@ -264,6 +259,53 @@ export default function MaterialSizeIndex() {
       <SpacingBackground width="100%" height="auto" margin="16px 0px ">
         <BoxBackground>
           <Form onSubmit={handleSubmit} method="POST">
+          <Box paddingInline="300" paddingBlock="1000">
+              <Box paddingBlockEnd="600">
+                <InlineStack blockAlign="center" gap="200">
+                  <Text as="strong" variant="headingMd">
+                    Enable Thickness
+                  </Text>
+                  <ReactSwitchCustom
+                    checked={formData.thickness.active}
+                    setChecked={(value: boolean) => {
+                      formData.thickness.active = value;
+                      handleInputChange("thickness", formData.thickness);
+                    }}
+                  />
+                </InlineStack>
+              </Box>
+              {formData.thickness.active && (
+                <BlockStack gap="300">
+                  <Grid gap={{ lg: "30px" }}>
+                    {formData.thickness.values?.map((thicknessValue: any, index: number) => (
+                        <Grid.Cell columnSpan={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}>
+                        <InlineStack gap={"100"} blockAlign="center"  wrap={false}>
+                          <TextField
+                            labelHidden
+                            type="number"
+                            autoComplete="on"
+                            onChange={(value) => {
+                              formData.thickness.values[index] = parseInt(value);
+                              handleInputChange("thickness", formData.thickness);
+                            }}
+                            label="Value"
+                            value={`${thicknessValue}`} 
+                          />
+                           <RemoveNowIconBtn onClick={() => handleDeleteThickness(index)} />
+                        
+
+                        </InlineStack>
+                       
+                        </Grid.Cell>
+                      ))}
+                  </Grid>  
+                  <Box width="300px">
+                  <BiAddBtn title="Add Thickness" handleClick={()=>handleAddThickness()} />
+                  </Box>
+                </BlockStack>
+              )}
+            </Box>
+            <Divider borderWidth="050" />
             <Box paddingInline="300" paddingBlock="1000">
               <Box paddingBlockEnd="600">
                 <InlineStack blockAlign="center" gap="200">
@@ -271,39 +313,51 @@ export default function MaterialSizeIndex() {
                     Custum Size
                   </Text>
                   <ReactSwitchCustom
-                    checked={formData.active}
-                    setChecked={handleActive}
+                    checked={formData.customSize.active}
+                    setChecked={(value: boolean) => {
+                      formData.customSize.active = value;
+                      handleInputChange("customSize", formData.customSize);
+                    }}
                   />
                 </InlineStack>
               </Box>
-              {formData.active && (
+              {formData.customSize.active && (
                 <Grid gap={{ lg: "30px" }}>
                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                     <BlockStack gap="800">
                       <TextField
                         label="Width label"
-                        value={`${formData.width.label}`}
-                        onChange={handleWidthLabel}
+                        value={`${formData.customSize.width.label}`}
+                        onChange={(value) => {
+                          formData.customSize.width.label = value;
+                          handleInputChange("customSize", formData.customSize);
+                        }}
                         autoComplete="on"
-                        error={getError(actionData, "width.label")}
+                        error={getError(actionData, "customSize.width.label")}
                       />
                       <TextField
                         size="medium"
                         label="Min width"
                         type="number"
-                        value={`${formData.width.min}`}
-                        onChange={handleWidthMin}
+                        value={`${formData.customSize.width.min}`}
+                        onChange={(value) => {
+                          formData.customSize.width.min = parseInt(value);
+                          handleInputChange("customSize", formData.customSize);
+                        }}
                         autoComplete="on"
-                        error={getError(actionData, "width.min")}
+                        error={getError(actionData, "customSize.width.min")}
                       />
                       <TextField
                         size="medium"
                         label="Max width"
                         type="number"
-                        value={`${formData.width.max}`}
-                        onChange={handleWidthMax}
+                        value={`${formData.customSize.width.max}`}
+                        onChange={(value) => {
+                          formData.customSize.width.max = parseInt(value);
+                          handleInputChange("customSize", formData.customSize);
+                        }}
                         autoComplete="on"
-                        error={getError(actionData, "width.max")}
+                        error={getError(actionData, "customSize.width.max")}
                       />
                     </BlockStack>
                   </Grid.Cell>
@@ -311,29 +365,38 @@ export default function MaterialSizeIndex() {
                     <BlockStack gap="800">
                       <TextField
                         label="Height label"
-                        value={`${formData.height.label}`}
-                        onChange={handleHeightLabel}
+                        value={`${formData.customSize.height.label}`}
+                        onChange={(value) => {
+                          formData.customSize.height.label = value;
+                          handleInputChange("customSize", formData.customSize);
+                        }}
                         autoComplete="on"
-                        error={getError(actionData, "height.label")}
+                        error={getError(actionData, "customSize.height.label")}
                       />
 
                       <TextField
                         size="medium"
                         label="Min height"
                         type="number"
-                        value={`${formData.height.min}`}
-                        onChange={handleHeightMin}
+                        value={`${formData.customSize.height.min}`}
+                        onChange={(value) => {
+                          formData.customSize.height.min = parseInt(value);
+                          handleInputChange("customSize", formData.customSize);
+                        }}
                         autoComplete="on"
-                        error={getError(actionData, "height.min")}
+                        error={getError(actionData, "customSize.height.min")}
                       />
                       <TextField
                         size="medium"
                         label="Max height"
                         type="number"
-                        value={`${formData.height.max}`}
-                        onChange={handleHeightMax}
+                        value={`${formData.customSize.height.max}`}
+                        onChange={(value) => {
+                          formData.customSize.height.max = parseInt(value);
+                          handleInputChange("customSize", formData.customSize);
+                        }}
                         autoComplete="on"
-                        error={getError(actionData, "height.max")}
+                        error={getError(actionData, "customSize.height.max")}
                       />
                     </BlockStack>
                   </Grid.Cell>
@@ -353,47 +416,50 @@ export default function MaterialSizeIndex() {
   );
 }
 
-const formSchema = z.object({
-  active: z
-    .any()
-    .transform((val) => `${val}`.toLowerCase() == "true")
-    .pipe(z.boolean()),
-  width: z
-    .any()
-    .transform((value) => JSON.parse(value as string) || {})
-    .pipe(
-      z.object({
-        label: z
-          .string({ required_error: "Width label is required" })
-          .min(3, "Width label is too short")
-          .max(100, "Width label is too long"),
-        min: z.number({
-          required_error: "Width min is required",
-        }),
-        max: z.number({
-          required_error: "Width max is required",
-        }),
-      }),
-    ),
-  height: z
-    .any()
-    .transform((value) => JSON.parse(value as string) || {})
-    .pipe(
-      z.object({
-        label: z
-          .string({ required_error: "Height label is required" })
-          .min(3, "Height label is too short")
-          .max(100, "Height label is too long"),
-        min: z.number({
-          required_error: "Height min is required",
-        }),
-        max: z.number({
-          required_error: "Height max is required",
-        }),
-      }),
-    ),
-});
 
+
+
+
+
+const formSchema = z.object({
+  thickness: z.any().transform(jsonTransform).pipe(z.object({
+    active: z.boolean(),
+    values: z.number().array()
+  })),
+
+  customSize: z.any().transform(jsonTransform).pipe(
+    z.object({
+      active:z.boolean(),
+      width:
+          z.object({
+            label: z
+              .string({ required_error: "Width label is required" })
+              .min(3, "Width label is too short")
+              .max(100, "Width label is too long"),
+            min: z.number({
+              required_error: "Width min is required",
+            }),
+            max: z.number({
+              required_error: "Width max is required",
+            }),
+          }),
+      
+      height: z.object({
+            label: z
+              .string({ required_error: "Height label is required" })
+              .min(3, "Height label is too short")
+              .max(100, "Height label is too long"),
+            min: z.number({
+              required_error: "Height min is required",
+            }),
+            max: z.number({
+              required_error: "Height max is required",
+            }),
+          })
+       
+    })
+  )
+})
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
 
@@ -440,22 +506,23 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         return json({ status: false, message: null, errors: submission.error });
       }
 
-      let customSize: ConfigCustomSize = submission.value as ConfigCustomSize;
+      let {customSize, thickness}:{customSize:ConfigCustomSize, thickness:configSizeThickness} = submission.value;
       if (customSize) {
-        let res = await MaterialSizeService.addCustomSize(
+        let res = await MaterialSizeService.addCustomSizeAndThickness(
           configId,
           session.id,
           mId,
           customSize,
+          thickness
         ); // Custom Size  updated is completed successfully
         return res
           ? json({
               ...jFlashMessage(
-                "Custom Size  updated is completed successfully",
+                "Custom Size and thickness  updated is completed successfully",
               ),
             })
           : json({
-              ...jFlashMessage("Errors on Custom Size  upadating", "error"),
+              ...jFlashMessage("Errors on Custom Size and thickness  upadating", "error"),
             });
       } else {
         return;

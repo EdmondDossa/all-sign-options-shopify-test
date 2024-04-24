@@ -5,7 +5,7 @@ import {Outlet, useLoaderData} from "@remix-run/react";
 import MaterialSizeService from "~/models/MateriaSizeService.service";
 import SizeService from "~/models/Size.service";
 import { authenticate } from "~/shopify.server";
-import { ConfigCustomSize, ConfigSize } from "~/types/ConfigDataType";
+import { ConfigCustomSize, ConfigSize, configSizeThickness } from "~/types/ConfigDataType";
 import { SizeType } from "~/types/ManagePropertyType";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -16,23 +16,23 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   let materialSizes:{
     customSize: ConfigCustomSize;
+    thickness: configSizeThickness;
     allSizes: ConfigSize[];
   } | null = null;
   
-  const manageSizes:SizeType[]|null =  await SizeService.getSizes(session.id)
 
   if (!Number.isNaN(configId)  && !Number.isNaN(mId)) {
     materialSizes = await MaterialSizeService.getAll(session.id, configId, mId);
 
   }
-  const {customSize,allSizes} = materialSizes||{}
-  return json({customSize, allSizes, manageSizes });
+  const {customSize, allSizes, thickness} = materialSizes||{}
+  return json({customSize, allSizes, thickness });
 };
 
 export default function MaterialSizes() {
-  let  {customSize, allSizes, manageSizes } = useLoaderData<typeof loader>();
+  let  {customSize, allSizes, thickness } = useLoaderData<typeof loader>();
   return (
-      <Outlet context={  {customSize, allSizes, manageSizes } }/>
+      <Outlet context={  {customSize, allSizes, thickness } }/>
   );
 }
 

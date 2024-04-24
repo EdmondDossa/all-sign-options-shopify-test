@@ -1,3 +1,4 @@
+import { number } from 'zod';
 
   
  export interface ConfigCustomSize {
@@ -13,6 +14,11 @@
       max: number;
     };
  }
+
+ export interface configSizeThickness {
+  active: boolean;
+  values: Array<any>;
+ }
   
  export interface ConfigCustomColor {
   active: boolean;
@@ -20,27 +26,31 @@
    prevImg: string;
 }
   
- export interface ConfigSize {
-    manageSizeId: number;
+export interface ConfigSize {
+    label: string;
+    width:number,
+    height:number,
     textNumber: number; 
     maxTextChar: number;
     charPrice: number;
-   basePrice: number;
-   startPriceAtChar: number;
-   isDefault?: boolean;
+    basePrice: number;
+    startPriceAtChar: number;
+    isDefault?: boolean;
   }
   
  export interface ConfigBorder {
     manageBorderId: number;
     additionalPrice: number;
     excludeSizes: number[];
-    settings: {
-      colors: Array<{ codeHex: string; name: string; }>;
-      enableBorderWidth: boolean;
-      enableBorderColor: boolean;
-    };
+    excludeShapes: number[];
     isDefault?: boolean;
-  }
+ }
+  
+ export interface BorderSettingType {
+  colors:Array<{ codeHex: string; name: string; }>;
+  enableBorderWidth:boolean,
+  enableBorderColor:boolean,
+ }
   
  export interface ConfigShape {
     shapeId: number;

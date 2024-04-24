@@ -8,8 +8,10 @@ import {
   Checkbox,
   ChoiceList,
   Divider,
+  Grid,
   IndexFilters,
   IndexTable,
+  InlineError,
   InlineGrid,
   InlineStack,
   Layout,
@@ -30,20 +32,30 @@ import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { BorderType } from "~/types/SettingsType";
 import { SizeType } from "~/types/ManagePropertyType";
-import { ConfigBorder } from "~/types/ConfigDataType";
+import { BorderSettingType, ConfigBorder } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { jFlashMessage } from "~/utils/message-flash";
 import MaterialBorderService from "~/models/MaterialBorderService.service";
 import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { getError } from "~/utils/error-getting";
+import { FileInput } from "~/components/inputs/FileInput";
+import { TextColorField } from "~/components/inputs/TextColorField";
+import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
+import { BiAddBtn } from "~/components/buttons/BiAddBtn";
+import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { z } from "zod";
+import { parseWithZod } from "@conform-to/zod";
+import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
 
 export default function MaterialBorderIndex() {
   const submit = useSubmit();
 
-  let {  manageBorders, borders } = useOutletContext<{
+  let {  manageBorders, borders,borderSetting } = useOutletContext<{
     manageBorders: BorderType[];
     borders: ConfigBorder[];
+    borderSetting: BorderSettingType;
   }>();
 
   useHandleFlashMessage();
@@ -79,6 +91,49 @@ export default function MaterialBorderIndex() {
   const handleEdit = () => {
     navigate("edit");
   };
+
+  const actionData = useActionData<typeof action>();
+
+  console.log("actionData Data data", actionData); 
+
+  const [formData, setFormData] = useState<any>(
+      borderSetting || {
+        colors:[],
+        enableBorderWidth:true,
+        enableBorderColor:true,
+      }
+  );
+
+  
+
+  
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const data = { ...formData, colors: JSON.stringify(formData.colors) };
+
+    submit(data, { method: "POST" });
+  }
+
+
+  const handleAddColor = () => {
+    if (!formData.colors) {
+      formData.colors = [];
+    } 
+    formData.colors.push({
+      name: "",
+      codeHex: "#FFFFFF"
+    });
+
+    setFormData({ ...formData });
+  }
+  
+
+  const  handleDeleteColor = (index: number) => {
+    formData.colors.splice(index, 1);
+    setFormData({ ...formData});
+  }
+
 
   console.log("data", borders, manageBorders);
 
@@ -177,9 +232,108 @@ export default function MaterialBorderIndex() {
           {rowMarkup}
         </IndexTable>
       </BoxBackground>
+
+      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+        <BoxBackground>
+          <Form onSubmit={handleFormSubmit} method="POST">
+            <Box paddingInline="300" paddingBlock="1000">
+                <BlockStack gap="300">
+                    <Text as="strong" variant="headingMd">
+                      Border settings
+                    </Text>
+                    <BlockStack gap="300">
+                    <Text as="h3" variant="bodyMd" fontWeight="bold"> Define text colors</Text>
+                    <Grid gap={{ lg: "30px" }}>
+                      {formData.colors?.map((color: any, index: number) => (
+                          <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 4, xl: 4 }}>
+                          <InlineStack gap={"300"} blockAlign="end" align="space-between" wrap={false}>
+                            <TextField
+                              autoComplete="on"
+                              onChange={(value) => {
+                                color.name = value;
+                                formData.colors[index] = color;
+                                setFormData({ ...formData });
+                              }}
+                              label="Name"
+                              value={color.name} 
+                            />
+                            <InlineStack gap={"300"} blockAlign="center" align="space-between" wrap={false}>
+                              
+                            <TextColorField  color={color.codeHex} setColor={(value: any) => {
+                                color.codeHex = value;
+                                formData.colors[index] = color;
+                              setFormData({ ...formData });
+                              
+                              }}
+                              />
+                            <DeleteNowIconBtn onClick={() => handleDeleteColor(index)} />
+                          </InlineStack>
+
+                          </InlineStack>
+                          {true && (
+                              <InlineError message={getError(
+                                actionData,
+                                `colors[${index}].name`
+                              )||getError(
+                                actionData,
+                                `colors[${index}].codeHex`
+                              )||''} fieldID="myFieldID" />
+                            )}
+                          </Grid.Cell>
+                        ))}
+                    </Grid>  
+                    <Box width="150px">
+                    <BiAddBtn title="Add color" handleClick={()=>handleAddColor()} />
+                    </Box>
+                  </BlockStack>
+
+                    <InlineStack gap="600">
+                      <InlineStack blockAlign="center" gap="200">
+                        <Text as="strong" variant="headingMd">
+                          Enable border width
+                        </Text>
+                        <ReactSwitchCustom
+                          checked={formData.enableBorderWidth}
+                          setChecked={(value: boolean)=>{formData.enableBorderWidth = value; setFormData({ ...formData });}}
+                        />
+                      </InlineStack>
+
+                      <InlineStack blockAlign="center" gap="200">
+                        <Text as="strong" variant="headingMd">
+                          Enable border color
+                        </Text>
+                        <ReactSwitchCustom
+                          checked={formData.enableBorderColor}
+                          setChecked={(value: boolean)=>{formData.enableBorderColor = value; setFormData({ ...formData });}}
+                        />
+                      </InlineStack>
+                    </InlineStack>
+                  </BlockStack>
+            </Box>
+            <Divider borderWidth="050" />
+            <Box paddingInline="300" paddingBlock="300">
+              <InlineStack align="end" gap="600">
+                <BiSaveBtn isLoading={isSubmitting} title="Save" />
+              </InlineStack>
+            </Box>
+          </Form>
+        </BoxBackground>
+      </SpacingBackground>
     </div>
   );
 }
+
+const formSchema = z.object({
+    colors: z.any().transform(jsonTransform).pipe(z.object({
+      codeHex: z
+        .string({ required_error: "Color  is required" })
+        .min(3, "Color is too short")
+        .max(7, "Color label is too long"),
+      name: z.string({ required_error: "Color name is required" })
+    }).array()),
+    enableBorderWidth: z.any().transform(booleanTransform).pipe(z.boolean()),
+    enableBorderColor: z.any().transform(booleanTransform).pipe(z.boolean()),
+  });
 
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -217,6 +371,35 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       return json({
         ...jFlashMessage("Default border is defined successfull"),
       });
+      break;
+    }
+    case "POST": {
+      const submission = parseWithZod(formData, { schema: formSchema });
+
+      if (submission.status !== "success") {
+        return json({ status: false, message: null, errors: submission.error });
+      }
+
+      let borderSetting: BorderSettingType = submission.value as BorderSettingType;
+      if (borderSetting) {
+        let res = await MaterialBorderService.editSetting(
+          configId,
+          session.id,
+          mId,
+          borderSetting
+        ); // Custom Size  updated is completed successfully
+        return res
+          ? json({
+              ...jFlashMessage(
+                "Border setting  updated is completed successfully",
+              ),
+            })
+          : json({
+              ...jFlashMessage("Errors on setting updating", "error"),
+            });
+      } else {
+        return;
+      }
       break;
     }
     default:

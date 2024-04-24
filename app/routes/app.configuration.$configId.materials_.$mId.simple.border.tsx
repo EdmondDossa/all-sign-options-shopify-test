@@ -2,13 +2,16 @@
 
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import {Outlet, useLoaderData} from "@remix-run/react";
+import MaterialSizeService from "~/models/MateriaSizeService.service";
 import MaterialBorderService from "~/models/MaterialBorderService.service";
+import MaterialShapeService from "~/models/MaterialShape.service";
 import SettingBorderService from "~/models/SettingBorder.service";
+import SettingShapesService from "~/models/SettingShapes.service";
 import SizeService from "~/models/Size.service";
 import { authenticate } from "~/shopify.server";
-import { ConfigBorder, ConfigCustomSize, ConfigSize } from "~/types/ConfigDataType";
+import { ConfigBorder, ConfigCustomSize, ConfigShape, ConfigSize } from "~/types/ConfigDataType";
 import { SizeType } from "~/types/ManagePropertyType";
-import { BorderType } from "~/types/SettingsType";
+import { BorderType, ShapeType } from "~/types/SettingsType";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -16,23 +19,30 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const mId = parseInt(params.mId ?? "");
   console.log('configID materialID', configId, mId);
 
-  let borders: ConfigBorder[] | null = null;
+  let borders = null;
+
+  let borderSetting = null;
+
   
-  const manageSizes: SizeType[] | null = await SizeService.getSizes(session.id)
-  const manageBorders : BorderType[] | null =  await SettingBorderService.get(session.id)
+  let configSizes: ConfigSize[]  = [];
+  const manageBorders: BorderType[] | null = await SettingBorderService.get(session.id)
+  const manageShapes: ShapeType[] | null =  await SettingShapesService.get(session.id)
 
   if ( !Number.isNaN(configId)  && !Number.isNaN(mId) ) {
-    borders = await MaterialBorderService.getAll(session.id, configId, mId);
-
+    const bordersResponse = await MaterialBorderService.getAll(session.id, configId, mId);
+    borders = bordersResponse?.allBorders;
+    borderSetting = bordersResponse?.settings;
+    let materialSizes = await MaterialSizeService.getAll(session.id, configId, mId);
+    configSizes = materialSizes?.allSizes||[];
   }
   
-  return json({manageSizes,manageBorders, borders });
+  return json({configSizes,manageBorders, borders ,manageShapes ,borderSetting});
 };
 
 export default function MaterialBorder() {
-  let  {manageSizes,manageBorders, borders } = useLoaderData<typeof loader>();
+  let  {configSizes,manageBorders, borders, manageShapes,borderSetting } = useLoaderData<typeof loader>();
   return (
-      <Outlet context={  {manageSizes,manageBorders, borders }}/>
+      <Outlet context={  {configSizes,manageBorders, borders , manageShapes,borderSetting }}/>
   );
 }
 

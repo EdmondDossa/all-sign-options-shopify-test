@@ -34,8 +34,8 @@ import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
 import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { MultiCombobox } from "~/components/inputs/MultiCombobox";
-import { BorderType } from "~/types/SettingsType";
-import { ConfigBorder } from "~/types/ConfigDataType";
+import { BorderType, ShapeType } from "~/types/SettingsType";
+import { ConfigBorder, ConfigSize } from "~/types/ConfigDataType";
 import { SizeType } from "~/types/ManagePropertyType";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { getError } from "~/utils/error-getting";
@@ -56,9 +56,10 @@ export default function MaterialBorderCreate() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  let { manageSizes, manageBorders, borders } = useOutletContext<{
+  let { configSizes, manageBorders, borders ,manageShapes} = useOutletContext<{
     manageBorders: BorderType[];
-    manageSizes: SizeType[];
+    configSizes: ConfigSize[];
+    manageShapes: ShapeType[];
     borders: ConfigBorder[];
   }>();
   const [searchParams] = useSearchParams();
@@ -71,11 +72,7 @@ export default function MaterialBorderCreate() {
           manageBorderId: 0,
           additionalPrice: 0,
           excludeSizes: [],
-          settings: {
-            colors: [],
-            enableBorderWidth: false,
-            enableBorderColor: false,
-          },
+          excludeShapes: []
         },
   );
 
@@ -85,7 +82,8 @@ export default function MaterialBorderCreate() {
         value: `${index}`,
       }))
     : [];
-  const sizes = manageSizes ? manageSizes.map((manageSize) => ({ label: manageSize.label||'', value: `${manageSize.id}` })) : [];
+  const sizes = configSizes ? configSizes.map((configSize,index) => ({ label: configSize.label||'', value: `${index}` })) : [];
+  const shapes = manageShapes ? manageShapes.map((manageShape,index) => ({ label: manageShape.name||'', value: `${index}` })) : [];
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
@@ -95,47 +93,26 @@ export default function MaterialBorderCreate() {
   const handleAdditionalPrice = (value: string) =>
     setFormData({ ...formData, additionalPrice: parseFloat(value) });
   const handleExcludeSizes = (value: any[]) =>
-    setFormData({ ...formData, excludeSizes: value.map(currValue=> parseInt(currValue)) });
+    setFormData({ ...formData, excludeSizes: value.map(currValue => parseInt(currValue)) });
+    const handleExcludeShapes = (value: any[]) =>
+    setFormData({ ...formData, excludeShapes: value.map(currValue=> parseInt(currValue)) });
 
  
+      console.log('action data :', actionData);  
 
-  const handleEnableBorderWidth = (value: boolean) => {
-    formData.settings.enableBorderWidth = value;
-    setFormData({ ...formData });
-  };
-
-  const handleEnableBorderColor = (value: boolean) => {
-    formData.settings.enableBorderColor = value;
-    setFormData({ ...formData });
-  };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
     submit(
       {
         ...formData,
-        settings: JSON.stringify(formData.settings),
         excludeSizes: JSON.stringify(formData.excludeSizes),
+        excludeShapes: JSON.stringify(formData.excludeShapes)
       },
       { method: "POST" },
     );
   };
-  const handleAddColor = () => {
-    if (!formData.settings.colors) {
-      formData.settings.colors = [];
-    } 
-    formData.settings.colors.push({
-      name: "",
-      codeHex: "#FFFFFF"
-    });
 
-    setFormData({ ...formData });
-  }
-
-  const  handleDeleteColor = (index: number) => {
-    formData.settings.colors.splice(index, 1);
-    setFormData({ ...formData});
-  }
   const navigate = useNavigate();
   const onBack = () => {
     navigate("..");
@@ -177,7 +154,7 @@ export default function MaterialBorderCreate() {
                       helpText="exclude the sizes of this border"
                       label="Exclude size"
                       placeholder="Select exclude size"
-                      selectedOptions={formData.excludeSizes}
+                      selectedOptions={formData.excludeSizes.map((curr) => `${curr}`)}
                       data={sizes}
                       setSelectedOptions={handleExcludeSizes}
                     ></MultiCombobox>
@@ -186,77 +163,20 @@ export default function MaterialBorderCreate() {
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <BlockStack gap="300">
                     <Text as="strong" variant="headingMd">
-                      Border settings
+                      Exclude shapes
                     </Text>
-                    <BlockStack gap="300">
-                    <Text as="h3" variant="bodyMd" fontWeight="bold"> Define text colors</Text>
-                    <Grid gap={{ lg: "30px" }}>
-                      {formData.settings.colors?.map((color: any, index: number) => (
-                          <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 4, xl: 4 }}>
-                          <InlineStack gap={"300"} blockAlign="end" align="space-between" wrap={false}>
-                            <TextField
-                              autoComplete="on"
-                              onChange={(value) => {
-                                color.name = value;
-                                formData.settings.colors[index] = color;
-                                setFormData({ ...formData });
-                              }}
-                              label="Name"
-                              value={color.name} 
-                            />
-                            <InlineStack gap={"300"} blockAlign="center" align="space-between" wrap={false}>
-                              
-                            <TextColorField  color={color.codeHex} setColor={(value: any) => {
-                                color.codeHex = value;
-                                formData.settings.colors[index] = color;
-                              setFormData({ ...formData });
-                              
-                              }}
-                              />
-                            <DeleteNowIconBtn onClick={() => handleDeleteColor(index)} />
-                          </InlineStack>
-
-                          </InlineStack>
-                          {true && (
-                              <InlineError message={getError(
-                                actionData,
-                                `settings.colors[${index}].name`
-                              )||getError(
-                                actionData,
-                                `settings.colors[${index}].codeHex`
-                              )||''} fieldID="myFieldID" />
-                            )}
-                          </Grid.Cell>
-                        ))}
-                    </Grid>  
-                    <Box width="150px">
-                    <BiAddBtn title="Add color" handleClick={()=>handleAddColor()} />
-                    </Box>
-                  </BlockStack>
-
-                    <InlineStack gap="600">
-                      <InlineStack blockAlign="center" gap="200">
-                        <Text as="strong" variant="headingMd">
-                          Enable border width
-                        </Text>
-                        <ReactSwitchCustom
-                          checked={formData.settings.enableBorderWidth}
-                          setChecked={handleEnableBorderWidth}
-                        />
-                      </InlineStack>
-
-                      <InlineStack blockAlign="center" gap="200">
-                        <Text as="strong" variant="headingMd">
-                          Enable border color
-                        </Text>
-                        <ReactSwitchCustom
-                          checked={formData.settings.enableBorderColor}
-                          setChecked={handleEnableBorderColor}
-                        />
-                      </InlineStack>
-                    </InlineStack>
+                    <MultiCombobox
+                      labelHidden={true}
+                      helpText="exclude the shapes of this border"
+                      label="Exclude shapes"
+                      placeholder="Select excluded shapes"
+                      selectedOptions={formData.excludeShapes.map((curr) => `${curr}`)}
+                      data={shapes}
+                      setSelectedOptions={handleExcludeShapes}
+                    ></MultiCombobox>
                   </BlockStack>
                 </Grid.Cell>
+            
               </Grid>
             </Box>
             <Divider borderWidth="050" />
@@ -300,27 +220,9 @@ const formSchema = z.object({
   manageBorderId: z.number({ required_error: "Border is required" }),
   additionalPrice: z.number({ required_error: "price is required" }),
   excludeSizes:  z.any()
-  .transform((value) => JSON.parse(value as string) || []).pipe(z.number().array()),
-  settings: z
-  .any()
-  .transform(jsonTransform)
-  .pipe(
-    z.object({
-      colors: z.object({
-        codeHex: z
-        .string({ required_error: "Color  is required" })
-        .min(3, "Color is too short")
-          .max(7, "Color label is too long"),
-        name: z.string({ required_error: "Color name is required" })
-      }).array(),
-        enableBorderWidth: z.boolean({
-        required_error: "field  is required",
-      }),
-      enableBorderColor: z.boolean({
-        required_error: "field is required",
-      }),
-    }),
-  )
+    .transform(jsonTransform).pipe(z.number().array()),
+    excludeShapes:  z.any()
+  .transform(jsonTransform).pipe(z.number().array())
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

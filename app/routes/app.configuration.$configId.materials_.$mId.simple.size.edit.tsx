@@ -36,15 +36,16 @@ export default function MaterialSizeIndex() {
   const navigation = useNavigation()
   const actionData = useActionData<typeof action>();
   console.log('action data :', actionData);
-  let { allSizes, manageSizes } = useOutletContext<{
+  let { allSizes,  } = useOutletContext<{
     allSizes: ConfigSize[];
-    manageSizes: SizeType[];
   }>();
   const [searchParams] = useSearchParams();
   const id = parseInt(searchParams.get('id') || "");
   let configSize = allSizes?.find((curr, index) =>index === id)
   const [formData, setFormData] = useState<ConfigSize>(configSize?(configSize as ConfigSize):{
-    manageSizeId: manageSizes[0]?.id||0,
+    width: 0,
+    label: "",
+    height: 0,
     textNumber: 0,
     maxTextChar: -1,
     charPrice: 0,
@@ -52,12 +53,16 @@ export default function MaterialSizeIndex() {
     startPriceAtChar: 0
   });
 
-  const options = manageSizes.map((currSize => ({ label: currSize.label||'', value: `${currSize.id}` })));
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
   
-  const handleManageSizeId = (value: string) => setFormData({...formData, manageSizeId:parseInt(value)})
+  const handleInputChange = (inputName: string, value: any) => {
+    setFormData((prevData: any) => ({
+      ...prevData,
+      [inputName]: value,
+    }));
+  };
 
   const handleTextNumber = (value: string) => setFormData({...formData, textNumber:parseInt(value)})
 
@@ -85,13 +90,36 @@ export default function MaterialSizeIndex() {
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{lg:"30px"}}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <Select
-                    label="Select size"
-                    options={options}
-                    value={`${formData.manageSizeId}`}
-                    onChange={handleManageSizeId}
-                    error={getError(actionData, "manageSizeId")}
-                  />
+                <TextField
+                        size="medium"
+                        label="Label"
+                        value={`${formData.label}`}
+                        onChange={(value) => handleInputChange("label", value)}
+                        autoComplete="on"
+                        error={getError(actionData, "label")}
+                      />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                <TextField
+                        size="medium"
+                        label="Width"
+                        type="number"
+                        value={`${formData.width}`}
+                        onChange={(value) => handleInputChange("width", parseInt(value))}
+                        autoComplete="on"
+                        error={getError(actionData, "width")}
+                      />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                <TextField
+                        size="medium"
+                        label="Height"
+                        type="number"
+                        value={`${formData.height}`}
+                        onChange={(value) => handleInputChange("height", parseInt(value))}
+                        autoComplete="on"
+                        error={getError(actionData, "height")}
+                />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
                   <TextField
@@ -180,7 +208,9 @@ export default function MaterialSizeIndex() {
 
 
 const formSchema = z.object({
-  manageSizeId: z.number({ required_error: 'Size is required' }),
+  label: z.string({ required_error: 'Size is required' }),
+  width: z.number({ required_error: 'Size is required' }),
+  height: z.number({ required_error: 'Size is required' }),
   textNumber: z.number({ required_error: 'Text number is required' }),
   maxTextChar: z.number({ required_error: 'Max Text char is required' }), 
   startPriceAtChar: z.number({ required_error: 'price is required' }), 
