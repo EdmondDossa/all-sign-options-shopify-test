@@ -100,7 +100,8 @@ export interface ConfigColor {
   title: string;
   description: string;
   icon: string;
-  image: string;
+   image: string;
+   excludeColors: number[];
    additionalPrice: number;
    isDefault?: boolean;
 }
@@ -122,7 +123,7 @@ export interface ConfigColor {
       fixingMethods: ConfigFixingMethod[];
       colors: ConfigColor[];
       additionalOptions: ConfigAdditionalOption[];
-    };
+    } | any;
  }
   
  
@@ -165,7 +166,7 @@ export interface MaterialAdvanceComponentType{
     icon: string;
     popImg: string;
     type: 'advance'|"simple";
-    data?: MaterialAdvanceComponentType[];
+    data?: MaterialAdvanceComponentType[] | any;
  }
   
 export interface MaterialType{

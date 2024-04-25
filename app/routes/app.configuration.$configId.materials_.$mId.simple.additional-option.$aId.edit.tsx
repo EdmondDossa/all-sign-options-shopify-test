@@ -21,21 +21,24 @@ import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
 import uploadIcon from "~/components/icons/uploadIcon";
 import { FileInput } from "~/components/inputs/FileInput";
+import { MultiCombobox } from "~/components/inputs/MultiCombobox";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
 import MaterialAdditionalOptionItemService from "~/models/MaterialAdditionalOptionItem.service";
 import { authenticate } from "~/shopify.server";
-import { ConfigAdditionalOption, ConfigAdditionalOptionItem } from "~/types/ConfigDataType";
+import { ConfigAdditionalOption, ConfigAdditionalOptionItem, ConfigColor } from "~/types/ConfigDataType";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
+import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
 
 export default function MaterialAdditionalOptionCreate() {
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { additionalOptionItems } = useOutletContext<{
+  const { additionalOptionItems, configColors } = useOutletContext<{
     additionalOptionItems: ConfigAdditionalOptionItem[];
+    configColors: ConfigColor[]
   }>();
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
@@ -51,12 +54,16 @@ export default function MaterialAdditionalOptionCreate() {
         description: "",
         icon: "",
         image: "",
-        additionalPrice:0
+        additionalPrice: 0,
+        excludeColors: [],
+        isDefault: false
       }
   );
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
+  const colors = configColors ? configColors.map((configColor,index) => ({ label: configColor.name||'', value: `${index}` })) : [];
+
 
   const handleTitle= (value: string) =>
     setFormData({ ...formData, title: value });
@@ -72,7 +79,7 @@ export default function MaterialAdditionalOptionCreate() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit({ ...formData }, { method: "POST" });
+    submit({ ...formData, excludeColors: JSON.stringify(formData.excludeColors) }, { method: "POST" });
   };
 
   const navigate = useNavigate();
@@ -121,6 +128,19 @@ export default function MaterialAdditionalOptionCreate() {
               <FileInput error={getError(actionData, "image")} title="Upload Background Image"
                     path={formData.image} handlePath={handleImage} />
               </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                    <MultiCombobox
+                      helpText="exclude the colors of this option"
+                      label="Exclude colors"
+                      placeholder="Search colors"
+                      selectedOptions={formData.excludeColors.map((curr) => `${curr}`)}
+                      data={colors}
+                      setSelectedOptions={(value:any) => {
+                        formData.excludeColors = value.map((curr:any) => parseFloat(curr));
+                        setFormData({ ...formData });
+                      }}
+                    ></MultiCombobox>
+                </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
               <TextField
                   label="Additional  price"
@@ -130,7 +150,8 @@ export default function MaterialAdditionalOptionCreate() {
               onChange={handleAdditionalPrice}
               error={getError(actionData, "additionalPrice")}
               />
-                </Grid.Cell>
+              </Grid.Cell>
+              
               </Grid>
             </Box>
         
@@ -162,7 +183,7 @@ export default function MaterialAdditionalOptionCreate() {
 const formSchema = z.object({
   title: z
     .string({ required_error: "Title is required" })
-    .min(3, "Title is too short")
+    .min(1, "Title is too short")
     .max(100, "Title is too long"),
   description: z
     .string({ required_error: "Description is required" })
@@ -170,7 +191,9 @@ const formSchema = z.object({
     .max(255, "Description is too long"),
   icon: z.string({ required_error: "Icon file is required" }),
   image: z.string({ required_error: "image file is required" }),
-  additionalPrice: z.number({ required_error: "image file is required" })
+  additionalPrice: z.number({ required_error: "image file is required" }),
+  excludeColors: z.any().transform(jsonTransform).pipe(z.number().array()),
+  isDefault: z.any().transform(booleanTransform).pipe(z.boolean())
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -222,3 +245,4 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
 };
+

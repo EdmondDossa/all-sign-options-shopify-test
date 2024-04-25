@@ -11,6 +11,7 @@ import { Form, Link, NavLink, Outlet, useLoaderData, useNavigate, useOutletConte
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { FixingMethodType } from "~/types/SettingsType";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 export default function SettingFixingMethod() {
@@ -41,13 +42,13 @@ export default function SettingFixingMethod() {
 
         <IndexTable.Cell>
         <img style={{height: "30px"}}
-            src={popImg}
+            src={ fileUrl(popImg) }
             alt={"Fixing method" + name}
           />
         </IndexTable.Cell>
         <IndexTable.Cell>
         <img style={{height: "30px"}}
-            src={icon}
+            src={fileUrl(icon)}
             alt={"Fixing method" + name}
           />
         </IndexTable.Cell>

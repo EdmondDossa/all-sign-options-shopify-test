@@ -14,6 +14,7 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import SettingBorderService from "~/models/SettingBorder.service";
 import {  BorderType } from "~/types/SettingsType";
+import { fileUrl } from "~/utils/fileUrl";
 
 export const loader = async ({request}:LoaderFunctionArgs) => { 
   const { session, admin } = await authenticate.admin(request);
@@ -44,7 +45,7 @@ export default function SettingBorderIndex() {
         </IndexTable.Cell>
         <IndexTable.Cell>
         <img style={{height: "30px"}}
-            src={icon}
+            src={fileUrl(icon)}
             alt={"border" + name}
           />
         </IndexTable.Cell>

@@ -34,6 +34,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import ClipartsGroupService from "~/models/ClipartsGroup.service";
 import ClipartService from "~/models/Clipart.service";
 import { jFlashMessage } from "~/utils/message-flash";
+import { fileUrl } from "~/utils/fileUrl";
 
 export const loader = async ({request,params}:LoaderFunctionArgs) => { 
   const { session, admin } = await authenticate.admin(request);
@@ -107,7 +108,7 @@ export default function MaterialFixingMethod() {
         </IndexTable.Cell>
         <IndexTable.Cell>
         <img style={{height: "30px"}}
-            src={url}
+            src={fileUrl(url)}
             alt={"Clipart" + title}
           />
         </IndexTable.Cell>

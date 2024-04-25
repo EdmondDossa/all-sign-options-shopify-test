@@ -38,6 +38,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import { BorderCircleText } from "~/components/feactures/BorderCircleText";
 import { ManageBtn } from "~/components/buttons/ManageBtn";
 import { truncateText } from "~/utils/truncate-text";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 
@@ -148,7 +149,7 @@ export default function Configuration() {
         <IndexTable.Cell ><Text  truncate as="p">{truncateText(description)}</Text></IndexTable.Cell>
         <IndexTable.Cell>
           <img style={{height: "30px"}}
-            src={icon}
+            src={fileUrl(icon)}
             alt={"product thumbnail" + name}
           />
         </IndexTable.Cell>

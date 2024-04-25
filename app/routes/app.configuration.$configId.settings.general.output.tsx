@@ -15,7 +15,7 @@ import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { settingAction, settingLoader } from "~/custom-action-loader/config-action-loader";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { z } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { FileInput } from "~/components/inputs/FileInput";
@@ -26,10 +26,10 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 const settingParams: [string, string] = ["generals", "output"];
 const formSchema = z.object({
   filesFormat:z.string(),
-  waterMark:z.string({required_error:"Files format is required"}),
+  waterMark:z.string({required_error:"Files format is required"}).nullish().transform(stringTransform),
   zipOutputFiles:z.any().transform(jsonTransform).pipe(z.object({
     active:z.any().transform(booleanTransform).pipe(z.boolean()),
-    zipOutFolderPrefix:z.string()
+    zipOutFolderPrefix:z.string().nullish().transform(stringTransform)
  })),
   designComposition:z.any().transform(booleanTransform).pipe(z.boolean()),     
 });

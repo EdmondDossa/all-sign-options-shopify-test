@@ -15,7 +15,7 @@ import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { settingAction, settingLoader } from "~/custom-action-loader/config-action-loader";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { z } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { FileInput } from "~/components/inputs/FileInput";
@@ -25,8 +25,8 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 
 const settingParams: [string, string] = ["languageImages", "uploadDesign"];
 const formSchema = z.object({
-  link:z.string(),
-  phraseSubmitCustom:z.string(),
+  link:z.string().nullish().transform(stringTransform),
+  phraseSubmitCustom:z.string().nullish().transform(stringTransform),
  activate:z.any().transform(booleanTransform).pipe(z.boolean()),     
 });
 

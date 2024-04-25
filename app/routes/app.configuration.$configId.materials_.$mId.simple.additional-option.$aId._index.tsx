@@ -40,6 +40,7 @@ import { ActionFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import MaterialAdditionalOptionItemService from "~/models/MaterialAdditionalOptionItem.service";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { fileUrl } from "~/utils/fileUrl";
 
 // This example is for guidance purposes. Copying it will come with caveats.
 export default function MaterialAdditionalOptionIndex() {
@@ -92,15 +93,15 @@ export default function MaterialAdditionalOptionIndex() {
         <IndexTable.Cell>
           <img
             style={{ height: "30px" }}
-            src={icon}
-            alt={" thumbnail" + title}
+            src={fileUrl(icon)}
+            alt={" thumbnail" }
           />
         </IndexTable.Cell>
         <IndexTable.Cell>
           <img
             style={{ height: "30px" }}
-            src={image}
-            alt={" thumbnail" + title}
+            src={fileUrl(image)}
+            alt={" thumbnail"}
           />
         </IndexTable.Cell>
         <IndexTable.Cell>

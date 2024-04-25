@@ -19,6 +19,7 @@ import { FixingMethodType } from "~/types/SettingsType";
 import { ConfigFixingMethod } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { fileUrl } from "~/utils/fileUrl";
 
 export default function MaterialFixingMethodComponent() {
  
@@ -98,7 +99,7 @@ export default function MaterialFixingMethodComponent() {
         </IndexTable.Cell>
         <IndexTable.Cell>
         <img style={{height: "30px"}}
-            src={image}
+            src={fileUrl(image)}
             alt={"fixing-method" + title}
           />
         </IndexTable.Cell>

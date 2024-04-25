@@ -35,6 +35,7 @@ import { authenticate } from "~/shopify.server";
 import MaterialShapeService from "~/models/MaterialShape.service";
 import { jFlashMessage } from "~/utils/message-flash";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { fileUrl } from "~/utils/fileUrl";
 
 export default function MaterialShape() {
   const submit = useSubmit();
@@ -108,7 +109,7 @@ export default function MaterialShape() {
         </IndexTable.Cell>
         <IndexTable.Cell>
         <img style={{height: "30px"}}
-            src={image}
+            src={fileUrl(image)}
             alt={"border" + title}
           />
         </IndexTable.Cell>

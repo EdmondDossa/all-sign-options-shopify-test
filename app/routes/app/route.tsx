@@ -43,7 +43,9 @@ export default function App() {
           Home
         </Link>
         <Link to="/app/configuration">List of configurations</Link>
-        {/* <Link to="/app/settings"> Settings Generals</Link> */}
+        <Link to="/app/manage-font">Manage fonts</Link>
+        <Link to="/app/manage-cliparts">Manage cliparts</Link>
+        <Link to="/app/settings"> Settings Generals</Link>
       </ui-nav-menu>
       <div style={{ display: 'flex' }}>
         <div style={{ width:"-webkit-fill-available"}}>

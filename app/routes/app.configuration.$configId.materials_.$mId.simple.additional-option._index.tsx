@@ -38,6 +38,7 @@ import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.s
 import { jFlashMessage } from "~/utils/message-flash";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
+import { fileUrl } from "~/utils/fileUrl";
 
 // This example is for guidance purposes. Copying it will come with caveats.
 export default function MaterialAdditionalOptionIndex() {
@@ -80,7 +81,7 @@ export default function MaterialAdditionalOptionIndex() {
         <IndexTable.Cell>
           <img
             style={{ height: "30px" }}
-            src={icon}
+            src={fileUrl(icon)}
             alt={" thumbnail" + title}
           />
         </IndexTable.Cell>

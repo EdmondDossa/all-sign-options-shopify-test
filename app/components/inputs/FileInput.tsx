@@ -12,6 +12,7 @@ import uploadIcon from "~/components/icons/uploadIcon";
 import { DeleteNowIconBtn } from "../buttons/DeleteNowIconBtn";
 import { getFileType } from "~/utils/file-type";
 import { FileIcon,TextFontIcon, PlayCircleIcon } from "@shopify/polaris-icons";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 export const FileInput = ({
@@ -48,12 +49,12 @@ export const FileInput = ({
               {buttonTitle || title || "Upload"}
             </Button>
           </FileUploader>
-          {path == "" ? (
+          {!path ? (
             <Thumbnail alt="image" source={uploadIcon} size="small" />
                   ) : (
                           <InlineStack gap="100">
                                <DeleteNowIconBtn onClick={()=>{handlePath('')}} size="micro" />
-                               <MediaThumbnail url={path} />
+                               <MediaThumbnail url={fileUrl(path)} />
                           </InlineStack>
           )}
         </InlineStack>
@@ -73,7 +74,7 @@ export const FileInput = ({
 
 
 const  MediaThumbnail = ({ url }: { url: string }) => {
-  let fileType = getFileType(url)
+  let fileType = getFileType(url||"");
   if (fileType=="image" || fileType == "icon") {
     return <Thumbnail size="small" source={url} alt={'file'}></Thumbnail>;
   }else if (fileType=="font") {

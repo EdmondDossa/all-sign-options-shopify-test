@@ -338,10 +338,4 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 };
 
-function replaceBaseUrl(url: string) {
-  const urltab = url.split("/uploads/");
-  if (urltab.length > 1) {
-    return process.env.APP_URL + "/uploads/" + urltab[1];
-  }
-  return url;
-}
+

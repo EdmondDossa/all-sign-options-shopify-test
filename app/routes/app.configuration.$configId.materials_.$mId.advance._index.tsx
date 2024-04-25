@@ -37,6 +37,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { truncateText } from "~/utils/truncate-text";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 // This example is for guidance purposes. Copying it will come with caveats.
@@ -109,7 +110,7 @@ export default function MaterialAdvancedIndex() {
         <IndexTable.Cell>{truncateText(description)}</IndexTable.Cell>
         <IndexTable.Cell>
           <img style={{height: "30px"}}
-            src={icon}
+            src={fileUrl(icon)}
             alt={"product " + name}
           />
         </IndexTable.Cell>

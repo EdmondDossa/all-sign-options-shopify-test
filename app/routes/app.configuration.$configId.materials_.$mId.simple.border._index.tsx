@@ -48,6 +48,7 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { fileUrl } from "~/utils/fileUrl";
 
 export default function MaterialBorderIndex() {
   const submit = useSubmit();
@@ -165,7 +166,7 @@ export default function MaterialBorderIndex() {
         </IndexTable.Cell>
         <IndexTable.Cell>
         <img style={{height: "30px"}}
-            src={icon}
+            src={fileUrl(icon)}
             alt={"border" + title}
           />
         </IndexTable.Cell>

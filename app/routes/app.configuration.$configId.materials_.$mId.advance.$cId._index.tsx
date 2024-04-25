@@ -35,6 +35,7 @@ import MaterialAdvancedOptionService from "~/models/MaterialAdvancedOption.servi
 import { jFlashMessage } from "~/utils/message-flash";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { truncateText } from "~/utils/truncate-text";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 // This example is for guidance purposes. Copying it will come with caveats.
@@ -104,7 +105,7 @@ export default function MaterialAdvancedIndex() {
           <InlineStack align="center">
 
           <img style={{height: "30px"}}
-            src={icon}
+            src={fileUrl(icon)}
             alt={"product thumbnail" + name}
           />
           </InlineStack>
@@ -113,7 +114,7 @@ export default function MaterialAdvancedIndex() {
           <InlineStack align="center">
 
           <img style={{height: "30px"}}
-            src={image}
+            src={fileUrl(image)}
             alt={"product thumbnail" + name}
           />
           </InlineStack>

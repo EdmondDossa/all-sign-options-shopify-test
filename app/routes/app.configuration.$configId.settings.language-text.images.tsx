@@ -15,7 +15,7 @@ import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { settingAction, settingLoader } from "~/custom-action-loader/config-action-loader";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { z } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { FileInput } from "~/components/inputs/FileInput";
@@ -25,24 +25,24 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 
 const settingParams: [string, string] = ["languageImages", "images"];
 const formSchema = z.object({
-            resetAllIcon: z.string().nullish(),
-            cancelAnAction:z.string().nullish(),
-            icon:z.string().nullish(),
-            changeIconPreview:z.string().nullish(),
-            changeIconImport:z.string().nullish(),
-            changeIconShare:z.string().nullish(),
-            changeIconSaveProject:z.string().nullish(),
-            changeIconShareSideBar:z.string().nullish(),
-            changeIconMaterial:z.string().nullish(),
-            changeIconShape:z.string().nullish(),
-            changeIconFixingMethod:z.string().nullish(),
-            changeIconProduct:z.string().nullish(),
-            changeIconSize:z.string().nullish(),
-            changeIconText:z.string().nullish(),
-            changeIconColor:z.string().nullish(),
-            changeIconSizeMenu:z.string().nullish(),
-            changeIconBorder:z.string().nullish(),
-            changeIconImage:z.string().nullish() 
+            resetAllIcon: z.string().nullish().transform(stringTransform),
+            cancelAnAction:z.string().nullish().transform(stringTransform),
+            icon:z.string().nullish().transform(stringTransform),
+            changeIconPreview:z.string().nullish().transform(stringTransform),
+            changeIconImport:z.string().nullish().transform(stringTransform),
+            changeIconShare:z.string().nullish().transform(stringTransform),
+            changeIconSaveProject:z.string().nullish().transform(stringTransform),
+            changeIconShareSideBar:z.string().nullish().transform(stringTransform),
+            changeIconMaterial:z.string().nullish().transform(stringTransform),
+            changeIconShape:z.string().nullish().transform(stringTransform),
+            changeIconFixingMethod:z.string().nullish().transform(stringTransform),
+            changeIconProduct:z.string().nullish().transform(stringTransform),
+            changeIconSize:z.string().nullish().transform(stringTransform),
+            changeIconText:z.string().nullish().transform(stringTransform),
+            changeIconColor:z.string().nullish().transform(stringTransform),
+            changeIconSizeMenu:z.string().nullish().transform(stringTransform),
+            changeIconBorder:z.string().nullish().transform(stringTransform),
+            changeIconImage:z.string().nullish().transform(stringTransform) 
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {

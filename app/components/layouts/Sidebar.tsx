@@ -17,7 +17,7 @@ import { NavLink } from "@remix-run/react";
 export default function Sidebar() {
     return (
         <BoxSideBar>
-        <Box paddingInline="400" paddingBlock="600">
+        <Box paddingInline="400" paddingBlock="1200">
           <BlockStack gap="300">
             <ItemSidebar title={"Manage font"} to="/app/manage-font">
               <ManageFontIcon />
@@ -25,16 +25,11 @@ export default function Sidebar() {
             <ItemSidebar title={"Manage Cliparts"} to="/app/manage-cliparts">
               <ManageClipartsIcon />
             </ItemSidebar>
-            <ItemSidebar title={"Color palette"} to="/app/color-palette">
-              <ColorPaletteIcon />
-            </ItemSidebar>
-            <ItemSidebar title={"Manage Size"} to="/app/manage-size" >
-              <ManageSizeIcon />
-            </ItemSidebar>
+          
           </BlockStack>
         </Box>
         <Divider borderColor="border-brand" />
-        <Box paddingInline="150" paddingBlock="600">
+        <Box paddingInline="150" paddingBlock="1200">
           <BlockStack gap="300">
             <ItemSidebar title={"Configuration"} to="/app/configuration">
               <ConfigurationIcon />

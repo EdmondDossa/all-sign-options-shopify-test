@@ -18,18 +18,22 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   console.log('configID materialID', configId, mId, aId);
 
   let additionalOptionItems: ConfigAdditionalOptionItem[] | null = null;
+  let configColors :ConfigColor[]= []
 
   if ( !Number.isNaN(configId)  && !Number.isNaN(mId) ) {
-    additionalOptionItems = await MaterialAdditionalOptionItemService.getAll(session.id, configId, mId,aId);
+    additionalOptionItems = await MaterialAdditionalOptionItemService.getAll(session.id, configId, mId, aId);
+    let colors = await MaterialColorService.getAll(session.id, configId, mId);
+    configColors = colors?.allColors || [];
+    
 
   }
   
-  return json({additionalOptionItems });
+  return json({additionalOptionItems, configColors });
 };
 
 export default function MaterialAdditionalOptionIndex() {
-  let  {additionalOptionItems } = useLoaderData<typeof loader>();
+  let  {additionalOptionItems,configColors } = useLoaderData<typeof loader>();
   return (
-      <Outlet context={  {additionalOptionItems }}/>
+      <Outlet context={  {additionalOptionItems, configColors }}/>
   );
 }

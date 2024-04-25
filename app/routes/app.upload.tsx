@@ -26,6 +26,7 @@ import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { Modal, TitleBar } from "@shopify/app-bridge-react"
 import { FileIcon,TextFontIcon, PlayCircleIcon } from "@shopify/polaris-icons";
 import { useFetcher } from "@remix-run/react";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 const fileExtensions = {
@@ -284,7 +285,7 @@ type ?: "image" | "video" | "font" | 'icon'| "all";
                               key={index}
                               style={{ position: "relative" }}
                             >
-                              <Image name={file.name} url={file.url} />
+                              <Image name={file.name} url={fileUrl(file.url)} />
                               <div
                                 style={{
                                   position: "absolute",

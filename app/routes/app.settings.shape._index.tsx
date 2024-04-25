@@ -14,6 +14,7 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import SettingShapesService from "~/models/SettingShapes.service";
 import { ShapeType } from "~/types/SettingsType";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 export default function MaterialFixingMethod() {
@@ -36,7 +37,7 @@ export default function MaterialFixingMethod() {
           {name}
       </IndexTable.Cell>
       <IndexTable.Cell>
-        <img style={{ height: "30px" }} src={icon} alt={"shape" + name} />
+        <img style={{ height: "30px" }} src={fileUrl(icon)} alt={"shape" + name} />
       </IndexTable.Cell>
 
 

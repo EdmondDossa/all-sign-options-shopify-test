@@ -42,6 +42,7 @@ import { Material } from "~/types/ConfigDataType";
 import { jFlashMessage } from "~/utils/message-flash";
 import { BorderCircleText } from "~/components/feactures/BorderCircleText";
 import { truncateText } from "~/utils/truncate-text";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 
@@ -82,7 +83,7 @@ export default function MaterialIndex() {
         <IndexTable.Cell>
           <img
             style={{ height: "30px" }}
-            src={icon}
+            src={fileUrl(icon)}
             alt={"product thumbnail" + name}
           />
         </IndexTable.Cell>

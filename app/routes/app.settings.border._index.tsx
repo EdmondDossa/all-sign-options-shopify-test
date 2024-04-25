@@ -11,6 +11,7 @@ import { Form, Link, NavLink, Outlet, useLoaderData, useNavigate, useOutletConte
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { BorderType } from "~/types/SettingsType";
+import { fileUrl } from "~/utils/fileUrl";
 
 
 export default function MaterialFixingMethod() {
@@ -37,7 +38,7 @@ export default function MaterialFixingMethod() {
         </IndexTable.Cell>
         <IndexTable.Cell>
         <img style={{height: "30px"}}
-            src={icon}
+            src={fileUrl(icon)}
             alt={"border" + name}
           />
         </IndexTable.Cell>
