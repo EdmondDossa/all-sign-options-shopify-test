@@ -16,13 +16,13 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const {session}=await authenticate.admin(request);
-  try {
-    SettingService.addSetting(session.id, session.shop);
-    console.log("Setting error setting_exist");
+  // try {
+  //   SettingService.addSetting(session.id, session.shop);
+  //   console.log("Setting error setting_exist");
 
-  } catch (error) {
-    console.log("Setting error setting_exist", error);
-  }
+  // } catch (error) {
+  //   console.log("Setting error setting_exist", error);
+  // }
 
   return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
 };

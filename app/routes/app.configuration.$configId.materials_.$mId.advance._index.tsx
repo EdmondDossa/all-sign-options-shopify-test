@@ -104,7 +104,7 @@ export default function MaterialAdvancedIndex() {
         
         <IndexTable.Cell>
            <InlineStack blockAlign="center" gap="300">
-            <BorderCircleText text={ name } /> {truncateText(name)}
+            <BorderCircleText onClick={()=>onManageOption(index)} text={ name } /> {truncateText(name)}
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell>{truncateText(description)}</IndexTable.Cell>

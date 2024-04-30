@@ -1,11 +1,15 @@
 import { Box, InlineStack } from '@shopify/polaris';
-export const BorderCircleText = ({text}:{text?:string}) => {
+export const BorderCircleText = ({text, onClick}:{text?:string, onClick?:Function}) => {
     text = getFirstLetters(text||"AS")
-  return (<Box padding="150" borderColor="border-brand" borderWidth="025" borderRadius="full" background="bg-surface-secondary" width="34px" minHeight="34px">
+  return (
+    <span onClick={()=>{ onClick&&onClick() }} className='hover-btn'>
+    <Box padding="150" borderColor="border-brand" borderWidth="025" borderRadius="full" background="bg-surface-secondary" width="34px" minHeight="34px">
     <InlineStack align='center' blockAlign='center'>
       {text}
       </InlineStack>
-    </Box>);
+    </Box>
+    </span>
+  );
 }
   
 

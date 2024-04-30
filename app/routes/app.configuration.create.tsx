@@ -50,7 +50,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { flashMessage } from "~/utils/message-flash";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
 import { SelectProducField } from "~/components/inputs/SelectProductFied";
-import { jsonTransform } from "~/utils/transfomerZod";
+import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { CustomTinymce } from "~/components/inputs/CustomTinymce";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -257,22 +257,10 @@ const formSchema = z.object({
       .min(3, "Name is too short")
       .max(100, "Name is too long"),
   ),
-  description: z.preprocess(
-    (value) => (value === "" ? undefined : value),
-    z
-      .string({ required_error: "Description is required" })
-      .min(3, "Description is fale is too short")
-      .max(500, "Description is too long"),
-  ),
-  icon: z.preprocess(
-    (value) => (value === "" ? undefined : value),
-    z.string({ required_error: "File is required" }),
-  ),
-  popupImg: z.preprocess(
-    (value) => (value === "" ? undefined : value),
-    z.string({ required_error: "File is required" }),
-  ),
-  product: z.any().transform(jsonTransform),
+  description: z.string().nullish().transform(stringTransform),
+  icon:z.string().nullish().transform(stringTransform),
+  popupImg: z.string().nullish().transform(stringTransform),
+  product: z.any().transform(jsonTransform)
 });
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -333,7 +321,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       );
     }
     return redirect(
-      `..${flashMessage("Configuration  added is completed successfully")}`,
+      `../${configurationObject.id}/demo`
     );
   }
 };

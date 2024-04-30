@@ -63,7 +63,7 @@ export default function Materiels(){
                   {configuration?.name}
                 </Text>
                 <NextLtrIcon />
-                <Link className="link" to="../../materials">
+                <Link className="link" to="../../../materials">
             <Text as="h2" variant="headingMd">
               Materials
             </Text>

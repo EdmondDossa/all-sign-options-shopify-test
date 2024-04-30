@@ -6,6 +6,11 @@
     opacity: 75%;
 }
 
+.hover-btn:hover{
+    opacity: 70%;
+}
+
+
 .inactive{
     opacity: 50%;
 }

@@ -39,6 +39,8 @@ import { BorderCircleText } from "~/components/feactures/BorderCircleText";
 import { ManageBtn } from "~/components/buttons/ManageBtn";
 import { truncateText } from "~/utils/truncate-text";
 import { fileUrl } from "~/utils/fileUrl";
+import { DuplicateIconBtn } from "~/components/buttons/DuplicateIconBtn";
+import { ConfigurationType } from "~/types/ConfigurationType";
 
 
 
@@ -78,6 +80,17 @@ export const action = async ({ request }:ActionFunctionArgs) => {
       return json({...jFlashMessage("Configution deleting is completed successfull")})
       break;
     }
+      
+    case "POST": {
+      console.log("start deleting")
+      const configuration:ConfigurationType = await ConfigurationService.getConfiguration(parseInt(id), session.id);
+      delete configuration.id;
+      delete configuration.product;
+      configuration.name = formData.get("configTitle") as string;
+      await ConfigurationService.duplicateConfiguration(configuration, session.id)
+      return json({...jFlashMessage("Configution duplicating is completed successfull")})
+      break;
+    }
   
     default:
       break;
@@ -92,6 +105,8 @@ export default function Configuration() {
   const submit = useSubmit();
   let { configurations } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
+
+  const [configTitle, setConfigTitle] = useState<string>("");
  
 
 
@@ -102,6 +117,10 @@ export default function Configuration() {
   
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
+  };
+
+  const handeleDuplicate = (id: number) => {
+    submit({ id: id, configTitle: configTitle }, { method: "POST" });
   };
 
   const handleUpdate = (id: number) => {
@@ -142,7 +161,7 @@ export default function Configuration() {
         
         <IndexTable.Cell>
           <InlineStack blockAlign="center" gap="300">
-             <BorderCircleText text={name} /> {truncateText(name)}
+             <BorderCircleText  onClick={()=>handleMaterials(id)}  text={name} /> {truncateText(name)}
           </InlineStack>
          
         </IndexTable.Cell>
@@ -158,8 +177,8 @@ export default function Configuration() {
         <IndexTable.Cell>
           <ButtonGroup gap="loose" >
             <ManageBtn  title="setting" handleClick={()=>handleSettings(id)}/>
-            <ViewIconBtn  size="micro" onClick={()=>handleMaterials(id)} />
             <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
+            <DuplicateIconBtn   handeleDuplicate={()=>{handeleDuplicate(id)}} handleTitle={setConfigTitle} title={configTitle} onModalOpen={() => {setConfigTitle(name);}} />
             <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>
         </IndexTable.Cell>

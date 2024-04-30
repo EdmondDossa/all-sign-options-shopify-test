@@ -76,7 +76,13 @@ export default function MaterialIndex() {
       <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="center" gap="300">
-          <BorderCircleText text={name} /> {truncateText(name)}
+          <BorderCircleText onClick={() =>
+                navigate(
+                  type == "simple"
+                    ? `${index}/simple`
+                    :`${index}/advance`,
+                )
+              } text={name} /> {truncateText(name)}
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell>{truncateText(description)}</IndexTable.Cell>
@@ -94,21 +100,6 @@ export default function MaterialIndex() {
 
         <IndexTable.Cell>
           <ButtonGroup gap="loose">
-            <button
-              className="add-option-btn"
-              onClick={() =>
-                navigate(
-                  type == "simple"
-                    ? `${index}/simple`
-                    :`${index}/advance`,
-                )
-              }
-            >
-              <InlineStack gap="100" blockAlign="center">
-               
-                <RoundManageHistoryIcon /> <Text as="span">manage</Text>
-              </InlineStack>
-            </button>
             <EditIconBtn
               size="micro"
               onClick={() => {

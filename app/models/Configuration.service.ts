@@ -177,6 +177,9 @@ export default class ConfigurationService {
         where: {
           sessionId: sessionId,
         },
+        orderBy: {
+          id: "asc"
+        }
       });
     } catch (error) {
       console.error("Error retrieving configurations:", error);
@@ -254,4 +257,26 @@ export default class ConfigurationService {
       return Promise.reject(null);
     }
   }
+
+
+
+  static async duplicateConfiguration(
+    configuration: ConfigurationType,
+    sessionId: string,
+  ): Promise<any | null> {
+    try {
+      return await prisma.configuration.create({
+        data: {
+          ...configuration,
+          sessionId: sessionId,
+        },
+      });
+    } catch (error) {
+      console.error("Error adding configuration:", error);
+      return Promise.reject(null);
+    }
+  }
 }
+
+
+

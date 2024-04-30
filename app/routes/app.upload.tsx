@@ -1,9 +1,19 @@
 import { Prisma } from "@prisma/client";
-import { ActionFunctionArgs, LoaderFunctionArgs, NodeOnDiskFile, json, unstable_composeUploadHandlers, unstable_createFileUploadHandler, unstable_createMemoryUploadHandler, unstable_parseMultipartFormData } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  NodeOnDiskFile,
+  json,
+  unstable_composeUploadHandlers,
+  unstable_createFileUploadHandler,
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
+} from "@remix-run/node";
 import { Url } from "url";
 import prisma from "~/db.server";
 import { authenticate } from "~/shopify.server";
 import {
+  ActionList,
   BlockStack,
   Box,
   Button,
@@ -11,111 +21,114 @@ import {
   Checkbox,
   DropZone,
   Grid,
+  Icon,
   InlineStack,
   LegacyCard,
   LegacyStack,
   Listbox,
   Page,
+  Popover,
+  Scrollable,
+  Select,
   Spinner,
   Tabs,
   Text,
+  TextField,
   Thumbnail,
   ThumbnailProps,
 } from "@shopify/polaris";
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
-import { Modal, TitleBar } from "@shopify/app-bridge-react"
-import { FileIcon,TextFontIcon, PlayCircleIcon } from "@shopify/polaris-icons";
+import { Modal, TitleBar } from "@shopify/app-bridge-react";
+import { FileIcon, TextFontIcon, PlayCircleIcon , SearchIcon} from "@shopify/polaris-icons";
 import { useFetcher } from "@remix-run/react";
 import { fileUrl } from "~/utils/fileUrl";
-
+import { truncateText } from "~/utils/truncate-text";
 
 const fileExtensions = {
-  "image": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".bmp", ".tiff"],
-  "icon": [".ico", ".icns",".svg"],
-  "video": [".mp4", ".mov", ".avi", ".wmv", ".mkv", ".flv", ".webm"],
-  "font": [".ttf", ".otf", ".woff", ".woff2"]
+  image: [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".bmp", ".tiff"],
+  icon: [".ico", ".icns", ".svg"],
+  video: [".mp4", ".mov", ".avi", ".wmv", ".mkv", ".flv", ".webm"],
+  font: [".ttf", ".otf", ".woff", ".woff2"],
 };
 
 const contentTypes = ["image", "video", "font", "icon"];
 
-
 export async function action({ request }: ActionFunctionArgs) {
-    const { admin, session } = await authenticate.admin(request);
-    const { shop } = session;
-    let formData = await unstable_parseMultipartFormData(
-      request,
-      unstable_composeUploadHandlers(
-        unstable_createFileUploadHandler({
-          // Limit file upload to images
-          filter({ contentType }) {
-            for (const currentType of contentTypes) {
-                if (contentType.includes(contentType)) {
-                  return true;
-                }
+  const { admin, session } = await authenticate.admin(request);
+  const { shop } = session;
+  let formData = await unstable_parseMultipartFormData(
+    request,
+    unstable_composeUploadHandlers(
+      unstable_createFileUploadHandler({
+        // Limit file upload to images
+        filter({ contentType }) {
+          for (const currentType of contentTypes) {
+            if (contentType.includes(contentType)) {
+              return true;
             }
+          }
 
-            return false;
-          },
-          // Store the images in the public/img folder
-          directory: "./public/uploads",
-          // By default `unstable_createFileUploadHandler` add a number to the file
-          // names if there's another with the same name, by disabling it we replace
-          // the old file
-          avoidFileConflicts: true,
-          // Use the actual filename as the final filename
-          file({ filename }) {
-            return filename;
-          },
-          // Limit the max size to 10MB
-          maxPartSize: 10 * 1024 * 1024,
-        }),
-        unstable_createMemoryUploadHandler(),
-      ),
-    );
-  
-  
+          return false;
+        },
+        // Store the images in the public/img folder
+        directory: "./public/uploads",
+        // By default `unstable_createFileUploadHandler` add a number to the file
+        // names if there's another with the same name, by disabling it we replace
+        // the old file
+        avoidFileConflicts: true,
+        // Use the actual filename as the final filename
+        file({ filename }) {
+          return filename;
+        },
+        // Limit the max size to 10MB
+        maxPartSize: 10 * 1024 * 1024,
+      }),
+      unstable_createMemoryUploadHandler(),
+    ),
+  );
+
   let files = formData.getAll("file") as NodeOnDiskFile[];
 
-  let returnFiles = files.map((file) => ({ name: file.name, url: `https://${shop}/apps/aso-proxy/uploads/${file.name}`, createdAt: Date.now() }));
-  
+  let returnFiles = files.map((file) => ({
+    name: file.name,
+    url: `https://${shop}/apps/aso-proxy/uploads/${file.name}`,
+    createdAt: Date.now(),
+  }));
+
   let upload = await prisma.upload.findUnique({
-    where:{shop:shop}
-  })
+    where: { shop: shop },
+  });
 
   if (!upload) {
     upload = await prisma.upload.create({
       data: {
-        shop:shop
-      }
-    })
+        shop: shop,
+      },
+    });
   }
-
 
   let filesToSave: any[];
-  
+
   if (upload) {
-    filesToSave = upload.files as any[]
-    filesToSave = [...filesToSave||[], ...returnFiles];
+    filesToSave = upload.files as any[];
+    filesToSave = [...(filesToSave || []), ...returnFiles];
     upload.files = filesToSave;
-   upload = await prisma.upload.update({
+    upload = await prisma.upload.update({
       where: {
-        id: upload.id
+        id: upload.id,
       },
       data: {
-        files: filesToSave
-      }
+        files: filesToSave,
+      },
     });
 
-    console.log("upload ",upload.files);
-    
+    console.log("upload ", upload.files);
   }
 
-
-
-  console.log("file file is file ", files)
-    return json({
-      files: returnFiles
-    });
+  console.log("file file is file ", files);
+  return json({
+    files: returnFiles,
+  });
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -123,12 +136,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { shop } = session;
 
   let upload = await prisma.upload.findUnique({
-    where:{shop:shop}
-  })
+    where: { shop: shop },
+  });
 
-  return json({files:upload?.files||[]})
-}
-  
+  return json({ files: upload?.files || [] });
+};
 
 export const FileUploader = ({
   children,
@@ -136,43 +148,44 @@ export const FileUploader = ({
   setFilesData,
   multiple,
   title,
-  type
+  type,
 }: {
   title?: string;
-type ?: "image" | "video" | "font" | 'icon'| "all";
+  type?: "image" | "video" | "font" | "icon" | "all";
   multiple?: boolean;
   setFilesData?: any;
   fileData?: string[];
   children?: React.ReactNode;
-  }) => {
-    const id = useId()
+}) => {
+  const id = useId();
 
-  
-  const [fileType, setFileType] = useState(type||"all");
-  const [files, setFiles] = useState<any[]>([]);
+  const [fileType, setFileType] = useState(type || "all");
+  const [searchTag, setSearchTag] = useState("");
+  const [orderBy, setOrderBy] = useState("");
+  let [files, setFiles] = useState<any[]>([]);
   const fileFetcher = useFetcher();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(
-    new Set(fileData || [])
+    new Set(fileData || []),
   );
   let { submit, isUploading, images } = useFileUpload();
 
   useEffect(() => {
     let data: any = fileFetcher?.data;
     let newFiles = data ? [...data.files] : files;
-    newFiles.sort((a, b) => b.createdAt - a.createdAt)
-    newFiles = newFiles.filter((file) =>fileType=="all"? true :getFileType(file.url) == fileType);
+    newFiles.sort((a, b) => b.createdAt - a.createdAt);
+    newFiles = newFiles.filter((file) =>
+      fileType == "all" ? true : getFileType(file.url) == fileType,
+    );
     setFiles(newFiles);
     console.log("je suis dedans dedans");
-  }, [fileFetcher,fileType]);
+  }, [fileFetcher, fileType]);
 
   useEffect(() => {
-    setFiles(images.length > 0 ? [...images, ...files]: files);
-  }, [images.length>0]);
+    setFiles(images.length > 0 ? [...images, ...files] : files);
+  }, [images.length > 0]);
 
   console.log("files ", files);
-
-
 
   const handleDropZoneDrop = useCallback(
     (_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
@@ -209,7 +222,7 @@ type ?: "image" | "video" | "font" | 'icon'| "all";
             : null,
       );
     }
-      
+
     console.log("select files: ", selectedFiles);
     shopify.modal.hide(id);
     setIsOpen(false);
@@ -220,8 +233,69 @@ type ?: "image" | "video" | "font" | 'icon'| "all";
     shopify.modal.hide(id);
   };
 
-  const handleFileType = useCallback((value:any)=>setFileType(value),[])
+  const handleFileType = useCallback((value: any) => setFileType(value), []);
 
+  if (searchTag) {
+    files = files.filter((file) => file.name.includes(searchTag));
+  }
+
+  let filesFilter = [...files];
+  if (orderBy) { 
+    switch (orderBy) {
+      case 'DATE_ASC':
+        filesFilter = filesFilter.reverse();
+        break;
+      case 'NAME_ASC':
+        filesFilter.sort((a, b) => {
+          const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+          const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+          if (nameA < nameB) {
+              return -1;
+          }
+          if (nameA > nameB) {
+              return 1;
+          }
+          return 0; // names must be equal
+        });
+        break;
+      
+      case 'NAME_DESC':
+        filesFilter.sort((b, a) => {
+          const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+          const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+          if (nameA < nameB) {
+              return -1;
+          }
+          if (nameA > nameB) {
+              return 1;
+          }
+          return 0; // names must be equal
+        });
+        break;
+    
+      default:
+        break;
+    }
+  }
+
+  const sortOptions =[
+    {
+      label: 'sort from Newest to Oldest',
+      value: 'DATE_DESC'
+    },
+    {
+      label: 'sort from Oldest to Newest)',
+      value: 'DATE_ASC'
+    },
+    {
+      label: 'sort A to Z',
+      value:'NAME_ASC'
+    },
+    {
+      label: 'sort Z to A',
+      value: 'NAME_DESC',
+    },
+  ]
   return (
     <>
       <div
@@ -233,87 +307,141 @@ type ?: "image" | "video" | "font" | 'icon'| "all";
       >
         {children || <div> Upload file</div>}
       </div>
-      <Modal variant="large" id={`${id}`} >
-     
-
-          <Box>
-            <InlineStack wrap={false}>
-              <Box
-                width="200px"
-                borderInlineEndWidth="025"
-                borderColor="border-brand"
-              >
-                <BlockStack gap="200">
-                  <Text
-                    as="h5"
-                    variant="bodyMd"
-                    alignment="center"
-                    fontWeight="bold"
+      <Modal variant="large" id={`${id}`}>
+        <Box overflowY="clip">
+          <InlineStack wrap={false}>
+            <Box
+              width="200px"
+              borderInlineEndWidth="025"
+              borderColor="border-brand"
+            >
+              <BlockStack gap="200">
+                <Text
+                  as="h5"
+                  variant="bodyMd"
+                  alignment="center"
+                  fontWeight="bold"
+                >
+                  Bibliothèque de la boutique
+                </Text>
+                <Box>
+                  <Listbox
+                    onSelect={handleFileType}
+                    accessibilityLabel="Basic Listbox example"
                   >
-                    Bibliothèque de la boutique
-                  </Text>
-                  <Box>
-                    <Listbox onSelect={handleFileType} accessibilityLabel="Basic Listbox example">
                     <Listbox.Option value="all">Tous</Listbox.Option>
-                      <Listbox.Option value="image">Image</Listbox.Option>
-                      <Listbox.Option value="video">Video</Listbox.Option>
-                      <Listbox.Option value="icon">Icon</Listbox.Option>
-                      <Listbox.Option value="font">Font</Listbox.Option>
-                    </Listbox>
-                  </Box>
-                </BlockStack>
+                    <Listbox.Option value="image">Image</Listbox.Option>
+                    <Listbox.Option value="video">Video</Listbox.Option>
+                    <Listbox.Option value="icon">Icon</Listbox.Option>
+                    <Listbox.Option value="font">Font</Listbox.Option>
+                  </Listbox>
+                </Box>
+              </BlockStack>
+            </Box>
+            <Box paddingBlock="100" width="-webkit-fill-available">
+              <Box padding='300'>
+                <InlineStack gap="200" align="space-between">
+                  <TextField clearButton onClearButtonClick={() => setSearchTag("")} label="search" labelHidden placeholder="search" value={searchTag} onChange={setSearchTag} prefix={<Icon source={SearchIcon} />} autoComplete="off" />
+                  <Select label="sort"  labelHidden options={sortOptions} value={orderBy} onChange={setOrderBy} />
+                </InlineStack>
               </Box>
-              <Box paddingBlock="100" paddingInline="300" width="100%">
+              <Scrollable
+                shadow
+                horizontal={false}
+                style={{ height: "100vh" }}
+                focusable
+                scrollbarGutter="stable"
+                scrollbarWidth="thin"
+              >
                 <BlockStack gap="300">
-                  <Box>
+                  <Box padding="300">
                     <DropZone onDrop={handleDropZoneDrop} variableHeight>
-                      <DropZone.FileUpload actionHint="Ou  glisser deposer" />
+                      <DropZone.FileUpload actionHint="or  drag drop" />
                     </DropZone>
                   </Box>
                   <Box>
-                    <InlineStack blockAlign="center" gap="200" wrap={true} align="start">
-                      {isUploading && <Spinner accessibilityLabel="uploading image" size="large" />}
-                    
-                      {Array.isArray(files) &&
-                        files.length > 0 &&
-                        files.map((file, index) => {
+                    <Grid gap={{ lg: "10px" }}>
+                      {isUploading && (
+                        <Grid.Cell
+                          columnSpan={{ xs: 3, sm: 2, md: 1, lg: 1, xl: 1 }}
+                        >
+                          <InlineStack
+                            blockAlign="center"
+                            gap="200"
+                            wrap={true}
+                            align="center"
+                          >
+                            <Spinner
+                              accessibilityLabel="uploading image"
+                              size="large"
+                            />
+                          </InlineStack>
+                        </Grid.Cell>
+                      )}
+
+                      {Array.isArray(filesFilter) &&
+                        filesFilter.length > 0 &&
+                        filesFilter.map((file, index) => {
                           return (
-                            <div
-                              onClick={() => {
-                                handleSeletedFile(file.url);
-                              }}
-                              key={index}
-                              style={{ position: "relative" }}
+                            <Grid.Cell
+                              columnSpan={{ xs: 3, sm: 2, md: 1, lg: 1, xl: 1 }}
                             >
-                              <Image name={file.name} url={fileUrl(file.url)} />
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  top: "0",
-                                  right: "0",
-                                }}
+
+                              <InlineStack
+                                blockAlign="center"
+                                gap="200"
+                                wrap={true}
+                                align="center"
                               >
-                                <Checkbox
-                                  label=""
-                                  labelHidden
-                                  checked={isSelectedFile(file.url)}
-                                />
-                              </div>
-                            </div>
+                                <div 
+                                  onClick={() => {
+                                    handleSeletedFile(file.url);
+                                  }}
+                                  key={index}
+                                  style={{ position: "relative" }}
+                                >
+                                  <Image
+                                    name={file.name}
+                                    url={fileUrl(file.url)}
+                                  />
+                                  <div
+                                    style={{
+                                      position: "absolute",
+                                      top: 5,
+                                      right: 5,
+                                    }}
+                                  >
+                                    <Checkbox
+                                      label=""
+                                      labelHidden
+                                      checked={isSelectedFile(file.url)}
+                                    />
+                                  </div>
+                                  </div>
+                                  <Text truncate={true} breakWord={false} as="p" variant="bodyMd" >{truncateText(file.name,15)}</Text>
+                              </InlineStack>
+                            </Grid.Cell>
                           );
                         })}
-                    </InlineStack>
+                    </Grid>
                   </Box>
                 </BlockStack>
-              </Box>
-            </InlineStack>
-          </Box>
-       
-        <TitleBar title={title||"Upload file"}>
-          <button type="button" variant="primary" onClick={handleAllSeletedFiles}>
+              </Scrollable>
+            </Box>
+          </InlineStack>
+        </Box>
+
+        <TitleBar title={title || "Upload file"}>
+          <button
+            type="button"
+            variant="primary"
+            onClick={handleAllSeletedFiles}
+          >
             Select file
           </button>
-          <button type="button"  onClick={handleCancelSelectedFiles}>Cancel</button>
+          <button type="button" onClick={handleCancelSelectedFiles}>
+            Cancel
+          </button>
         </TitleBar>
       </Modal>
     </>
@@ -349,7 +477,7 @@ export function useFileUpload() {
       });
     },
     isUploading,
-    images
+    images,
   };
 }
 
@@ -364,25 +492,25 @@ export function Image({ name, url }: { name: string; url: string }) {
     // If there's an objectUrl but the `url` is not a blob anymore, we revoke it
     if (objectUrl && !url?.startsWith("blob:")) URL.revokeObjectURL(objectUrl);
   }, [objectUrl, url]);
-  let fileType = getFileType(url)
-  if (fileType=="image" || fileType == "icon") {
+  let fileType = getFileType(url);
+  if (fileType == "image" || fileType == "icon") {
     return <Thumbnail size="large" source={url} alt={name}></Thumbnail>;
-  }else if (fileType=="font") {
-    return <Thumbnail size="large" source={TextFontIcon} alt={name}></Thumbnail>;
-  }else if (fileType=="video") {
-    return <Thumbnail size="large" source={PlayCircleIcon} alt={name}></Thumbnail>;
+  } else if (fileType == "font") {
+    return (
+      <Thumbnail size="large" source={TextFontIcon} alt={name}></Thumbnail>
+    );
+  } else if (fileType == "video") {
+    return (
+      <Thumbnail size="large" source={PlayCircleIcon} alt={name}></Thumbnail>
+    );
   } else {
     return <Thumbnail size="large" source={FileIcon} alt={name}></Thumbnail>;
   }
-
-  
 }
 
-function getFileType(filename:string) {
-  let part = filename.split('.');
+function getFileType(filename: string) {
+  let part = filename.split(".");
   let ext = `.${part.length > 1 ? part.reverse()[0] : ""}`.toLowerCase();
-  
- 
 
   for (const [fileType, extensions] of Object.entries(fileExtensions)) {
     if (extensions.includes(ext)) {
@@ -393,5 +521,3 @@ function getFileType(filename:string) {
   return null;
 }
 
-
-  

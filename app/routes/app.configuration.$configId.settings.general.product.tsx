@@ -23,7 +23,9 @@ const formSchema = z.object({
   redirectAfterAddingToCart:  z.any().transform(booleanTransform).pipe(z.boolean()),
   hideAddToCartButtonOnDetailPage:  z.any().transform(booleanTransform).pipe(z.boolean()),
   hideDesignButtonsOnShopPage:  z.any().transform(booleanTransform).pipe(z.boolean()),
-  hideAddToCartButtonOnShopPage:  z.any().transform(booleanTransform).pipe(z.boolean())
+  hideAddToCartButtonOnShopPage: z.any().transform(booleanTransform).pipe(z.boolean()),
+  redirectToCheckOutPage:z.any().transform(booleanTransform).pipe(z.boolean()),
+  displayRecapsOnCheckout:z.any().transform(booleanTransform).pipe(z.boolean())
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -53,7 +55,9 @@ export default function ConfigSettingsGeneral() {
         redirectAfterAddingToCart:true,
         hideAddToCartButtonOnDetailPage:false,
         hideDesignButtonsOnShopPage:true,
-        hideAddToCartButtonOnShopPage:false
+      hideAddToCartButtonOnShopPage: false,
+      redirectToCheckOutPage:false,
+      displayRecapsOnCheckout:false,
       }
   );
 
@@ -111,8 +115,22 @@ export default function ConfigSettingsGeneral() {
                 <Grid.Cell
                   columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}
                 >
-                  <ProductConfigItem title="hide to cart buttons for custom product on shop" checked={formData.hideAddToCartButtonOnShopPage} setChecked={(value)=>handleInputChange('hideAddToCartButtonOnShopPage',value)}>
+                  <ProductConfigItem title="Hide to cart buttons for custom product on shop" checked={formData.hideAddToCartButtonOnShopPage} setChecked={(value)=>handleInputChange('hideAddToCartButtonOnShopPage',value)}>
                     This options allow  you to show/hidethe cart button on the cart button on the customization page
+                  </ProductConfigItem>
+                </Grid.Cell>
+                <Grid.Cell
+                  columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}
+                >
+                  <ProductConfigItem title="Redirect to  checkout page" checked={formData.redirectToCheckOutPage} setChecked={(value)=>handleInputChange('redirectToCheckOutPage',value)}>
+                    This options allow to redirect to  checkout page
+                  </ProductConfigItem>
+                </Grid.Cell>
+                <Grid.Cell
+                  columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}
+                >
+                  <ProductConfigItem title="Display recaps on checkout" checked={formData.displayRecapsOnCheckout} setChecked={(value)=>handleInputChange('displayRecapsOnCheckout',value)}>
+                    This option allow  to display recaps on checkout
                   </ProductConfigItem>
                 </Grid.Cell>
                 

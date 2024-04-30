@@ -4,24 +4,33 @@ import RayStartArrowIcon from "../icons/RayStartArrowIcon";
 import { useNavigate } from "@remix-run/react";
 import LoadingGray from "../icons/LoadingGray";
 
-export const BackBtn = ({ isLoading, title }: { isLoading?: boolean; title?: string }) => {
+export const BackBtn = ({
+  isLoading,
+  title,
+  onClick,
+}: {
+  isLoading?: boolean;
+  title?: string;
+  onClick?: Function;
+}) => {
   const navigate = useNavigate();
   const onBack = () => {
-    navigate("..");
+    if (onClick) {
+      onClick();
+    } else {
+      navigate("..");
+    }
   };
-    return (  <button 
-      className="back-large-btn"
-      type="button"
-      onClick={onBack}
-    >
+  return (
+    <button className="back-large-btn" type="button" onClick={onBack}>
       <Box paddingInline="1000">
         <InlineStack gap="300">
-        
-          {isLoading?<LoadingGray/> :  <RayStartArrowIcon />}
+          {isLoading ? <LoadingGray /> : <RayStartArrowIcon />}
           <span style={{ color: "black", fontWeight: "bold" }}>
-            {title||'Back'}
+            {title || "Back"}
           </span>
         </InlineStack>
       </Box>
-    </button>);
-}
+    </button>
+  );
+};

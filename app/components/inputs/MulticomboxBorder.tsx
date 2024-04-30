@@ -2,6 +2,8 @@ import { AutoSelection, BlockStack, Box, Combobox, Grid, InlineError, InlineGrid
 import { useCallback, useMemo, useState } from "react";
 import { SpacingBackground } from "../layouts/SpacingBackground";
 import CircleNotCheckIcon from "../icons/CircleNotCheckIcon";
+import { fileUrl } from "~/utils/fileUrl";
+import { ActionFunctionArgs } from "@remix-run/node";
 
 export const MultiCombobox = ({
   label,
@@ -96,7 +98,7 @@ export const MultiCombobox = ({
                   <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
                     <BlockStack align="center">
                       
-                    <img style={{ height: "50px" }} src={image} />
+                    <img style={{ height: "50px" }} src={fileUrl(image)} />
                   </BlockStack>
                     </Grid.Cell>
                     <Grid.Cell columnSpan={{ xs: 3, sm: 3, md: 3, lg: 9, xl: 9 }}>
@@ -246,9 +248,9 @@ export const SelectCombobox = ({
                 <Box borderWidth="025" borderRadius="100" borderColor="border" padding="100" >
                   <Grid >
                   <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
-                    <BlockStack align="center">
+                    <BlockStack align="center" inlineAlign="center">
                       
-                    <img style={{ height: "50px" }} src={image} />
+                    <img style={{ width: "100px" , height: "auto" }} src={image} />
                   </BlockStack>
                     </Grid.Cell>
                     <Grid.Cell columnSpan={{ xs: 3, sm: 3, md: 3, lg: 9, xl: 9 }}>
@@ -313,4 +315,9 @@ export const SelectCombobox = ({
 };
 
 
+
+
+export const  action  =  ({request}: ActionFunctionArgs) => {
+  
+}
 
