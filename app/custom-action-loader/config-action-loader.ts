@@ -51,7 +51,7 @@ export const settingAction = async (
         session.id,
         configId,
         settingParams[0],
-        data,
+        data
       );
     } else {
       res = await ConfigSettingsService.edit(

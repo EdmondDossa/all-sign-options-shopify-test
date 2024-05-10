@@ -87,10 +87,11 @@ export default class ConfigSettingsService {
         console.log("Configuration not found");
         return null
       };
-      console.log('configuration',configuration)
+      console.log('configuration item',item)
       let data = configuration?.data
       if (data instanceof Object && "settings" in data) {
-          configuration["data"]["settings"][setting] = item
+          const oldItem = configuration["data"]["settings"][setting]
+          configuration["data"]["settings"][setting] = {...oldItem||{}, ...item}
       } else {
         console.log('data is not an object')
         configuration["data"] = { ...data||{},'settings':{[setting]:item}}

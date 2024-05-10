@@ -230,7 +230,7 @@ export default function MaterialColorCreate() {
                           <Grid.Cell
                             columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
                           >
-                            {color.pattern.active ? (
+                            {( !color.pattern.active )? (
                               <TextColorField
                                 error={getError(
                                   actionData,
@@ -252,7 +252,7 @@ export default function MaterialColorCreate() {
                                 )}
                                 title="Preview Image"
                                 path={color.pattern.url}
-                                handlePath={(value: string) => {
+                                handlePath={(value: string) => { !color.pattern.active 
                                   color.pattern.url = value;
                                   formData.colors[index] = color;
                                   setFormData({ ...formData });
@@ -338,7 +338,7 @@ export default function MaterialColorCreate() {
                               type="number"
                               value={`${color.additionalPrice}`}
                               onChange={(value) => {
-                                color.additionalPrice = parseFloat(value);
+                                color.additionalPrice = Number.parseFloat(value);
                                 formData.colors[index] = color;
                                 setFormData({ ...formData });
                               }}

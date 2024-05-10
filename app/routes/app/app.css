@@ -302,3 +302,126 @@
 .activatable-item.no-troke.active path{
     stroke: white;
 }
+
+.topbar-aso{
+    padding-left: 0.5rem;
+    padding-right: 1.5rem;
+    z-index: 50;
+    position: fixed;
+    display: flex;
+    height: 3rem;
+    width: 100%;
+    background-color: white;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2);
+}
+
+.version-style{
+    color: #3c434a;
+    font-size: 20;
+    font-weight: 700;
+}
+
+.app-content{
+    margin-top: 3rem;
+    min-width: 200px;
+    width: -webkit-fill-available;
+    width: -moz-available;
+}
+
+.sidebar-sticky{
+    width:85px;
+    position: relative;
+}
+
+.content-sidebar-wrapper{
+    display: flex;
+}
+
+img.aso-logo{
+    height: 50px; 
+}
+
+.aso-config-id{
+    font-weight: 600;
+    padding: 5px 10px ;
+    border: 2px solid  rgb(70 104 1);
+    background-color: transparent;
+    border-radius: 5px  ;
+    color: #466801;
+
+}
+
+
+
+.aso-material-btn{
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 7px 10px ;
+    border: 2px solid #EF5A35;
+    background-color: #F8E7E7;
+    border-radius: 5px  ;
+    color:#EF5A35;
+    cursor: pointer;
+
+}
+
+.aso-setting-btn{
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 7px 10px ;
+    border: 2px solid #016464;
+    border-radius: 5px  ;
+    color:#016464;
+    cursor: pointer;
+}
+
+.aso-additonal-btn{
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 7px 10px ;
+    border: 2px solid #f0bb1b;
+    border-radius: 5px  ;
+    color:#f0bb1b;
+    cursor: pointer;
+
+}
+
+
+.aso-additonal-card { 
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 7px 10px ;
+    border-radius: 5px  ;
+    cursor: pointer;
+}
+
+
+.aso-additonal-card.active{
+    color:#016464;
+    border: 2px solid #016464;
+}
+
+.aso-additonal-card.disabled{
+    opacity: 0.5;
+}
+
+
+
+
+
+
+

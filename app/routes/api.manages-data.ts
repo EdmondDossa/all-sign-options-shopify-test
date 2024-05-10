@@ -21,27 +21,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     cliparts: await ClipartsGroupService.getClipartsGroupsCliparts(sessionId) || [],
     borders: (await SettingBorderService.get(sessionId)) || [],
     pageSettings: { titleBalise: "h1" },
-    colors: (await ColorService.getColors(sessionId)) || [
-      {
-        name: "Evil purple",
-        textColor: { active: true, codeHex: "#f9a71a" },
-        backgroundColor: "#942ab2",
-      },
-    ],
-    manageSize: (await SizeService.getSizes(sessionId)) || [
-      {
-        label: "25x10_thick",
-        width: 25,
-        height: 10,
-        thickness: { active: true, value: 1 },
-      },
-    ],
-    allShapes: (await SettingShapesService.get(sessionId)) || [
-      { name: "Oval", icon: "", value: "oval" },
-    ],
-    allFixingMethod: (await SettingFixingMethodService.get(sessionId)) || [
-      { name: "None", description: "", icon: "", popImg: "", type: "none" },
-    ],
+    allShapes: (await SettingShapesService.get(sessionId)) || [],
+    allFixingMethod: (await SettingFixingMethodService.get(sessionId)) || [],
     allBorder: (await SettingBorderService.get(sessionId)) || [],
     outputOptions: [],
   };

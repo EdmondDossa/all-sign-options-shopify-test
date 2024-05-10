@@ -29,8 +29,8 @@ export default function ConfigSettingsGeneral() {
       >
         <Box paddingBlock="300">
           <InlineStack gap="400" align="center">
-            <SubTabItem to=""> Choose your customizer appearance</SubTabItem>
-
+            <SubTabItem to="theme"> Choose your customizer appearance</SubTabItem>
+            <SubTabItem to="custom-css"> Custom  CSS </SubTabItem>
           </InlineStack>
         </Box>
       </SpacingBackground>

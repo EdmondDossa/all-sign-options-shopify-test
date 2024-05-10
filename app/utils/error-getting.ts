@@ -6,4 +6,15 @@ export function getError(actionData:any, key:string){
     }
 
     return '';
-}
+}                               
+
+
+
+export  function getErrorFromZod(errors:any, inputs: string){
+    try {
+        const error = errors.find((currError: any) => currError.path.join(".") == inputs);
+        return error? error.message : "";
+    } catch (error) {
+       return "" 
+    }
+}   

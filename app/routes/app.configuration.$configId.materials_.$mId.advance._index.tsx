@@ -103,7 +103,7 @@ export default function MaterialAdvancedIndex() {
         
         
         <IndexTable.Cell>
-           <InlineStack blockAlign="center" gap="300">
+           <InlineStack blockAlign="center" gap="300" wrap={false}>
             <BorderCircleText onClick={()=>onManageOption(index)} text={ name } /> {truncateText(name)}
           </InlineStack>
         </IndexTable.Cell>
@@ -117,7 +117,7 @@ export default function MaterialAdvancedIndex() {
         <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
         <IndexTable.Cell>
-          <ButtonGroup gap="loose" >
+          <ButtonGroup noWrap gap="loose" >
             <button className="add-option-btn" onClick={()=>onManageOption(index)}>
 
          

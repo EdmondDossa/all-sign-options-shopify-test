@@ -2,7 +2,7 @@ import { Box, InlineStack } from '@shopify/polaris';
 export const BorderCircleText = ({text, onClick}:{text?:string, onClick?:Function}) => {
     text = getFirstLetters(text||"AS")
   return (
-    <span onClick={()=>{ onClick&&onClick() }} className='hover-btn'>
+    <span onClick={()=>{ onClick&&onClick() }} className='hover-btn' style={{cursor:'pointer'}}>
     <Box padding="150" borderColor="border-brand" borderWidth="025" borderRadius="full" background="bg-surface-secondary" width="34px" minHeight="34px">
     <InlineStack align='center' blockAlign='center'>
       {text}

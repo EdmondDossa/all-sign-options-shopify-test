@@ -17,8 +17,8 @@ import { NavLink } from "@remix-run/react";
 export default function Sidebar() {
     return (
         <BoxSideBar>
-        <Box paddingInline="400" paddingBlock="1200">
-          <BlockStack gap="300">
+        <Box paddingInline="400" paddingBlockStart="1600"  paddingBlockEnd="400">
+          <BlockStack gap="200">
             <ItemSidebar title={"Manage font"} to="/app/manage-font">
               <ManageFontIcon />
             </ItemSidebar>
@@ -29,8 +29,8 @@ export default function Sidebar() {
           </BlockStack>
         </Box>
         <Divider borderColor="border-brand" />
-        <Box paddingInline="150" paddingBlock="1200">
-          <BlockStack gap="300">
+        <Box paddingInline="150" paddingBlockStart="400"  paddingBlockEnd="2800">
+          <BlockStack gap="200">
             <ItemSidebar title={"Configuration"} to="/app/configuration">
               <ConfigurationIcon />
             </ItemSidebar>
@@ -42,6 +42,7 @@ export default function Sidebar() {
             </ItemSidebar>
           </BlockStack>
         </Box>
+        <Box paddingBlock="1200"></Box>
       </BoxSideBar>
     );
 }

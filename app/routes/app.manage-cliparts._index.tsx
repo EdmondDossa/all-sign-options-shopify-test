@@ -88,7 +88,7 @@ export default function ManageClipartIndex() {
 
       <IndexTable.Cell>
         <InlineStack align="end">
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
             <button className="add-option-btn" onClick={() => navigate(`${id}/clipart`)}>
               <InlineStack gap="100" blockAlign="center">
                 {" "}

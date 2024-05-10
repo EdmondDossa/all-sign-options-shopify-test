@@ -168,6 +168,7 @@ const initialData = {
     },
   },
   materials: [],
+  additionalOptions: []
 };
 
 export default class ConfigurationService {

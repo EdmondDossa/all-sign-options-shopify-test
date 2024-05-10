@@ -119,7 +119,7 @@ export default function MaterialShape() {
         </IndexTable.Cell>
         <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
         <IndexTable.Cell>
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
 
           <EditIconBtn
               size="micro"

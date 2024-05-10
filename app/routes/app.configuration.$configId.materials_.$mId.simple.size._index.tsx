@@ -163,9 +163,9 @@ export default function MaterialSizeIndex() {
     return {
       id:`${index}`,
       title: currSize?.label,
-      width: `${currSize?.width}mm`,
-      height: `${currSize?.height}mm`,
-      price: `${currSize?.basePrice}$`,
+      width: `${currSize?.width}`,
+      height: `${currSize?.height}`,
+      price: `${currSize?.basePrice}`,
       isDefault: currSize?.isDefault
     };
   });
@@ -198,7 +198,7 @@ export default function MaterialSizeIndex() {
         <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
         <IndexTable.Cell>
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
             <EditIconBtn
               size="micro"
               onClick={() => {

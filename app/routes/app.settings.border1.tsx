@@ -53,7 +53,7 @@ export default function SettingBorderIndex() {
         
 
         <IndexTable.Cell>
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
             <EditIconBtn size="micro" />
           </ButtonGroup>
         </IndexTable.Cell>

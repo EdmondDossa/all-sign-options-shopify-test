@@ -160,7 +160,7 @@ export default function Configuration() {
       >
         
         <IndexTable.Cell>
-          <InlineStack blockAlign="center" gap="300">
+          <InlineStack blockAlign="center" gap="300" wrap={false}>
              <BorderCircleText  onClick={()=>handleMaterials(id)}  text={name} /> {truncateText(name)}
           </InlineStack>
          
@@ -175,7 +175,7 @@ export default function Configuration() {
        
       
         <IndexTable.Cell>
-          <ButtonGroup gap="loose" >
+          <ButtonGroup noWrap gap="loose" >
             <ManageBtn  title="setting" handleClick={()=>handleSettings(id)}/>
             <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
             <DuplicateIconBtn   handeleDuplicate={()=>{handeleDuplicate(id)}} handleTitle={setConfigTitle} title={configTitle} onModalOpen={() => {setConfigTitle(name);}} />

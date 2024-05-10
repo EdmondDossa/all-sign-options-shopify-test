@@ -43,7 +43,7 @@ export default function MaterialFixingMethod() {
           />
         </IndexTable.Cell>
         <IndexTable.Cell>
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
           <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(value)}} />
           </ButtonGroup>
         </IndexTable.Cell>

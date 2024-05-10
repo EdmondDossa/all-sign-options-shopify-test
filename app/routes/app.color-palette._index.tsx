@@ -95,7 +95,7 @@ export default function ColorPaletteIndex() {
      
 
         <IndexTable.Cell>
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
           <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
             <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>

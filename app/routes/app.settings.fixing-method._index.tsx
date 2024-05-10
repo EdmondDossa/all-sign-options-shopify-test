@@ -55,7 +55,7 @@ export default function SettingFixingMethod() {
        
 
         <IndexTable.Cell>
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
           <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(type)}} />
           </ButtonGroup>
         </IndexTable.Cell>

@@ -43,6 +43,7 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";
 import { booleanTransform } from "~/utils/transfomerZod";
 import { parseWithZod } from "@conform-to/zod";
+import { fileUrl } from "~/utils/fileUrl";
 
 export default function MaterialColorIndex() {
   const submit = useSubmit();
@@ -129,9 +130,10 @@ export default function MaterialColorIndex() {
     return {
       id: `${index}`,
       title: `${color?.name}`,
-      textColor: `${color?.textColor?.codeHex}`,
-      BackgroundColor: `${color?.pattern?.codeHex}`,
-      price: `${color?.additionalPrice}$`,
+      textColor: (color?.textColor?.active) ? `${color?.textColor?.codeHex}`:'Disable',
+      patternActive:color?.pattern?.active,
+      BackgroundColor:(color?.pattern?.active) ? `${color?.pattern?.url}`:`${color?.pattern?.codeHex}`,
+      price: `${color?.additionalPrice}`,
       isDefault: color.isDefault
     }
   }) : [];
@@ -143,7 +145,7 @@ export default function MaterialColorIndex() {
   };
 
   const rowMarkup = colorsTab.map(
-    ({ id, title, textColor, BackgroundColor,price,isDefault }, index) => (
+    ({ id, title, textColor, BackgroundColor,patternActive,price,isDefault }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
@@ -152,7 +154,10 @@ export default function MaterialColorIndex() {
         </IndexTable.Cell>
         <IndexTable.Cell><Badge tone="critical" >{textColor}</Badge></IndexTable.Cell>
         <IndexTable.Cell>
-          <Badge tone="info">{BackgroundColor}</Badge>
+          {patternActive?  <img style={{height: "30px"}}
+            src={fileUrl(BackgroundColor)}
+            alt={"fixing-method" + title}
+          />:<Badge tone="info">{BackgroundColor}</Badge>}
         </IndexTable.Cell>
         <IndexTable.Cell>
           <Badge tone="success" >{price}</Badge>
@@ -160,7 +165,7 @@ export default function MaterialColorIndex() {
         <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
         <IndexTable.Cell>
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
 
           <EditIconBtn
               size="micro"

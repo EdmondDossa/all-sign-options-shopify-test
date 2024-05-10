@@ -86,7 +86,7 @@ export default function MaterialAdditionalOptionIndex() {
           />
         </IndexTable.Cell>
         <IndexTable.Cell>
-          <ButtonGroup gap="loose">
+          <ButtonGroup noWrap gap="loose">
           <ViewIconBtn
               size="micro"
               onClick={() => {
