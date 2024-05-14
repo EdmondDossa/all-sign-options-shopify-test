@@ -183,22 +183,20 @@ export default function MaterialSizeIndex() {
             {title}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>
-          <InlineStack blockAlign="start" gap="300">
+        <IndexTable.Cell className="td-center">
             <Badge tone="success">{width}</Badge>
-          </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <Badge tone="critical">{height}</Badge>
         </IndexTable.Cell>
        
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <Badge tone="critical">{price}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell  className="td-center">
+          <ButtonGroup  fullWidth={true}  noWrap gap="loose">
             <EditIconBtn
               size="micro"
               onClick={() => {
@@ -241,14 +239,13 @@ export default function MaterialSizeIndex() {
         <IndexTable
           resourceName={resourceName}
           itemCount={sizes ? sizes.length : 0}
-          sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
-            { title: "Width" },
-            { title: "Height" },
-            { title: "price" },
-            { title: "Default" },
-            { title: "Action" },
+            { title: "Width" ,  alignment: "center"},
+            { title: "Height", alignment: "center"},
+            { title: "price" ,  alignment: "center"},
+            { title: "Default", alignment: "center"},
+            { title: "Action" , alignment: "center"},
           ]}
           selectable={false}
         >

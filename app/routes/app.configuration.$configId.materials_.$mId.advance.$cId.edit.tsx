@@ -48,6 +48,7 @@ import { ColorType } from "~/types/ManagePropertyType";
 import { FixingMethodType, ShapeType } from "~/types/SettingsType";
 import { TextColorField } from "~/components/inputs/TextColorField";
 import { MultiCombobox, SelectCombobox } from "~/components/inputs/MulticomboxBorder";
+import { stringTransform } from "~/utils/transfomerZod";
 
 export default function MaterialComponentCreate() {
   const navigate = useNavigate();
@@ -418,10 +419,7 @@ const formSchema = z.object({
     .string({ required_error: "Title is required" })
     .min(3, "Title is too short")
     .max(100, "Title is too long"),
-  description: z
-    .string({ required_error: "Description is required" })
-    .min(3, "Description is too short")
-    .max(255, "Description is too long"),
+  description:  z.string().nullish().transform(stringTransform),
   icon: z.string({ required_error: "Icon file is required" }),
   image: z.string({ required_error: "image file is required" }),
   additionalPrice: z.number({ required_error: "Price is required" }),
@@ -451,8 +449,8 @@ const formSchema = z.object({
     .pipe(
       z.object({
         name: z.string({ required_error: "Color name  is required" }),
-        codeHex: z.string({ required_error: "Color code Hex  is required" }),
-        prevImg: z.string({ required_error: "Color image  is required" }),
+        codeHex:  z.string().nullish().transform(stringTransform),
+        prevImg:  z.string().nullish().transform(stringTransform)
       }),
     )
 });

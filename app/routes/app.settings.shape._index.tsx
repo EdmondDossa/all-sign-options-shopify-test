@@ -36,14 +36,14 @@ export default function MaterialFixingMethod() {
       <IndexTable.Cell>
           {name}
       </IndexTable.Cell>
-      <IndexTable.Cell>
+      <IndexTable.Cell className="td-center">
         <img style={{ height: "30px" }} src={fileUrl(icon)} alt={"shape" + name} />
       </IndexTable.Cell>
 
 
 
-      <IndexTable.Cell>
-        <ButtonGroup noWrap gap="loose">
+      <IndexTable.Cell className="td-center">
+        <ButtonGroup fullWidth noWrap gap="loose">
         <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(value)}} />
         </ButtonGroup>
       </IndexTable.Cell>
@@ -67,8 +67,8 @@ export default function MaterialFixingMethod() {
         sortable={[false, true, true, true, true, true, true]}
         headings={[
           { title: "Title" },
-          { title: "Icon" },
-          { title: "Action" },
+          { title: "Icon", alignment:"center" },
+          { title: "Action", alignment:"center" },
         ]}
         selectable={false}
       >

@@ -152,20 +152,20 @@ export default function MaterialColorIndex() {
             {title}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell><Badge tone="critical" >{textColor}</Badge></IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center"><Badge tone="critical" >{textColor}</Badge></IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           {patternActive?  <img style={{height: "30px"}}
             src={fileUrl(BackgroundColor)}
-            alt={"fixing-method" + title}
+            alt={"color" + title}
           />:<Badge tone="info">{BackgroundColor}</Badge>}
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <Badge tone="success" >{price}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
 
           <EditIconBtn
               size="micro"
@@ -209,14 +209,13 @@ export default function MaterialColorIndex() {
         <IndexTable
           resourceName={resourceName}
           itemCount={colorsTab.length}
-          sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
-            { title: "Text color" },
-            { title: "Background color" },
-            { title: "Additional price" },
-            { title: "Default" },
-            { title: "Action" },
+            { title: "Text color",  alignment: "center"},
+            { title: "Background color",  alignment: "center"},
+            { title: "Additional price",  alignment: "center"},
+            { title: "Default" ,  alignment: "center"},
+            { title: "Action", alignment: "center" },
           ]}
           selectable={false}
         >

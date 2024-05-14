@@ -137,6 +137,11 @@ export default function Configuration() {
     navigate(`${id}/settings`);
   }
 
+  const handlePreviews = (id: number) => {
+    
+    navigate(`${id}/preview`);
+  }
+
 
 
   configurations = configurations || [];
@@ -165,8 +170,8 @@ export default function Configuration() {
           </InlineStack>
          
         </IndexTable.Cell>
-        <IndexTable.Cell ><Text  truncate as="p">{truncateText(description)}</Text></IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell  ><Text  truncate as="p">{truncateText(description)}</Text></IndexTable.Cell>
+        <IndexTable.Cell className="td-center" >
           <img style={{height: "30px"}}
             src={fileUrl(icon)}
             alt={"product thumbnail" + name}
@@ -174,8 +179,10 @@ export default function Configuration() {
         </IndexTable.Cell>
        
       
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose" >
+        <IndexTable.Cell className="td-center">
+          
+          <ButtonGroup fullWidth={true} noWrap gap="loose" >
+            <ViewIconBtn onClick={()=>{handlePreviews(id)}} />
             <ManageBtn  title="setting" handleClick={()=>handleSettings(id)}/>
             <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
             <DuplicateIconBtn   handeleDuplicate={()=>{handeleDuplicate(id)}} handleTitle={setConfigTitle} title={configTitle} onModalOpen={() => {setConfigTitle(name);}} />
@@ -232,8 +239,8 @@ export default function Configuration() {
           headings={[
             { title: "Name configuration" },
             { title: "Desciption"},
-            { title: "Icon" },
-            { title: "Action"},
+            { title: "Icon", alignment:"center" },
+            { title: "Action" ,alignment:"center" },
           ]}
         >
           {rowMarkup}

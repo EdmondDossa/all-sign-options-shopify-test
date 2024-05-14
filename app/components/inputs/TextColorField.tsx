@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 
 
 export function TextColorField({ label, color, setColor, helpText, error }: { error?:string; helpText?: string; label?: string; color?: string | undefined;  setColor?:Function}) {
-    const [popoverActive, setPopoverActive] = useState(true);
+    const [popoverActive, setPopoverActive] = useState(false);
     const [colorHex, setColorHex] = useState<string>(color||"#FFFFFF");
     let hsv = ColorConvertor.hex.hsv(color||"#FFFFFF")
     const [colorHsv, setColorHsv] = useState({

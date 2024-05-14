@@ -1,28 +1,13 @@
 import {
   Badge,
-  BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  Checkbox,
-  ChoiceList,
   Divider,
-  IndexFilters,
   IndexTable,
-  InlineGrid,
   InlineStack,
-  Layout,
-  Page,
-  Select,
-  Text,
-  TextField,
-  useIndexResourceState,
   useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
 import { Form, Link, NavLink, Outlet, json, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
@@ -98,12 +83,12 @@ export default function ManageFontIndex() {
         <IndexTable.Cell>
             {label}
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           {isGoogleFont? <Badge tone="info" >Google font</Badge>:<Badge > Custom font</Badge>}
         </IndexTable.Cell>
        
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
           <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
             <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>
@@ -136,11 +121,10 @@ export default function ManageFontIndex() {
         <IndexTable
           resourceName={resourceName}
           itemCount={fonts?fonts.length:0}
-          sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
-            { title: "Font type" },
-            { title: "Action" },
+            { title: "Font type", alignment:"center" },
+            { title: "Action", alignment:"center" },
           ]}
           selectable={false}
         >

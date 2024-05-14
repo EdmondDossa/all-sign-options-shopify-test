@@ -164,19 +164,19 @@ export default function MaterialBorderIndex() {
             {title}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
         <img style={{height: "30px"}}
             src={fileUrl(icon)}
             alt={"border" + title}
           />
         </IndexTable.Cell>
        
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <Badge tone="critical" >{price}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
 
           <EditIconBtn
               size="micro"
@@ -220,13 +220,12 @@ export default function MaterialBorderIndex() {
         <IndexTable
           resourceName={resourceName}
           itemCount={bordersTab.length}
-          sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
-            { title: "Icon" },
-            { title: "Additional Price" },
-            { title: "Default" },
-            { title: "Action" },
+            { title: "Icon" , alignment: "center"},
+            { title: "Additional Price" , alignment: "center"},
+            { title: "Default", alignment: "center"},
+            { title: "Action", alignment: "center"},
           ]}
           selectable={false}
         >

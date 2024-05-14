@@ -61,12 +61,12 @@ export default function MaterialIndex() {
           </InlineStack>
         </IndexTable.Cell>
      
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <Badge tone={type == "simple" ? "info" : "success"}>{type}</Badge>
         </IndexTable.Cell>
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
             <EditIconBtn
               size="micro"
               onClick={() => {
@@ -113,8 +113,8 @@ export default function MaterialIndex() {
         selectable={false}
         headings={[
           { title: "Title" },
-          { title: "Type" },
-          { title: "Action" },
+          { title: "Type",  alignment: "center"},
+          { title: "Action",  alignment : "center"},
         ]}
       >
         {rowMarkup}

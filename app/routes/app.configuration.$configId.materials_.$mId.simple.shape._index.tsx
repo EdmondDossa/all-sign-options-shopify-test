@@ -107,19 +107,19 @@ export default function MaterialShape() {
             {title}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
         <img style={{height: "30px"}}
             src={fileUrl(image)}
             alt={"border" + title}
           />
         </IndexTable.Cell>
        
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <Badge tone="critical" >{price}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
 
           <EditIconBtn
               size="micro"
@@ -163,13 +163,12 @@ export default function MaterialShape() {
         <IndexTable
           resourceName={resourceName}
           itemCount={shapesTab.length}
-          sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
-            { title: "Image" },
-            { title: "Additional Price" },
-            { title: "Default" },
-            { title: "Action" },
+            { title: "Image", alignment: "center"},
+            { title: "Additional Price", alignment: "center"},
+            { title: "Default", alignment: "center"},
+            { title: "Action" , alignment: "center"},
           ]}
           selectable={false}
         >

@@ -40,13 +40,13 @@ export default function SettingFixingMethod() {
           {description}
         </IndexTable.Cell>
 
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
         <img style={{height: "30px"}}
             src={ fileUrl(popImg) }
             alt={"Fixing method" + name}
           />
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
         <img style={{height: "30px"}}
             src={fileUrl(icon)}
             alt={"Fixing method" + name}
@@ -54,8 +54,8 @@ export default function SettingFixingMethod() {
         </IndexTable.Cell>
        
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
           <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(type)}} />
           </ButtonGroup>
         </IndexTable.Cell>
@@ -79,9 +79,9 @@ export default function SettingFixingMethod() {
           headings={[
             { title: "Title" },
             { title: "Description" },
-            { title: "Image" },
-            { title: "Icon" },
-            { title: "Action" },
+            { title: "Image" , alignment:"center" },
+            { title: "Icon" , alignment:"center" },
+            { title: "Action", alignment:"center" },
           ]}
           selectable={false}
         >

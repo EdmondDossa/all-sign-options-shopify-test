@@ -78,15 +78,15 @@ export default function MaterialAdditionalOptionIndex() {
       <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
         <IndexTable.Cell>{title}</IndexTable.Cell>
         <IndexTable.Cell>{description}</IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <img
             style={{ height: "30px" }}
             src={fileUrl(icon)}
             alt={" thumbnail" + title}
           />
         </IndexTable.Cell>
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
           <ViewIconBtn
               size="micro"
               onClick={() => {
@@ -140,12 +140,11 @@ export default function MaterialAdditionalOptionIndex() {
         resourceName={resourceName}
         itemCount={additionalOptions ? additionalOptions.length : 0}
         selectable={false}
-        sortable={[false, true, true, true, true, true, true]}
         headings={[
           { title: "Title" },
           { title: "Desciption" },
-          { title: "Icon" },
-          { title: "Action" },
+          { title: "Icon" ,  alignment: "center"},
+          { title: "Action", alignment: "center" },
         ]}
       >
         {rowMarkup}

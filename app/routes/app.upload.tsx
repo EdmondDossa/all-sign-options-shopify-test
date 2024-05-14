@@ -165,7 +165,7 @@ export const FileUploader = ({
   let [files, setFiles] = useState<any[]>([]);
   const fileFetcher = useFetcher();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(
+  let [selectedFiles, setSelectedFiles] = useState<Set<string>>(
     new Set(fileData || []),
   );
   let { submit, isUploading, images } = useFileUpload();
@@ -178,7 +178,7 @@ export const FileUploader = ({
       fileType == "all" ? true : getFileType(file.url) == fileType,
     );
     setFiles(newFiles);
-    console.log("je suis dedans dedans");
+
   }, [fileFetcher, fileType]);
 
   useEffect(() => {
@@ -214,12 +214,14 @@ export const FileUploader = ({
 
   const handleAllSeletedFiles = () => {
     if (typeof setFilesData == "function") {
+      let selectedFilesArr = [...selectedFiles]
+        .filter((file) => type =="all" || getFileType(file) == (type || "image"));
       setFilesData(
         multiple
-          ? [...selectedFiles]
-          : selectedFiles.size > 0
+          ? selectedFilesArr
+          : selectedFilesArr?.length > 0
             ? [...selectedFiles][0]
-            : null,
+            : ""
       );
     }
 

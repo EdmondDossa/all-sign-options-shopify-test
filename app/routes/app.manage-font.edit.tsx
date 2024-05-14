@@ -139,7 +139,7 @@ export default function ManageFontCreate() {
               
              { !formData.isGoogleFont  &&   <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
 
-                  <FileInput helperText=".ttf, .woff Font File Type (Required)"
+                  <FileInput type="font" helperText=".ttf, .woff Font File Type (Required)"
                     error={getError(actionData, "url")} title="Upload font file"
                     path={formData.url} handlePath={handleUrl} />
                 </Grid.Cell>}

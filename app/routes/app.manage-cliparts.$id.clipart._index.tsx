@@ -106,19 +106,19 @@ export default function MaterialFixingMethod() {
             {title}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
         <img style={{height: "30px"}}
             src={fileUrl(url)}
             alt={"Clipart" + title}
           />
         </IndexTable.Cell>
        
-        <IndexTable.Cell>
-          <Badge tone="success" >{additionalPrice+'$'}</Badge>
+        <IndexTable.Cell className="td-center">
+          <Badge tone="success" >{additionalPrice}</Badge>
         </IndexTable.Cell>
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
           <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
           <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>
@@ -154,9 +154,9 @@ export default function MaterialFixingMethod() {
           sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
-            { title: "Icon" },
-            { title: "Additional Price" },
-            { title: "Action" },
+            { title: "Icon", alignment: "center" },
+            { title: "Additional Price",  alignment: "center" },
+            { title: "Action", alignment: "center" },
           ]}
           selectable={false}
         >

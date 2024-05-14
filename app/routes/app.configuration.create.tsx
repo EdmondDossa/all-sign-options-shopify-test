@@ -233,10 +233,9 @@ export default function ConfigurationEdit() {
                         />
                       )}
                       <span style={{ color: "white", fontWeight: "bold" }}>
-                        {" "}
-                        Next
+                        {configuration? "Save" : "Next"} 
                       </span>
-                      {!isSubmitting && <RayEndArrowIcon />}
+                      {!isSubmitting && !configuration && <RayEndArrowIcon />}
                     </InlineStack>
                   </Box>
                 </button>

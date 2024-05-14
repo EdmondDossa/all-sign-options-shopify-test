@@ -86,7 +86,7 @@ export default function MaterialIndex() {
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell>{truncateText(description)}</IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <img
             style={{ height: "30px" }}
             src={fileUrl(icon)}
@@ -94,12 +94,12 @@ export default function MaterialIndex() {
           />
         </IndexTable.Cell>
        
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <Badge tone={type == "simple" ? "info" : "success"}>{type}</Badge>
         </IndexTable.Cell>
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth={true} noWrap gap="loose">
             <EditIconBtn
               size="micro"
               onClick={() => {
@@ -147,9 +147,9 @@ export default function MaterialIndex() {
         headings={[
           { title: "Title" },
           { title: "Desciption" },
-          { title: "Icon" },
-          { title: "Behavior (type)" },
-          { title: "Action" },
+          { title: "Icon", alignment: "center"  },
+          { title: "Behavior (type)", alignment: "center" },
+          { title: "Action" , alignment: "center" },
         ]}
       >
         {rowMarkup}

@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://off-halloween-characteristic-carey.trycloudflare.com"
+application_url = "https://bufing-gets-spirituality-economics.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://off-halloween-characteristic-carey.trycloudflare.com/auth/callback",
-  "https://off-halloween-characteristic-carey.trycloudflare.com/auth/shopify/callback",
-  "https://off-halloween-characteristic-carey.trycloudflare.com/api/auth/callback"
+  "https://bufing-gets-spirituality-economics.trycloudflare.com/auth/callback",
+  "https://bufing-gets-spirituality-economics.trycloudflare.com/auth/shopify/callback",
+  "https://bufing-gets-spirituality-economics.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

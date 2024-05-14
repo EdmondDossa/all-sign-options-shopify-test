@@ -107,17 +107,17 @@ export default function MaterialAdvancedIndex() {
             <BorderCircleText onClick={()=>onManageOption(index)} text={ name } /> {truncateText(name)}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>{truncateText(description)}</IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell >{truncateText(description)}</IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <img style={{height: "30px"}}
             src={fileUrl(icon)}
             alt={"product " + name}
           />
         </IndexTable.Cell>
-        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose" >
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose" >
             <button className="add-option-btn" onClick={()=>onManageOption(index)}>
 
          
@@ -201,14 +201,12 @@ export default function MaterialAdvancedIndex() {
           resourceName={resourceName}
         itemCount={materialComponents?materialComponents.length:0}
           selectable={false}
-        
-          sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
             { title: "Desciption"},
-            { title: "Icon" },
-            { title: "Default" },
-            { title: "Action"},
+            { title: "Icon" , alignment: "center"},
+            { title: "Default",  alignment: "center"},
+            { title: "Action", alignment: "center"},
           ]}
         >
           {rowMarkup}

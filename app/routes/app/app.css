@@ -120,6 +120,7 @@
     background-color: white;
     border-radius: 5px;
     border-width: 1px;
+    cursor: pointer;
 }
 
 .next-large-btn{
@@ -128,6 +129,7 @@
     border-radius: 5px;
     border-width: 1px;
     border-color: rgb(1, 100, 100) !important;
+    cursor: pointer;
 }
 
 .primary-btn{
@@ -136,6 +138,8 @@
     border-radius: 5px;
     border-width: 1px;
     border-color: rgb(1, 100, 100) !important;
+
+    cursor: pointer;
 }
 
 .add-option-btn{
@@ -143,6 +147,7 @@
     border-radius: 8px;
     padding: 2px 4px;
     border: 0px;
+    cursor: pointer;
 }
 
 .primary-btn-text{
@@ -418,6 +423,18 @@ img.aso-logo{
 .aso-additonal-card.disabled{
     opacity: 0.5;
 }
+
+
+.td-center{
+   text-align: center;
+
+}
+
+
+.td-end{
+   text-align: end;
+}
+
 
 
 

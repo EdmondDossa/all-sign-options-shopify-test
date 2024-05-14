@@ -17,6 +17,7 @@ import { fileUrl } from "~/utils/fileUrl";
 
 export const FileInput = ({
   title,
+  type,
   error,
   helperText,
   path,
@@ -24,6 +25,7 @@ export const FileInput = ({
   buttonTitle,
 }: {
   title?: string;
+  type?:  "image" | "icon" | "video" | "font" | "all";
   error?: string;
   helperText?: string;
   buttonTitle?: string;
@@ -36,6 +38,7 @@ export const FileInput = ({
       <Box borderRadius="100" borderWidth="025" padding="025" paddingInline="100" >
         <InlineStack blockAlign="center" align="space-between">
           <FileUploader
+            type={type}
             fileData={[path]}
             setFilesData={handlePath}
             title="Uplaod image file"

@@ -16,7 +16,41 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
+import previewStyle from "./assets/index.css";
+import { ExternalScriptsHandle } from "remix-utils/external-scripts";
+import { useEffect } from "react";
+// import './assets/shopify'
+// import './assets/fabric'
+// import './assets/editor.script'
+// import './assets/index'
 
+
+// export let handle: ExternalScriptsHandle = {
+//   scripts: [
+//     {
+//       src: "/assets-preview/shopify.js",
+//       crossOrigin: 'anonymous',
+//       preload: true
+//     },
+//     {
+//       src: "/assets-preview/editor.script.js",
+//       crossOrigin: 'anonymous',
+//       preload: true
+//     },
+//     {
+//       src: "/assets-preview/fabric.js",
+//       crossOrigin: 'anonymous',
+//       preload: true
+//     },
+//     {
+//       src: "/assets-preview/index.js",
+//       preload: true,
+//       crossOrigin: 'anonymous',
+//     }
+//   ],
+// };
+
+export const links = () => [{ rel: "stylesheet", href: previewStyle }];
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const { session, admin } = await authenticate.admin(request);
     const configId = parseInt(params.configId ?? "");
@@ -29,7 +63,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     return json({ materials });
   };
 
-export default function Preview(){
+export default function Preview() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = '/assets-preview/index.js';
+    script.async = true;
+    script.onload = () => console.log('Le script a été chargé avec succès.');
+    script.onerror = () => console.error('Une erreur est survenue lors du chargement du script.');
+    document.body.appendChild(script);
+
+    // Fonction de nettoyage pour supprimer le script lors du démontage du composant
+    return () => {
+      document.body.removeChild(script);
+    }
+  }, []);
   let { materials } = useLoaderData<typeof loader>();
   const { configuration } = useOutletContext<{ configuration: ConfigurationType; }>();
   
@@ -54,8 +101,10 @@ export default function Preview(){
           </Box>
       </BoxBackground>
       <SpacingBackground>
-        <Scripts />
-        <div id="app"></div>
+      <div id="app">
+        
+      <h1> All  signs options    </h1>    
+      </div>
       </SpacingBackground>
   
   

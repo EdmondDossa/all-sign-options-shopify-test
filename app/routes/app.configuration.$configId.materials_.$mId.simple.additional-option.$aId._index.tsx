@@ -90,27 +90,27 @@ export default function MaterialAdditionalOptionIndex() {
       <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
         <IndexTable.Cell>{title}</IndexTable.Cell>
         <IndexTable.Cell>{description}</IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <img
             style={{ height: "30px" }}
             src={fileUrl(icon)}
             alt={" thumbnail" }
           />
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <img
             style={{ height: "30px" }}
             src={fileUrl(image)}
             alt={" thumbnail"}
           />
         </IndexTable.Cell>
-        <IndexTable.Cell>
-        <Badge tone="success" >{`${additionalPrice}$`}</Badge>
+        <IndexTable.Cell className="td-center">
+        <Badge tone="success" >{`${additionalPrice}`}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
 
             <EditIconBtn
               size="micro"
@@ -159,15 +159,14 @@ export default function MaterialAdditionalOptionIndex() {
         resourceName={resourceName}
         itemCount={additionalOptionItems ? additionalOptionItems.length : 0}
         selectable={false}
-        sortable={[false, true, true, true, true, true, true]}
         headings={[
           { title: "Title" },
           { title: "Desciption" },
-          { title: "Icon" },
-          { title: "Image" },
-          { title: "Price" },
-          { title: "Default" },
-          { title: "Action" },
+          { title: "Icon" ,  alignment: "center"},
+          { title: "Image", alignment: "center" },
+          { title: "Price", alignment: "center" },
+          { title: "Default", alignment: "center" },
+          { title: "Action", alignment: "center" },
         ]}
       >
         {rowMarkup}

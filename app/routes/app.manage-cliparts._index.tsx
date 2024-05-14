@@ -86,9 +86,9 @@ export default function ManageClipartIndex() {
       <IndexTable.Cell>{title}</IndexTable.Cell>
       <IndexTable.Cell>{description}</IndexTable.Cell>
 
-      <IndexTable.Cell>
-        <InlineStack align="end">
-          <ButtonGroup noWrap gap="loose">
+      <IndexTable.Cell className="td-center">
+       
+          <ButtonGroup fullWidth noWrap gap="loose">
             <button className="add-option-btn" onClick={() => navigate(`${id}/clipart`)}>
               <InlineStack gap="100" blockAlign="center">
                 {" "}
@@ -100,7 +100,7 @@ export default function ManageClipartIndex() {
             <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
               <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
           </ButtonGroup>
-      </InlineStack>
+   
       </IndexTable.Cell>
     </IndexTable.Row>
   ));
@@ -134,7 +134,7 @@ export default function ManageClipartIndex() {
         headings={[
           { title: "Title" },
           { title: "Description" },
-          { title: "Action",alignment:"end" },
+          { title: "Action",alignment:"center" },
         ]}
         selectable={false}
       >

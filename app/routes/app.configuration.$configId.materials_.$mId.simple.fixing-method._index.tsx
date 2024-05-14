@@ -77,7 +77,7 @@ export default function MaterialFixingMethodComponent() {
       id: `${index}`,
       title: `${fixingMethod?.name}`,
       image: fixingMethod?.icon,
-      price: `${currFixingMethod?.additionalPrice}$`,
+      price: `${currFixingMethod?.additionalPrice}`,
       isDefault: currFixingMethod.isDefault
     }
   }) : [];
@@ -92,25 +92,25 @@ export default function MaterialFixingMethodComponent() {
   const rowMarkup = fixingMethodTab?.map(
     ({ id, title, image, price, isDefault }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
-        <IndexTable.Cell>
+        <IndexTable.Cell >
           <InlineStack blockAlign="start" gap="300">
             {title}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
         <img style={{height: "30px"}}
             src={fileUrl(image)}
             alt={"fixing-method" + title}
           />
         </IndexTable.Cell>
        
-        <IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
           <Badge tone="critical" >{price}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
 
-        <IndexTable.Cell>
-          <ButtonGroup noWrap gap="loose">
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
 
           <EditIconBtn
               size="micro"
@@ -154,13 +154,12 @@ export default function MaterialFixingMethodComponent() {
         <IndexTable
           resourceName={resourceName}
           itemCount={fixingMethodTab.length}
-          sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
-            { title: "Image" },
-            { title: "Additional Price" },
-            { title: "Default" },
-            { title: "Action" },
+            { title: "Image",alignment:"center" },
+            { title: "Additional Price" , alignment: "center"},
+            { title: "Default", alignment: "center"},
+            { title: "Action", alignment: "center"},
           ]}
           selectable={false}
         >
