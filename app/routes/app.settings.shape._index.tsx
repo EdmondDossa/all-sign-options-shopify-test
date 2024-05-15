@@ -37,7 +37,7 @@ export default function MaterialFixingMethod() {
           {name}
       </IndexTable.Cell>
       <IndexTable.Cell className="td-center">
-        <img style={{ height: "30px" }} src={fileUrl(icon)} alt={"shape" + name} />
+       {icon && <img style={{ height: "30px" }} src={fileUrl(icon)} alt={"shape" + name} />}
       </IndexTable.Cell>
 
 
@@ -64,7 +64,6 @@ export default function MaterialFixingMethod() {
       <IndexTable
         resourceName={resourceName}
         itemCount={shapes?shapes.length:0}
-        sortable={[false, true, true, true, true, true, true]}
         headings={[
           { title: "Title" },
           { title: "Icon", alignment:"center" },

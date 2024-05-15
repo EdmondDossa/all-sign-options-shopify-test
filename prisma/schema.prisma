@@ -20,6 +20,7 @@ model Session {
   expires     DateTime?
   accessToken String
   userId      BigInt?
+  isInitialized    Boolean   @default(false)
   configurations  Configuration[]
   fonts       Font[]
   sizes       Size[]

@@ -105,7 +105,7 @@ export default function ManageSizeCreate() {
                         setChecked={handleZipName}
                       />
                     </InlineStack>
-                    <Text as="span" tone="subdued">    Use ider id as zip name </Text>
+                    <Text as="span" tone="subdued">Use the command id as the name of the zip file that will contain the uploaded files during customization </Text>
                   </BlockStack>
                 </Grid.Cell>
 
@@ -120,7 +120,7 @@ export default function ManageSizeCreate() {
                         setChecked={handleCalculateOutput}
                       />
                     </InlineStack>
-                      <Text as="span" tone="subdued">  Calculate retina output </Text>
+                    
                   </BlockStack>
                 </Grid.Cell>
               </Grid>

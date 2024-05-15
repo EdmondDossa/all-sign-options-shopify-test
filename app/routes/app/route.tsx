@@ -16,14 +16,9 @@ import { config } from "process";
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "stylesheet", href: appStyle }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const {session}=await authenticate.admin(request);
-  // try {
-  //   SettingService.addSetting(session.id, session.shop);
-  //   console.log("Setting error setting_exist");
-
-  // } catch (error) {
-  //   console.log("Setting error setting_exist", error);
-  // }
+  const { session }: any = await authenticate.admin(request);
+  SettingService.addSetting(session.id, session.shop);
+ 
 
   return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
 };

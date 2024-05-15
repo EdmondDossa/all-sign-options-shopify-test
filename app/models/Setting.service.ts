@@ -1,5 +1,4 @@
 import prisma from "~/db.server";
-import { FontType } from "~/types/ManagePropertyType";
 
 export default class SettingService {
   static async addSetting(
@@ -7,14 +6,17 @@ export default class SettingService {
     shop: string = "",
   ): Promise<any | null> {
     try {
-      return await prisma.setting.create({
-        data: {
+      return await prisma.setting.upsert({
+        where: {
+          sessionId: sessionId,
+        },
+        update: {},
+        create: {
           data: data(shop),
           sessionId: sessionId,
         },
       });
     } catch (error) {
-      console.error("Error adding font:", error);
       return Promise.resolve(null);
     }
   }
@@ -39,7 +41,7 @@ export default class SettingService {
 }
 
 const data = (shop: string) => {
-  const url = shop ? `https://${shop}/admin` : "";
+  const url = shop ? `https://${shop}/apps/aso-proxy` : "";
 
   return {
     output: {
@@ -50,62 +52,62 @@ const data = (shop: string) => {
     shapes: [
       {
         name: "Oval",
-        icon: url + "/resources/shapes/Icons/shape_oval_icon.svg",
+        icon: "",
         value: "oval",
       },
       {
         name: "Square",
-        icon: url + "/resources/shapes/Icons/shape_square_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_square.svg",
         value: "square",
       },
       {
         name: "Triangle",
-        icon: url + "/resources/shapes/Icons/shape_triangle_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_triangle.svg",
         value: "triangle",
       },
       {
         name: "Rounded Square",
-        icon: url + "/resources/shapes/Icons/shape_rounded_rectangular_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_rounded.svg",
         value: "rounded-square",
       },
       {
         name: "Rotated Square",
-        icon: url + "/resources/shapes/Icons/shape_rotated_square_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_rotated_square.svg",
         value: "rotated-square",
       },
       {
         name: "Turn Left",
-        icon: url + "/resources/shapes/Icons/shape_turn_left_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_turn_left.svg",
         value: "turn-left",
       },
       {
         name: "Turn Right",
-        icon: url + "/resources/shapes/Icons/shape_turn_right_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_turn_right.svg",
         value: "turn-right",
       },
       {
         name: "Arrow Left",
-        icon: url + "/resources/shapes/Icons/shape_arrow_left_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_arrow_left.svg",
         value: "arrow-left",
       },
       {
         name: "Arrow Right",
-        icon: url + "/resources/shapes/Icons/shape_arrow_right_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_arrow_right.svg",
         value: "arrow-right",
       },
       {
         name: "Stop",
-        icon: url + "/resources/shapes/Icons/shape_stop_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_stop.svg",
         value: "stop",
       },
       {
         name: "Rounded Top",
-        icon: url + "/resources/shapes/Icons/shape_rounded_top_bottom_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_rounded_top.svg",
         value: "rounded-top",
       },
       {
         name: "Rounded Sides",
-        icon: url + "/resources/shapes/Icons/shape_rounded_sides_icon.svg",
+        icon:url + "/assets/images/shapes/ic_shape_rounded_sides.svg",
         value: "rounded-sides",
       },
     ],
@@ -113,110 +115,164 @@ const data = (shop: string) => {
     fixingMethods: [
       {
         name: "None",
-        description: "None",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_none_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_none_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_none.svg",
+        popImg: "",
         type: "none",
       },
       {
+        name: "Adhesive Tape",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_adhesive_tape.svg",
+        popImg: "",
+        type: "adhesive-tape",
+      },
+      {
         name: "Screw",
-        description: "Screw",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_screw_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_screw_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_screw.svg",
+        popImg: "",
         type: "screw",
       },
       {
         name: "Screw Cap",
-        description: "Screw Cap",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_screw_cap_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_screw_cap_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_screw_cap.svg",
+        popImg: "",
         type: "screw-cap",
       },
       {
         name: "Stand Off",
-        description: "Stand Off",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_standoff_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_standoff_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_standoff.svg",
+        popImg: "",
         type: "standoff",
       },
       {
         name: "Hanging",
-        description: "Hanging",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_hanging_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_hanging_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_hanging.svg",
+        popImg: "",
         type: "hanging",
       },
       {
         name: "Flag",
-        description: "Flag",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_flag_attachmnt_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_flag_attachmnt_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_flag.svg",
+        popImg: "",
         type: "flag",
       },
       {
         name: "Suction Cup",
-        description: "Suction Cup",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_suction_cups_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_suction_cups_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_suction_cup.svg",
+        popImg: "",
         type: "suction-cup",
       },
       {
         name: "Table Stand",
-        description: "Table Stand",
-        icon: url + "*/resources/fixing-methods/Icons/fixmethod_table_clamp_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_table_clamp_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_table_stand.svg",
+        popImg: "",
         type: "table-stand",
       },
       {
         name: "Ceiling",
-        description: "Ceiling",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_none_icon.svg",
-        popImg: url + "",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_ceiling.svg",
+        popImg: "",
         type: "ceiling",
       },
       {
         name: "Pole Attachment",
-        description: "Pole Attachment",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_pole_attachmnt_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_pole_attachmnt_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_pole_attachment.svg",
+        popImg: "",
         type: "pole-attachment",
       },
       {
         name: "Cable Labeling",
-        description: "Cable Labeling",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_cable_label_icon.svg",
-        popImg: url +  "/resources/fixing-methods/Icons/fixmethod_cable_label_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_cable_label.svg",
+        popImg: "",
         type: "cable-labeling",
       },
       {
         name: "Table Clamp",
-        description: "Table Clamp",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_table_clamp_icon.svg",
-        popImg: url + "/resources/fixing-methods/Icons/fixmethod_table_clamp_icon.svg",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_table_clamp.svg",
+        popImg: "",
         type: "table-clamp",
       },
       {
         name: "Base Support",
-        description: "Base Support",
-        icon: url + "/resources/fixing-methods/Icons/fixmethod_none_icon.svg",
-        popImg: url + "",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_base_support.svg",
+        popImg: "",
         type: "base-support",
+      },
+      {
+        name: "Magnetic Strip",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_magnetic_strip.svg",
+        popImg: "",
+        type: "magnetic-strip",
+      },
+      {
+        name: "Keyring",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_keyring.svg",
+        popImg: "",
+        type: "keyring",
+      },
+      {
+        name: "Sign Holder",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_sign_holder.svg",
+        popImg: "",
+        type: "sign-holder",
+      },
+      {
+        name: "Eyelets",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_eyelets.svg",
+        popImg: "",
+        type: "eyelets",
+      },
+      {
+        name: "S Hook",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_s_hook.svg",
+        popImg: "",
+        type: "s-hook",
+      },
+      {
+        name: "Roll Up",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_roll_up.svg",
+        popImg: "",
+        type: "roll-up",
       },
     ],
     borders: [
       {
         name: "None",
-        icon: url + "/resources/borders/icons/border_none_icon.svg",
+        icon:url + "/assets/images/borders/ic_border_none.svg",
         value: "none",
       },
       {
         name: "Normal",
-        icon: url + "/resources/borders/icons/border_icon.svg",
+        icon:url + "/assets/images/borders/ic_border_thin.svg",
         value: "normal",
       },
       {
-        name: "Old world",
-        icon: url + "/resources/borders/icons/border_old_world_icon.svg",
+        name: "Rounded Corners",
+        icon:url + "/assets/images/borders/ic_border_rounded_corners.svg",
+        value: "rounded-corners",
+      },
+      {
+        name: "Old World",
+        icon:url + "/assets/images/borders/ic_border_old_world.svg",
         value: "old-world",
       },
     ],

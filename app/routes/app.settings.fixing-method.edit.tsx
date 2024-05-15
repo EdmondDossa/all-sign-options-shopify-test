@@ -29,6 +29,9 @@ import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { FixingMethodType } from "~/types/SettingsType";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
+import { BackBtn } from "~/components/buttons/BackBtn";
+import { CustomTinymce } from "~/components/inputs/CustomTinymce";
+import { stringTransform } from "~/utils/transfomerZod";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -112,13 +115,8 @@ export default function SettingFixingMethod() {
                     handlePath={handleIcon}
                   />
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <FileInput
-                    error={getError(actionData, "popImg")}
-                    title="Upload popup img"
-                    path={formData.popImg}
-                    handlePath={handlePopImg}
-                  />
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                   <CustomTinymce error={getError(actionData, "popImg")} title="Complete popup description" onEditorChange={handlePopImg} value={formData.popImg}/>
                 </Grid.Cell>
               </Grid>
             </Box>
@@ -127,6 +125,7 @@ export default function SettingFixingMethod() {
           <SpacingBackground backgroundColor="#F9F9F9">
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
+              <BackBtn isLoading={isLoading} title="Back"/>
                 <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
@@ -151,7 +150,7 @@ const formSchema = z.object({
     .min(1, "type is too short")
     .max(255, "type is too long"),
   icon: z.string({ required_error: "Icon file is required" }),
-  popImg: z.string({ required_error: "Image file is required" }),
+  popImg: z.string().nullish().transform(stringTransform)
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

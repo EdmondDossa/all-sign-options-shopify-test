@@ -41,6 +41,7 @@ import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { ShapeType } from "~/types/SettingsType";
 import SettingShapesService from "~/models/SettingShapes.service";
+import { BackBtn } from "~/components/buttons/BackBtn";
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
@@ -118,6 +119,7 @@ export default function SettingShapeEdit() {
 
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
+              <BackBtn isLoading={isLoading} title="Back"/>
               <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
