@@ -31,7 +31,7 @@ import { authenticate } from "~/shopify.server";
 import { ConfigAdditionalOption, ConfigAdditionalOptionItem, ConfigColor } from "~/types/ConfigDataType";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
-import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 
 export default function MaterialAdditionalOptionCreate() {
   const submit = useSubmit();
@@ -185,10 +185,7 @@ const formSchema = z.object({
     .string({ required_error: "Title is required" })
     .min(1, "Title is too short")
     .max(100, "Title is too long"),
-  description: z
-    .string({ required_error: "Description is required" })
-    .min(3, "Description is too short")
-    .max(255, "Description is too long"),
+  description: z.string().nullish().transform(stringTransform),
   icon: z.string({ required_error: "Icon file is required" }),
   image: z.string({ required_error: "image file is required" }),
   additionalPrice: z.number({ required_error: "image file is required" }),

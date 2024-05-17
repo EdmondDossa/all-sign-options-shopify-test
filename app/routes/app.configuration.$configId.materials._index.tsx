@@ -43,6 +43,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import { BorderCircleText } from "~/components/feactures/BorderCircleText";
 import { truncateText } from "~/utils/truncate-text";
 import { fileUrl } from "~/utils/fileUrl";
+import { ManageBtn } from "~/components/buttons/ManageBtn";
 
 
 
@@ -66,9 +67,17 @@ export default function MaterialIndex() {
     navigate("edit");
   };
 
+  const  handleManage = (index:number,type:string) => {
+    navigate(
+      type == "simple"
+        ? `${index}/simple`
+        :`${index}/advance`,
+    )
+  }
+
   const resourceName = {
-    singular: "Configuration",
-    plural: "Configurations",
+    singular: "Material",
+    plural: "Materials"
   };
 
   const rowMarkup = materials?.map(
@@ -77,11 +86,7 @@ export default function MaterialIndex() {
         <IndexTable.Cell>
           <InlineStack blockAlign="center" wrap={false} gap="300">
           <BorderCircleText onClick={() =>
-                navigate(
-                  type == "simple"
-                    ? `${index}/simple`
-                    :`${index}/advance`,
-                )
+                handleManage(index,type)
               } text={name} /> {truncateText(name)}
           </InlineStack>
         </IndexTable.Cell>
@@ -100,6 +105,7 @@ export default function MaterialIndex() {
 
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth={true} noWrap gap="loose">
+          <ManageBtn  title="Manage" handleClick={()=>handleManage(index,type)}/>
             <EditIconBtn
               size="micro"
               onClick={() => {

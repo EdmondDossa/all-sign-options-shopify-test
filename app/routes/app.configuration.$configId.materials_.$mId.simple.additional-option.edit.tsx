@@ -29,6 +29,7 @@ import { authenticate } from "~/shopify.server";
 import { ConfigAdditionalOption } from "~/types/ConfigDataType";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
+import { stringTransform } from "~/utils/transfomerZod";
 
 export default function MaterialAdditionalOptionCreate() {
   const submit = useSubmit();
@@ -80,7 +81,7 @@ export default function MaterialAdditionalOptionCreate() {
         <Box padding="300">
           <Text as="h2" variant="headingMd">
            
-          {Number.isNaN(id)?' Add new option group ':'Edit option group'}
+          {Number.isNaN(id)?' Add new component ':'Edit component'}
             
           </Text>
         </Box>
@@ -145,10 +146,7 @@ const formSchema = z.object({
     .string({ required_error: "Title is required" })
     .min(3, "Title is too short")
     .max(100, "Title is too long"),
-  description: z
-    .string({ required_error: "Description is required" })
-    .min(3, "Description is too short")
-    .max(255, "Description is too long"),
+  description:z.string().nullish().transform(stringTransform),
   icon: z.string({ required_error: "Icon file is required" })
 });
 

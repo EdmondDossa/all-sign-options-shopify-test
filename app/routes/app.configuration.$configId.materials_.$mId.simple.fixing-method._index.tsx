@@ -134,7 +134,7 @@ export default function MaterialFixingMethodComponent() {
       <BoxBackground>
         <BoxBackground>
           <Box padding="150">
-            <InlineStack gap="100" align="end">
+          {(manageFixingMethods?.length== fixingMethods.length) || <InlineStack gap="100" align="end">
               <button
                 className="primary-btn"
                 type="button"
@@ -147,7 +147,7 @@ export default function MaterialFixingMethodComponent() {
                   </InlineStack>
                 </Box>
               </button>
-            </InlineStack>
+            </InlineStack>}
           </Box>
           <Divider borderWidth="050" />
         </BoxBackground>

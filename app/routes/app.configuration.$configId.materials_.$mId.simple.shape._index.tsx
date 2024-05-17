@@ -108,10 +108,10 @@ export default function MaterialShape() {
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-        <img style={{height: "30px"}}
+       {image && <img style={{height: "30px"}}
             src={fileUrl(image)}
             alt={"border" + title}
-          />
+          />}
         </IndexTable.Cell>
        
         <IndexTable.Cell className="td-center">
@@ -143,7 +143,7 @@ export default function MaterialShape() {
       <BoxBackground>
         <BoxBackground>
           <Box padding="150">
-            <InlineStack gap="100" align="end">
+            {manageShapes.length==shapes.length || <InlineStack gap="100" align="end">
               <button
                 className="primary-btn"
                 type="button"
@@ -156,7 +156,7 @@ export default function MaterialShape() {
                   </InlineStack>
                 </Box>
               </button>
-            </InlineStack>
+            </InlineStack>}
           </Box>
           <Divider borderWidth="050" />
         </BoxBackground>

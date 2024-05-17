@@ -30,7 +30,6 @@ const formSchema = z.object({
   showHideMeasurements: z.string(),
   decimalFormatMeasurements: z.string(),
   desktopColumnOrder: z.string(),
-  showDayNightButton: z.string(),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -69,10 +68,7 @@ export default function ConfigSettingsGeneral() {
   ];
 
 
-  const displaySwitchOptions = [
-    { label: "Display ", value: "display" },
-    { label: "hidden", value: "hidden" }
-  ];
+ 
 
 
 
@@ -91,7 +87,6 @@ export default function ConfigSettingsGeneral() {
          showHideMeasurements: showMeasurementOptions[0].value,
          decimalFormatMeasurements: measurementDecimalFormatOptions[0].value,
          desktopColumnOrder: positionOptions[0].value,
-         showDayNightButton: displaySwitchOptions[0].value,
     },
   );
 
@@ -164,7 +159,7 @@ export default function ConfigSettingsGeneral() {
                 <Grid.Cell  columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                  
                  <Select
-                    label="Right or Left"
+                    label="Desktop Column Order"
                    options={positionOptions}
                    onChange={(value) =>
                     handleInputChange("desktopColumnOrder", value)
@@ -174,23 +169,6 @@ export default function ConfigSettingsGeneral() {
                  />
                
                 </Grid.Cell>
-                
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                 
-                 <Select
-                    label=""
-                    helpText="Display a switch to turn default background into day or right mode"
-                   options={displaySwitchOptions}
-                   onChange={(value) =>
-                    handleInputChange("showDayNightButton", value)
-                  }
-                  value={formData.showDayNightButton}
-                  error={getError(actionData, "showDayNightButton")}
-                 />
-               
-               </Grid.Cell>
-              
-              
               </Grid>
             </Box>
           </BoxBackground>

@@ -30,6 +30,7 @@ import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { BackBtn } from "~/components/buttons/BackBtn";
+import { stringTransform } from "~/utils/transfomerZod";
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
@@ -144,11 +145,9 @@ export default function ManageClipartCreate() {
 
 const formSchema = z.object({
   title: z.string({ required_error: 'Title is required' })
-  .min(3, 'Title is too short')
+  .min(2, 'Title is too short')
     .max(100, 'Title is too long'),
-    description: z.string({ required_error: 'Description is required' })
-    .min(3, 'Description is too short')
-    .max(250, 'Description is too long'),
+    description:  z.string().nullish().transform(stringTransform),
 });
 
 

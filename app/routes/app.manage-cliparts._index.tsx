@@ -130,7 +130,6 @@ export default function ManageClipartIndex() {
       <IndexTable
         resourceName={resourceName}
         itemCount={clipartsGroups? clipartsGroups.length:0}
-        sortable={[false, true, true, true, true, true, true]}
         headings={[
           { title: "Title" },
           { title: "Description" },

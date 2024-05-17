@@ -27,7 +27,7 @@ import { ConfigShape } from "~/types/ConfigDataType";
 import { ShapeType } from "~/types/SettingsType";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
-import { z } from "zod";
+import { number, z } from "zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { parseWithZod } from "@conform-to/zod";
@@ -50,6 +50,14 @@ export default function MaterialFixingMethod() {
   const id = parseInt(searchParams.get("id") || "");
   let configShape = shapes?.find((curr, index) => index === id);
 
+
+  const options = manageShapes
+  ? manageShapes.map((manageShapes, index) => ({
+      label: manageShapes.name || "",
+      value: `${index}`,
+    })).filter(filterShape=>(filterShape.value==`${configShape?.shapeId}` )|| (!shapes?.find((curr) => filterShape.value == `${curr.shapeId}`)))
+  : [];
+
   const [formData, setFormData] = useState<{configShapes: ConfigShape[]}>(
     configShape
       ? 
@@ -58,8 +66,7 @@ export default function MaterialFixingMethod() {
       }
       : {
         configShapes: [ {
-       
-          shapeId:  0,
+          shapeId: parseInt(options[0]?.value),
           additionalPrice: 0,
           isDefault: false
         }]
@@ -70,9 +77,9 @@ export default function MaterialFixingMethod() {
     if (!formData.configShapes) {
       formData.configShapes = [];
     } 
-    if (Number.isNaN(id)) {
+    if (Number.isNaN(id) && options?.length > formData.configShapes?.length) {
       formData.configShapes.push({
-        shapeId:0,
+        shapeId: parseInt(options.filter(option=>!formData.configShapes?.find(curr=>curr.shapeId == parseInt(option.value)))[0]?.value),
         additionalPrice: 0,
         isDefault: false
         
@@ -95,12 +102,7 @@ export default function MaterialFixingMethod() {
     submit({configShapes: JSON.stringify(formData.configShapes)},{ method: "POST" });
   };
 
-  const options = manageShapes
-    ? manageShapes.map((manageShapes, index) => ({
-        label: manageShapes.name || "",
-        value: `${index}`,
-      }))
-    : [];
+
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
@@ -169,7 +171,7 @@ export default function MaterialFixingMethod() {
                 </Grid.Cell>
                          ))
                         }
-               {Number.isNaN(id) && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+               {Number.isNaN(id) && options.length > formData.configShapes?.length && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <Box width="150px">
                     <BiAddBtn title="Add shapes" handleClick={()=>handleAddItem()} />
                   </Box>

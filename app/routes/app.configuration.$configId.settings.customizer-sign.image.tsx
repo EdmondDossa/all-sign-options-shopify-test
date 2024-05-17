@@ -3,25 +3,17 @@ import { BlurSvg } from "~/components/svgs/BlurSvg";
 import { SharpenSvg } from "~/components/svgs/SharpenSvg";
 import { EmbossSvg } from "~/components/svgs/EmbossSvg";
 import {
-  AutoSelection,
   BlockStack,
   Box,
-  Button,
-  Combobox,
   Grid,
   InlineStack,
-  LegacyStack,
-  Listbox,
-  Select,
-  Tag,
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useMemo, useState } from "react";
-import { Form, NavLink, redirect, useActionData, useLoaderData, useNavigate, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import { useState } from "react";
+import { Form,  useActionData, useLoaderData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { MultiCombobox } from "~/components/inputs/MultiCombobox";
 import { ActivatabaleItem } from "~/components/inputs/ActivatabaleItem";
@@ -35,8 +27,7 @@ import { z } from "zod";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
-import { ClipartsGroupType, ColorType, FontType } from "~/types/ManagePropertyType";
-import { ShapeType } from "~/types/SettingsType";
+import { ClipartsGroupType} from "~/types/ManagePropertyType";
 
 const settingParams: [string, string] = ["customizerSign", "images"];
 const formSchema = z.object({
@@ -240,18 +231,18 @@ export default function ConfigSettingsGeneral() {
                       handleInputChange("enableClipart", formData.enableClipart )
                     }} />
                     </InlineStack>
-                    <MultiCombobox
+                   {formData.enableClipart.active && <MultiCombobox
                        label="Select clipart  group"
                        placeholder="Search clipart group"
                        data={clipartGroups}
-                       selectedOptions={formData.enableClipart.selectClipartGroups}
+                       selectedOptions={formData.enableClipart.selectClipartGroups?.map((curr:any)=>`${curr}`)}
                        setSelectedOptions={(value: any) => {
                          if (Array.isArray(value)) {
                            formData.enableClipart.selectClipartGroups = value.map((curr) => parseInt(curr));
                            handleInputChange("enableClipart", formData.enableClipart )
                          }
                      }} 
-                     ></MultiCombobox>
+                     ></MultiCombobox>}
                   </BlockStack>
               
                 </Grid.Cell>
@@ -264,7 +255,7 @@ export default function ConfigSettingsGeneral() {
                       handleInputChange("filter", formData.filter )
                     }}/>
                     </InlineStack>
-                    <InlineStack  gap="800" blockAlign="start"> 
+                  { formData.filter.active &&  <InlineStack  gap="800" blockAlign="start"> 
                       <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Greyscale"
                       status={formData.filter.enableGreyscale}
                       toggleStatus={(value) => {
@@ -296,7 +287,7 @@ export default function ConfigSettingsGeneral() {
                         formData.filter.enableEmbross = value
                       handleInputChange("filter", formData.filter )
                       }}><EmbossSvg />  </ActivatabaleItem>
-                    </InlineStack>
+                    </InlineStack>}
                   </BlockStack>
               
                 </Grid.Cell>

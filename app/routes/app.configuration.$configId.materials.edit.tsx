@@ -31,6 +31,7 @@ import { authenticate } from "~/shopify.server";
 import { Material, MaterialType } from "~/types/ConfigDataType";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
+import { stringTransform } from "~/utils/transfomerZod";
 
 
 
@@ -170,15 +171,10 @@ const formSchema = z.object({
     .min(3, 'Type is too short')
     .max(100, 'Type is too long'),
   
-  description:z
-      .string({ required_error: 'Description is required' })
-      .min(3, 'Description is fale is too short')
-      .max(500, 'Description is too long'),
+  description:z.string().nullish().transform(stringTransform),
   icon:z
       .string({ required_error: 'File is required' }),
-  popImg:z.string({ required_error: 'File is required' })
-    
-  
+  popImg:z.string().nullish().transform(stringTransform)
 });
 
 export const action = async ({ request,params}: ActionFunctionArgs) => {

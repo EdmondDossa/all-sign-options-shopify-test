@@ -129,7 +129,7 @@ export default function ConfigSettingsGeneral() {
                       handleInputChange("zipOutputFiles", formData.zipOutputFiles )
                     }} />
                     </InlineStack>
-                  <TextField
+               {formData.zipOutputFiles.active &&   <TextField
                     size="medium"
                     label="Zip output folder prefix"
                     value={formData.zipOutputFiles.zipOutFolderPrefix}
@@ -139,7 +139,7 @@ export default function ConfigSettingsGeneral() {
                       }}
                       error={getError(actionData, "zipOutputFiles.zipOutFolderPrefix")} 
                     autoComplete="off"
-                  />
+                  />}
                   </BlockStack>
                 </Grid.Cell>
 

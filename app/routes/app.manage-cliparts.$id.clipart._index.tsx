@@ -151,7 +151,6 @@ export default function MaterialFixingMethod() {
         <IndexTable
           resourceName={resourceName}
           itemCount={cliparts?cliparts.length:0}
-          sortable={[false, true, true, true, true, true, true]}
           headings={[
             { title: "Title" },
             { title: "Icon", alignment: "center" },

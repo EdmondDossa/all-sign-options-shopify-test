@@ -1,4 +1,5 @@
 const shopifyProxyURL = `/api/`;
+
 async function getAsoConfiguration(configurationId) {
     
   
@@ -55,7 +56,7 @@ async function getAsoManagesData() {
 // console.log("config id and  product id  agin", asoConfigurationId, asoProductId);
 
 async function aso_confiurator_dataFunction(){
-  const   currentConfig = await getAsoConfiguration(56);
+  const   currentConfig = await getAsoConfiguration(parseInt(window.name.split('_')[1]));
   const managesData = await getAsoManagesData();
   return ( {
 

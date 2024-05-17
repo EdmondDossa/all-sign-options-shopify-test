@@ -184,7 +184,7 @@ export default function ConfigurationEdit() {
                       actionData?.errors?.popupImg
                         ? actionData.errors.popupImg[0]
                         : ""
-                    } title="Complete description" onEditorChange={handlePopupImg} value={formData.popupImg}/>
+                    } title="Popup image" onEditorChange={handlePopupImg} value={formData.popupImg}/>
                   {/* <FileInput
                     error={
                       actionData?.errors?.popupImg

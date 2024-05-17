@@ -139,9 +139,17 @@ function asoGetFontFormat(url) {
   }
 }
 
-//  to add  font to  page  ffffffff
+
+function addStylesToBody(cssRules) {
+  var styleElement = document.createElement("style");
+  styleElement.textContent = cssRules;
+  document.body.appendChild(styleElement);
+}
+
+//  to add  font and custom css to  page  ffffffff
 document.addEventListener('DOMContentLoaded', async function () {
   const managesData = await getAsoManagesData();
+  
   managesData.fonts.forEach(font => {
     let style = document.createElement('style');
     style.textContent = `
@@ -155,6 +163,17 @@ document.addEventListener('DOMContentLoaded', async function () {
       `;
     document.body.appendChild(style);
   });
+
+  const  currentConfig = await getAsoConfiguration(asoConfigurationId);
+
+  try {
+    console.log("Custom CSS", currentConfig)
+    currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
+    console.log('Custom CSS added successfully');
+  } catch (error) {
+    console.error('Error adding custom CSS:', error);
+  }
+
 });
 
 

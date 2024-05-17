@@ -65,23 +65,26 @@ export default function MaterialBorderCreate() {
   const [searchParams] = useSearchParams();
   const id = parseInt(searchParams.get("id") || "");
   let configBorder = borders?.find((curr, index) => index === id);
+
+  const options = manageBorders
+  ? manageBorders.map((manageBorder,index) => ({
+      label: manageBorder.name || "",
+      value: `${index}`,
+    })).filter(filterBorder=>(filterBorder.value==`${configBorder?.manageBorderId}` )|| (!borders?.find((curr) => filterBorder.value == `${curr.manageBorderId}`)))
+    : [];
+  
   const [formData, setFormData] = useState<ConfigBorder>(
     configBorder
       ? (configBorder as ConfigBorder)
       : {
-          manageBorderId: 0,
+          manageBorderId: parseInt(options[0]?.value),
           additionalPrice: 0,
           excludeSizes: [],
           excludeShapes: []
         },
   );
 
-  const options = manageBorders
-    ? manageBorders.map((manageBorder,index) => ({
-        label: manageBorder.name || "",
-        value: `${index}`,
-      }))
-    : [];
+
   const sizes = configSizes ? configSizes.map((configSize,index) => ({ label: configSize.label||'', value: `${index}` })) : [];
   const shapes = manageShapes ? manageShapes.map((manageShape,index) => ({ label: manageShape.name||'', value: `${index}` })) : [];
 

@@ -200,7 +200,7 @@ export default function MaterialBorderIndex() {
       <BoxBackground>
         <BoxBackground>
           <Box padding="150">
-            <InlineStack gap="100" align="end">
+            {(manageBorders?.length==borders?.length )|| <InlineStack gap="100" align="end">
               <button
                 className="primary-btn"
                 type="button"
@@ -213,7 +213,7 @@ export default function MaterialBorderIndex() {
                   </InlineStack>
                 </Box>
               </button>
-            </InlineStack>
+            </InlineStack>}
           </Box>
           <Divider borderWidth="050" />
         </BoxBackground>

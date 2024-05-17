@@ -39,6 +39,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { fileUrl } from "~/utils/fileUrl";
+import { ManageBtn } from "~/components/buttons/ManageBtn";
 
 // This example is for guidance purposes. Copying it will come with caveats.
 export default function MaterialAdditionalOptionIndex() {
@@ -69,8 +70,8 @@ export default function MaterialAdditionalOptionIndex() {
   };
 
   const resourceName = {
-    singular: "Additional option",
-    plural: "Additionals options",
+    singular: "Additional component",
+    plural: "Additional components",
   };
 
   const rowMarkup = additionalOptions?.map(
@@ -87,12 +88,9 @@ export default function MaterialAdditionalOptionIndex() {
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth noWrap gap="loose">
-          <ViewIconBtn
-              size="micro"
-              onClick={() => {
-                handleView(index);
-              }}
-            />
+     
+          <ManageBtn  title="add options" handleClick={()=>   handleView(index)}/>
+
             <EditIconBtn
               size="micro"
               onClick={() => {
@@ -127,7 +125,7 @@ export default function MaterialAdditionalOptionIndex() {
                 <Box paddingInline="300">
                   <InlineStack gap="300">
                     <PlusIcon />
-                    <span className="primary-btn-text"> Add new option group</span>
+                    <span className="primary-btn-text"> Add new component</span>
                   </InlineStack>
                 </Box>
               </button>

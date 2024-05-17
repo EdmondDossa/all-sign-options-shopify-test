@@ -94,6 +94,7 @@ export default function ConfigSettingsGeneral() {
                   </BlockStack>
               
                 </Grid.Cell>
+             { formData.activate &&  <>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <TextField
                     size="medium"
@@ -116,6 +117,7 @@ export default function ConfigSettingsGeneral() {
                   autoComplete="off"
                   />
                 </Grid.Cell>
+                </>}
 
               
               </Grid>

@@ -271,7 +271,6 @@ export default function ConfigSettingsGeneral() {
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <InlineStack gap="300">
-                  <InlineStack gap="300">
                       <Text as="strong" fontWeight="medium" variant="bodyMd">
                         Enable Custom color
                       </Text>
@@ -286,6 +285,9 @@ export default function ConfigSettingsGeneral() {
                         }}
                       />
                     </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                 
                     <InlineStack gap="300">
                       <Text as="strong" fontWeight="medium" variant="bodyMd">
                         Enable font size
@@ -301,10 +303,11 @@ export default function ConfigSettingsGeneral() {
                         }}
                       />
                     </InlineStack>
-                  </InlineStack>
                 </Grid.Cell>
 
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+
+                {formData.enableFontSize.active && <>
+               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
                   <TextField
                     size="medium"
                     label="Minimun font size"
@@ -361,6 +364,8 @@ export default function ConfigSettingsGeneral() {
                     autoComplete="off"
                   />
                 </Grid.Cell>
+                </>
+                }
 
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <BlockStack gap="300">

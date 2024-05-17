@@ -104,56 +104,60 @@ export default function ConfigSettingsGeneral() {
                     }}  />
                     </InlineStack>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl:12 }}>
-                  <TextField
-                    size="medium"
-                    label="Label"
-                    value={formData.doublePart.label}
-                      onChange={(value) => {
-                        formData.doublePart.label = value
-                      handleInputChange("doublePart", formData.doublePart )
-                      }}
-                      error={getError(actionData, "doublePart.label")} 
-                    autoComplete="off"
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                  <TextField
-                    size="medium"
-                    label="Part 1"
-                    value={formData.doublePart.part1}
-                      onChange={(value) => {
-                        formData.doublePart.part1 = value
-                      handleInputChange("doublePart", formData.doublePart )
-                      }}
-                      error={getError(actionData, "doublePart.part1")} 
-                    autoComplete="off"
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                  
-                  <TextField
-                    size="medium"
-                    label="Part 2"
-                    value={formData.doublePart.part2}
-                    onChange={(value) => {
-                      formData.doublePart.part2 = value
-                    handleInputChange("doublePart", formData.doublePart )
-                    }}
-                    error={getError(actionData, "doublePart.part2")} 
-                  autoComplete="off"
-                  />
-                </Grid.Cell>
+                {formData.doublePart.active &&
+                  <>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl:12 }}>
+                          <TextField
+                            size="medium"
+                            label="Label"
+                            value={formData.doublePart.label}
+                              onChange={(value) => {
+                                formData.doublePart.label = value
+                              handleInputChange("doublePart", formData.doublePart )
+                              }}
+                              error={getError(actionData, "doublePart.label")} 
+                            autoComplete="off"
+                          />
+                        </Grid.Cell>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                          <TextField
+                            size="medium"
+                            label="Part 1"
+                            value={formData.doublePart.part1}
+                              onChange={(value) => {
+                                formData.doublePart.part1 = value
+                              handleInputChange("doublePart", formData.doublePart )
+                              }}
+                              error={getError(actionData, "doublePart.part1")} 
+                            autoComplete="off"
+                          />
+                        </Grid.Cell>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                          
+                          <TextField
+                            size="medium"
+                            label="Part 2"
+                            value={formData.doublePart.part2}
+                            onChange={(value) => {
+                              formData.doublePart.part2 = value
+                            handleInputChange("doublePart", formData.doublePart )
+                            }}
+                            error={getError(actionData, "doublePart.part2")} 
+                          autoComplete="off"
+                          />
+                        </Grid.Cell>
 
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                    <InlineStack gap="300">
-                      <Text as="strong"  variant="bodyMd">Enable Copy design from side</Text>
-                      <ReactSwitchCustom  checked={formData.doublePart.enableCopyDesignFromSide} setChecked={(value:any) => {
-                        formData.doublePart.enableCopyDesignFromSide = value
-                      handleInputChange("doublePart", formData.doublePart )
-                    }} />
-                    </InlineStack>            
-                </Grid.Cell>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                            <InlineStack gap="300">
+                              <Text as="strong"  variant="bodyMd">Enable Copy design from side</Text>
+                              <ReactSwitchCustom  checked={formData.doublePart.enableCopyDesignFromSide} setChecked={(value:any) => {
+                                formData.doublePart.enableCopyDesignFromSide = value
+                              handleInputChange("doublePart", formData.doublePart )
+                            }} />
+                            </InlineStack>            
+                        </Grid.Cell>
+                  </>
+                }
               
               </Grid>
             </Box>

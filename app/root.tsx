@@ -28,9 +28,7 @@ export default function App() {
         <ExternalScripts />
         <LiveReload />
         <Scripts />
-        <script src="/assets-preview/shopify.js"></script>
-        <script src="/assets-preview/fabric.js"></script>
-        <script src="/assets-preview/editor.script.js"></script>
+       
         <script>
        
         </script>

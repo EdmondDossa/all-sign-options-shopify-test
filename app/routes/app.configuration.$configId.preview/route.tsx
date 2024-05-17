@@ -6,7 +6,7 @@ import {
     Text,
   } from "@shopify/polaris";
   
-  import {Link, Outlet, Scripts, useLoaderData, useOutletContext} from "@remix-run/react";
+  import {Link, Outlet, Scripts, useLoaderData, useNavigate, useOutletContext} from "@remix-run/react";
   import { BoxBackground } from "~/components/layouts/BoxBackground";
   import NextLtrIcon from "~/components/icons/NextLtrIcon";
   import { Tabheader } from "~/components/layouts/TabHeader";
@@ -19,36 +19,8 @@ import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import previewStyle from "./assets/index.css";
 import { ExternalScriptsHandle } from "remix-utils/external-scripts";
 import { useEffect } from "react";
-// import './assets/shopify'
-// import './assets/fabric'
-// import './assets/editor.script'
-// import './assets/index'
+import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 
-
-// export let handle: ExternalScriptsHandle = {
-//   scripts: [
-//     {
-//       src: "/assets-preview/shopify.js",
-//       crossOrigin: 'anonymous',
-//       preload: true
-//     },
-//     {
-//       src: "/assets-preview/editor.script.js",
-//       crossOrigin: 'anonymous',
-//       preload: true
-//     },
-//     {
-//       src: "/assets-preview/fabric.js",
-//       crossOrigin: 'anonymous',
-//       preload: true
-//     },
-//     {
-//       src: "/assets-preview/index.js",
-//       preload: true,
-//       crossOrigin: 'anonymous',
-//     }
-//   ],
-// };
 
 export const links = () => [{ rel: "stylesheet", href: previewStyle }];
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -64,23 +36,21 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   };
 
 export default function Preview() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = '/assets-preview/index.js';
-    script.async = true;
-    script.onload = () => console.log('Le script a été chargé avec succès.');
-    script.onerror = () => console.error('Une erreur est survenue lors du chargement du script.');
-    document.body.appendChild(script);
-
-    // Fonction de nettoyage pour supprimer le script lors du démontage du composant
-    return () => {
-      document.body.removeChild(script);
-    }
-  }, []);
+  const navigate = useNavigate();
   let { materials } = useLoaderData<typeof loader>();
   const { configuration } = useOutletContext<{ configuration: ConfigurationType; }>();
+  const shopify = useAppBridge();
   
-    return (<Page fullWidth>
+  return (<Page fullWidth>
+
+      <Modal id="my-modal" open={true} variant="max" onHide={() => navigate(`../..`)}>
+        <iframe name={`configId_${configuration.id}`} src="/preview.html" className="aso-preview">
+      </iframe>
+      <TitleBar title={configuration.name}>
+         
+          
+        </TitleBar>
+      </Modal>
         <BoxBackground>
           <Box paddingInline="300" paddingBlock="600">
             <InlineStack>
@@ -100,12 +70,7 @@ export default function Preview() {
             </InlineStack>
           </Box>
       </BoxBackground>
-      <SpacingBackground>
-      <div id="app">
-        
-      <h1> All  signs options    </h1>    
-      </div>
-      </SpacingBackground>
+   
   
   
       </Page>)

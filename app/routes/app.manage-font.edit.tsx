@@ -116,33 +116,13 @@ export default function ManageFontCreate() {
                     autoComplete="on"
                     error={getError(actionData,"label")}
                   />
-                </Grid.Cell>
-
-             { formData.isGoogleFont &&  <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                   <Select
-                    label="Choose google fonts"
-                    options={options}
-                    onChange={handleUrl}
-                    error={getError(actionData, "url")}
-                    value={formData.url}
-                  />
-                </Grid.Cell>}
-           {/* {  formData.isGoogleFont &&   <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                   <Select
-                    label="Google fonts variants"
-                    options={options}
-                    onChange={handleSelectChange}
-                    value={selected}
-                  />
-                </Grid.Cell>} */}
-              
-              
-             { !formData.isGoogleFont  &&   <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                </Grid.Cell>            
+             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
 
                   <FileInput type="font" helperText=".ttf, .woff Font File Type (Required)"
                     error={getError(actionData, "url")} title="Upload font file"
                     path={formData.url} handlePath={handleUrl} />
-                </Grid.Cell>}
+                </Grid.Cell>
           
               </Grid>
             </Box>

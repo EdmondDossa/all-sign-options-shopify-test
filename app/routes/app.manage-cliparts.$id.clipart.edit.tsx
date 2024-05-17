@@ -240,7 +240,7 @@ export default function ClipartCreate() {
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
         
-                
+                { !clipart &&
                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                     <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyLg">Use custom cliparts</Text>
@@ -248,7 +248,7 @@ export default function ClipartCreate() {
                     />
                       <Text as="strong" fontWeight="bold" variant="bodyLg">Use Api cliparts</Text>
                     </InlineStack>
-                </Grid.Cell>
+                </Grid.Cell>}
                 { (!saveSelectedCliparts && isApiUsed) && <>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <Select

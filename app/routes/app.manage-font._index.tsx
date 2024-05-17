@@ -78,15 +78,11 @@ export default function ManageFontIndex() {
   };
 
   const rowMarkup = fonts?.map(
-    ({ id, label, isGoogleFont}, index) => (
+    ({ id, label}, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
             {label}
         </IndexTable.Cell>
-        <IndexTable.Cell className="td-center">
-          {isGoogleFont? <Badge tone="info" >Google font</Badge>:<Badge > Custom font</Badge>}
-        </IndexTable.Cell>
-       
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth noWrap gap="loose">
           <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
@@ -123,7 +119,6 @@ export default function ManageFontIndex() {
           itemCount={fonts?fonts.length:0}
           headings={[
             { title: "Title" },
-            { title: "Font type", alignment:"center" },
             { title: "Action", alignment:"center" },
           ]}
           selectable={false}

@@ -53,6 +53,14 @@ export default function MaterialFixingMethod() {
   const id = parseInt(searchParams.get("id") || "");
   let configFixingMethod = fixingMethods?.find((curr, index) => index === id);
 
+
+  const options = manageFixingMethods
+  ? manageFixingMethods.map((manageFixingMethod, index) => ({
+      label: manageFixingMethod.name || "",
+      value: `${index}`,
+    })).filter(filterFixingMethod=>(filterFixingMethod.value==`${configFixingMethod?.fixingMethodId}` )|| (!fixingMethods?.find((curr) => filterFixingMethod.value == `${curr.fixingMethodId}`)))
+  : [];
+
   const [formData, setFormData] = useState<{configFixingMethods: ConfigFixingMethod[]}>(
     configFixingMethod
       ? 
@@ -61,7 +69,7 @@ export default function MaterialFixingMethod() {
       }
       : {
         configFixingMethods: [ {
-          fixingMethodId:  0,
+          fixingMethodId:  parseInt(options[0]?.value),
           additionalPrice: 0,
           excludeSizes: [],
           excludeShapes: [],
@@ -76,7 +84,7 @@ export default function MaterialFixingMethod() {
     } 
     if (Number.isNaN(id)) {
       formData.configFixingMethods.push({
-        fixingMethodId:0,
+        fixingMethodId:parseInt(options.filter(option=>!formData.configFixingMethods?.find(curr=>curr.fixingMethodId == parseInt(option.value)))[0]?.value),
         additionalPrice: 0,
         isDefault: false,
         excludeSizes: [],
@@ -100,12 +108,7 @@ export default function MaterialFixingMethod() {
     submit({configFixingMethods: JSON.stringify(formData.configFixingMethods)},{ method: "POST" });
   };
 
-  const options = manageFixingMethods
-    ? manageFixingMethods.map((manageFixingMethod, index) => ({
-        label: manageFixingMethod.name || "",
-        value: `${index}`,
-      }))
-    : [];
+
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
@@ -236,7 +239,7 @@ export default function MaterialFixingMethod() {
                   </>
                 ))}
             
-               {Number.isNaN(id) && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+               {Number.isNaN(id) && options?.length > formData.configFixingMethods?.length && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <Box width="300px">
                     <BiAddBtn title="Add fixing method" handleClick={()=>handleAddItem()} />
                   </Box>
