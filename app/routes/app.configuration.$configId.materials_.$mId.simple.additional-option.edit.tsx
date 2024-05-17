@@ -1,25 +1,18 @@
 import { parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
-import { Form, Outlet, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSearchParams, useSubmit } from "@remix-run/react";
+import { Form, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSearchParams, useSubmit } from "@remix-run/react";
 import {
-  BlockStack,
   Box,
-  Button,
-  Card,
   Divider,
   Grid,
-  InlineGrid,
   InlineStack,
-  Page,
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import {  useState } from "react";
 import { z } from "zod";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
-import uploadIcon from "~/components/icons/uploadIcon";
 import { FileInput } from "~/components/inputs/FileInput";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";

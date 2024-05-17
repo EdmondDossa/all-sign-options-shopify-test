@@ -2,39 +2,26 @@ import {
   Badge,
   BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  ChoiceList,
   Divider,
   IndexTable,
-  InlineGrid,
   InlineStack,
-  Page,
-  Select,
   Text,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
 
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
 import {
-  Link,
   json,
   useNavigate,
-  useNavigation,
   useOutletContext,
   useSubmit,
 } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
-import { ConfigAdditionalOption, ConfigAdditionalOptionItem } from "~/types/ConfigDataType";
+import { ConfigAdditionalOptionItem } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
 import { jFlashMessage } from "~/utils/message-flash";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
@@ -53,11 +40,9 @@ export default function MaterialAdditionalOptionIndex() {
 
   useHandleFlashMessage();
 
-
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
   };
-
 
   const handeleDefault = (id: number) => {
     additionalOptionItems = additionalOptionItems.map((curr, index) => {
@@ -68,7 +53,7 @@ export default function MaterialAdditionalOptionIndex() {
       }
       return curr;
     });
-    
+
     submit({ id: id }, { method: "PUT" });
   };
 
@@ -86,7 +71,10 @@ export default function MaterialAdditionalOptionIndex() {
   };
 
   const rowMarkup = additionalOptionItems?.map(
-    ({ title, description, icon,image ,additionalPrice, isDefault }, index) => (
+    (
+      { title, description, icon, image, additionalPrice, isDefault },
+      index,
+    ) => (
       <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
         <IndexTable.Cell>{title}</IndexTable.Cell>
         <IndexTable.Cell>{description}</IndexTable.Cell>
@@ -94,7 +82,7 @@ export default function MaterialAdditionalOptionIndex() {
           <img
             style={{ height: "30px" }}
             src={fileUrl(icon)}
-            alt={" thumbnail" }
+            alt={" thumbnail"}
           />
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
@@ -105,13 +93,17 @@ export default function MaterialAdditionalOptionIndex() {
           />
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-        <Badge tone="success" >{`${additionalPrice}`}</Badge>
+          <Badge tone="success">{`${additionalPrice}`}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <ReactSwitchCustom
+            checked={isDefault || false}
+            setChecked={() => (isDefault ? "" : handeleDefault(index))}
+          ></ReactSwitchCustom>
+        </IndexTable.Cell>
 
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth noWrap gap="loose">
-
             <EditIconBtn
               size="micro"
               onClick={() => {
@@ -162,7 +154,7 @@ export default function MaterialAdditionalOptionIndex() {
         headings={[
           { title: "Title" },
           { title: "Desciption" },
-          { title: "Icon" ,  alignment: "center"},
+          { title: "Icon", alignment: "center" },
           { title: "Image", alignment: "center" },
           { title: "Price", alignment: "center" },
           { title: "Default", alignment: "center" },
@@ -174,7 +166,6 @@ export default function MaterialAdditionalOptionIndex() {
     </SpacingBackground>
   );
 }
-
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);

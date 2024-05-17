@@ -1,7 +1,6 @@
 import {
   BlockStack,
     Box,
-    Divider,
     InlineStack,
     Page,
     Text,
@@ -11,11 +10,8 @@ import {
   import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { FixingMethodSvg } from "~/components/svgs/FixingMethodSvg";
 import { ShapeSvg } from "~/components/svgs/ShapeSvg";
-import { TextImageSvg } from "~/components/svgs/TextImageSvg";
 import { BorderSvg } from "~/components/svgs/BorderSvg";
-import { RoundManageHistorySvg } from "~/components/svgs/RoundManageHistorySvg";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { LicenceSvg } from "~/components/svgs/LicenceSvg";
 import { OutputSvg } from "~/components/svgs/OutputSvg";
   
 
@@ -49,13 +45,6 @@ export const SettingTabheader = () => {
     <SpacingBackground width="100%" height="auto" border="1px solid #DDDDDD">
         <Box paddingInline="100" background="bg-surface">
         <InlineStack gap="100" align="center">
-          {/* <TabItems to="licence">
-            <LicenceSvg /> Licence
-          </TabItems>
-          <TabItems to="configuration-page">
-            {" "}
-            <RoundManageHistorySvg /> Configuration page 
-          </TabItems> */}
           <TabItems to="output">
             {" "}
             <OutputSvg /> Output

@@ -1,28 +1,26 @@
 import {
-  Badge,
   BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  ChoiceList,
   Divider,
-  IndexFilters,
   IndexTable,
   InlineGrid,
   InlineStack,
-  Layout,
   Page,
   Select,
   Text,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Link, json, useLoaderData, useNavigate, useSearchParams, useSubmit } from "@remix-run/react";
+import {
+  Link,
+  json,
+  useLoaderData,
+  useNavigate,
+  useSubmit,
+} from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
@@ -30,9 +28,6 @@ import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import prisma from "~/db.server";
 import ConfigurationService from "~/models/Configuration.service";
-import { getSessionCookie } from "~/sessions";
-import { MessageFlash } from "~/types/MessageFlashType";
-import { useAppBridge } from "@shopify/app-bridge-react";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { jFlashMessage } from "~/utils/message-flash";
 import { BorderCircleText } from "~/components/feactures/BorderCircleText";
@@ -42,63 +37,64 @@ import { fileUrl } from "~/utils/fileUrl";
 import { DuplicateIconBtn } from "~/components/buttons/DuplicateIconBtn";
 import { ConfigurationType } from "~/types/ConfigurationType";
 
-
-
-export const loader = async ({request}:LoaderFunctionArgs) => { 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
 
   const configurations = await prisma.configuration.findMany({
     where: {
-      sessionId: session.id
-    }
+      sessionId: session.id,
+    },
   });
 
-  console.log( "my head :", request.headers)
-
-  
+  console.log("my head :", request.headers);
 
   // let messageFlash = sessionCookie.get("messageFlash")
 
-  
+  return json({ configurations, messageFlash: null });
+};
 
-  return  json({configurations, messageFlash:null})
-}
-
-export const action = async ({ request }:ActionFunctionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
-  
+
   const formData = await request.formData();
   const id = formData.get("id") as string;
   const method = request.method;
-  console.log(" config deleeting :", id,method);
-  
+  console.log(" config deleeting :", id, method);
+
   switch (method) {
     case "DELETE": {
-      console.log("start deleting")
-      await ConfigurationService.deleteConfiguration(parseInt(id), session.id)
-      
-      return json({...jFlashMessage("Configution deleting is completed successfull")})
+      console.log("start deleting");
+      await ConfigurationService.deleteConfiguration(parseInt(id), session.id);
+
+      return json({
+        ...jFlashMessage("Configution deleting is completed successfull"),
+      });
       break;
     }
-      
+
     case "POST": {
-      console.log("start deleting")
-      const configuration:ConfigurationType = await ConfigurationService.getConfiguration(parseInt(id), session.id);
+      console.log("start deleting");
+      const configuration: ConfigurationType =
+        await ConfigurationService.getConfiguration(parseInt(id), session.id);
       delete configuration.id;
       delete configuration.product;
       configuration.name = formData.get("configTitle") as string;
-      await ConfigurationService.duplicateConfiguration(configuration, session.id)
-      return json({...jFlashMessage("Configution duplicating is completed successfull")})
+      await ConfigurationService.duplicateConfiguration(
+        configuration,
+        session.id,
+      );
+      return json({
+        ...jFlashMessage("Configution duplicating is completed successfull"),
+      });
       break;
     }
-  
+
     default:
       break;
   }
 
-  return null
-}
-
+  return null;
+};
 
 // This example is for guidance purposes. Copying it will come with caveats.
 export default function Configuration() {
@@ -107,14 +103,12 @@ export default function Configuration() {
   useHandleFlashMessage();
 
   const [configTitle, setConfigTitle] = useState<string>("");
- 
-
 
   const navigate = useNavigate();
   const onHandleConfigurationCreate = () => {
-    navigate('/app/configuration/create');
+    navigate("/app/configuration/create");
   };
-  
+
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
   };
@@ -124,25 +118,19 @@ export default function Configuration() {
   };
 
   const handleUpdate = (id: number) => {
-    
-    submit({id:id},{method:"GET", action:"create"});
-  }
+    submit({ id: id }, { method: "GET", action: "create" });
+  };
 
   const handleMaterials = (id: number) => {
-    
     navigate(`${id}/materials`);
-  }
+  };
   const handleSettings = (id: number) => {
-    
     navigate(`${id}/settings`);
-  }
+  };
 
   const handlePreviews = (id: number) => {
-    
     navigate(`${id}/preview`);
-  }
-
-
+  };
 
   configurations = configurations || [];
 
@@ -150,163 +138,118 @@ export default function Configuration() {
     singular: "Configuration",
     plural: "Configurations",
   };
-  const { selectedResources, allResourcesSelected, handleSelectionChange } =
-    useIndexResourceState(configurations);
+
   const rowMarkup = configurations.map(
-    (
-      { id, name, description, icon, popupImg },
-      index,
-    ) => (
-      <IndexTable.Row
-        id={`${id}`}
-        key={id}
-        selected={selectedResources.includes(`${id}`)}
-        position={index}
-      >
-        
+    ({ id, name, description, icon, popupImg }, index) => (
+      <IndexTable.Row id={`${id}`} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="center" gap="300" wrap={false}>
-             <BorderCircleText  onClick={()=>handleMaterials(id)}  text={name} /> {truncateText(name)}
+            <BorderCircleText onClick={() => handleMaterials(id)} text={name} />{" "}
+            <span className="btn-span" onClick={() => handleMaterials(id)}>
+            {truncateText(name)}
+            </span>
           </InlineStack>
-         
         </IndexTable.Cell>
-        <IndexTable.Cell  ><Text  truncate as="p">{truncateText(description)}</Text></IndexTable.Cell>
-        <IndexTable.Cell className="td-center" >
-          <img style={{height: "30px"}}
+        <IndexTable.Cell>
+
+            <span className="btn-span" onClick={() => handleMaterials(id)}>
+            {truncateText(description)}
+            </span>
+          
+        </IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <img
+            style={{ height: "30px" }}
             src={fileUrl(icon)}
             alt={"product thumbnail" + name}
           />
         </IndexTable.Cell>
-       
-      
+
         <IndexTable.Cell className="td-center">
-          
-          <ButtonGroup fullWidth={true} noWrap gap="loose" >
-            <ViewIconBtn onClick={()=>{handlePreviews(id)}} />
-            <ManageBtn  title="setting" handleClick={()=>handleSettings(id)}/>
-            <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
-            <DuplicateIconBtn   handeleDuplicate={()=>{handeleDuplicate(id)}} handleTitle={setConfigTitle} title={configTitle} onModalOpen={() => {setConfigTitle(name);}} />
-            <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
+          <ButtonGroup fullWidth={true} noWrap gap="loose">
+            <ViewIconBtn
+              onClick={() => {
+                handlePreviews(id);
+              }}
+            />
+            <ManageBtn title="Materials" handleClick={() => handleMaterials(id)} />
+            <EditIconBtn
+              size="micro"
+              onClick={() => {
+                handleUpdate(id);
+              }}
+            />
+            <DuplicateIconBtn
+              handeleDuplicate={() => {
+                handeleDuplicate(id);
+              }}
+              handleTitle={setConfigTitle}
+              title={configTitle}
+              onModalOpen={() => {
+                setConfigTitle(name);
+              }}
+            />
+            <DeleteIconBtn
+              size="micro"
+              onClick={() => {
+                handeleDelete(id);
+              }}
+            />
           </ButtonGroup>
         </IndexTable.Cell>
       </IndexTable.Row>
     ),
   );
   return (
-    <Page
-      fullWidth
-    >
-      <SpacingBackground >
+    <Page fullWidth>
+      <SpacingBackground>
         <BoxBackground>
           <Box padding="300">
-          <BlockStack gap="300">
-
+            <BlockStack gap="300">
               <InlineGrid columns="1fr auto">
                 <Text as="h2" variant="headingMd">
                   List of configurations
                 </Text>
+              </InlineGrid>
 
-               
-              </InlineGrid>
-              
-              <InlineGrid columns="1fr auto">
-                <Text as="h2" variant="headingMd">
+              <InlineStack align="end">
                 
-                </Text>
                 <button
-                className="primary-btn"
-                type="button"
-                onClick={onHandleConfigurationCreate}
-              >
-                <Box paddingInline="300">
-                  <InlineStack gap="300">
-                    <PlusIcon/>
-                    <span className="primary-btn-text"> Add new configuration</span>
-                  </InlineStack>
-                </Box>
-              </button>
-            
-              </InlineGrid>
-            
+                  className="primary-btn"
+                  type="button"
+                  onClick={onHandleConfigurationCreate}
+                >
+                  <Box paddingInline="300">
+                    <InlineStack gap="300">
+                      <PlusIcon />
+                      <span className="primary-btn-text">
+                        {" "}
+                        Add new configuration
+                      </span>
+                    </InlineStack>
+                  </Box>
+                </button>
+              </InlineStack>
             </BlockStack>
           </Box>
-        
         </BoxBackground>
         <IndexTable
           resourceName={resourceName}
           itemCount={configurations.length}
-      selectable={false}
+          selectable={false}
           headings={[
             { title: "Name configuration" },
-            { title: "Desciption"},
-            { title: "Icon", alignment:"center" },
-            { title: "Action" ,alignment:"center" },
+            { title: "Desciption" },
+            { title: "Icon", alignment: "center" },
+            { title: "Action", alignment: "center" },
           ]}
         >
           {rowMarkup}
         </IndexTable>
         <Divider borderWidth="050" />
-        {/* <SpacingBackground backgroundColor="#FFFFFF">
-        <Box padding="300">
-          <FooterLabel/>
-        </Box>
-        </SpacingBackground> */}
+        
       </SpacingBackground>
     </Page>
   );
 }
-
-
-
-
-export const FooterLabel = () => {
-  const [selected, setSelected] = useState('10');
-
-  const handleSelectChange = useCallback(
-    (value: string) => setSelected(value),
-    [],
-  );
-
-  const options = [
-    {label: '10', value: '10'},
-    {label: '20', value: '20'},
-    {label: '30', value: '30'},
-  ];
-
-  return (
-
-      <InlineStack blockAlign="center" align="space-between">
-          <InlineStack gap="300" blockAlign="center">
-        <Select
-          label=""
-          labelHidden
-            options={options}
-            onChange={handleSelectChange}
-            value={selected}
-          />
-          <InlineStack gap="100" blockAlign="center">
-            <Text as="strong">1</Text>
-            <Text as="span" tone="subdued"> to</Text>
-            <Text as="strong"> 10</Text>
-            <Text as="span" tone="subdued"> on</Text>
-            <Text as="strong"> 50</Text>
-        </InlineStack>
-      </InlineStack>
-      <InlineStack gap="150">
-        <Link className="link" to="">{ '<<' }</Link>
-        <Link className="link" to="">{ '<' } </Link>
-        <Text as="span" tone="subdued">page 1 on 8 </Text>
-        <Link className="link" to="">{ '>' }</Link>
-        <Link className="link" to="">{ '>>' } </Link>
-      </InlineStack>
-  </InlineStack>)
-}
-
-
-
-
-
-
-
-
 

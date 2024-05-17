@@ -1,15 +1,15 @@
 import {
-  Badge,
+
   Box,
   ButtonGroup,
   Divider,
   IndexTable,
-  InlineStack,
-  useSetIndexFiltersMode,
+  InlineStack
+
 } from "@shopify/polaris";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, json, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
+import {  json, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";

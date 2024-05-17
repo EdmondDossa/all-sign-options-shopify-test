@@ -1,105 +1,100 @@
+import { Box, Grid, InlineStack, Text } from "@shopify/polaris";
+import { useState } from "react";
 import {
-  BlockStack,
-  Box,
-  Button,
-  Grid,
-  InlineStack,
-  Select,
-  Text,
-  TextField,
-} from "@shopify/polaris";
-import { useCallback, useState } from "react";
-import { Form, NavLink, redirect, useActionData, useLoaderData, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+  useSubmit,
+} from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
-import { settingAction, settingLoader } from "~/custom-action-loader/config-action-loader";
+import {
+  settingAction,
+  settingLoader,
+} from "~/custom-action-loader/config-action-loader";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
+import { stringTransform } from "~/utils/transfomerZod";
 import { z } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { FileInput } from "~/components/inputs/FileInput";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 
-
 const settingParams: [string, string] = ["languageImages", "images"];
 const formSchema = z.object({
-            resetAllIcon: z.string().nullish().transform(stringTransform),
-            cancelAnAction:z.string().nullish().transform(stringTransform),
-            icon:z.string().nullish().transform(stringTransform),
-            changeIconPreview:z.string().nullish().transform(stringTransform),
-            changeIconImport:z.string().nullish().transform(stringTransform),
-            changeIconShare:z.string().nullish().transform(stringTransform),
-            changeIconSaveProject:z.string().nullish().transform(stringTransform),
-            changeIconShareSideBar:z.string().nullish().transform(stringTransform),
-            changeIconMaterial:z.string().nullish().transform(stringTransform),
-            changeIconShape:z.string().nullish().transform(stringTransform),
-            changeIconFixingMethod:z.string().nullish().transform(stringTransform),
-            changeIconProduct:z.string().nullish().transform(stringTransform),
-            changeIconSize:z.string().nullish().transform(stringTransform),
-            changeIconText:z.string().nullish().transform(stringTransform),
-            changeIconColor:z.string().nullish().transform(stringTransform),
-            changeIconSizeMenu:z.string().nullish().transform(stringTransform),
-            changeIconBorder:z.string().nullish().transform(stringTransform),
-            changeIconImage:z.string().nullish().transform(stringTransform) 
+  resetAllIcon: z.string().nullish().transform(stringTransform),
+  cancelAnAction: z.string().nullish().transform(stringTransform),
+  icon: z.string().nullish().transform(stringTransform),
+  changeIconPreview: z.string().nullish().transform(stringTransform),
+  changeIconImport: z.string().nullish().transform(stringTransform),
+  changeIconShare: z.string().nullish().transform(stringTransform),
+  changeIconSaveProject: z.string().nullish().transform(stringTransform),
+  changeIconShareSideBar: z.string().nullish().transform(stringTransform),
+  changeIconMaterial: z.string().nullish().transform(stringTransform),
+  changeIconShape: z.string().nullish().transform(stringTransform),
+  changeIconFixingMethod: z.string().nullish().transform(stringTransform),
+  changeIconProduct: z.string().nullish().transform(stringTransform),
+  changeIconSize: z.string().nullish().transform(stringTransform),
+  changeIconText: z.string().nullish().transform(stringTransform),
+  changeIconColor: z.string().nullish().transform(stringTransform),
+  changeIconSizeMenu: z.string().nullish().transform(stringTransform),
+  changeIconBorder: z.string().nullish().transform(stringTransform),
+  changeIconImage: z.string().nullish().transform(stringTransform),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
-   return await settingLoader(agrs, settingParams);
-}
+  return await settingLoader(agrs, settingParams);
+};
 
 export const action = async (args: ActionFunctionArgs) => {
   return await settingAction(args, settingParams, formSchema);
-}
-
-
+};
 
 export default function ConfigSettingsGeneral() {
   const submit = useSubmit();
-  let  {settingData } = useLoaderData<typeof loader>();
+  let { settingData } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
   const [formData, setFormData] = useState<any>(
     settingData || {
-            resetAllIcon:'',
-            cancelAnAction:'',
-            icon:'',
-            changeIconPreview:'',
-            changeIconImport:'',
-            changeIconShare:'',
-            changeIconSaveProject:'',
-            changeIconShareSideBar:'',
-            changeIconMaterial:'',
-            changeIconShape:'',
-            changeIconFixingMethod:'',
-            changeIconProduct:'',
-            changeIconSize:'',
-            changeIconText:'',
-            changeIconColor:'',
-            changeIconSizeMenu:'',
-            changeIconBorder:'',
-            changeIconImage:'',
-      }
+      resetAllIcon: "",
+      cancelAnAction: "",
+      icon: "",
+      changeIconPreview: "",
+      changeIconImport: "",
+      changeIconShare: "",
+      changeIconSaveProject: "",
+      changeIconShareSideBar: "",
+      changeIconMaterial: "",
+      changeIconShape: "",
+      changeIconFixingMethod: "",
+      changeIconProduct: "",
+      changeIconSize: "",
+      changeIconText: "",
+      changeIconColor: "",
+      changeIconSizeMenu: "",
+      changeIconBorder: "",
+      changeIconImage: "",
+    },
   );
 
   const handleInputChange = (inputName: string, value: any) => {
-        setFormData((prevData:any) => ({
-        ...prevData,
-        [inputName]: value
+    setFormData((prevData: any) => ({
+      ...prevData,
+      [inputName]: value,
     }));
-  }
+  };
 
-  
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const data = {...formData};
+    const data = { ...formData };
 
     submit(data, { method: "POST" });
-  }
+  };
 
   return (
     <>
@@ -115,18 +110,38 @@ export default function ConfigSettingsGeneral() {
                 </Grid.Cell>
 
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "resetAllIcon")} title="Reset All" buttonTitle="Upload icon"
-                    path={formData.resetAllIcon} handlePath={(value:any)=>handleInputChange("resetAllIcon",value)}/>
+                  <FileInput
+                    error={getError(actionData, "resetAllIcon")}
+                    title="Reset All"
+                    buttonTitle="Upload icon"
+                    path={formData.resetAllIcon}
+                    handlePath={(value: any) =>
+                      handleInputChange("resetAllIcon", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "cancelAnAction")} title="Cancel an action"  buttonTitle="Upload icon"
-                    path={formData.cancelAnAction} handlePath={(value:any)=>handleInputChange("cancelAnAction",value)}/>
+                  <FileInput
+                    error={getError(actionData, "cancelAnAction")}
+                    title="Cancel an action"
+                    buttonTitle="Upload icon"
+                    path={formData.cancelAnAction}
+                    handlePath={(value: any) =>
+                      handleInputChange("cancelAnAction", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "icon")} title="Undo icon"  buttonTitle="Upload icon"
-                    path={formData.icon} handlePath={(value:any)=>handleInputChange("icon",value)}/>
+                  <FileInput
+                    error={getError(actionData, "icon")}
+                    title="Undo icon"
+                    buttonTitle="Upload icon"
+                    path={formData.icon}
+                    handlePath={(value: any) =>
+                      handleInputChange("icon", value)
+                    }
+                  />
                 </Grid.Cell>
-             
               </Grid>
             </Box>
           </BoxBackground>
@@ -142,32 +157,64 @@ export default function ConfigSettingsGeneral() {
                 </Grid.Cell>
 
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconPreview")} title="Change Icon  preview"  buttonTitle="Upload icon"
-                    path={formData.changeIconPreview} handlePath={(value:any)=>handleInputChange("changeIconPreview",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconPreview")}
+                    title="Change Icon  preview"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconPreview}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconPreview", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconImport")} title="Change Icon  Import"  buttonTitle="Upload icon"
-                    path={formData.changeIconImport} handlePath={(value:any)=>handleInputChange("changeIconImport",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconImport")}
+                    title="Change Icon  Import"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconImport}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconImport", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconShare")} title="Change  Icon  share"  buttonTitle="Upload icon"
-                    path={formData.changeIconShare} handlePath={(value:any)=>handleInputChange("changeIconShare",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconShare")}
+                    title="Change  Icon  share"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconShare}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconShare", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconSaveProject")} title="Change  Icon  save project"  buttonTitle="Upload icon"
-                    path={formData.changeIconSaveProject} handlePath={(value:any)=>handleInputChange("changeIconSaveProject",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconSaveProject")}
+                    title="Change  Icon  save project"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconSaveProject}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconSaveProject", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconShareSideBar")} title="Change Icon Share Side bar"  buttonTitle="Upload icon"
-                    path={formData.changeIconShareSideBar} handlePath={(value:any)=>handleInputChange("changeIconShareSideBar",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconShareSideBar")}
+                    title="Change Icon Share Side bar"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconShareSideBar}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconShareSideBar", value)
+                    }
+                  />
                 </Grid.Cell>
-            
-           
               </Grid>
             </Box>
           </BoxBackground>
         </SpacingBackground>
-
 
         <SpacingBackground border="1px solid #DDDDDD" margin="4px 0px">
           <BoxBackground>
@@ -180,58 +227,126 @@ export default function ConfigSettingsGeneral() {
                 </Grid.Cell>
 
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconMaterial")} title="Change  Icon Material"  buttonTitle="Upload icon"
-                    path={formData.changeIconMaterial} handlePath={(value:any)=>handleInputChange("changeIconMaterial",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconMaterial")}
+                    title="Change  Icon Material"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconMaterial}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconMaterial", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconShape")} title="Change Icon shape"  buttonTitle="Upload icon"
-                    path={formData.changeIconShape} handlePath={(value:any)=>handleInputChange("changeIconShape",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconShape")}
+                    title="Change Icon shape"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconShape}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconShape", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconFixingMethod")} title="Change  Icon  fixing method"  buttonTitle="Upload icon"
-                    path={formData.changeIconFixingMethod} handlePath={(value:any)=>handleInputChange("changeIconFixingMethod",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconFixingMethod")}
+                    title="Change  Icon  fixing method"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconFixingMethod}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconFixingMethod", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconProduct")} title="Change  Icon  Product"  buttonTitle="Upload icon"
-                    path={formData.changeIconProduct} handlePath={(value:any)=>handleInputChange("changeIconProduct",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconProduct")}
+                    title="Change  Icon  Product"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconProduct}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconProduct", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconSizeMenu")} title="Change Icon  Size Menu"  buttonTitle="Upload icon"
-                    path={formData.changeIconSizeMenu} handlePath={(value:any)=>handleInputChange("changeIconSizeMenu",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconSizeMenu")}
+                    title="Change Icon  Size Menu"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconSizeMenu}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconSizeMenu", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconText")} title="Change Icon Text"  buttonTitle="Upload icon"
-                    path={formData.changeIconText} handlePath={(value:any)=>handleInputChange("changeIconText",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconText")}
+                    title="Change Icon Text"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconText}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconText", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconColor")} title="Change  Icon  color"  buttonTitle="Upload icon"
-                    path={formData.changeIconColor} handlePath={(value:any)=>handleInputChange("changeIconColor",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconColor")}
+                    title="Change  Icon  color"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconColor}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconColor", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-                <FileInput error={getError(actionData, "changeIconSize")} title="Change Icon size"  buttonTitle="Upload icon"
-                    path={formData.changeIconSize} handlePath={(value:any)=>handleInputChange("changeIconSize",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconSize")}
+                    title="Change Icon size"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconSize}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconSize", value)
+                    }
+                  />
                 </Grid.Cell>
-                
+
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-              <FileInput error={getError(actionData, "changeIconBorder")} title="Change Icon border"  buttonTitle="Upload icon"
-                    path={formData.changeIconBorder} handlePath={(value:any)=>handleInputChange("changeIconBorder",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconBorder")}
+                    title="Change Icon border"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconBorder}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconBorder", value)
+                    }
+                  />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
-              <FileInput error={getError(actionData, "changeIconImage")} title="Change Icon image"  buttonTitle="Upload icon"
-                    path={formData.changeIconImage} handlePath={(value:any)=>handleInputChange("changeIconImage",value)}/>
+                  <FileInput
+                    error={getError(actionData, "changeIconImage")}
+                    title="Change Icon image"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconImage}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconImage", value)
+                    }
+                  />
                 </Grid.Cell>
-           
               </Grid>
             </Box>
           </BoxBackground>
         </SpacingBackground>
-      
 
         <SpacingBackground width="100%" height="auto" margin="3px 0 0 0">
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-              <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
           </BoxBackground>
@@ -240,4 +355,3 @@ export default function ConfigSettingsGeneral() {
     </>
   );
 }
-

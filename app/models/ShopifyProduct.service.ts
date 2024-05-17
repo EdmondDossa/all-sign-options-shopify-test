@@ -1,5 +1,3 @@
-import { RestResources } from "@shopify/shopify-api/rest/admin/2024-01";
-import { AdminApiContext } from "node_modules/@shopify/shopify-app-remix/build/ts/server/clients";
 
 export class ShopifyProductService {
   static async create(

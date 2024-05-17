@@ -3,10 +3,9 @@ import {
   Divider,
   Grid,
   InlineStack,
-  Select,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import {  useState } from "react";
 import {
   Form,
   redirect,
@@ -21,7 +20,6 @@ import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
 import { ConfigSize } from "~/types/ConfigDataType";
-import { SizeType } from "~/types/ManagePropertyType";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";

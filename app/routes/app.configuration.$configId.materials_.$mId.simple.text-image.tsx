@@ -1,32 +1,19 @@
-import {
-  Box,
-  Checkbox,
-  Divider,
-  Grid,
-  InlineStack,
-  Select,
-  Text,
-  TextField,
-} from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import { Box, Divider, Grid, InlineStack, Text } from "@shopify/polaris";
+import { useState } from "react";
 import {
   Form,
-  redirect,
   useActionData,
   useLoaderData,
-  useNavigate,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
-import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
+
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import { ConfigColor, ConfigTextImages } from "~/types/ConfigDataType";
-import { ColorType } from "~/types/ManagePropertyType";
+import { ConfigTextImages } from "~/types/ConfigDataType";
+
 import MaterialTextImageService from "~/models/MaterialTextImage.service";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
@@ -162,7 +149,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       : json({
           ...jFlashMessage(
             "Errors on Matrrial  text and image   upadating",
-            "error"
+            "error",
           ),
         });
   } else {

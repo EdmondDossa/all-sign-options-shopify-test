@@ -2,36 +2,27 @@ import {
   Badge,
   BlockStack,
   Box,
-  Button,
+
   ButtonGroup,
-  Card,
-  Checkbox,
-  ChoiceList,
+
   Divider,
   Grid,
-  IndexFilters,
   IndexTable,
   InlineError,
-  InlineGrid,
   InlineStack,
-  Layout,
-  Page,
-  Select,
+
   Text,
   TextField,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
+
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import {  useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, json, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import { Form, json, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { BorderType } from "~/types/SettingsType";
-import { SizeType } from "~/types/ManagePropertyType";
 import { BorderSettingType, ConfigBorder } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { jFlashMessage } from "~/utils/message-flash";
@@ -40,7 +31,6 @@ import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { getError } from "~/utils/error-getting";
-import { FileInput } from "~/components/inputs/FileInput";
 import { TextColorField } from "~/components/inputs/TextColorField";
 import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";

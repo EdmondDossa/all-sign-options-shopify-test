@@ -1,34 +1,23 @@
 import {
   Badge,
-  BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  Checkbox,
-  ChoiceList,
   Divider,
-  IndexFilters,
   IndexTable,
-  InlineGrid,
   InlineStack,
-  Layout,
-  Page,
-  Select,
-  Text,
-  TextField,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, useNavigate, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import {
+  useNavigate,
+  useNavigation,
+  useOutletContext,
+  useSubmit,
+} from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
-import {  ShapeType } from "~/types/SettingsType";
-import {  ConfigShape } from "~/types/ConfigDataType";
+import { ShapeType } from "~/types/SettingsType";
+import { ConfigShape } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
@@ -41,18 +30,15 @@ export default function MaterialShape() {
   const submit = useSubmit();
   const navigate = useNavigate();
 
-
   let { manageShapes, shapes } = useOutletContext<{
     manageShapes: ShapeType[];
     shapes: ConfigShape[];
   }>();
   useHandleFlashMessage();
 
-
   const navigation = useNavigation();
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
-
 
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
@@ -67,7 +53,7 @@ export default function MaterialShape() {
       }
       return curr;
     });
-    
+
     submit({ id: id }, { method: "PUT" });
   };
 
@@ -79,28 +65,26 @@ export default function MaterialShape() {
     navigate("edit");
   };
 
+  const shapesTab = shapes
+    ? shapes.map((currShapes, index) => {
+        let shape = manageShapes ? manageShapes[currShapes?.shapeId] : null;
+        return {
+          id: `${index}`,
+          title: `${shape?.name}`,
+          image: shape?.icon,
+          price: `${currShapes?.additionalPrice}$`,
+          isDefault: currShapes?.isDefault,
+        };
+      })
+    : [];
 
-  const shapesTab = shapes ? shapes.map((currShapes, index) => {
-
-    let shape = manageShapes?manageShapes[currShapes?.shapeId]:null;
-    return {
-      id: `${index}`,
-      title: `${shape?.name}`,
-      image: shape?.icon,
-      price: `${currShapes?.additionalPrice}$`,
-      isDefault: currShapes?.isDefault
-    }
-  }) : [];
-
-
- 
   const resourceName = {
     singular: "Shape",
     plural: "Shapes",
   };
 
   const rowMarkup = shapesTab.map(
-    ({ id, title, image, price , isDefault}, index) => (
+    ({ id, title, image, price, isDefault }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
@@ -108,20 +92,27 @@ export default function MaterialShape() {
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-       {image && <img style={{height: "30px"}}
-            src={fileUrl(image)}
-            alt={"border" + title}
-          />}
+          {image && (
+            <img
+              style={{ height: "30px" }}
+              src={fileUrl(image)}
+              alt={"border" + title}
+            />
+          )}
         </IndexTable.Cell>
-       
+
         <IndexTable.Cell className="td-center">
-          <Badge tone="critical" >{price}</Badge>
+          <Badge tone="critical">{price}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <ReactSwitchCustom
+            checked={isDefault || false}
+            setChecked={() => (isDefault ? "" : handeleDefault(index))}
+          ></ReactSwitchCustom>
+        </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth noWrap gap="loose">
-
-          <EditIconBtn
+            <EditIconBtn
               size="micro"
               onClick={() => {
                 handleUpdate(parseInt(id));
@@ -143,20 +134,22 @@ export default function MaterialShape() {
       <BoxBackground>
         <BoxBackground>
           <Box padding="150">
-            {manageShapes.length==shapes.length || <InlineStack gap="100" align="end">
-              <button
-                className="primary-btn"
-                type="button"
-                onClick={handleEdit}
-              >
-                <Box paddingInline="300">
-                  <InlineStack gap="300">
-                    <PlusIcon />
-                    <span className="primary-btn-text"> Add new shape</span>
-                  </InlineStack>
-                </Box>
-              </button>
-            </InlineStack>}
+            {manageShapes.length == shapes.length || (
+              <InlineStack gap="100" align="end">
+                <button
+                  className="primary-btn"
+                  type="button"
+                  onClick={handleEdit}
+                >
+                  <Box paddingInline="300">
+                    <InlineStack gap="300">
+                      <PlusIcon />
+                      <span className="primary-btn-text"> Add new shape</span>
+                    </InlineStack>
+                  </Box>
+                </button>
+              </InlineStack>
+            )}
           </Box>
           <Divider borderWidth="050" />
         </BoxBackground>
@@ -165,10 +158,10 @@ export default function MaterialShape() {
           itemCount={shapesTab.length}
           headings={[
             { title: "Title" },
-            { title: "Image", alignment: "center"},
-            { title: "Additional Price", alignment: "center"},
-            { title: "Default", alignment: "center"},
-            { title: "Action" , alignment: "center"},
+            { title: "Image", alignment: "center" },
+            { title: "Additional Price", alignment: "center" },
+            { title: "Default", alignment: "center" },
+            { title: "Action", alignment: "center" },
           ]}
           selectable={false}
         >
@@ -178,7 +171,6 @@ export default function MaterialShape() {
     </div>
   );
 }
-
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -200,7 +192,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Material  fixing method  deleting is completed successfull"),
+        ...jFlashMessage(
+          "Material  fixing method  deleting is completed successfull",
+        ),
       });
       break;
     }

@@ -1,5 +1,5 @@
 
-import { Form, Link, NavLink, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import {  Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { BorderType } from "~/types/SettingsType";
@@ -13,7 +13,6 @@ export const loader = async ({request}:LoaderFunctionArgs) => {
   return  json({borders})
 }
 export default function MaterialFixingMethod() {
-  const navigate = useNavigate();
   const { borders } = useLoaderData<typeof loader>();
 
   return (

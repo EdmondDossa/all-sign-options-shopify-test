@@ -1,12 +1,9 @@
 import { parseWithZod } from "@conform-to/zod";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, json } from "@remix-run/node";
 import {
   Form,
-  Outlet,
   redirect,
   useActionData,
-  useLoaderData,
-  useNavigate,
   useNavigation,
   useOutletContext,
   useSearchParams,
@@ -16,39 +13,27 @@ import {
   Bleed,
   BlockStack,
   Box,
-  Button,
-  Card,
   Divider,
   Grid,
-  InlineGrid,
   InlineStack,
-  Page,
-  Select,
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
-import { number, z } from "zod";
+import { useState } from "react";
+import { z } from "zod";
 import { BackBtn } from "~/components/buttons/BackBtn";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
 import { FlashToast } from "~/components/feactures/FlashToast";
-import BiSaveIcon from "~/components/icons/BiSaveIcon";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
-import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
-import { CustomTinymce } from "~/components/inputs/CustomTinymce";
 import { FileInput } from "~/components/inputs/FileInput";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { TextColorField } from "~/components/inputs/TextColorField";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 
 import ConfigAddionalOptionService from "~/models/ConfigAddionalOption.service";
-import ServiceMaterial from "~/models/Material.service";
 import { authenticate } from "~/shopify.server";
-import { Material, MaterialType } from "~/types/ConfigDataType";
-import { getError, getErrorFromZod } from "~/utils/error-getting";
+import { getErrorFromZod } from "~/utils/error-getting";
 import { fileUrl } from "~/utils/fileUrl";
 import { flashMessage } from "~/utils/message-flash";
 import { jsonTransform } from "~/utils/transfomerZod";
@@ -70,29 +55,31 @@ export default function MaterialEdit() {
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
-  let types = [  {
-    icon: "/aso-config-additional-option/yes-no.jpg",
-    value: "yes/no",
-    label: "Yes/No",
-    component: (
-      <YesOrNoInput
-        additonalOption={additonalOption}
-        isLoading={isLoading}
-        isSubmitting={isSubmitting}
-      />
-    ),
-  }, {
-    icon: "/aso-config-additional-option/image-type.jpg",
-    value: "image-input",
-    label: "Image Input",
-    component: (
-      <TypeImageInput
-        additonalOption={additonalOption}
-        isLoading={isLoading}
-        isSubmitting={isSubmitting}
-      />
-    ),
-  },
+  let types = [
+    {
+      icon: "/aso-config-additional-option/yes-no.jpg",
+      value: "yes/no",
+      label: "Yes/No",
+      component: (
+        <YesOrNoInput
+          additonalOption={additonalOption}
+          isLoading={isLoading}
+          isSubmitting={isSubmitting}
+        />
+      ),
+    },
+    {
+      icon: "/aso-config-additional-option/image-type.jpg",
+      value: "image-input",
+      label: "Image Input",
+      component: (
+        <TypeImageInput
+          additonalOption={additonalOption}
+          isLoading={isLoading}
+          isSubmitting={isSubmitting}
+        />
+      ),
+    },
     {
       icon: "/aso-config-additional-option/dropdown.jpg",
       value: "dropdown",
@@ -129,8 +116,6 @@ export default function MaterialEdit() {
         />
       ),
     },
-   
-  
   ];
 
   return (
@@ -154,14 +139,16 @@ export default function MaterialEdit() {
                 1- Choose an Input Type
               </Text>
               <Text as="p" variant="bodyMd" tone="subdued">
-                This text will  displayed above the input options.
+                This text will displayed above the input options.
               </Text>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
               <InlineStack gap="600" blockAlign="center" align="center">
                 {types?.map((type) => (
                   <div
-                    onClick={() =>Number.isNaN(id) && setSelectedType(type.value)}
+                    onClick={() =>
+                      Number.isNaN(id) && setSelectedType(type.value)
+                    }
                     className={
                       type.value === selectedType
                         ? "aso-additonal-card active"
@@ -264,16 +251,16 @@ function YesOrNoInput({
       },
     },
   );
-    let [isError, setIsError] = useState(false);
+  let [isError, setIsError] = useState(false);
   let [formErrors, setFormErrors] = useState<any>({});
 
   const formSchema = z.object({
     label: z.string().min(1),
     inputs: z.object({
-      yes:z.string().min(1),
-      no: z.string().min(1)
-    })
-  })
+      yes: z.string().min(1),
+      no: z.string().min(1),
+    }),
+  });
 
   const submit = useSubmit();
 
@@ -288,8 +275,6 @@ function YesOrNoInput({
     submit({ option: JSON.stringify(formData) }, { method: "POST" });
   };
 
-  
-
   const handleInputChange = (inputName: string, value: any) => {
     setIsError(false);
     setFormData((prevData: any) => ({
@@ -300,7 +285,14 @@ function YesOrNoInput({
 
   return (
     <Form onSubmit={handleSubmit} method="POST">
-     {isError && <FlashToast  messageFlash={{msg:"Your entries contain errors. kindly rectify them", status:"error"}} />}
+      {isError && (
+        <FlashToast
+          messageFlash={{
+            msg: "Your entries contain errors. kindly rectify them",
+            status: "error",
+          }}
+        />
+      )}
       <SpacingBackground backgroundColor="#F8F9FB">
         <Box paddingInline="300" paddingBlock="600">
           <Grid gap={{ lg: "15px" }}>
@@ -310,7 +302,7 @@ function YesOrNoInput({
                 2- Set the Label and Description
               </Text>
               <Text as="p" variant="bodyMd" tone="subdued">
-                This text will  displayed above the input options.
+                This text will displayed above the input options.
               </Text>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -321,7 +313,7 @@ function YesOrNoInput({
                   handleInputChange("label", value);
                 }}
                 autoComplete="on"
-                error={getErrorFromZod(formErrors,"label")}
+                error={getErrorFromZod(formErrors, "label")}
               />
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -359,7 +351,7 @@ function YesOrNoInput({
                   handleInputChange("inputs", formData.inputs);
                 }}
                 autoComplete="on"
-                error={getErrorFromZod(formErrors,"inputs.yes")}
+                error={getErrorFromZod(formErrors, "inputs.yes")}
               />
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -370,7 +362,7 @@ function YesOrNoInput({
                   formData.inputs.no = value;
                   handleInputChange("inputs", formData.inputs);
                 }}
-                error={getErrorFromZod(formErrors,"inputs.no")}
+                error={getErrorFromZod(formErrors, "inputs.no")}
                 autoComplete="on"
               />
             </Grid.Cell>
@@ -520,7 +512,6 @@ function YesOrNoInput({
                       value: value,
                     })
                   }
-
                   onBlur={(value) =>
                     handleInputChange("price", {
                       ...formData.price,
@@ -569,12 +560,12 @@ function NoteTypeInput({
       noteLimitChar: "",
     },
   );
-    let [isError, setIsError] = useState(false);
+  let [isError, setIsError] = useState(false);
   let [formErrors, setFormErrors] = useState<any>({});
 
   const formSchema = z.object({
     label: z.string().min(1),
-  })
+  });
 
   const submit = useSubmit();
 
@@ -589,9 +580,6 @@ function NoteTypeInput({
     submit({ option: JSON.stringify(formData) }, { method: "POST" });
   };
 
-  
-
-
   const handleInputChange = (inputName: string, value: any) => {
     setIsError(false);
     setFormData((prevData: any) => ({
@@ -602,7 +590,14 @@ function NoteTypeInput({
 
   return (
     <Form onSubmit={handleSubmit} method="POST">
-       {isError && <FlashToast  messageFlash={{msg:"Your entries contain errors. kindly rectify them", status:"error"}} />}
+      {isError && (
+        <FlashToast
+          messageFlash={{
+            msg: "Your entries contain errors. kindly rectify them",
+            status: "error",
+          }}
+        />
+      )}
       <SpacingBackground backgroundColor="#F8F9FB">
         <Box paddingInline="300" paddingBlock="600">
           <Grid gap={{ lg: "15px" }}>
@@ -612,7 +607,7 @@ function NoteTypeInput({
                 2- Set the Label and Description
               </Text>
               <Text as="p" variant="bodyMd" tone="subdued">
-                This text will  displayed above the input options.
+                This text will displayed above the input options.
               </Text>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -623,7 +618,7 @@ function NoteTypeInput({
                   handleInputChange("label", value);
                 }}
                 autoComplete="on"
-                error={getErrorFromZod(formErrors,"label")}
+                error={getErrorFromZod(formErrors, "label")}
               />
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -681,8 +676,6 @@ function NoteTypeInput({
   );
 }
 
-
-
 function TypeImageInput({
   additonalOption,
   isSubmitting,
@@ -693,7 +686,7 @@ function TypeImageInput({
   isLoading: boolean;
 }) {
   const [formData, setFormData] = useState<any>(
-    additonalOption ||  {
+    additonalOption || {
       type: "image-input",
       label: "",
       description: "",
@@ -708,9 +701,9 @@ function TypeImageInput({
             type: "none",
             value: 0,
           },
-        }
-      ]
-    }
+        },
+      ],
+    },
   );
 
   const handleAddItem = () => {
@@ -719,16 +712,16 @@ function TypeImageInput({
     }
 
     formData.options.push({
-          label: "",
-          value: "",
-          color: "#ffffff",
-          previewImg: "",
-          popupImg: "",
-          price: {
-            type: "none",
-            value: 0,
-          },
-        });
+      label: "",
+      value: "",
+      color: "#ffffff",
+      previewImg: "",
+      popupImg: "",
+      price: {
+        type: "none",
+        value: 0,
+      },
+    });
 
     setFormData({ ...formData });
   };
@@ -741,14 +734,15 @@ function TypeImageInput({
   };
   let [isError, setIsError] = useState(false);
   let [formErrors, setFormErrors] = useState<any>({});
-  
 
   const formSchema = z.object({
     label: z.string().min(1),
-    options: z.object({
-      value: z.string().min(1),
-    }).array()
-  })
+    options: z
+      .object({
+        value: z.string().min(1),
+      })
+      .array(),
+  });
 
   const submit = useSubmit();
 
@@ -763,10 +757,7 @@ function TypeImageInput({
     submit({ option: JSON.stringify(formData) }, { method: "POST" });
   };
 
-  
-
   const handleInputChange = (inputName: string, value: any) => {
-    
     setIsError(false);
     setFormData((prevData: any) => ({
       ...prevData,
@@ -776,7 +767,14 @@ function TypeImageInput({
 
   return (
     <Form onSubmit={handleSubmit} method="POST">
-       {isError && <FlashToast  messageFlash={{msg:"Your entries contain errors. kindly rectify them", status:"error"}} />}
+      {isError && (
+        <FlashToast
+          messageFlash={{
+            msg: "Your entries contain errors. kindly rectify them",
+            status: "error",
+          }}
+        />
+      )}
       <SpacingBackground backgroundColor="#F8F9FB">
         <Box paddingInline="300" paddingBlock="600">
           <Grid gap={{ lg: "15px" }}>
@@ -786,7 +784,7 @@ function TypeImageInput({
                 2- Set the Label and Description
               </Text>
               <Text as="p" variant="bodyMd" tone="subdued">
-                This text will  displayed above the input options.
+                This text will displayed above the input options.
               </Text>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -797,7 +795,7 @@ function TypeImageInput({
                   handleInputChange("label", value);
                 }}
                 autoComplete="on"
-                error={getErrorFromZod(formErrors,"label")}
+                error={getErrorFromZod(formErrors, "label")}
               />
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -819,22 +817,28 @@ function TypeImageInput({
           <Grid gap={{ lg: "15px" }}>
             <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
               <Text as="h3" variant="headingMd" fontWeight="semibold">
-              3- Images as Input
+                3- Images as Input
               </Text>
               <Text as="p" variant="bodyMd" tone="subdued">
-              Displays as a row of images that is selectable by the customer.
+                Displays as a row of images that is selectable by the customer.
               </Text>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-              <Box paddingInline="300" paddingBlock="600" background="bg-surface">
+              <Box
+                paddingInline="300"
+                paddingBlock="600"
+                background="bg-surface"
+              >
                 <Grid gap={{ lg: "15px" }}>
                   {formData.options.map((option: any, index: number) => (
                     <>
-                     {index > 0 && <Grid.Cell
-                        columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
-                      >
-                        <Divider borderWidth="100" />
-                      </Grid.Cell>}
+                      {index > 0 && (
+                        <Grid.Cell
+                          columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                        >
+                          <Divider borderWidth="100" />
+                        </Grid.Cell>
+                      )}
                       <Grid.Cell
                         columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
                       >
@@ -860,9 +864,12 @@ function TypeImageInput({
                                 <TextField
                                   label="Label"
                                   value={`${option.label}`}
-                                  onChange={(value) => { 
-                                    formData.options[index].label = value
-                                    handleInputChange("options", formData.options);
+                                  onChange={(value) => {
+                                    formData.options[index].label = value;
+                                    handleInputChange(
+                                      "options",
+                                      formData.options,
+                                    );
                                   }}
                                   autoComplete="on"
                                 />
@@ -879,12 +886,18 @@ function TypeImageInput({
                                 <TextField
                                   label="Value(Required)"
                                   value={`${option.value}`}
-                                  onChange={(value) => { 
-                                    formData.options[index].value = value
-                                    handleInputChange("options", formData.options);
+                                  onChange={(value) => {
+                                    formData.options[index].value = value;
+                                    handleInputChange(
+                                      "options",
+                                      formData.options,
+                                    );
                                   }}
                                   autoComplete="on"
-                                  error={getErrorFromZod(formErrors,"options."+index+".value")}
+                                  error={getErrorFromZod(
+                                    formErrors,
+                                    "options." + index + ".value",
+                                  )}
                                 />
                               </Grid.Cell>
                               <Grid.Cell
@@ -899,9 +912,12 @@ function TypeImageInput({
                                 <TextColorField
                                   label="Color"
                                   color={`${option.color}`}
-                                  setColor={(value: string) => { 
-                                    formData.options[index].color = value
-                                    handleInputChange("options", formData.options);
+                                  setColor={(value: string) => {
+                                    formData.options[index].color = value;
+                                    handleInputChange(
+                                      "options",
+                                      formData.options,
+                                    );
                                   }}
                                 />
                               </Grid.Cell>
@@ -934,12 +950,14 @@ function TypeImageInput({
                                   title="Example Image - displayed as popup"
                                   buttonTitle="choose a picture"
                                   path={option.popupImg}
-                                  handlePath={(value: string) => { 
-                                    formData.options[index].popupImg = value
-                                    handleInputChange("options", formData.options);
+                                  handlePath={(value: string) => {
+                                    formData.options[index].popupImg = value;
+                                    handleInputChange(
+                                      "options",
+                                      formData.options,
+                                    );
                                   }}
                                 />
-
                               </Grid.Cell>
                               <Grid.Cell
                                 columnSpan={{
@@ -961,12 +979,14 @@ function TypeImageInput({
                                   title="Image - displayed as   Preview image "
                                   buttonTitle="choose a picture"
                                   path={option.previewImg}
-                                  handlePath={(value: string) => { 
-                                    formData.options[index].previewImg = value
-                                    handleInputChange("options", formData.options);
+                                  handlePath={(value: string) => {
+                                    formData.options[index].previewImg = value;
+                                    handleInputChange(
+                                      "options",
+                                      formData.options,
+                                    );
                                   }}
                                 />
-                                
                               </Grid.Cell>
                               <Grid.Cell
                                 columnSpan={{
@@ -988,10 +1008,14 @@ function TypeImageInput({
                                     </Text>
                                     <ReactSwitchCustom
                                       checked={option.price.type == "none"}
-                                      setChecked={(value: boolean) => { 
+                                      setChecked={(value: boolean) => {
                                         if (!value) return;
-                                        formData.options[index].price.type =  "none"
-                                        handleInputChange("options", formData.options);
+                                        formData.options[index].price.type =
+                                          "none";
+                                        handleInputChange(
+                                          "options",
+                                          formData.options,
+                                        );
                                       }}
                                     />
                                   </InlineStack>
@@ -1005,10 +1029,14 @@ function TypeImageInput({
                                     </Text>
                                     <ReactSwitchCustom
                                       checked={option.price.type == "base"}
-                                      setChecked={(value: boolean) => { 
+                                      setChecked={(value: boolean) => {
                                         if (!value) return;
-                                        formData.options[index].price.type =  "base"
-                                        handleInputChange("options", formData.options);
+                                        formData.options[index].price.type =
+                                          "base";
+                                        handleInputChange(
+                                          "options",
+                                          formData.options,
+                                        );
                                       }}
                                     />
                                   </InlineStack>
@@ -1024,11 +1052,14 @@ function TypeImageInput({
                                       checked={
                                         option.price.type == "multiplier"
                                       }
-                                    
-                                      setChecked={(value: boolean) => { 
+                                      setChecked={(value: boolean) => {
                                         if (!value) return;
-                                        formData.options[index].price.type =  "multiplier"
-                                        handleInputChange("options", formData.options);
+                                        formData.options[index].price.type =
+                                          "multiplier";
+                                        handleInputChange(
+                                          "options",
+                                          formData.options,
+                                        );
                                       }}
                                     />
                                   </InlineStack>
@@ -1049,14 +1080,21 @@ function TypeImageInput({
                                     type="number"
                                     labelHidden
                                     value={`${option.price.value}`}
-                                    onChange={(value: any) => { 
-                                      formData.options[index].price.value = value
-                                      handleInputChange("options", formData.options);
+                                    onChange={(value: any) => {
+                                      formData.options[index].price.value =
+                                        value;
+                                      handleInputChange(
+                                        "options",
+                                        formData.options,
+                                      );
                                     }}
-
-                                    onBlur={(value: any) => { 
-                                      formData.options[index].price.value = parseFloat(option.price.value)
-                                      handleInputChange("options", formData.options);
+                                    onBlur={(value: any) => {
+                                      formData.options[index].price.value =
+                                        parseFloat(option.price.value);
+                                      handleInputChange(
+                                        "options",
+                                        formData.options,
+                                      );
                                     }}
                                     helpText={
                                       option.price.type == "base"
@@ -1103,7 +1141,6 @@ function TypeImageInput({
     </Form>
   );
 }
-
 
 function DropdownTypeInput({
   additonalOption,
@@ -1163,10 +1200,12 @@ function DropdownTypeInput({
 
   const formSchema = z.object({
     label: z.string().min(1),
-    options: z.object({
-      value: z.string().min(1),
-    }).array()
-  })
+    options: z
+      .object({
+        value: z.string().min(1),
+      })
+      .array(),
+  });
 
   const submit = useSubmit();
 
@@ -1174,15 +1213,13 @@ function DropdownTypeInput({
     e.preventDefault();
     const formAnalyser = formSchema.safeParse(formData);
     if (!formAnalyser.success) {
-      console.log("errors",formAnalyser.error.issues);
+      console.log("errors", formAnalyser.error.issues);
       setIsError(true);
       setFormErrors(formAnalyser.error.issues);
       return;
     }
     submit({ option: JSON.stringify(formData) }, { method: "POST" });
   };
-
-  
 
   const handleInputChange = (inputName: string, value: any) => {
     setIsError(false);
@@ -1194,7 +1231,14 @@ function DropdownTypeInput({
 
   return (
     <Form onSubmit={handleSubmit} method="POST">
-       {isError && <FlashToast  messageFlash={{msg:"Your entries contain errors. kindly rectify them", status:"error"}} />}
+      {isError && (
+        <FlashToast
+          messageFlash={{
+            msg: "Your entries contain errors. kindly rectify them",
+            status: "error",
+          }}
+        />
+      )}
       <SpacingBackground backgroundColor="#F8F9FB">
         <Box paddingInline="300" paddingBlock="600">
           <Grid gap={{ lg: "15px" }}>
@@ -1204,7 +1248,7 @@ function DropdownTypeInput({
                 2- Set the Label and Description
               </Text>
               <Text as="p" variant="bodyMd" tone="subdued">
-                This text will  displayed above the input options.
+                This text will displayed above the input options.
               </Text>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -1214,7 +1258,7 @@ function DropdownTypeInput({
                 onChange={(value) => {
                   handleInputChange("label", value);
                 }}
-                error={getErrorFromZod(formErrors,"label")}
+                error={getErrorFromZod(formErrors, "label")}
                 autoComplete="on"
               />
             </Grid.Cell>
@@ -1245,7 +1289,11 @@ function DropdownTypeInput({
               </Text>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-              <Box paddingInline="300" paddingBlock="1000" background="bg-surface">
+              <Box
+                paddingInline="300"
+                paddingBlock="1000"
+                background="bg-surface"
+              >
                 <Grid gap={{ lg: "30px" }}>
                   {formData.options.map((option: any, index: number) => (
                     <>
@@ -1280,9 +1328,12 @@ function DropdownTypeInput({
                                 <TextField
                                   label="Label"
                                   value={`${option.label}`}
-                                  onChange={(value) => { 
-                                    formData.options[index].label = value
-                                    handleInputChange("options", formData.options);
+                                  onChange={(value) => {
+                                    formData.options[index].label = value;
+                                    handleInputChange(
+                                      "options",
+                                      formData.options,
+                                    );
                                   }}
                                   autoComplete="on"
                                 />
@@ -1299,13 +1350,18 @@ function DropdownTypeInput({
                                 <TextField
                                   label="Value(Required)"
                                   value={`${option.value}`}
-                                  onChange={(value) => { 
-                                    formData.options[index].value = value
-                                    handleInputChange("options", formData.options);
+                                  onChange={(value) => {
+                                    formData.options[index].value = value;
+                                    handleInputChange(
+                                      "options",
+                                      formData.options,
+                                    );
                                   }}
                                   autoComplete="on"
-                                error={getErrorFromZod(formErrors,"options."+index+".value")}
-
+                                  error={getErrorFromZod(
+                                    formErrors,
+                                    "options." + index + ".value",
+                                  )}
                                 />
                               </Grid.Cell>
                               <Grid.Cell
@@ -1328,9 +1384,12 @@ function DropdownTypeInput({
                                   title="Example Image - displayed as popup"
                                   buttonTitle="choose a picture"
                                   path={option.popupImg}
-                                  handlePath={(value: string) => { 
-                                    formData.options[index].popupImg = value
-                                    handleInputChange("options", formData.options);
+                                  handlePath={(value: string) => {
+                                    formData.options[index].popupImg = value;
+                                    handleInputChange(
+                                      "options",
+                                      formData.options,
+                                    );
                                   }}
                                 />
                               </Grid.Cell>
@@ -1354,10 +1413,14 @@ function DropdownTypeInput({
                                     </Text>
                                     <ReactSwitchCustom
                                       checked={option.price.type == "none"}
-                                      setChecked={(value: boolean) => { 
+                                      setChecked={(value: boolean) => {
                                         if (!value) return;
-                                        formData.options[index].price.type =  "none"
-                                        handleInputChange("options", formData.options);
+                                        formData.options[index].price.type =
+                                          "none";
+                                        handleInputChange(
+                                          "options",
+                                          formData.options,
+                                        );
                                       }}
                                     />
                                   </InlineStack>
@@ -1371,10 +1434,14 @@ function DropdownTypeInput({
                                     </Text>
                                     <ReactSwitchCustom
                                       checked={option.price.type == "base"}
-                                      setChecked={(value: boolean) => { 
+                                      setChecked={(value: boolean) => {
                                         if (!value) return;
-                                        formData.options[index].price.type =  "base"
-                                        handleInputChange("options", formData.options);
+                                        formData.options[index].price.type =
+                                          "base";
+                                        handleInputChange(
+                                          "options",
+                                          formData.options,
+                                        );
                                       }}
                                     />
                                   </InlineStack>
@@ -1390,11 +1457,14 @@ function DropdownTypeInput({
                                       checked={
                                         option.price.type == "multiplier"
                                       }
-                                    
-                                      setChecked={(value: boolean) => { 
+                                      setChecked={(value: boolean) => {
                                         if (!value) return;
-                                        formData.options[index].price.type =  "multiplier"
-                                        handleInputChange("options", formData.options);
+                                        formData.options[index].price.type =
+                                          "multiplier";
+                                        handleInputChange(
+                                          "options",
+                                          formData.options,
+                                        );
                                       }}
                                     />
                                   </InlineStack>
@@ -1415,14 +1485,21 @@ function DropdownTypeInput({
                                     type="number"
                                     labelHidden
                                     value={`${option.price.value}`}
-                                    onChange={(value: any) => { 
-                                      formData.options[index].price.value = value
-                                      handleInputChange("options", formData.options);
+                                    onChange={(value: any) => {
+                                      formData.options[index].price.value =
+                                        value;
+                                      handleInputChange(
+                                        "options",
+                                        formData.options,
+                                      );
                                     }}
-
-                                    onBlur={(value: any) => { 
-                                      formData.options[index].price.value = parseFloat(option.price.value);
-                                      handleInputChange("options", formData.options);
+                                    onBlur={(value: any) => {
+                                      formData.options[index].price.value =
+                                        parseFloat(option.price.value);
+                                      handleInputChange(
+                                        "options",
+                                        formData.options,
+                                      );
                                     }}
                                     helpText={
                                       option.price.type == "base"
@@ -1491,12 +1568,12 @@ function IncludedOptionInput({
       },
     },
   );
-    let [isError, setIsError] = useState(false);
+  let [isError, setIsError] = useState(false);
   let [formErrors, setFormErrors] = useState<any>({});
 
   const formSchema = z.object({
     label: z.string().min(1),
-  })
+  });
 
   const submit = useSubmit();
 
@@ -1511,10 +1588,6 @@ function IncludedOptionInput({
     submit({ option: JSON.stringify(formData) }, { method: "POST" });
   };
 
-  
-
-
-
   const handleInputChange = (inputName: string, value: any) => {
     setIsError(false);
     setFormData((prevData: any) => ({
@@ -1525,7 +1598,14 @@ function IncludedOptionInput({
 
   return (
     <Form onSubmit={handleSubmit} method="POST">
-       {isError && <FlashToast  messageFlash={{msg:"Your entries contain errors. kindly rectify them", status:"error"}} />}
+      {isError && (
+        <FlashToast
+          messageFlash={{
+            msg: "Your entries contain errors. kindly rectify them",
+            status: "error",
+          }}
+        />
+      )}
       <SpacingBackground backgroundColor="#F8F9FB">
         <Box paddingInline="300" paddingBlock="600">
           <Grid gap={{ lg: "15px" }}>
@@ -1535,7 +1615,7 @@ function IncludedOptionInput({
                 2- Set the Label and Description
               </Text>
               <Text as="p" variant="bodyMd" tone="subdued">
-                This text will  displayed above the input options.
+                This text will displayed above the input options.
               </Text>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -1546,7 +1626,7 @@ function IncludedOptionInput({
                   handleInputChange("label", value);
                 }}
                 autoComplete="on"
-                error={getErrorFromZod(formErrors,"label")}
+                error={getErrorFromZod(formErrors, "label")}
               />
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -1653,15 +1733,16 @@ function IncludedOptionInput({
                   type="number"
                   labelHidden
                   value={`${formData.price.value}`}
-                  onChange={(value) =>handleInputChange("price", {
-                    ...formData.price,
-                    value: value
-                  })
+                  onChange={(value) =>
+                    handleInputChange("price", {
+                      ...formData.price,
+                      value: value,
+                    })
                   }
                   onBlur={(value) =>
                     handleInputChange("price", {
                       ...formData.price,
-                      value:parseFloat(formData.price.value),
+                      value: parseFloat(formData.price.value),
                     })
                   }
                   helpText={

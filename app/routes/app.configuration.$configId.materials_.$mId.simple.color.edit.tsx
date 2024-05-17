@@ -2,16 +2,13 @@ import {
   Bleed,
   BlockStack,
   Box,
-  Collapsible,
   Divider,
   Grid,
-  InlineGrid,
   InlineStack,
-  Select,
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import {  useState } from "react";
 import {
   Form,
   redirect,
@@ -25,9 +22,7 @@ import {
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { ConfigColor } from "~/types/ConfigDataType";
-import { ColorType } from "~/types/ManagePropertyType";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { getError } from "~/utils/error-getting";
 import { z } from "zod";
@@ -37,7 +32,6 @@ import { parseWithZod } from "@conform-to/zod";
 import MaterialColorService from "~/models/MaterialColors.service";
 import { flashMessage } from "~/utils/message-flash";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
-import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
 import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
 import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { FileInput } from "~/components/inputs/FileInput";
@@ -49,8 +43,7 @@ export default function MaterialColorCreate() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  let { manageColors, colors } = useOutletContext<{
-    manageColors: ColorType[];
+  let {  colors } = useOutletContext<{
     colors: ConfigColor[];
   }>();
   const [searchParams] = useSearchParams();

@@ -1,21 +1,9 @@
-import {
-  BlockStack,
-  Box,
-  Button,
-  Grid,
-  InlineStack,
-  Select,
-  Text,
-  TextField,
-} from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import { Box, Grid, InlineStack, Text } from "@shopify/polaris";
+import { useState } from "react";
 import {
   Form,
-  NavLink,
-  redirect,
   useActionData,
   useLoaderData,
-  useNavigate,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
@@ -64,8 +52,8 @@ const formSchema = z.object({
         backgroundColorHoverButtonRestartAll: z.string().nullish(),
         textColorButtonRestartAll: z.string().nullish(),
         backgroundColorButtonRestartAll: z.string().nullish(),
-      })
-  )
+      }),
+    ),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -109,8 +97,8 @@ export default function ConfigSettingsThemeColor() {
         backgroundColorHoverButtonRestartAll: "#000000",
         textColorButtonRestartAll: "#000000",
         backgroundColorButtonRestartAll: "#000000",
-      }
-    }
+      },
+    },
   );
 
   const handleInputChange = (inputName: string, value: any) => {

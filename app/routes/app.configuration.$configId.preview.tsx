@@ -1,6 +1,6 @@
 import { Box, InlineStack, Page, Text } from "@shopify/polaris";
 
-import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
+import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import NextLtrIcon from "~/components/icons/NextLtrIcon";
 import MaterialService from "~/models/Material.service";
@@ -8,6 +8,9 @@ import { Material } from "~/types/ConfigDataType";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
+import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
@@ -20,14 +23,29 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return json({ materials });
 };
 
-export default function Materiels() {
+export default function Preview() {
+  const navigate = useNavigate();
   let { materials } = useLoaderData<typeof loader>();
   const { configuration } = useOutletContext<{
     configuration: ConfigurationType;
   }>();
+  const shopify = useAppBridge();
 
   return (
     <Page fullWidth>
+      <Modal
+        id="my-modal"
+        open={true}
+        variant="max"
+        onHide={() => navigate(`../..`)}
+      >
+        <iframe
+          name={`configId_${configuration.id}`}
+          src="/preview.html"
+          className="aso-preview"
+        ></iframe>
+        <TitleBar title={configuration.name}></TitleBar>
+      </Modal>
       <BoxBackground>
         <Box paddingInline="300" paddingBlock="600">
           <InlineStack>
@@ -38,19 +56,12 @@ export default function Materiels() {
               <NextLtrIcon />
 
               <Text as="h2" variant="headingMd" tone="subdued">
-                Additionals options
+                Preview
               </Text>
             </InlineStack>
           </InlineStack>
         </Box>
       </BoxBackground>
-
-      <Outlet
-        context={{
-          materials: materials,
-          additonalOptions: configuration.data.additionalOptions,
-        }}
-      />
     </Page>
   );
 }

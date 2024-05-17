@@ -1,7 +1,7 @@
 import { ShopifyProductService } from './../models/ShopifyProduct.service';
 import { z } from 'zod';
 import { authenticate } from './../shopify.server';
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, json } from "@remix-run/node";
 import { parseWithZod } from '@conform-to/zod';
 
 

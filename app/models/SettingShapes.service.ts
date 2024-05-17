@@ -1,8 +1,6 @@
 import { ShapeType } from "./../types/SettingsType";
 import prisma from "~/db.server";
-import { FontType } from "~/types/ManagePropertyType";
 import SettingService from "./Setting.service";
-import { OutputType } from "~/types/SettingsType";
 
 export default class SettingShapesService {
   static async get(sessionId: string): Promise<any | null> {

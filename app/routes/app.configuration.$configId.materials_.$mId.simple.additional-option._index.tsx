@@ -1,31 +1,18 @@
 import {
-  Badge,
   BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  ChoiceList,
   Divider,
   IndexTable,
-  InlineGrid,
   InlineStack,
-  Page,
-  Select,
   Text,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
 
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
 import {
-  Link,
   json,
   useNavigate,
-  useNavigation,
   useOutletContext,
   useSubmit,
 } from "@remix-run/react";
@@ -51,7 +38,6 @@ export default function MaterialAdditionalOptionIndex() {
   }>();
 
   useHandleFlashMessage();
-
 
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
@@ -88,8 +74,10 @@ export default function MaterialAdditionalOptionIndex() {
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth noWrap gap="loose">
-     
-          <ManageBtn  title="add options" handleClick={()=>   handleView(index)}/>
+            <ManageBtn
+              title="add options"
+              handleClick={() => handleView(index)}
+            />
 
             <EditIconBtn
               size="micro"
@@ -141,7 +129,7 @@ export default function MaterialAdditionalOptionIndex() {
         headings={[
           { title: "Title" },
           { title: "Desciption" },
-          { title: "Icon" ,  alignment: "center"},
+          { title: "Icon", alignment: "center" },
           { title: "Action", alignment: "center" },
         ]}
       >
@@ -150,7 +138,6 @@ export default function MaterialAdditionalOptionIndex() {
     </SpacingBackground>
   );
 }
-
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -172,7 +159,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Material additional option deleting is completed successfull"),
+        ...jFlashMessage(
+          "Material additional option deleting is completed successfull",
+        ),
       });
       break;
     }

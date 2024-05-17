@@ -2,7 +2,6 @@ import {
     Box,
     Divider,
     InlineStack,
-    Page,
     Text,
   } from "@shopify/polaris";
   
@@ -11,13 +10,11 @@ import {
   import NextLtrIcon from "~/components/icons/NextLtrIcon";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import { ConfigAdditionalOptionItem, MaterialAdvance, MaterialAdvanceComponentType, MaterialAdvanceOptionType } from "~/types/ConfigDataType";
-import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
+import {  MaterialAdvance, MaterialAdvanceComponentType, MaterialAdvanceOptionType } from "~/types/ConfigDataType";
+
 import MaterialAdvancedOptionService from "~/models/MaterialAdvancedOption.service";
-import { ColorType } from "~/types/ManagePropertyType";
 import { FixingMethodType, ShapeType } from "~/types/SettingsType";
 import SettingShapesService from "~/models/SettingShapes.service";
-import ColorService from "~/models/Color.service";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
 import { ConfigurationType } from "~/types/ConfigurationType";
   
@@ -29,7 +26,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   console.log('configID materialID', configId, materialId, componentId);
 
   let materialOptions: MaterialAdvanceOptionType[] | null = null;
-  const manageColors: ColorType[] | null = await ColorService.getColors(session.id);
+
   const manageShapes: ShapeType[] | null = await SettingShapesService.get(session.id);
   const manageFixingsMethods : FixingMethodType[] | null =  await SettingFixingMethodService.get(session.id)
 
@@ -38,13 +35,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   }
   
-  return json({materialOptions,manageColors,manageShapes,manageFixingsMethods });
+  return json({materialOptions,manageShapes,manageFixingsMethods });
 };
 
   
 
 export default function Materiels(){
-  let { materialOptions, manageColors, manageShapes, manageFixingsMethods } = useLoaderData<typeof loader>();
+  let { materialOptions, manageShapes, manageFixingsMethods } = useLoaderData<typeof loader>();
   const { materialComponents , material, configuration} = useOutletContext<{
     materialComponents: MaterialAdvanceComponentType[];
     material:MaterialAdvance, configuration: ConfigurationType
@@ -85,7 +82,7 @@ export default function Materiels(){
           <Divider borderWidth="100" />
         </BoxBackground>
         <Divider borderWidth="100" />
-        <Outlet context={{materialOptions,manageColors,manageShapes,manageFixingsMethods }}/>
+        <Outlet context={{materialOptions,manageShapes,manageFixingsMethods }}/>
 
       </>
       )

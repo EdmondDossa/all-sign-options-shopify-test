@@ -1,37 +1,30 @@
 import {
   Badge,
-  BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  Checkbox,
-  ChoiceList,
   Divider,
   Grid,
-  IndexFilters,
   IndexTable,
-  InlineGrid,
   InlineStack,
-  Layout,
-  Page,
-  Select,
   Text,
   TextField,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useNavigation,
+  useOutletContext,
+  useSubmit,
+} from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import { ColorType } from "~/types/ManagePropertyType";
-import { ConfigColor, ConfigCustomColor, ConfigCustomSize } from "~/types/ConfigDataType";
+import { ConfigColor, ConfigCustomColor } from "~/types/ConfigDataType";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import MaterialColorService from "~/models/MaterialColors.service";
@@ -49,58 +42,49 @@ export default function MaterialColorIndex() {
   const submit = useSubmit();
   const navigate = useNavigate();
 
-
   const actionData = useActionData<typeof action>();
 
   const onHandleColorCreate = () => {
     navigate("create");
   };
 
-
-  let { manageColors, colors, customColors } = useOutletContext<{
-    manageColors: ColorType[];
+  let {  colors, customColors } = useOutletContext<{
     colors: ConfigColor[];
     customColors: ConfigCustomColor;
   }>();
 
-
   const [formData, setFormData] = useState<any>(
     customColors || {
-      "active":false,
-      "label":"Custom Colors",
-      "prevImg":""
-      }
+      active: false,
+      label: "Custom Colors",
+      prevImg: "",
+    },
   );
 
   const handleInputChange = (inputName: string, value: any) => {
-        setFormData((prevData:any) => ({
-        ...prevData,
-        [inputName]: value
+    setFormData((prevData: any) => ({
+      ...prevData,
+      [inputName]: value,
     }));
-  }
+  };
 
-  
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const data = {...formData};
+    const data = { ...formData };
 
     submit(data, { method: "POST" });
-  }
-
+  };
 
   useHandleFlashMessage();
-
 
   const navigation = useNavigation();
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
 
-
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
   };
-
 
   const handeleDefault = (id: number) => {
     colors = colors.map((curr, index) => {
@@ -111,7 +95,7 @@ export default function MaterialColorIndex() {
       }
       return curr;
     });
-    
+
     submit({ id: id }, { method: "PUT" });
   };
 
@@ -123,21 +107,23 @@ export default function MaterialColorIndex() {
     navigate("edit");
   };
 
-
-  const colorsTab = colors ? colors.map((color, index) => {
-
-    
-    return {
-      id: `${index}`,
-      title: `${color?.name}`,
-      textColor: (color?.textColor?.active) ? `${color?.textColor?.codeHex}`:'Disable',
-      patternActive:color?.pattern?.active,
-      BackgroundColor:(color?.pattern?.active) ? `${color?.pattern?.url}`:`${color?.pattern?.codeHex}`,
-      price: `${color?.additionalPrice}`,
-      isDefault: color.isDefault
-    }
-  }) : [];
-
+  const colorsTab = colors
+    ? colors.map((color, index) => {
+        return {
+          id: `${index}`,
+          title: `${color?.name}`,
+          textColor: color?.textColor?.active
+            ? `${color?.textColor?.codeHex}`
+            : "Disable",
+          patternActive: color?.pattern?.active,
+          BackgroundColor: color?.pattern?.active
+            ? `${color?.pattern?.url}`
+            : `${color?.pattern?.codeHex}`,
+          price: `${color?.additionalPrice}`,
+          isDefault: color.isDefault,
+        };
+      })
+    : [];
 
   const resourceName = {
     singular: "Color",
@@ -145,29 +131,51 @@ export default function MaterialColorIndex() {
   };
 
   const rowMarkup = colorsTab.map(
-    ({ id, title, textColor, BackgroundColor,patternActive,price,isDefault }, index) => (
+    (
+      {
+        id,
+        title,
+        textColor,
+        BackgroundColor,
+        patternActive,
+        price,
+        isDefault,
+      },
+      index,
+    ) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
             {title}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell className="td-center"><Badge tone="critical" >{textColor}</Badge></IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          {patternActive?  <img style={{height: "30px"}}
-            src={fileUrl(BackgroundColor)}
-            alt={"color" + title}
-          />:<Badge tone="info">{BackgroundColor}</Badge>}
+          <Badge tone="critical">{textColor}</Badge>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          <Badge tone="success" >{price}</Badge>
+          {patternActive ? (
+            <img
+              style={{ height: "30px" }}
+              src={fileUrl(BackgroundColor)}
+              alt={"color" + title}
+            />
+          ) : (
+            <Badge tone="info">{BackgroundColor}</Badge>
+          )}
         </IndexTable.Cell>
-        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <Badge tone="success">{price}</Badge>
+        </IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <ReactSwitchCustom
+            checked={isDefault || false}
+            setChecked={() => (isDefault ? "" : handeleDefault(index))}
+          ></ReactSwitchCustom>
+        </IndexTable.Cell>
 
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth noWrap gap="loose">
-
-          <EditIconBtn
+            <EditIconBtn
               size="micro"
               onClick={() => {
                 handleUpdate(parseInt(id));
@@ -198,7 +206,9 @@ export default function MaterialColorIndex() {
                 <Box paddingInline="300">
                   <InlineStack gap="300">
                     <PlusIcon />
-                    <span className="primary-btn-text">Add new color palette</span>
+                    <span className="primary-btn-text">
+                      Add new color palette
+                    </span>
                   </InlineStack>
                 </Box>
               </button>
@@ -211,10 +221,10 @@ export default function MaterialColorIndex() {
           itemCount={colorsTab.length}
           headings={[
             { title: "Title" },
-            { title: "Text color",  alignment: "center"},
-            { title: "Background color",  alignment: "center"},
-            { title: "Additional price",  alignment: "center"},
-            { title: "Default" ,  alignment: "center"},
+            { title: "Text color", alignment: "center" },
+            { title: "Background color", alignment: "center" },
+            { title: "Additional price", alignment: "center" },
+            { title: "Default", alignment: "center" },
             { title: "Action", alignment: "center" },
           ]}
           selectable={false}
@@ -235,7 +245,7 @@ export default function MaterialColorIndex() {
                   <ReactSwitchCustom
                     checked={formData.active}
                     setChecked={(value: boolean) => {
-                          handleInputChange('active', value);
+                      handleInputChange("active", value);
                     }}
                   />
                 </InlineStack>
@@ -243,25 +253,26 @@ export default function MaterialColorIndex() {
               {formData.active && (
                 <Grid gap={{ lg: "30px" }}>
                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                      <TextField
-                        label="Label"
-                        value={`${formData.label}`}
-                        onChange={(value) => {
-                          handleInputChange('label', value);
-                        }}
-                        autoComplete="on"
-                        error={getError(actionData, "label")}
-                      />
-                    
+                    <TextField
+                      label="Label"
+                      value={`${formData.label}`}
+                      onChange={(value) => {
+                        handleInputChange("label", value);
+                      }}
+                      autoComplete="on"
+                      error={getError(actionData, "label")}
+                    />
                   </Grid.Cell>
                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                  <FileInput error={getError(actionData, "image")} title="Preview Image"
-                    path={formData.prevImg} handlePath={(value: string) => {
-                      handleInputChange('prevImg', value);
-                    }} />
-                    
+                    <FileInput
+                      error={getError(actionData, "image")}
+                      title="Preview Image"
+                      path={formData.prevImg}
+                      handlePath={(value: string) => {
+                        handleInputChange("prevImg", value);
+                      }}
+                    />
                   </Grid.Cell>
-                 
                 </Grid>
               )}
             </Box>
@@ -274,7 +285,6 @@ export default function MaterialColorIndex() {
           </Form>
         </BoxBackground>
       </SpacingBackground>
-    
     </div>
   );
 }
@@ -282,11 +292,8 @@ export default function MaterialColorIndex() {
 const formSchema = z.object({
   label: z.string({ required_error: "Label is required" }),
   prevImg: z.string({ required_error: "Preview image is required" }),
-  active: z.any().transform(booleanTransform).pipe(z.boolean())
-})
-
-  
-
+  active: z.any().transform(booleanTransform).pipe(z.boolean()),
+});
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -325,7 +332,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
       break;
     }
-    
+
     case "POST": {
       const submission = parseWithZod(formData, { schema: formSchema });
 
@@ -333,7 +340,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         return json({ status: false, message: null, errors: submission.error });
       }
 
-      let customColor: ConfigCustomColor = submission.value as ConfigCustomColor;
+      let customColor: ConfigCustomColor =
+        submission.value as ConfigCustomColor;
       if (customColor) {
         let res = await MaterialColorService.editCustom(
           configId,
@@ -361,4 +369,3 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   return null;
 };
-

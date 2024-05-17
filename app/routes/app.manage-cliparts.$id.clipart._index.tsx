@@ -1,81 +1,64 @@
 import {
   Badge,
-  BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  Checkbox,
-  ChoiceList,
   Divider,
-  IndexFilters,
   IndexTable,
-  InlineGrid,
   InlineStack,
-  Layout,
-  Page,
-  Select,
-  Text,
-  TextField,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
+import { useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-import ClipartsGroupService from "~/models/ClipartsGroup.service";
 import ClipartService from "~/models/Clipart.service";
 import { jFlashMessage } from "~/utils/message-flash";
 import { fileUrl } from "~/utils/fileUrl";
 
-export const loader = async ({request,params}:LoaderFunctionArgs) => { 
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
-  const  clipartsGroupId = parseInt(params.id||"0");
-  const cliparts  = await ClipartService.getCliparts(clipartsGroupId);
+  const clipartsGroupId = parseInt(params.id || "0");
+  const cliparts = await ClipartService.getCliparts(clipartsGroupId);
 
-  return  json({cliparts})
-}
+  return json({ cliparts });
+};
 
-
-export const action = async ({ request,params }:ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
-  const  clipartsGroupId = parseInt(params.id||"0");
-  
+  const clipartsGroupId = parseInt(params.id || "0");
+
   const formData = await request.formData();
   const id = formData.get("id") as string;
   const method = request.method;
-  
+
   switch (method) {
     case "DELETE": {
-      console.log("start deleting") 
-      await ClipartService.deleteClipart(parseInt(id), clipartsGroupId, session.id)
-      return json({...jFlashMessage("Cliparts group deleting is completed successfull")})
+      console.log("start deleting");
+      await ClipartService.deleteClipart(
+        parseInt(id),
+        clipartsGroupId,
+        session.id,
+      );
+      return json({
+        ...jFlashMessage("Cliparts group deleting is completed successfull"),
+      });
     }
-  
+
     default:
       break;
   }
 
-  return null
-}
-
-
+  return null;
+};
 
 export default function MaterialFixingMethod() {
-  
-  
-  const submit = useSubmit()
+  const submit = useSubmit();
   let { cliparts } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
- 
 
   const navigate = useNavigate();
   const onHandleCreate = () => {
@@ -87,16 +70,13 @@ export default function MaterialFixingMethod() {
   };
 
   const handleUpdate = (id: number) => {
-    
-    submit({id:id},{method:"GET", action:"edit"});
-  }
-
+    submit({ id: id }, { method: "GET", action: "edit" });
+  };
 
   const resourceName = {
     singular: "Clipart ",
     plural: "Cliparts",
   };
- 
 
   const rowMarkup = cliparts?.map(
     ({ id, title, url, additionalPrice }, index) => (
@@ -107,20 +87,31 @@ export default function MaterialFixingMethod() {
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-        <img style={{height: "30px"}}
+          <img
+            style={{ height: "30px" }}
             src={fileUrl(url)}
             alt={"Clipart" + title}
           />
         </IndexTable.Cell>
-       
+
         <IndexTable.Cell className="td-center">
-          <Badge tone="success" >{additionalPrice}</Badge>
+          <Badge tone="success">{additionalPrice}</Badge>
         </IndexTable.Cell>
 
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth noWrap gap="loose">
-          <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(id)}} />
-          <DeleteIconBtn  size="micro" onClick={()=>{handeleDelete(id)}} />
+            <EditIconBtn
+              size="micro"
+              onClick={() => {
+                handleUpdate(id);
+              }}
+            />
+            <DeleteIconBtn
+              size="micro"
+              onClick={() => {
+                handeleDelete(id);
+              }}
+            />
           </ButtonGroup>
         </IndexTable.Cell>
       </IndexTable.Row>
@@ -150,11 +141,11 @@ export default function MaterialFixingMethod() {
         </BoxBackground>
         <IndexTable
           resourceName={resourceName}
-          itemCount={cliparts?cliparts.length:0}
+          itemCount={cliparts ? cliparts.length : 0}
           headings={[
             { title: "Title" },
             { title: "Icon", alignment: "center" },
-            { title: "Additional Price",  alignment: "center" },
+            { title: "Additional Price", alignment: "center" },
             { title: "Action", alignment: "center" },
           ]}
           selectable={false}

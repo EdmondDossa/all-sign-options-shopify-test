@@ -1,7 +1,6 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import {
   Form,
-  Outlet,
   redirect,
   useActionData,
   useNavigate,
@@ -11,30 +10,19 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import {
-  ActionList,
-  AutoSelection,
   BlockStack,
   Box,
-  Button,
-  ColorPicker,
-  Combobox,
   Divider,
   Grid,
-  InlineGrid,
   InlineStack,
-  LegacyStack,
-  Listbox,
-  Popover,
-  Select,
-  Tag,
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { number, string, z } from "zod";
+import { z } from "zod";
 import { authenticate } from "~/shopify.server";
 import { parseWithZod } from "@conform-to/zod";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
@@ -47,17 +35,19 @@ import { FileInput } from "~/components/inputs/FileInput";
 import { ColorType } from "~/types/ManagePropertyType";
 import { FixingMethodType, ShapeType } from "~/types/SettingsType";
 import { TextColorField } from "~/components/inputs/TextColorField";
-import { MultiCombobox, SelectCombobox } from "~/components/inputs/MulticomboxBorder";
+import {
+  MultiCombobox,
+  SelectCombobox,
+} from "~/components/inputs/MulticomboxBorder";
 import { stringTransform } from "~/utils/transfomerZod";
 
 export default function MaterialComponentCreate() {
   const navigate = useNavigate();
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { materialOptions, manageColors, manageShapes, manageFixingsMethods } =
+  const { materialOptions, manageShapes, manageFixingsMethods } =
     useOutletContext<{
       materialOptions: MaterialAdvanceOptionType[];
-      manageColors: ColorType[];
       manageShapes: ShapeType[];
       manageFixingsMethods: FixingMethodType[];
     }>();
@@ -85,10 +75,10 @@ export default function MaterialComponentCreate() {
           size: {
             width: 0,
             height: 0,
-            basePrice:0,
-            startPriceAtChar:1,
-            maxTextChar:-1,
-            charPrice:0
+            basePrice: 0,
+            startPriceAtChar: 1,
+            maxTextChar: -1,
+            charPrice: 0,
           },
           additionalPrice: 0,
         },
@@ -108,8 +98,6 @@ export default function MaterialComponentCreate() {
   const handleAdditionalPrice = (value: string) =>
     setFormData({ ...formData, additionalPrice: parseFloat(value) });
 
-
-
   const handleSizeWidth = (value: string) => {
     formData.size.width = parseInt(value);
     setFormData({ ...formData });
@@ -119,7 +107,6 @@ export default function MaterialComponentCreate() {
     formData.size.height = parseInt(value);
     setFormData({ ...formData });
   };
-
 
   const handleSizeBasePrice = (value: string) => {
     formData.size.basePrice = parseInt(value);
@@ -131,9 +118,7 @@ export default function MaterialComponentCreate() {
     setFormData({ ...formData });
   };
 
-
-
-  const handleSizeMaxTextChar= (value: string) => {
+  const handleSizeMaxTextChar = (value: string) => {
     formData.size.maxTextChar = parseInt(value);
     setFormData({ ...formData });
   };
@@ -142,7 +127,6 @@ export default function MaterialComponentCreate() {
     formData.size.charPrice = parseInt(value);
     setFormData({ ...formData });
   };
-
 
   const handleInputChange = (inputName: string, value: any) => {
     setFormData((prevData: any) => ({
@@ -154,28 +138,34 @@ export default function MaterialComponentCreate() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     submit(
-      { ...formData, size: JSON.stringify(formData.size), color: JSON.stringify(formData.color), fixingMethods: JSON.stringify(formData.fixingMethods) },
+      {
+        ...formData,
+        size: JSON.stringify(formData.size),
+        color: JSON.stringify(formData.color),
+        fixingMethods: JSON.stringify(formData.fixingMethods),
+      },
       { method: "POST" },
     );
   };
 
   console.log("actionData", actionData);
 
-
-  const shapes = manageShapes.map((manageShape,index) => ({
+  const shapes = manageShapes.map((manageShape, index) => ({
     value: `${index}`,
     label: manageShape.name || "",
     description: manageShape.name || "",
     image: manageShape.icon || "",
   }));
-  const fixingMethods = manageFixingsMethods.map((manageFixingsMethod,index) => ({
-    value: `${index}`,
-    label: manageFixingsMethod.name || "",
-    description: manageFixingsMethod.description || "",
-    image: manageFixingsMethod.icon || "",
-  }));
+  const fixingMethods = manageFixingsMethods.map(
+    (manageFixingsMethod, index) => ({
+      value: `${index}`,
+      label: manageFixingsMethod.name || "",
+      description: manageFixingsMethod.description || "",
+      image: manageFixingsMethod.icon || "",
+    }),
+  );
 
-  console.log("value  of  data" ,formData.fixingMethods)
+  console.log("value  of  data", formData.fixingMethods);
 
   const onBack = () => {
     navigate("..");
@@ -186,8 +176,7 @@ export default function MaterialComponentCreate() {
       <BoxBackground>
         <Box padding="300">
           <Text as="h2" variant="headingMd">
-            
-            {Number.isNaN(id)?'Add option':'Edit option'}
+            {Number.isNaN(id) ? "Add option" : "Edit option"}
           </Text>
         </Box>
         <Divider borderWidth="050" />
@@ -232,7 +221,6 @@ export default function MaterialComponentCreate() {
               </Grid.Cell>
 
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-               
                 <MultiCombobox
                   label="Select fixing method"
                   placeholder="seach fixing method"
@@ -241,7 +229,10 @@ export default function MaterialComponentCreate() {
                   )}
                   data={fixingMethods}
                   setSelectedOptions={(value: any) => {
-                    handleInputChange("fixingMethods", value.map((v:string) => parseInt(v)));
+                    handleInputChange(
+                      "fixingMethods",
+                      value.map((v: string) => parseInt(v)),
+                    );
                   }}
                 ></MultiCombobox>
               </Grid.Cell>
@@ -278,57 +269,66 @@ export default function MaterialComponentCreate() {
                 </BlockStack>
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    label="Max text char"
-                    type="number"
-                    value={`${formData.size.maxTextChar}`}
+                <TextField
+                  label="Max text char"
+                  type="number"
+                  value={`${formData.size.maxTextChar}`}
                   onChange={handleSizeMaxTextChar}
                   helpText="Max number of characters in text, for without limit set to -1"
-                    autoComplete="on"
-                    error={getError(actionData, "size.maxTextChar")}
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    size="medium"
-                    label="Base Price"
-                    type="number"
-                    value={`${formData.size.basePrice}`}
-                    onChange={handleSizeBasePrice}
-                    autoComplete="on"
-                    error={getError(actionData, "size.basePrice")}
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    size="medium"
-                    label="Number at start pricing char"
-                    type="number"
-                    value={`${formData.size.startPriceAtChar}`}
-                    onChange={handleSizeStartPriceAtChar}
-                    autoComplete="on"
-                    error={getError(actionData, "size.startPriceAtChar")}
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    size="medium"
-                    label="Char Price"
-                    type="number"
-                    value={`${formData.size.charPrice}`}
-                    onChange={handleSizeCharPrice}
-                    autoComplete="on"
-                    error={getError(actionData, "size.charPrice")}
-                  />
-                </Grid.Cell>
+                  autoComplete="on"
+                  error={getError(actionData, "size.maxTextChar")}
+                />
+              </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <SelectCombobox
+                <TextField
+                  size="medium"
+                  label="Base Price"
+                  type="number"
+                  value={`${formData.size.basePrice}`}
+                  onChange={handleSizeBasePrice}
+                  autoComplete="on"
+                  error={getError(actionData, "size.basePrice")}
+                />
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                <TextField
+                  size="medium"
+                  label="Number at start pricing char"
+                  type="number"
+                  value={`${formData.size.startPriceAtChar}`}
+                  onChange={handleSizeStartPriceAtChar}
+                  autoComplete="on"
+                  error={getError(actionData, "size.startPriceAtChar")}
+                />
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                <TextField
+                  size="medium"
+                  label="Char Price"
+                  type="number"
+                  value={`${formData.size.charPrice}`}
+                  onChange={handleSizeCharPrice}
+                  autoComplete="on"
+                  error={getError(actionData, "size.charPrice")}
+                />
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                <SelectCombobox
                   label="Select shape"
                   placeholder="seach shape"
-                  selectedOptions={!Number.isNaN(formData.shapeId)?[`${formData.shapeId}`]:[]}
+                  selectedOptions={
+                    !Number.isNaN(formData.shapeId)
+                      ? [`${formData.shapeId}`]
+                      : []
+                  }
                   data={shapes}
                   setSelectedOptions={(value: any) => {
-                    handleInputChange("shapeId", value.length? value[value.length-1]: parseInt(value[0]));
+                    handleInputChange(
+                      "shapeId",
+                      value.length
+                        ? value[value.length - 1]
+                        : parseInt(value[0]),
+                    );
                   }}
                   error={getError(actionData, "shapeId")}
                 ></SelectCombobox>
@@ -346,48 +346,53 @@ export default function MaterialComponentCreate() {
               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <BlockStack gap="200">
                   <Text as="strong" fontWeight="bold" variant="bodyLg">
-                  Color setting
+                    Color setting
                   </Text>
                   <Grid gap={{ lg: "30px" }}>
-                  <Grid.Cell  columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
-                <TextField
-                  size="medium"
-                  label="Color name"
-                  value={formData.color.name}
-                  onChange={(value) => {
-                    formData.color.name = value;
-                    handleInputChange("color", formData.color);
-                  }}
-                  error={getError(actionData, "color.name")}
-                  autoComplete="on"
-                />
-              </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                <TextColorField
-                  label="Color code hex"
-                  color={formData.color.codeHex}
-                  setColor={(value:any) => {
-                    formData.color.codeHex = value;
-                    handleInputChange("color", formData.color);
-                  }}
-                />
-              </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                <FileInput
-                  error={getError(actionData, "color.prevImg")}
-                  title="color image"
-                  buttonTitle="Upload color image"
-                  path={formData.color.prevImg||''}
-                  handlePath={(value:any) => {
-                    formData.color.prevImg = value;
-                    handleInputChange("color", formData.color);
-                  }}
-                />
-              </Grid.Cell>
+                    <Grid.Cell
+                      columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}
+                    >
+                      <TextField
+                        size="medium"
+                        label="Color name"
+                        value={formData.color.name}
+                        onChange={(value) => {
+                          formData.color.name = value;
+                          handleInputChange("color", formData.color);
+                        }}
+                        error={getError(actionData, "color.name")}
+                        autoComplete="on"
+                      />
+                    </Grid.Cell>
+                    <Grid.Cell
+                      columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                    >
+                      <TextColorField
+                        label="Color code hex"
+                        color={formData.color.codeHex}
+                        setColor={(value: any) => {
+                          formData.color.codeHex = value;
+                          handleInputChange("color", formData.color);
+                        }}
+                      />
+                    </Grid.Cell>
+                    <Grid.Cell
+                      columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                    >
+                      <FileInput
+                        error={getError(actionData, "color.prevImg")}
+                        title="color image"
+                        buttonTitle="Upload color image"
+                        path={formData.color.prevImg || ""}
+                        handlePath={(value: any) => {
+                          formData.color.prevImg = value;
+                          handleInputChange("color", formData.color);
+                        }}
+                      />
+                    </Grid.Cell>
                   </Grid>
                 </BlockStack>
               </Grid.Cell>
-              
             </Grid>
           </Box>
 
@@ -419,17 +424,18 @@ const formSchema = z.object({
     .string({ required_error: "Title is required" })
     .min(3, "Title is too short")
     .max(100, "Title is too long"),
-  description:  z.string().nullish().transform(stringTransform),
+  description: z.string().nullish().transform(stringTransform),
   icon: z.string({ required_error: "Icon file is required" }),
   image: z.string({ required_error: "image file is required" }),
   additionalPrice: z.number({ required_error: "Price is required" }),
   fixingMethods: z
-  .any()
-  .transform((value) => JSON.parse(value || ""))
-  .pipe(
-    z.number().array()
-  ),
-  shapeId: z.number({ required_error: "Shape is required", invalid_type_error: "Shape is required" }),
+    .any()
+    .transform((value) => JSON.parse(value || ""))
+    .pipe(z.number().array()),
+  shapeId: z.number({
+    required_error: "Shape is required",
+    invalid_type_error: "Shape is required",
+  }),
   size: z
     .any()
     .transform((value) => JSON.parse(value || ""))
@@ -437,25 +443,25 @@ const formSchema = z.object({
       z.object({
         width: z.number({ required_error: "Width  is required" }),
         height: z.number({ required_error: "Height  is required" }),
-        basePrice:z.number({ required_error: "Base price  is required" }),
-        startPriceAtChar:z.number({ required_error: "Start price at char  is required" }),
-        maxTextChar:z.number({ required_error: " Max text char is required" }),
-        charPrice:z.number({ required_error: "Char price  is required" })
+        basePrice: z.number({ required_error: "Base price  is required" }),
+        startPriceAtChar: z.number({
+          required_error: "Start price at char  is required",
+        }),
+        maxTextChar: z.number({ required_error: " Max text char is required" }),
+        charPrice: z.number({ required_error: "Char price  is required" }),
       }),
-  ),
+    ),
   color: z
     .any()
     .transform((value) => JSON.parse(value || ""))
     .pipe(
       z.object({
         name: z.string({ required_error: "Color name  is required" }),
-        codeHex:  z.string().nullish().transform(stringTransform),
-        prevImg:  z.string().nullish().transform(stringTransform)
+        codeHex: z.string().nullish().transform(stringTransform),
+        prevImg: z.string().nullish().transform(stringTransform),
       }),
-    )
+    ),
 });
-
-
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);

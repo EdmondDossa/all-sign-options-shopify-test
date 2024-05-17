@@ -7,25 +7,21 @@ import {
   Text,
 } from "@shopify/polaris";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, useLoaderData, useNavigate, useOutletContext, useSubmit } from "@remix-run/react";
+import { useNavigate, useOutletContext, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { authenticate } from "~/shopify.server";
-import SettingShapesService from "~/models/SettingShapes.service";
+
 import { ShapeType } from "~/types/SettingsType";
 import { fileUrl } from "~/utils/fileUrl";
 
-
 export default function MaterialFixingMethod() {
-  const submit = useSubmit()
+  const submit = useSubmit();
   const navigate = useNavigate();
-  const { shapes } = useOutletContext<{shapes:ShapeType[]}>();
+  const { shapes } = useOutletContext<{ shapes: ShapeType[] }>();
 
   const handleUpdate = (id: string) => {
-    
-    submit({id:id},{method:"GET", action:"edit"});
-  }
+    submit({ id: id }, { method: "GET", action: "edit" });
+  };
   const resourceName = {
     singular: "Shape",
     plural: "Shapes",
@@ -33,18 +29,25 @@ export default function MaterialFixingMethod() {
 
   const rowMarkup = shapes?.map(({ name, value, icon }, index) => (
     <IndexTable.Row id={value} key={value} position={index}>
-      <IndexTable.Cell>
-          {name}
-      </IndexTable.Cell>
+      <IndexTable.Cell>{name}</IndexTable.Cell>
       <IndexTable.Cell className="td-center">
-       {icon && <img style={{ height: "30px" }} src={fileUrl(icon)} alt={"shape" + name} />}
+        {icon && (
+          <img
+            style={{ height: "30px" }}
+            src={fileUrl(icon)}
+            alt={"shape" + name}
+          />
+        )}
       </IndexTable.Cell>
-
-
 
       <IndexTable.Cell className="td-center">
         <ButtonGroup fullWidth noWrap gap="loose">
-        <EditIconBtn  size="micro"  onClick={()=>{handleUpdate(value)}} />
+          <EditIconBtn
+            size="micro"
+            onClick={() => {
+              handleUpdate(value);
+            }}
+          />
         </ButtonGroup>
       </IndexTable.Cell>
     </IndexTable.Row>
@@ -55,7 +58,7 @@ export default function MaterialFixingMethod() {
         <Box padding="400">
           <InlineStack gap="100" align="start">
             <Text as="h6" variant="bodyMd" fontWeight="bold">
-            List of shapes
+              List of shapes
             </Text>
           </InlineStack>
         </Box>
@@ -63,11 +66,11 @@ export default function MaterialFixingMethod() {
       </BoxBackground>
       <IndexTable
         resourceName={resourceName}
-        itemCount={shapes?shapes.length:0}
+        itemCount={shapes ? shapes.length : 0}
         headings={[
           { title: "Title" },
-          { title: "Icon", alignment:"center" },
-          { title: "Action", alignment:"center" },
+          { title: "Icon", alignment: "center" },
+          { title: "Action", alignment: "center" },
         ]}
         selectable={false}
       >

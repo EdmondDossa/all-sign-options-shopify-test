@@ -2,55 +2,39 @@ import {
   Badge,
   BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  ChoiceList,
   Divider,
   IndexTable,
-  InlineGrid,
   InlineStack,
-  Page,
-  Select,
-  Text,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
+  Text
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
 
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Link, useNavigate, useOutletContext, useSubmit } from "@remix-run/react";
+import { useNavigate, useOutletContext, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
-import RoundManageHistoryIcon from "~/components/icons/RoundManageHistoryIcon";
 import { MaterialAdvanceOptionType } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import MaterialAdditionalOptionItemService from "~/models/MaterialAdditionalOptionItem.service";
 import MaterialAdvancedOptionService from "~/models/MaterialAdvancedOption.service";
 import { jFlashMessage } from "~/utils/message-flash";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { truncateText } from "~/utils/truncate-text";
 import { fileUrl } from "~/utils/fileUrl";
 
-
 // This example is for guidance purposes. Copying it will come with caveats.
 export default function MaterialAdvancedIndex() {
-  
   const navigate = useNavigate();
   const submit = useSubmit();
-
 
   let { materialOptions } = useOutletContext<{
     materialOptions: MaterialAdvanceOptionType[];
   }>();
 
   useHandleFlashMessage();
-
 
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
@@ -69,15 +53,13 @@ export default function MaterialAdvancedIndex() {
       }
       return curr;
     });
-    
+
     submit({ id: id }, { method: "PUT" });
   };
 
- 
   const handleEdit = () => {
     navigate("edit");
   };
-
 
   const resourceName = {
     singular: "Component",
@@ -85,45 +67,43 @@ export default function MaterialAdvancedIndex() {
   };
 
   const rowMarkup = materialOptions?.map(
-    (
-      {name, description, icon,image, additionalPrice, isDefault },
-      index,
-    ) => (
-      <IndexTable.Row
-        id={`${index}`}
-        key={`${index}`}
-       
-        position={index}
-      >
-        
-        
+    ({ name, description, icon, image, additionalPrice, isDefault }, index) => (
+      <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
+        <IndexTable.Cell>{truncateText(name)}</IndexTable.Cell>
         <IndexTable.Cell>
-          {truncateText(name)}
+          {" "}
+          <Text as="p">{truncateText(description)}</Text>{" "}
         </IndexTable.Cell>
-        <IndexTable.Cell> <Text as="p">{truncateText(description)}</Text> </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <InlineStack align="center">
-
-          <img style={{height: "30px"}}
-            src={fileUrl(icon)}
-            alt={"product thumbnail" + name}
-          />
+            <img
+              style={{ height: "30px" }}
+              src={fileUrl(icon)}
+              alt={"product thumbnail" + name}
+            />
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <InlineStack align="center">
-
-          <img style={{height: "30px"}}
-            src={fileUrl(image)}
-            alt={"product thumbnail" + name}
-          />
+            <img
+              style={{ height: "30px" }}
+              src={fileUrl(image)}
+              alt={"product thumbnail" + name}
+            />
           </InlineStack>
-        </IndexTable.Cell >
-        <IndexTable.Cell className="td-center"><Badge tone="success" >{additionalPrice +"$"}</Badge></IndexTable.Cell>
-        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          <ButtonGroup fullWidth noWrap gap="loose" >
-          <EditIconBtn
+          <Badge tone="success">{additionalPrice + "$"}</Badge>
+        </IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <ReactSwitchCustom
+            checked={isDefault || false}
+            setChecked={() => (isDefault ? "" : handeleDefault(index))}
+          ></ReactSwitchCustom>
+        </IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <ButtonGroup fullWidth noWrap gap="loose">
+            <EditIconBtn
               size="micro"
               onClick={() => {
                 handleUpdate(index);
@@ -141,16 +121,12 @@ export default function MaterialAdvancedIndex() {
     ),
   );
   return (
-    
-     <SpacingBackground width="100%" height="auto" >
-        <BoxBackground>
-          <Box padding="300">
+    <SpacingBackground width="100%" height="auto">
+      <BoxBackground>
+        <Box padding="300">
           <BlockStack gap="300">
-          <InlineStack gap="100" align="space-between" >
-
-                <Text as="h2" variant="headingMd">
-               
-                </Text>
+            <InlineStack gap="100" align="end">
+             
               <button
                 className="primary-btn"
                 type="button"
@@ -158,41 +134,36 @@ export default function MaterialAdvancedIndex() {
               >
                 <Box paddingInline="300">
                   <InlineStack gap="300">
-                    <PlusIcon/>
+                    <PlusIcon />
                     <span className="primary-btn-text">Add new option</span>
                   </InlineStack>
                 </Box>
               </button>
             </InlineStack>
-        
-            </BlockStack>
-          </Box>
-          <Divider borderWidth="050"/>
-        </BoxBackground>
-        <IndexTable
-          resourceName={resourceName}
-        itemCount={materialOptions?materialOptions.length:0}
-          selectable={false}
-        
-          sortable={[false, true, true, true, true, true, true]}
-          headings={[
-            { title: "Title" },
-            { title: "Desciption"},
-            { title: "Icon" , alignment: "center"},
-            { title: "Image", alignment: "center"},
-            { title: "Price",   alignment: "center"},
-            { title: "Default",alignment: "center"},
-            { title: "Action", alignment: "center"},
-          ]}
-        >
-          {rowMarkup}
-        </IndexTable>
-      </SpacingBackground>
-   
+          </BlockStack>
+        </Box>
+        <Divider borderWidth="050" />
+      </BoxBackground>
+      <IndexTable
+        resourceName={resourceName}
+        itemCount={materialOptions ? materialOptions.length : 0}
+        selectable={false}
+        sortable={[false, true, true, true, true, true, true]}
+        headings={[
+          { title: "Title" },
+          { title: "Desciption" },
+          { title: "Icon", alignment: "center" },
+          { title: "Image", alignment: "center" },
+          { title: "Price", alignment: "center" },
+          { title: "Default", alignment: "center" },
+          { title: "Action", alignment: "center" },
+        ]}
+      >
+        {rowMarkup}
+      </IndexTable>
+    </SpacingBackground>
   );
 }
-
-
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -220,7 +191,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
       break;
     }
-    
+
     case "PUT": {
       const id = formData.get("id") as string;
       console.log("start deleting");
@@ -236,19 +207,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
       break;
     }
-    
-    
+
     default:
       break;
   }
 
   return null;
 };
-
-
-
-
-
-
-
-

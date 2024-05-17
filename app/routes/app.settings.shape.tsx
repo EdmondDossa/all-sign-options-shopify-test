@@ -1,15 +1,4 @@
-import {
-  Box,
-  ButtonGroup,
-  Divider,
-  IndexTable,
-  InlineStack,
-  Text,
-} from "@shopify/polaris";
-import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, Link, NavLink, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
-import { SpacingBackground } from "~/components/layouts/SpacingBackground";
+import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import SettingShapesService from "~/models/SettingShapes.service";

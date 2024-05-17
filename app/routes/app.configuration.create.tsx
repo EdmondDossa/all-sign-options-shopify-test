@@ -1,29 +1,16 @@
 import {
   Box,
-  Button,
-  ButtonGroup,
-  Checkbox,
   Divider,
   Grid,
-  Icon,
-  IndexTable,
-  InlineGrid,
   InlineStack,
   Page,
-  Select,
   Text,
   TextField,
-  useIndexResourceState,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
-import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
-import { EditIconBtn } from "~/components/buttons/EditIconBtn";
+import { useState } from "react";
+
 import {
   Form,
-  Link,
-  NavLink,
-  Outlet,
   json,
   redirect,
   useActionData,
@@ -32,14 +19,9 @@ import {
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
-import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
 import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
-import BiSaveIcon from "~/components/icons/BiSaveIcon";
-import uploadIcon from "~/components/icons/uploadIcon";
 import { FileInput } from "~/components/inputs/FileInput";
 import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
@@ -111,7 +93,10 @@ export default function ConfigurationEdit() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(" log is nt errors");
-    submit({ ...formData, product: JSON.stringify(formData.product) }, { method: "POST" });
+    submit(
+      { ...formData, product: JSON.stringify(formData.product) },
+      { method: "POST" },
+    );
   };
 
   return (
@@ -122,9 +107,9 @@ export default function ConfigurationEdit() {
             <Box paddingInline="300" paddingBlock="600">
               <Text as="h6" variant="bodyMd" fontWeight="bold">
                 {" "}
-          {configuration ? 'Update configuration' : 'Create new configuration'}
-                
-               
+                {configuration
+                  ? "Update configuration"
+                  : "Create new configuration"}
               </Text>
             </Box>
           </SpacingBackground>
@@ -166,7 +151,7 @@ export default function ConfigurationEdit() {
                     handlePath={handleIcon}
                   />
                 </Grid.Cell>
-              
+
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
                   <SelectProducField
                     label="Product associated with configuration"
@@ -180,11 +165,16 @@ export default function ConfigurationEdit() {
                   />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <CustomTinymce  error={
+                  <CustomTinymce
+                    error={
                       actionData?.errors?.popupImg
                         ? actionData.errors.popupImg[0]
                         : ""
-                    } title="Popup image" onEditorChange={handlePopupImg} value={formData.popupImg}/>
+                    }
+                    title="Popup image"
+                    onEditorChange={handlePopupImg}
+                    value={formData.popupImg}
+                  />
                   {/* <FileInput
                     error={
                       actionData?.errors?.popupImg
@@ -233,7 +223,7 @@ export default function ConfigurationEdit() {
                         />
                       )}
                       <span style={{ color: "white", fontWeight: "bold" }}>
-                        {configuration? "Save" : "Next"} 
+                        {configuration ? "Save" : "Next"}
                       </span>
                       {!isSubmitting && !configuration && <RayEndArrowIcon />}
                     </InlineStack>
@@ -257,9 +247,9 @@ const formSchema = z.object({
       .max(100, "Name is too long"),
   ),
   description: z.string().nullish().transform(stringTransform),
-  icon:z.string().nullish().transform(stringTransform),
+  icon: z.string().nullish().transform(stringTransform),
   popupImg: z.string().nullish().transform(stringTransform),
-  product: z.any().transform(jsonTransform)
+  product: z.any().transform(jsonTransform),
 });
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -278,26 +268,44 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (id) {
     configuration.id = parseInt(id);
-    const oldConfiguration = await ConfigurationService.getConfiguration(configuration.id, session.id)
-    const oldConfigurationProductID = oldConfiguration.product?oldConfiguration.product.id:undefined
-    
-    const configurationObject = await ConfigurationService.updateConfiguration(configuration, session.id);
-    if (configurationObject && configurationObject.product?.id && oldConfigurationProductID != configurationObject.product?.id) {
-      const metafieldId  = await  ShopifyProductService.getMetafieldID(admin, configuration?.product?.id)
+    const oldConfiguration = await ConfigurationService.getConfiguration(
+      configuration.id,
+      session.id,
+    );
+    const oldConfigurationProductID = oldConfiguration.product
+      ? oldConfiguration.product.id
+      : undefined;
+
+    const configurationObject = await ConfigurationService.updateConfiguration(
+      configuration,
+      session.id,
+    );
+    if (
+      configurationObject &&
+      configurationObject.product?.id &&
+      oldConfigurationProductID != configurationObject.product?.id
+    ) {
+      const metafieldId = await ShopifyProductService.getMetafieldID(
+        admin,
+        configuration?.product?.id,
+      );
       await ShopifyProductService.update(
         admin,
         configurationObject.product.id,
         configurationObject.id,
-        metafieldId
+        metafieldId,
       );
 
       if (oldConfigurationProductID) {
-        const oldMetafieldId  = await  ShopifyProductService.getMetafieldID(admin, oldConfigurationProductID)
+        const oldMetafieldId = await ShopifyProductService.getMetafieldID(
+          admin,
+          oldConfigurationProductID,
+        );
         await ShopifyProductService.update(
           admin,
           oldConfigurationProductID,
           0,
-          oldMetafieldId
+          oldMetafieldId,
         );
       }
     }
@@ -306,7 +314,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   } else {
     const app_url = process.env.APP_URL;
-    const metafieldId  = await  ShopifyProductService.getMetafieldID(admin, configuration?.product?.id)
+    const metafieldId = await ShopifyProductService.getMetafieldID(
+      admin,
+      configuration?.product?.id,
+    );
     const configurationObject = await ConfigurationService.addConfiguration(
       configuration,
       session.id,
@@ -316,13 +327,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         admin,
         configurationObject.product.id,
         configurationObject.id,
-        metafieldId
+        metafieldId,
       );
     }
-    return redirect(
-      `../${configurationObject.id}/demo`
-    );
+    return redirect(`../${configurationObject.id}/demo`);
   }
 };
-
-

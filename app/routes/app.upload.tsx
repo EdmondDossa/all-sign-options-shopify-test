@@ -9,35 +9,25 @@ import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
 } from "@remix-run/node";
-import { Url } from "url";
 import prisma from "~/db.server";
 import { authenticate } from "~/shopify.server";
 import {
-  ActionList,
   BlockStack,
   Box,
-  Button,
-  Card,
   Checkbox,
   DropZone,
   Grid,
   Icon,
   InlineStack,
-  LegacyCard,
-  LegacyStack,
   Listbox,
-  Page,
-  Popover,
   Scrollable,
   Select,
   Spinner,
-  Tabs,
   Text,
   TextField,
   Thumbnail,
-  ThumbnailProps,
 } from "@shopify/polaris";
-import { useCallback, useEffect, useId, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { Modal, TitleBar } from "@shopify/app-bridge-react";
 import { FileIcon, TextFontIcon, PlayCircleIcon , SearchIcon} from "@shopify/polaris-icons";
 import { useFetcher } from "@remix-run/react";

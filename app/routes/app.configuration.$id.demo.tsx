@@ -1,7 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { Form, redirect, useActionData, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
-import { Badge, Banner, BlockStack, Box, InlineStack, Page, Text } from "@shopify/polaris";
+import { BlockStack, Box, InlineStack, Page, Text } from "@shopify/polaris";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { BackBtn } from "~/components/buttons/BackBtn";
@@ -14,7 +14,6 @@ import { configurationDemoData } from "~/models/demoData";
 import { authenticate } from "~/shopify.server";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
-import { stringTransform } from "~/utils/transfomerZod";
 
 export default function ConfigurationDemo() {
   const [includeDemoData, setIncludeDemoData] = useState(false);

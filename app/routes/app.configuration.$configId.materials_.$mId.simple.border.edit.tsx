@@ -1,24 +1,14 @@
 import {
-  AutoSelection,
   BlockStack,
   Box,
-  Checkbox,
-  Combobox,
   Divider,
-  EmptySearchResult,
   Grid,
-  Icon,
-  InlineError,
   InlineStack,
-  LegacyStack,
-  Listbox,
   Select,
-  Tag,
   Text,
-  TextContainer,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useState, useMemo } from "react";
+import { useState } from "react";
 import {
   Form,
   redirect,
@@ -32,14 +22,10 @@ import {
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { MultiCombobox } from "~/components/inputs/MultiCombobox";
 import { BorderType, ShapeType } from "~/types/SettingsType";
 import { ConfigBorder, ConfigSize } from "~/types/ConfigDataType";
-import { SizeType } from "~/types/ManagePropertyType";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { getError } from "~/utils/error-getting";
-import { TextColorField } from "~/components/inputs/TextColorField";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
@@ -47,8 +33,6 @@ import { authenticate } from "~/shopify.server";
 import { parseWithZod } from "@conform-to/zod";
 import MaterialBorderService from "~/models/MaterialBorderService.service";
 import { flashMessage } from "~/utils/message-flash";
-import { BiAddBtn } from "~/components/buttons/BiAddBtn";
-import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
 import { jsonTransform } from "~/utils/transfomerZod";
 
 export default function MaterialBorderCreate() {
@@ -56,7 +40,7 @@ export default function MaterialBorderCreate() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  let { configSizes, manageBorders, borders ,manageShapes} = useOutletContext<{
+  let { configSizes, manageBorders, borders, manageShapes } = useOutletContext<{
     manageBorders: BorderType[];
     configSizes: ConfigSize[];
     manageShapes: ShapeType[];
@@ -67,12 +51,20 @@ export default function MaterialBorderCreate() {
   let configBorder = borders?.find((curr, index) => index === id);
 
   const options = manageBorders
-  ? manageBorders.map((manageBorder,index) => ({
-      label: manageBorder.name || "",
-      value: `${index}`,
-    })).filter(filterBorder=>(filterBorder.value==`${configBorder?.manageBorderId}` )|| (!borders?.find((curr) => filterBorder.value == `${curr.manageBorderId}`)))
+    ? manageBorders
+        .map((manageBorder, index) => ({
+          label: manageBorder.name || "",
+          value: `${index}`,
+        }))
+        .filter(
+          (filterBorder) =>
+            filterBorder.value == `${configBorder?.manageBorderId}` ||
+            !borders?.find(
+              (curr) => filterBorder.value == `${curr.manageBorderId}`,
+            ),
+        )
     : [];
-  
+
   const [formData, setFormData] = useState<ConfigBorder>(
     configBorder
       ? (configBorder as ConfigBorder)
@@ -80,13 +72,22 @@ export default function MaterialBorderCreate() {
           manageBorderId: parseInt(options[0]?.value),
           additionalPrice: 0,
           excludeSizes: [],
-          excludeShapes: []
+          excludeShapes: [],
         },
   );
 
-
-  const sizes = configSizes ? configSizes.map((configSize,index) => ({ label: configSize.label||'', value: `${index}` })) : [];
-  const shapes = manageShapes ? manageShapes.map((manageShape,index) => ({ label: manageShape.name||'', value: `${index}` })) : [];
+  const sizes = configSizes
+    ? configSizes.map((configSize, index) => ({
+        label: configSize.label || "",
+        value: `${index}`,
+      }))
+    : [];
+  const shapes = manageShapes
+    ? manageShapes.map((manageShape, index) => ({
+        label: manageShape.name || "",
+        value: `${index}`,
+      }))
+    : [];
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
@@ -96,13 +97,17 @@ export default function MaterialBorderCreate() {
   const handleAdditionalPrice = (value: string) =>
     setFormData({ ...formData, additionalPrice: parseFloat(value) });
   const handleExcludeSizes = (value: any[]) =>
-    setFormData({ ...formData, excludeSizes: value.map(currValue => parseInt(currValue)) });
-    const handleExcludeShapes = (value: any[]) =>
-    setFormData({ ...formData, excludeShapes: value.map(currValue=> parseInt(currValue)) });
+    setFormData({
+      ...formData,
+      excludeSizes: value.map((currValue) => parseInt(currValue)),
+    });
+  const handleExcludeShapes = (value: any[]) =>
+    setFormData({
+      ...formData,
+      excludeShapes: value.map((currValue) => parseInt(currValue)),
+    });
 
- 
-      console.log('action data :', actionData);  
-
+  console.log("action data :", actionData);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -110,7 +115,7 @@ export default function MaterialBorderCreate() {
       {
         ...formData,
         excludeSizes: JSON.stringify(formData.excludeSizes),
-        excludeShapes: JSON.stringify(formData.excludeShapes)
+        excludeShapes: JSON.stringify(formData.excludeShapes),
       },
       { method: "POST" },
     );
@@ -157,7 +162,9 @@ export default function MaterialBorderCreate() {
                       helpText="exclude the sizes of this border"
                       label="Exclude size"
                       placeholder="Select exclude size"
-                      selectedOptions={formData.excludeSizes.map((curr) => `${curr}`)}
+                      selectedOptions={formData.excludeSizes.map(
+                        (curr) => `${curr}`,
+                      )}
                       data={sizes}
                       setSelectedOptions={handleExcludeSizes}
                     ></MultiCombobox>
@@ -173,13 +180,14 @@ export default function MaterialBorderCreate() {
                       helpText="exclude the shapes of this border"
                       label="Exclude shapes"
                       placeholder="Select excluded shapes"
-                      selectedOptions={formData.excludeShapes.map((curr) => `${curr}`)}
+                      selectedOptions={formData.excludeShapes.map(
+                        (curr) => `${curr}`,
+                      )}
                       data={shapes}
                       setSelectedOptions={handleExcludeShapes}
                     ></MultiCombobox>
                   </BlockStack>
                 </Grid.Cell>
-            
               </Grid>
             </Box>
             <Divider borderWidth="050" />
@@ -209,7 +217,6 @@ export default function MaterialBorderCreate() {
   );
 }
 
-
 // manageBorderId: manageBorders[0]?.value || "",
 // additionalPrice: 0,
 // excludeSizes: [],
@@ -222,10 +229,8 @@ export default function MaterialBorderCreate() {
 const formSchema = z.object({
   manageBorderId: z.number({ required_error: "Border is required" }),
   additionalPrice: z.number({ required_error: "price is required" }),
-  excludeSizes:  z.any()
-    .transform(jsonTransform).pipe(z.number().array()),
-    excludeShapes:  z.any()
-  .transform(jsonTransform).pipe(z.number().array())
+  excludeSizes: z.any().transform(jsonTransform).pipe(z.number().array()),
+  excludeShapes: z.any().transform(jsonTransform).pipe(z.number().array()),
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -244,13 +249,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   let configBorder: ConfigBorder = submission.value as ConfigBorder;
 
-  if (!Number.isNaN(parseInt(id||""))   && !Number.isNaN(configId)  && !Number.isNaN(mId) ) {
+  if (
+    !Number.isNaN(parseInt(id || "")) &&
+    !Number.isNaN(configId) &&
+    !Number.isNaN(mId)
+  ) {
     let res = await MaterialBorderService.update(
       configId,
       session.id,
       mId,
       configBorder,
-      parseInt(id||"")
+      parseInt(id || ""),
     );
     return res
       ? redirect(
@@ -264,7 +273,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       configId,
       session.id,
       mId,
-      configBorder
+      configBorder,
     );
     return res
       ? redirect(

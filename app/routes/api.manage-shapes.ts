@@ -1,5 +1,4 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import ConfigurationService from "~/models/Configuration.service";
 import SettingShapesService from "~/models/SettingShapes.service";
 import { authenticate } from "~/shopify.server";
 

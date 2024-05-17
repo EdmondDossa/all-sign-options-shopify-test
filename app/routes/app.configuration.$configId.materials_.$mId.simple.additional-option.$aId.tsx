@@ -1,39 +1,39 @@
-
-
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import {Outlet, useLoaderData} from "@remix-run/react";
-import ColorService from "~/models/Color.service";
-import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
+import { Outlet, useLoaderData } from "@remix-run/react";
+
 import MaterialAdditionalOptionItemService from "~/models/MaterialAdditionalOptionItem.service";
 import MaterialColorService from "~/models/MaterialColors.service";
 import { authenticate } from "~/shopify.server";
-import { ConfigAdditionalOption, ConfigAdditionalOptionItem, ConfigBorder, ConfigColor, ConfigCustomSize, ConfigSize } from "~/types/ConfigDataType";
-import { ColorType, SizeType } from "~/types/ManagePropertyType";
+import {
+  ConfigAdditionalOptionItem,
+  ConfigColor
+} from "~/types/ConfigDataType";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
   const mId = parseInt(params.mId ?? "");
   const aId = parseInt(params.aId ?? "");
-  console.log('configID materialID', configId, mId, aId);
+  console.log("configID materialID", configId, mId, aId);
 
   let additionalOptionItems: ConfigAdditionalOptionItem[] | null = null;
-  let configColors :ConfigColor[]= []
+  let configColors: ConfigColor[] = [];
 
-  if ( !Number.isNaN(configId)  && !Number.isNaN(mId) ) {
-    additionalOptionItems = await MaterialAdditionalOptionItemService.getAll(session.id, configId, mId, aId);
+  if (!Number.isNaN(configId) && !Number.isNaN(mId)) {
+    additionalOptionItems = await MaterialAdditionalOptionItemService.getAll(
+      session.id,
+      configId,
+      mId,
+      aId,
+    );
     let colors = await MaterialColorService.getAll(session.id, configId, mId);
     configColors = colors?.allColors || [];
-    
-
   }
-  
-  return json({additionalOptionItems, configColors });
+
+  return json({ additionalOptionItems, configColors });
 };
 
 export default function MaterialAdditionalOptionIndex() {
-  let  {additionalOptionItems,configColors } = useLoaderData<typeof loader>();
-  return (
-      <Outlet context={  {additionalOptionItems, configColors }}/>
-  );
+  let { additionalOptionItems, configColors } = useLoaderData<typeof loader>();
+  return <Outlet context={{ additionalOptionItems, configColors }} />;
 }

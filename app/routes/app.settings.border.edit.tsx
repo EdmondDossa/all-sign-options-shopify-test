@@ -6,7 +6,7 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import {  useState } from "react";
 import {
   Form,
   json,
@@ -28,7 +28,6 @@ import { getError } from "~/utils/error-getting";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { BorderType } from "~/types/SettingsType";
-import SettingShapesService from "~/models/SettingShapes.service";
 import SettingBorderService from "~/models/SettingBorder.service";
 import { BackBtn } from "~/components/buttons/BackBtn";
 

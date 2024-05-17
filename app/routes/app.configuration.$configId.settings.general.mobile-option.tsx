@@ -1,10 +1,5 @@
-import {
-  Box,
-  Grid,
-  InlineStack,
-  Select,
-} from "@shopify/polaris";
-import {  useState } from "react";
+import { Box, Grid, InlineStack, Select } from "@shopify/polaris";
+import { useState } from "react";
 import {
   Form,
   useActionData,

@@ -21,7 +21,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
-import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
+import {  stringTransform } from "~/utils/transfomerZod";
 
 const settingParams: [string, string] = ["themeColors", ""];
 

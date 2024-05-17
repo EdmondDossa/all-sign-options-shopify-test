@@ -1,5 +1,4 @@
 import {
-  ConfigAdditionalOptionItem,
   MaterialAdvanceOptionType,
 } from "~/types/ConfigDataType";
 import ConfigurationService from "./Configuration.service";

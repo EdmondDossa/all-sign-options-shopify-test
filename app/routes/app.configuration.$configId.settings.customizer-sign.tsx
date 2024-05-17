@@ -1,24 +1,12 @@
 import {
-  BlockStack,
   Box,
-  Checkbox,
-  Divider,
-  Grid,
-  InlineStack,
-  Select,
-  TextField,
-  Text,
+  InlineStack
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
-import { Form, NavLink, Outlet, redirect, useLoaderData, useNavigate } from "@remix-run/react";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
+import {  Outlet, useLoaderData } from "@remix-run/react";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { SubTabItem } from "~/components/layouts/SubTabItem";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import ColorService from "~/models/Color.service";
 import FontService from "~/models/Font.service";
 import { ClipartsGroupType, ColorType, FontType } from "~/types/ManagePropertyType";
 import { ShapeType } from "~/types/SettingsType";
@@ -33,18 +21,18 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   
  
-  const manageColors: ColorType[] | null = await ColorService.getColors(session.id)
+
   const manageFonts : FontType[] | null =  await FontService.getFonts(session.id)
   const manageShapes : ShapeType[] | null =  await SettingShapesService.get(session.id)
   const manageClipartGroups : ClipartsGroupType[] | null =  await ClipartsGroupService.getClipartsGroups(session.id)
   
 
   
-  return json({manageColors, manageFonts,manageShapes, manageClipartGroups });
+  return json({ manageFonts,manageShapes, manageClipartGroups });
 };
 
 export default function ConfigSettingsGeneral() {
-  let  {manageColors, manageFonts, manageShapes, manageClipartGroups } = useLoaderData<typeof loader>();
+  let  { manageFonts, manageShapes, manageClipartGroups } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -68,7 +56,7 @@ export default function ConfigSettingsGeneral() {
         </Box>
       </SpacingBackground>
 
-        <Outlet context={  {manageColors, manageFonts ,manageShapes, manageClipartGroups}}></Outlet>
+        <Outlet context={  { manageFonts ,manageShapes, manageClipartGroups}}></Outlet>
     </>
   );
 }

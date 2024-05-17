@@ -1,35 +1,15 @@
 import {
-  BlockStack,
+
   Box,
-  Checkbox,
-  Divider,
-  Grid,
+
   InlineStack,
-  Select,
-  TextField,
-  Text,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
-import { Form, NavLink, Outlet, redirect, useNavigate } from "@remix-run/react";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
+
+import {  Outlet } from "@remix-run/react";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { SubTabItem } from "~/components/layouts/SubTabItem";
 
 export default function ConfigSettingsGeneral() {
-  const [checked, setChecked] = useState(false);
-
-
-  const [value, setValue] = useState("");
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
-  );
-  const navigate = useNavigate();
-  const onBack = () => {
-    navigate("..");
-  };
 
   return (
     <>

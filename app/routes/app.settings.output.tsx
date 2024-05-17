@@ -1,40 +1,21 @@
 import {
   BlockStack,
   Box,
-  ButtonGroup,
-  Checkbox,
   Divider,
   Grid,
-  IndexTable,
-  InlineGrid,
   InlineStack,
-  Select,
-  Text,
-  TextField,
-  useIndexResourceState,
+  Text
 } from "@shopify/polaris";
 import { useCallback, useState } from "react";
-import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
-import { EditIconBtn } from "~/components/buttons/EditIconBtn";
+
 import {
   Form,
-  Link,
-  NavLink,
-  Outlet,
-  redirect,
   useLoaderData,
-  useNavigate,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
-import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
-import BiSaveIcon from "~/components/icons/BiSaveIcon";
 import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import SettingOutputService from "~/models/SettingOutput.service";
@@ -95,7 +76,7 @@ export default function ManageSizeCreate() {
             <Box paddingInline="300" paddingBlock="1200">
               <Grid gap={{ lg: "30px" }}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <BlockStack gap="100" >
+                  <BlockStack gap="100">
                     <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyMd">
                         Use ider id as zip name
@@ -105,7 +86,10 @@ export default function ManageSizeCreate() {
                         setChecked={handleZipName}
                       />
                     </InlineStack>
-                    <Text as="span" tone="subdued">Use the command id as the name of the zip file that will contain the uploaded files during customization </Text>
+                    <Text as="span" tone="subdued">
+                      Use the command id as the name of the zip file that will
+                      contain the uploaded files during customization{" "}
+                    </Text>
                   </BlockStack>
                 </Grid.Cell>
 
@@ -120,7 +104,6 @@ export default function ManageSizeCreate() {
                         setChecked={handleCalculateOutput}
                       />
                     </InlineStack>
-                    
                   </BlockStack>
                 </Grid.Cell>
               </Grid>

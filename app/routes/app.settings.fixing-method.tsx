@@ -1,5 +1,5 @@
 
-import { Form, Link, NavLink, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import {  Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { FixingMethodType } from "~/types/SettingsType";
@@ -14,7 +14,6 @@ export const loader = async ({request}:LoaderFunctionArgs) => {
 }
 
 export default function SettingFixingMethod() {
-  const navigate = useNavigate();
   const { fixingMethods } = useLoaderData<typeof loader>();
 
   return (

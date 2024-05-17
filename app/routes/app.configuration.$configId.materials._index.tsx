@@ -2,30 +2,14 @@ import {
   Badge,
   BlockStack,
   Box,
-  Button,
   ButtonGroup,
-  Card,
-  ChoiceList,
-  Divider,
-  IndexFilters,
   IndexTable,
-  InlineGrid,
   InlineStack,
-  Layout,
-  Page,
-  Select,
-  Text,
-  useIndexResourceState,
-  useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
 import {
-  Link,
   json,
-  useLoaderData,
   useNavigate,
   useOutletContext,
   useSubmit,
@@ -33,10 +17,9 @@ import {
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RoundManageHistoryIcon from "~/components/icons/RoundManageHistoryIcon";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { authenticate } from "~/shopify.server";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs } from "@remix-run/node";
 import MaterialService from "~/models/Material.service";
 import { Material } from "~/types/ConfigDataType";
 import { jFlashMessage } from "~/utils/message-flash";
@@ -45,11 +28,9 @@ import { truncateText } from "~/utils/truncate-text";
 import { fileUrl } from "~/utils/fileUrl";
 import { ManageBtn } from "~/components/buttons/ManageBtn";
 
-
-
 export default function MaterialIndex() {
   const submit = useSubmit();
-  let { materials } = useOutletContext<{materials:Material[]}>();
+  let { materials } = useOutletContext<{ materials: Material[] }>();
 
   useHandleFlashMessage();
 
@@ -67,17 +48,13 @@ export default function MaterialIndex() {
     navigate("edit");
   };
 
-  const  handleManage = (index:number,type:string) => {
-    navigate(
-      type == "simple"
-        ? `${index}/simple`
-        :`${index}/advance`,
-    )
-  }
+  const handleManage = (index: number, type: string) => {
+    navigate(type == "simple" ? `${index}/simple` : `${index}/advance`);
+  };
 
   const resourceName = {
     singular: "Material",
-    plural: "Materials"
+    plural: "Materials",
   };
 
   const rowMarkup = materials?.map(
@@ -85,12 +62,20 @@ export default function MaterialIndex() {
       <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="center" wrap={false} gap="300">
-          <BorderCircleText onClick={() =>
-                handleManage(index,type)
-              } text={name} /> {truncateText(name)}
+            <BorderCircleText
+              onClick={() => handleManage(index, type)}
+              text={name}
+            />
+            <span className="btn-span" onClick={() => handleManage(index, type)}>
+            {truncateText(name)}
+            </span>
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell>{truncateText(description)}</IndexTable.Cell>
+        <IndexTable.Cell>
+            <span className="btn-span" onClick={() => handleManage(index, type)}>
+            {truncateText(description)}
+            </span>
+        </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <img
             style={{ height: "30px" }}
@@ -98,14 +83,17 @@ export default function MaterialIndex() {
             alt={"product thumbnail" + name}
           />
         </IndexTable.Cell>
-       
+
         <IndexTable.Cell className="td-center">
           <Badge tone={type == "simple" ? "info" : "success"}>{type}</Badge>
         </IndexTable.Cell>
 
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth={true} noWrap gap="loose">
-          <ManageBtn  title="Manage" handleClick={()=>handleManage(index,type)}/>
+            <ManageBtn
+              title="Manage"
+              handleClick={() => handleManage(index, type)}
+            />
             <EditIconBtn
               size="micro"
               onClick={() => {
@@ -129,14 +117,13 @@ export default function MaterialIndex() {
         <Box padding="300">
           <BlockStack gap="300">
             <InlineStack align="end">
-          
               <button
                 className="primary-btn"
                 type="button"
                 onClick={handleEdit}
               >
                 <Box paddingInline="300">
-                  <InlineStack gap="300" >
+                  <InlineStack gap="300">
                     <PlusIcon />
                     <span className="primary-btn-text"> Add new Material</span>
                   </InlineStack>
@@ -153,9 +140,9 @@ export default function MaterialIndex() {
         headings={[
           { title: "Title" },
           { title: "Desciption" },
-          { title: "Icon", alignment: "center"  },
+          { title: "Icon", alignment: "center" },
           { title: "Behavior (type)", alignment: "center" },
-          { title: "Action" , alignment: "center" },
+          { title: "Action", alignment: "center" },
         ]}
       >
         {rowMarkup}
@@ -164,26 +151,27 @@ export default function MaterialIndex() {
   );
 }
 
-export const action = async ({ request, params }:ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
-  
+
   const formData = await request.formData();
   const id = formData.get("id") as string;
   const configId = parseInt(params.configId ?? "");
   const method = request.method;
-  
+
   switch (method) {
     case "DELETE": {
-      console.log("start deleting")
+      console.log("start deleting");
       await MaterialService.delete(configId, session.id, parseInt(id));
-      return json({...jFlashMessage("Configution deleting is completed successfull")})
+      return json({
+        ...jFlashMessage("Configution deleting is completed successfull"),
+      });
       break;
     }
-  
+
     default:
       break;
   }
 
-  return null
-}
-
+  return null;
+};

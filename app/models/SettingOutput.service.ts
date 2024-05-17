@@ -1,5 +1,4 @@
 import prisma from "~/db.server";
-import { FontType } from "~/types/ManagePropertyType";
 import SettingService from "./Setting.service";
 import { OutputType } from "~/types/SettingsType";
 

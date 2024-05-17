@@ -37,9 +37,9 @@ export default function Sidebar() {
             <ItemSidebar title={"Settings general"} to="/app/settings">
               <SettingsGeneralIcon />
             </ItemSidebar>
-            <ItemSidebar title={"Message"} to="/app/message" >
+            {/* <ItemSidebar title={"Message"} to="/app/message" >
               <MessageIcon />
-            </ItemSidebar>
+            </ItemSidebar> */}
           </BlockStack>
         </Box>
         <Box paddingBlock="1200"></Box>

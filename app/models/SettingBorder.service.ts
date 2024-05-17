@@ -1,7 +1,6 @@
 import prisma from "~/db.server";
-import { FontType } from "~/types/ManagePropertyType";
 import SettingService from "./Setting.service";
-import { BorderType, OutputType } from "~/types/SettingsType";
+import { BorderType } from "~/types/SettingsType";
 
 export default class SettingBorderService {
   static async get(sessionId: string): Promise<any | null> {

@@ -1,33 +1,25 @@
 import {
   Bleed,
   Box,
-  Button,
-  ButtonGroup,
-  Checkbox,
   Divider,
   Grid,
-  IndexTable,
-  InlineGrid,
   InlineStack,
   Select,
   Text,
   TextField,
   useIndexResourceState,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import {  useState } from "react";
 import {
   Form,
   json,
   redirect,
   useActionData,
   useLoaderData,
-  useNavigate,
   useNavigation,
-  useSubmit,
+  useSubmit
 } from "@remix-run/react";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import BiSaveIcon from "~/components/icons/BiSaveIcon";
-import uploadIcon from "~/components/icons/uploadIcon";
 import ClipartService from "~/models/Clipart.service";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";

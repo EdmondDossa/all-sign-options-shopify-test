@@ -6,7 +6,7 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import {  useState } from "react";
 import {
   Form,
   redirect,
@@ -17,8 +17,6 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
-import BiSaveIcon from "~/components/icons/BiSaveIcon";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import ClipartsGroupService from "~/models/ClipartsGroup.service";

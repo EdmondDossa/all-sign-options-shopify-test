@@ -1,4 +1,3 @@
-import { useActionData, useSearchParams } from "@remix-run/react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useEffect } from "react";
 import { MessageFlash } from "~/types/MessageFlashType";

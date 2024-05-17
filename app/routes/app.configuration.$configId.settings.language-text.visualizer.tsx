@@ -1,36 +1,21 @@
-import {
-  BlockStack,
-  Box,
-  Button,
-  Grid,
-  InlineStack,
-  Select,
-  Text,
-  TextField,
-} from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import { Box, Grid, InlineStack, Text, TextField } from "@shopify/polaris";
+import { useState } from "react";
 import {
   Form,
-  NavLink,
-  redirect,
   useActionData,
   useLoaderData,
-  useNavigate,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import {
   settingAction,
   settingLoader,
 } from "~/custom-action-loader/config-action-loader";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
 import { z } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import { FileInput } from "~/components/inputs/FileInput";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 
@@ -42,17 +27,17 @@ const formSchema = z.object({
   textButtonNext: z.string(),
   // textBeforePrice: "",
   // textAfterPrice: "TVA Include",
-  textButtonFinish:z.string(),
+  textButtonFinish: z.string(),
   // textAddToCart: z.string(),
   textPreview: z.string(),
-  textShare:z.string(),
+  textShare: z.string(),
   textImport: z.string(),
   textDownload: z.string(),
-  textSave:z.string(),
+  textSave: z.string(),
   textHelp: z.string(),
-  textMaterial:z.string(),
+  textMaterial: z.string(),
   textSize: z.string(),
-  textShape:z.string(),
+  textShape: z.string(),
   textFixingMethods: z.string(),
   textColor: z.string(),
   textOptionText: z.string(),
@@ -61,7 +46,7 @@ const formSchema = z.object({
   textImage: z.string(),
   customSize: z.string(),
   customSizeButtonDone: z.string(),
-  thickness: z.string()
+  thickness: z.string(),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -104,9 +89,9 @@ export default function ConfigSettingsGeneral() {
       textBorder: "Border",
       textProduct: "Product",
       textImage: "Image",
-      customSize:"Custom Size",
-      customSizeButtonDone:"Done",
-      thickness:"Thickness"
+      customSize: "Custom Size",
+      customSizeButtonDone: "Done",
+      thickness: "Thickness",
     },
   );
 
@@ -228,9 +213,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Share text"
                     value={formData.textShare}
-                    onChange={(value) =>
-                      handleInputChange("textShare", value)
-                    }
+                    onChange={(value) => handleInputChange("textShare", value)}
                     error={getError(actionData, "textShare")}
                     autoComplete="on"
                   />
@@ -240,9 +223,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Import text"
                     value={formData.textImport}
-                    onChange={(value) =>
-                      handleInputChange("textImport", value)
-                    }
+                    onChange={(value) => handleInputChange("textImport", value)}
                     error={getError(actionData, "textImport")}
                     autoComplete="on"
                   />
@@ -264,9 +245,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Save  text"
                     value={formData.textSave}
-                    onChange={(value) =>
-                      handleInputChange("textSave", value)
-                    }
+                    onChange={(value) => handleInputChange("textSave", value)}
                     error={getError(actionData, "textSave")}
                     autoComplete="on"
                   />
@@ -276,9 +255,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Help text"
                     value={formData.textHelp}
-                    onChange={(value) =>
-                      handleInputChange("textHelp", value)
-                    }
+                    onChange={(value) => handleInputChange("textHelp", value)}
                     error={getError(actionData, "textHelp")}
                     autoComplete="on"
                   />
@@ -294,7 +271,7 @@ export default function ConfigSettingsGeneral() {
               <Grid gap={{ lg: "20px" }}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <Text as="strong" fontWeight="bold" variant="bodyLg">
-                    Button  Options
+                    Button Options
                   </Text>
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
@@ -314,9 +291,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Text Size"
                     value={formData.textSize}
-                    onChange={(value) =>
-                      handleInputChange("textSize", value)
-                    }
+                    onChange={(value) => handleInputChange("textSize", value)}
                     error={getError(actionData, "textSize")}
                     autoComplete="on"
                   />
@@ -326,9 +301,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Text Custom Size"
                     value={formData.customSize}
-                    onChange={(value) =>
-                      handleInputChange("customSize", value)
-                    }
+                    onChange={(value) => handleInputChange("customSize", value)}
                     error={getError(actionData, "customSize")}
                     autoComplete="on"
                   />
@@ -350,9 +323,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Text Thickness"
                     value={formData.thickness}
-                    onChange={(value) =>
-                      handleInputChange("thickness", value)
-                    }
+                    onChange={(value) => handleInputChange("thickness", value)}
                     error={getError(actionData, "thickness")}
                     autoComplete="on"
                   />
@@ -362,9 +333,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Text  Shape"
                     value={formData.textShape}
-                    onChange={(value) =>
-                      handleInputChange("textShape", value)
-                    }
+                    onChange={(value) => handleInputChange("textShape", value)}
                     error={getError(actionData, "textShape")}
                     autoComplete="on"
                   />
@@ -386,9 +355,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Text  color"
                     value={formData.textColor}
-                    onChange={(value) =>
-                      handleInputChange("textColor", value)
-                    }
+                    onChange={(value) => handleInputChange("textColor", value)}
                     error={getError(actionData, "textColor")}
                     autoComplete="on"
                   />
@@ -410,9 +377,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Text  Border"
                     value={formData.textBorder}
-                    onChange={(value) =>
-                      handleInputChange("textBorder", value)
-                    }
+                    onChange={(value) => handleInputChange("textBorder", value)}
                     error={getError(actionData, "textBorder")}
                     autoComplete="on"
                   />
@@ -434,9 +399,7 @@ export default function ConfigSettingsGeneral() {
                     size="medium"
                     label="Text  Image"
                     value={formData.textImage}
-                    onChange={(value) =>
-                      handleInputChange("textImage", value)
-                    }
+                    onChange={(value) => handleInputChange("textImage", value)}
                     error={getError(actionData, "textImage")}
                     autoComplete="on"
                   />
@@ -445,8 +408,6 @@ export default function ConfigSettingsGeneral() {
             </Box>
           </BoxBackground>
         </SpacingBackground>
-
-
 
         <SpacingBackground width="100%" height="auto" margin="3px 0 0 0">
           <BoxBackground>

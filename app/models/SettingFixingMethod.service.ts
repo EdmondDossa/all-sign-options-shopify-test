@@ -1,7 +1,6 @@
 import prisma from "~/db.server";
-import { FontType } from "~/types/ManagePropertyType";
 import SettingService from "./Setting.service";
-import { FixingMethodType, OutputType } from "~/types/SettingsType";
+import { FixingMethodType } from "~/types/SettingsType";
 
 export default class SettingFixingMethodService {
   static async get(sessionId: string): Promise<any | null> {

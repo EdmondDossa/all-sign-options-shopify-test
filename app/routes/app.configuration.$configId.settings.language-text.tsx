@@ -1,28 +1,9 @@
-import {
-  BlockStack,
-  Box,
-  Checkbox,
-  Divider,
-  Grid,
-  InlineStack,
-  Select,
-  TextField,
-  Text,
-} from "@shopify/polaris";
-import { useCallback, useState } from "react";
-import { Form, NavLink, Outlet, redirect, useNavigate } from "@remix-run/react";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
+import { Box, InlineStack } from "@shopify/polaris";
+import { Outlet } from "@remix-run/react";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RayEndArrowIcon from "~/components/icons/RayEndArrowIcon";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { SubTabItem } from "~/components/layouts/SubTabItem";
 
 export default function ConfigSettingsGeneral() {
-  const [checked, setChecked] = useState(false);
-
-
- 
-
   return (
     <>
       <SpacingBackground
@@ -34,17 +15,13 @@ export default function ConfigSettingsGeneral() {
         <Box paddingBlock="300">
           <InlineStack gap="400" align="center">
             <SubTabItem to="upload-design">Upload design</SubTabItem>
-            <SubTabItem to="visualizer">
-            visualizer
-            </SubTabItem>
-            <SubTabItem to="images">
-              Images
-            </SubTabItem>
+            <SubTabItem to="visualizer">visualizer</SubTabItem>
+            <SubTabItem to="images">Images</SubTabItem>
           </InlineStack>
         </Box>
       </SpacingBackground>
 
-        <Outlet></Outlet>
+      <Outlet></Outlet>
     </>
   );
 }
@@ -52,6 +29,3 @@ export default function ConfigSettingsGeneral() {
 export const action = () => {
   return null;
 };
-
-
-

@@ -1,6 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet, json, useLoaderData } from "@remix-run/react";
-import { config } from "process";
 import ConfigurationService from "~/models/Configuration.service";
 import { authenticate } from "~/shopify.server";
 

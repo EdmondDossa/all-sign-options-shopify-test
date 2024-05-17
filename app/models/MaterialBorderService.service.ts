@@ -1,10 +1,6 @@
 import {
   BorderSettingType,
   ConfigBorder,
-  ConfigCustomSize,
-  ConfigSize,
-  Material,
-  MaterialSimple,
 } from "~/types/ConfigDataType";
 import ConfigurationService from "./Configuration.service";
 import { ConfigurationType } from "~/types/ConfigurationType";
@@ -22,7 +18,6 @@ export default class MaterialBorderService {
         configuration["data"]["materials"][materialId]["data"]["borders"];
       return borders ? (borders as ConfigBorder) : borders;
     } catch (error) {
-      console.error("Error retrieving font:", error);
       return Promise.resolve(null);
     }
   }

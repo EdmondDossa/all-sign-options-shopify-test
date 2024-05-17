@@ -1,12 +1,9 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import ClipartsGroupService from "~/models/ClipartsGroup.service";
-import ColorService from "~/models/Color.service";
-import ConfigurationService from "~/models/Configuration.service";
 import FontService from "~/models/Font.service";
 import SettingBorderService from "~/models/SettingBorder.service";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
 import SettingShapesService from "~/models/SettingShapes.service";
-import SizeService from "~/models/Size.service";
 import { authenticate } from "~/shopify.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
