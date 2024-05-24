@@ -204,10 +204,14 @@ export default function MaterialFixingMethod() {
                                 type="number"
                                 value={`${fixingMethod.additionalPrice}`}
                                 onChange={(value) => {
-                                  fixingMethod.additionalPrice =
-                                    parseFloat(value);
+                                  fixingMethod.additionalPrice = value;
                                   formData.configFixingMethods[index] =
                                     fixingMethod;
+                                  setFormData({ ...formData });
+                                }}
+                                onBlur={(value) => {
+                                  formData.configFixingMethods[index].additionalPrice =
+                                   parseFloat(`${fixingMethod.additionalPrice||"0"}`)
                                   setFormData({ ...formData });
                                 }}
                                 autoComplete="off"

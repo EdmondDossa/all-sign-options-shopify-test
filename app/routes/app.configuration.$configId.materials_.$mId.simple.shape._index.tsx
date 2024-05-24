@@ -72,7 +72,7 @@ export default function MaterialShape() {
           id: `${index}`,
           title: `${shape?.name}`,
           image: shape?.icon,
-          price: `${currShapes?.additionalPrice}$`,
+          price: `${currShapes?.additionalPrice}`,
           isDefault: currShapes?.isDefault,
         };
       })

@@ -124,9 +124,7 @@ export default function Configuration() {
   const handleMaterials = (id: number) => {
     navigate(`${id}/materials`);
   };
-  const handleSettings = (id: number) => {
-    navigate(`${id}/settings`);
-  };
+  
 
   const handlePreviews = (id: number) => {
     navigate(`${id}/preview`);
@@ -158,11 +156,11 @@ export default function Configuration() {
           
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          <img
+        { icon && <img
             style={{ height: "30px" }}
             src={fileUrl(icon)}
             alt={"product thumbnail" + name}
-          />
+          />}
         </IndexTable.Cell>
 
         <IndexTable.Cell className="td-center">

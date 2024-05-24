@@ -75,11 +75,10 @@ export default class MaterialColorService {
         await ConfigurationService.getConfiguration(configurationId, sessionId);
       let materialData = configuration["data"]["materials"][materialId]["data"];
       if (materialData instanceof Object && "colors" in materialData) {
-        const colors =
-          configuration["data"]["materials"][materialId]["data"]["colors"]["customColors"];
-        configuration["data"]["materials"][materialId]["data"]["colors"]["customColors"] = {
-          ...(colors || {}),
-          color}
+      
+        configuration["data"]["materials"][materialId]["data"]["colors"]["customColors"] = color
+        
+        console.log("configuration color", configuration["data"]["materials"][materialId]["data"]["colors"]["customColors"])
       
       } else {
         configuration["data"]["materials"][materialId]["data"] = {

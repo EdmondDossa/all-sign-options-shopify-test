@@ -85,15 +85,15 @@ export default function MaterialAdvancedIndex() {
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <InlineStack align="center">
-            <img
+         { image &&  <img
               style={{ height: "30px" }}
               src={fileUrl(image)}
               alt={"product thumbnail" + name}
-            />
+            />}
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          <Badge tone="success">{additionalPrice + "$"}</Badge>
+          <Badge tone="success">{additionalPrice+""}</Badge>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <ReactSwitchCustom
@@ -146,9 +146,8 @@ export default function MaterialAdvancedIndex() {
       </BoxBackground>
       <IndexTable
         resourceName={resourceName}
-        itemCount={materialOptions ? materialOptions.length : 0}
         selectable={false}
-        sortable={[false, true, true, true, true, true, true]}
+        itemCount={materialOptions ? materialOptions.length : 0}
         headings={[
           { title: "Title" },
           { title: "Desciption" },

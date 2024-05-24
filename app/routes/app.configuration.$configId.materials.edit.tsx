@@ -170,7 +170,7 @@ export default function MaterialEdit() {
 const formSchema = z.object({
   name: z
     .string({ required_error: "Name is required" })
-    .min(3, "Name is too short")
+    .min(1, "Name is too short")
     .max(100, "Name is too long"),
   type: z
     .string({ required_error: "Type is required" })
@@ -178,7 +178,7 @@ const formSchema = z.object({
     .max(100, "Type is too long"),
 
   description: z.string().nullish().transform(stringTransform),
-  icon: z.string({ required_error: "File is required" }),
+  icon: z.string().nullish().transform(stringTransform),
   popImg: z.string().nullish().transform(stringTransform),
 });
 

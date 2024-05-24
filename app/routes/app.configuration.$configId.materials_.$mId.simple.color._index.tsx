@@ -34,7 +34,7 @@ import { getError } from "~/utils/error-getting";
 import { FileInput } from "~/components/inputs/FileInput";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";
-import { booleanTransform } from "~/utils/transfomerZod";
+import { booleanTransform, stringTransform } from "~/utils/transfomerZod";
 import { parseWithZod } from "@conform-to/zod";
 import { fileUrl } from "~/utils/fileUrl";
 
@@ -44,9 +44,7 @@ export default function MaterialColorIndex() {
 
   const actionData = useActionData<typeof action>();
 
-  const onHandleColorCreate = () => {
-    navigate("create");
-  };
+  
 
   let {  colors, customColors } = useOutletContext<{
     colors: ConfigColor[];
@@ -207,7 +205,7 @@ export default function MaterialColorIndex() {
                   <InlineStack gap="300">
                     <PlusIcon />
                     <span className="primary-btn-text">
-                      Add new color palette
+                    Add material Color 
                     </span>
                   </InlineStack>
                 </Box>
@@ -240,7 +238,7 @@ export default function MaterialColorIndex() {
               <Box paddingBlockEnd="600">
                 <InlineStack blockAlign="center" gap="200">
                   <Text as="strong" variant="headingMd">
-                    Custum color
+                  Enable Custom Color
                   </Text>
                   <ReactSwitchCustom
                     checked={formData.active}
@@ -291,7 +289,7 @@ export default function MaterialColorIndex() {
 
 const formSchema = z.object({
   label: z.string({ required_error: "Label is required" }),
-  prevImg: z.string({ required_error: "Preview image is required" }),
+  prevImg: z.string().nullish().transform(stringTransform),
   active: z.any().transform(booleanTransform).pipe(z.boolean()),
 });
 

@@ -103,11 +103,11 @@ export default function MaterialAdvancedIndex() {
             </span>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          <img
+        { icon && <img
             style={{ height: "30px" }}
             src={fileUrl(icon)}
             alt={"product " + name}
-          />
+          />}
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <ReactSwitchCustom

@@ -20,14 +20,16 @@ const initialData = {
       },
       product: {
         designFromScratch: true,
+        redirectToCheckOutPage: true,
+        displayRecapsOnCheckout: false,
         redirectAfterAddingToCart: true,
         hideDesignButtonsOnShopPage: true,
-        hideAddToCartButtonOnShopPage: false,
+        hideAddToCartButtonOnShopPage: true,
         hideAddToCartButtonOnDetailPage: false,
       },
     },
     themeColors: {
-      skin: "default",
+      skin: "couffo",
       colors: {
         textColorButton: "#000000",
         backgroundButton: "#000000",
@@ -43,7 +45,7 @@ const initialData = {
         backgroundColorButtonHelp: "#000000",
         textColorButtonRestartAll: "#000000",
         backgroundColorHoverButton: "#000000",
-        backgroundColorOptionsMenu: "#000000",
+        backgroundColorOptionsMenu: "#EE1A1A",
         backgroundColorTextButtonSave: "#000000",
         backgroundColorHoverButtonHelp: "#000000",
         backgroundColorHoverButtonSave: "#000000",
@@ -52,10 +54,16 @@ const initialData = {
         backgroundColorHeaderContentSide: "#000000",
         backgroundColorHoverButtonRestartAll: "#000000",
       },
+      customCss: "",
     },
     customizerSign: {
       text: {
-        colors: [],
+        colors: [
+          {
+            name: "black",
+            codeHex: "#000000",
+          },
+        ],
         enableBold: true,
         enableBorder: true,
         enableItalic: true,
@@ -66,7 +74,7 @@ const initialData = {
         enableFontSize: {
           active: true,
           defaultFontSize: 16,
-          maximumFontSize: 30,
+          maximumFontSize: 40,
           minimumFontSize: 12,
         },
         enableOverline: true,
@@ -80,9 +88,9 @@ const initialData = {
           active: true,
           enableBlur: true,
           enableSepia: true,
-          enableEmbross: true,
+          enableEmbross: false,
           enableOpacity: true,
-          enableSharpen: true,
+          enableSharpen: false,
           enableGreyscale: false,
         },
         enableClipart: {
@@ -109,7 +117,6 @@ const initialData = {
       customizerOptions: {
         measurementUnit: "cm",
         desktopColumnOrder: "right",
-        showDayNightButton: "display",
         showHideMeasurements: "both",
         decimalFormatMeasurements: "with-decimal",
       },
@@ -168,7 +175,7 @@ const initialData = {
     },
   },
   materials: [],
-  additionalOptions: []
+  additionalOptions: [],
 };
 
 export default class ConfigurationService {
@@ -179,8 +186,8 @@ export default class ConfigurationService {
           sessionId: sessionId,
         },
         orderBy: {
-          id: "asc"
-        }
+          id: "asc",
+        },
       });
     } catch (error) {
       console.error("Error retrieving configurations:", error);
@@ -250,7 +257,7 @@ export default class ConfigurationService {
         data: {
           ...configuration,
           sessionId: sessionId,
-          data: initialData
+          data: initialData,
         },
       });
     } catch (error) {
@@ -258,8 +265,6 @@ export default class ConfigurationService {
       return Promise.reject(null);
     }
   }
-
-
 
   static async duplicateConfiguration(
     configuration: ConfigurationType,
@@ -278,6 +283,3 @@ export default class ConfigurationService {
     }
   }
 }
-
-
-

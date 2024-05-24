@@ -46,6 +46,7 @@ export default function MaterialAdditionalOptionCreate() {
         description: "",
         icon: "",
         image: "",
+        popImg:"",
         additionalPrice: 0,
         excludeColors: [],
         isDefault: false
@@ -65,6 +66,8 @@ export default function MaterialAdditionalOptionCreate() {
     setFormData({ ...formData, icon: value });
     const handleImage = (value: string) =>
       setFormData({ ...formData, image: value });
+      const handlePopImg = (value: string) =>
+      setFormData({ ...formData, popImg: value });
   const handleAdditionalPrice= (value: string) =>
     setFormData({ ...formData, additionalPrice: parseFloat(value) });
 
@@ -117,8 +120,8 @@ export default function MaterialAdditionalOptionCreate() {
                     path={formData.icon} handlePath={handleIcon} />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <FileInput error={getError(actionData, "image")} title="Upload Background Image"
-                    path={formData.image} handlePath={handleImage} />
+              <FileInput error={getError(actionData, "popImg")} title="Example"
+                    path={formData.popImg} handlePath={handlePopImg} />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
                     <MultiCombobox
@@ -178,8 +181,8 @@ const formSchema = z.object({
     .min(1, "Title is too short")
     .max(100, "Title is too long"),
   description: z.string().nullish().transform(stringTransform),
-  icon: z.string({ required_error: "Icon file is required" }),
-  image: z.string({ required_error: "image file is required" }),
+  icon:  z.string().nullish().transform(stringTransform),
+  image:  z.string().nullish().transform(stringTransform),
   additionalPrice: z.number({ required_error: "image file is required" }),
   excludeColors: z.any().transform(jsonTransform).pipe(z.number().array()),
   isDefault: z.any().transform(booleanTransform).pipe(z.boolean())

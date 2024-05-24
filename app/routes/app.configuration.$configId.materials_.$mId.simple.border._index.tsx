@@ -2,23 +2,27 @@ import {
   Badge,
   BlockStack,
   Box,
-
   ButtonGroup,
-
   Divider,
   Grid,
   IndexTable,
   InlineError,
   InlineStack,
-
   Text,
   TextField,
-
 } from "@shopify/polaris";
-import {  useState } from "react";
+import { useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { Form, json, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  json,
+  useActionData,
+  useNavigate,
+  useNavigation,
+  useOutletContext,
+  useSubmit,
+} from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
@@ -37,20 +41,20 @@ import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
-import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { fileUrl } from "~/utils/fileUrl";
+import { FileInput } from "~/components/inputs/FileInput";
 
 export default function MaterialBorderIndex() {
   const submit = useSubmit();
 
-  let {  manageBorders, borders,borderSetting } = useOutletContext<{
+  let { manageBorders, borders, borderSetting } = useOutletContext<{
     manageBorders: BorderType[];
     borders: ConfigBorder[];
-    borderSetting: BorderSettingType;
+    borderSetting: any;
   }>();
 
   useHandleFlashMessage();
-
 
   const navigation = useNavigation();
   let isLoading = navigation.state == "loading";
@@ -71,7 +75,7 @@ export default function MaterialBorderIndex() {
       }
       return curr;
     });
-    
+
     submit({ id: id }, { method: "PUT" });
   };
 
@@ -85,69 +89,70 @@ export default function MaterialBorderIndex() {
 
   const actionData = useActionData<typeof action>();
 
-  console.log("actionData Data data", actionData); 
+  console.log("actionData Data data", actionData);
 
   const [formData, setFormData] = useState<any>(
-      borderSetting || {
-        colors:[],
-        enableBorderWidth:true,
-        enableBorderColor:true,
-      }
+    {
+      colors: [],
+      enableBorderWidth: true,
+      enableBorderColor: true,
+      borderColorsLabel: "Borders Colors",
+      customColorsPrevImg: '',
+      ...borderSetting||{}
+    },
   );
 
-  
-
-  
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     const data = { ...formData, colors: JSON.stringify(formData.colors) };
 
     submit(data, { method: "POST" });
-  }
-
+  };
 
   const handleAddColor = () => {
     if (!formData.colors) {
       formData.colors = [];
-    } 
+    }
     formData.colors.push({
       name: "",
-      codeHex: "#FFFFFF"
+      codeHex: "#FFFFFF",
+      additionalPrice: 0,
     });
 
     setFormData({ ...formData });
-  }
-  
+  };
 
-  const  handleDeleteColor = (index: number) => {
+  const handleDeleteColor = (index: number) => {
     formData.colors.splice(index, 1);
-    setFormData({ ...formData});
-  }
-
+    setFormData({ ...formData });
+  };
 
   console.log("data", borders, manageBorders);
 
+  const bordersTab = borders
+    ? borders.map((currBorder, index) => {
+        let border = manageBorders.find(
+          (manageBorder, manageIndex) =>
+            manageIndex == currBorder.manageBorderId,
+        );
+        return {
+          id: `${index}`,
+          title: `${border?.name}`,
+          icon: `${border?.icon}`,
+          price: `${currBorder.additionalPrice}`,
+          isDefault: currBorder.isDefault,
+        };
+      })
+    : [];
 
-  const bordersTab = borders ? borders.map((currBorder, index) => {
-
-    let border = manageBorders.find((manageBorder, manageIndex) => manageIndex == currBorder.manageBorderId)
-    return {
-      id: `${index}`,
-      title: `${border?.name}`,
-      icon: `${border?.icon}`,
-      price: `${currBorder.additionalPrice}`,
-      isDefault: currBorder.isDefault
-    }
-  }) : [];
-  
   const resourceName = {
     singular: "Border",
     plural: "Borders",
   };
 
   const rowMarkup = bordersTab.map(
-    ({ id, title, icon, price,isDefault }, index) => (
+    ({ id, title, icon, price, isDefault }, index) => (
       <IndexTable.Row id={id} key={id} position={index}>
         <IndexTable.Cell>
           <InlineStack blockAlign="start" gap="300">
@@ -155,20 +160,25 @@ export default function MaterialBorderIndex() {
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-        <img style={{height: "30px"}}
+          <img
+            style={{ height: "30px" }}
             src={fileUrl(icon)}
             alt={"border" + title}
           />
         </IndexTable.Cell>
-       
+
         <IndexTable.Cell className="td-center">
-          <Badge tone="critical" >{price}</Badge>
+          <Badge tone="critical">{price}</Badge>
         </IndexTable.Cell>
-        <IndexTable.Cell className="td-center"><ReactSwitchCustom checked={isDefault||false} setChecked={() => isDefault ? "" : handeleDefault(index)}></ReactSwitchCustom></IndexTable.Cell>
+        <IndexTable.Cell className="td-center">
+          <ReactSwitchCustom
+            checked={isDefault || false}
+            setChecked={() => (isDefault ? "" : handeleDefault(index))}
+          ></ReactSwitchCustom>
+        </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           <ButtonGroup fullWidth noWrap gap="loose">
-
-          <EditIconBtn
+            <EditIconBtn
               size="micro"
               onClick={() => {
                 handleUpdate(parseInt(id));
@@ -190,20 +200,22 @@ export default function MaterialBorderIndex() {
       <BoxBackground>
         <BoxBackground>
           <Box padding="150">
-            {(manageBorders?.length==borders?.length )|| <InlineStack gap="100" align="end">
-              <button
-                className="primary-btn"
-                type="button"
-                onClick={handleEdit}
-              >
-                <Box paddingInline="300">
-                  <InlineStack gap="300">
-                    <PlusIcon />
-                    <span className="primary-btn-text"> Add new border</span>
-                  </InlineStack>
-                </Box>
-              </button>
-            </InlineStack>}
+            {manageBorders?.length == borders?.length || (
+              <InlineStack gap="100" align="end">
+                <button
+                  className="primary-btn"
+                  type="button"
+                  onClick={handleEdit}
+                >
+                  <Box paddingInline="300">
+                    <InlineStack gap="300">
+                      <PlusIcon />
+                      <span className="primary-btn-text"> Add new border</span>
+                    </InlineStack>
+                  </Box>
+                </button>
+              </InlineStack>
+            )}
           </Box>
           <Divider borderWidth="050" />
         </BoxBackground>
@@ -212,10 +224,10 @@ export default function MaterialBorderIndex() {
           itemCount={bordersTab.length}
           headings={[
             { title: "Title" },
-            { title: "Icon" , alignment: "center"},
-            { title: "Additional Price" , alignment: "center"},
-            { title: "Default", alignment: "center"},
-            { title: "Action", alignment: "center"},
+            { title: "Icon", alignment: "center" },
+            { title: "Additional Price", alignment: "center" },
+            { title: "Default", alignment: "center" },
+            { title: "Action", alignment: "center" },
           ]}
           selectable={false}
         >
@@ -227,78 +239,140 @@ export default function MaterialBorderIndex() {
         <BoxBackground>
           <Form onSubmit={handleFormSubmit} method="POST">
             <Box paddingInline="300" paddingBlock="1000">
+              <BlockStack gap="300">
+                <Text as="strong" variant="headingMd">
+                  Border settings
+                </Text>
                 <BlockStack gap="300">
-                    <Text as="strong" variant="headingMd">
-                      Border settings
-                    </Text>
-                    <BlockStack gap="300">
-                    <Text as="h3" variant="bodyMd" fontWeight="bold"> Define text colors</Text>
-                    <Grid gap={{ lg: "30px" }}>
-                      {formData.colors?.map((color: any, index: number) => (
-                          <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 4, xl: 4 }}>
-                          <InlineStack gap={"300"} blockAlign="end" align="space-between" wrap={false}>
-                            <TextField
-                              autoComplete="on"
-                              onChange={(value) => {
-                                color.name = value;
+                  <Text as="h3" variant="bodyMd" fontWeight="bold">
+                    Define border colors
+                  </Text>
+                  <Box maxWidth="350px" width="350px">
+                    <TextField
+                      autoComplete="on"
+                      onChange={(value) => {
+                        formData.borderColorsLabel = value;
+                        setFormData({ ...formData });
+                      }}
+                      label="Label"
+                      value={formData.borderColorsLabel}
+                    />
+                  </Box>
+                  <Grid gap={{ lg: "30px" }}>
+                    {formData.colors?.map((color: any, index: number) => (
+                      <Grid.Cell
+                        columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}
+                      >
+                        <InlineStack
+                          gap={"300"}
+                          blockAlign="end"
+                          align="space-between"
+                          wrap={false}
+                        >
+                          <TextField
+                            autoComplete="on"
+                            onChange={(value) => {
+                              color.name = value;
+                              formData.colors[index] = color;
+                              setFormData({ ...formData });
+                            }}
+                            label="Name"
+                            value={color.name}
+                          />
+                          <InlineStack
+                            gap={"300"}
+                            blockAlign="end"
+                            align="space-between"
+                            wrap={false}
+                          >
+                            <TextColorField
+                              color={color.codeHex}
+                              setColor={(value: any) => {
+                                color.codeHex = value;
                                 formData.colors[index] = color;
                                 setFormData({ ...formData });
                               }}
-                              label="Name"
-                              value={color.name} 
                             />
-                            <InlineStack gap={"300"} blockAlign="center" align="space-between" wrap={false}>
-                              
-                            <TextColorField  color={color.codeHex} setColor={(value: any) => {
-                                color.codeHex = value;
+                            <TextField
+                              type="number"
+                              autoComplete="on"
+                              onChange={(value) => {
+                                color.additionalPrice = value;
                                 formData.colors[index] = color;
-                              setFormData({ ...formData });
-                              
+                                setFormData({ ...formData });
                               }}
-                              />
-                            <DeleteNowIconBtn onClick={() => handleDeleteColor(index)} />
+                              onBlur={(value) => {
+                                formData.colors[index].additionalPrice =
+                                  parseFloat(color.additionalPrice || "0");
+                                setFormData({ ...formData });
+                              }}
+                              label="Price"
+                              value={`${color.additionalPrice}`}
+                            />
+                            <DeleteNowIconBtn
+                              onClick={() => handleDeleteColor(index)}
+                            />
                           </InlineStack>
-
-                          </InlineStack>
-                          {true && (
-                              <InlineError message={getError(
+                        </InlineStack>
+                        {true && (
+                          <InlineError
+                            message={
+                              getError(actionData, `colors[${index}].name`) ||
+                              getError(
                                 actionData,
-                                `colors[${index}].name`
-                              )||getError(
-                                actionData,
-                                `colors[${index}].codeHex`
-                              )||''} fieldID="myFieldID" />
-                            )}
-                          </Grid.Cell>
-                        ))}
-                    </Grid>  
-                    <Box width="150px">
-                    <BiAddBtn title="Add color" handleClick={()=>handleAddColor()} />
-                    </Box>
-                  </BlockStack>
+                                `colors[${index}].codeHex`,
+                              ) ||
+                              ""
+                            }
+                            fieldID="myFieldID"
+                          />
+                        )}
+                      </Grid.Cell>
+                    ))}
+                  </Grid>
+                  <Box width="150px">
+                    <BiAddBtn
+                      title="Add color"
+                      handleClick={() => handleAddColor()}
+                    />
+                  </Box>
+                </BlockStack>
 
-                    <InlineStack gap="600">
-                      <InlineStack blockAlign="center" gap="200">
-                        <Text as="strong" variant="headingMd">
-                          Enable border width
-                        </Text>
-                        <ReactSwitchCustom
-                          checked={formData.enableBorderWidth}
-                          setChecked={(value: boolean)=>{formData.enableBorderWidth = value; setFormData({ ...formData });}}
-                        />
-                      </InlineStack>
+                <InlineStack gap="600">
+                  <InlineStack blockAlign="center" gap="200">
+                    <Text as="strong" variant="headingMd">
+                      Enable border width
+                    </Text>
+                    <ReactSwitchCustom
+                      checked={formData.enableBorderWidth}
+                      setChecked={(value: boolean) => {
+                        formData.enableBorderWidth = value;
+                        setFormData({ ...formData });
+                      }}
+                    />
+                  </InlineStack>
 
-                      <InlineStack blockAlign="center" gap="200">
-                        <Text as="strong" variant="headingMd">
-                          Enable border color
-                        </Text>
-                        <ReactSwitchCustom
-                          checked={formData.enableBorderColor}
-                          setChecked={(value: boolean)=>{formData.enableBorderColor = value; setFormData({ ...formData });}}
-                        />
-                      </InlineStack>
-                    </InlineStack>
-                  </BlockStack>
+                  <InlineStack blockAlign="center" gap="200">
+                    <Text as="strong" variant="headingMd">
+                      Enable border color
+                    </Text>
+                    <ReactSwitchCustom
+                      checked={formData.enableBorderColor}
+                      setChecked={(value: boolean) => {
+                        formData.enableBorderColor = value;
+                        setFormData({ ...formData });
+                      }}
+                    />
+
+
+                 
+                  </InlineStack>
+                </InlineStack>
+            { formData.enableBorderColor &&   <Box width="300px">
+
+                 <FileInput title="Custom color preview image"  buttonTitle="upload image"  path={formData.customColorsPrevImg} handlePath={(value:any)=>{formData.customColorsPrevImg = value; setFormData({...formData})}}/>
+                </Box>}
+              </BlockStack>
             </Box>
             <Divider borderWidth="050" />
             <Box paddingInline="300" paddingBlock="300">
@@ -314,17 +388,23 @@ export default function MaterialBorderIndex() {
 }
 
 const formSchema = z.object({
-    colors: z.any().transform(jsonTransform).pipe(z.object({
-      codeHex: z
-        .string({ required_error: "Color  is required" })
-        .min(3, "Color is too short")
-        .max(7, "Color label is too long"),
-      name: z.string({ required_error: "Color name is required" })
-    }).array()),
-    enableBorderWidth: z.any().transform(booleanTransform).pipe(z.boolean()),
-    enableBorderColor: z.any().transform(booleanTransform).pipe(z.boolean()),
-  });
-
+  colors: z
+    .any()
+    .transform(jsonTransform)
+    .pipe(
+      z
+        .object({
+          codeHex: z.string().nullish().transform(stringTransform),
+          name: z.string().nullish().transform(stringTransform),
+          additionalPrice: z.number(),
+        })
+        .array(),
+  ),
+  borderColorsLabel: z.string().nullish().transform(stringTransform),
+  customColorsPrevImg: z.string().nullish().transform(stringTransform),
+  enableBorderWidth: z.any().transform(booleanTransform).pipe(z.boolean()),
+  enableBorderColor: z.any().transform(booleanTransform).pipe(z.boolean()),
+});
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -370,13 +450,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         return json({ status: false, message: null, errors: submission.error });
       }
 
-      let borderSetting: BorderSettingType = submission.value as BorderSettingType;
+      let borderSetting: BorderSettingType =
+        submission.value as BorderSettingType;
       if (borderSetting) {
         let res = await MaterialBorderService.editSetting(
           configId,
           session.id,
           mId,
-          borderSetting
+          borderSetting,
         ); // Custom Size  updated is completed successfully
         return res
           ? json({

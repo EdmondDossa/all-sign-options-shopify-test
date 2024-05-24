@@ -52,7 +52,7 @@ const data = (shop: string) => {
     shapes: [
       {
         name: "Oval",
-        icon: "",
+        icon:url + "/assets/images/shapes/ic_shape_oval.svg",
         value: "oval",
       },
       {

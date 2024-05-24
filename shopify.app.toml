@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://bio-comparing-storage-amazon.trycloudflare.com"
+application_url = "https://motors-wars-calcium-enterprise.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://bio-comparing-storage-amazon.trycloudflare.com/auth/callback",
-  "https://bio-comparing-storage-amazon.trycloudflare.com/auth/shopify/callback",
-  "https://bio-comparing-storage-amazon.trycloudflare.com/api/auth/callback"
+  "https://motors-wars-calcium-enterprise.trycloudflare.com/auth/callback",
+  "https://motors-wars-calcium-enterprise.trycloudflare.com/auth/shopify/callback",
+  "https://motors-wars-calcium-enterprise.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

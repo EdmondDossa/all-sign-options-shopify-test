@@ -19,7 +19,7 @@ import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { TextColorField } from "~/components/inputs/TextColorField";
 import { CheckSpan } from "~/components/inputs/CheckSpan";
-import { jsonTransform } from "~/utils/transfomerZod";
+import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 
 const settingParams: [string, string] = ["themeColors", ""];
 
@@ -30,28 +30,30 @@ const formSchema = z.object({
     .transform(jsonTransform)
     .pipe(
       z.object({
-        textColorContentHeader: z.string().nullish(),
-        backgroundColorHeader: z.string().nullish(),
-        textColorContentSideMenu: z.string().nullish(),
-        backgroundColorHeaderContentSide: z.string().nullish(),
-        textColorOptionsMenu: z.string().nullish(),
-        backgroundColorOptionsMenu: z.string().nullish(),
-        textColorButtonSave: z.string().nullish(),
-        backgroundColorTextButtonSave: z.string().nullish(),
-        textColorHoverButtonSave: z.string().nullish(),
-        backgroundColorHoverButtonSave: z.string().nullish(),
-        textColorButton: z.string().nullish(),
-        backgroundButton: z.string().nullish(),
-        textColorHoverButton: z.string().nullish(),
-        backgroundColorHoverButton: z.string().nullish(),
-        textColorButtonHelp: z.string().nullish(),
-        backgroundColorButtonHelp: z.string().nullish(),
-        textColorHoverButtonHelp: z.string().nullish(),
-        backgroundColorHoverButtonHelp: z.string().nullish(),
-        textColorHoverButtonRestartAll: z.string().nullish(),
-        backgroundColorHoverButtonRestartAll: z.string().nullish(),
-        textColorButtonRestartAll: z.string().nullish(),
-        backgroundColorButtonRestartAll: z.string().nullish(),
+        canvasBackgroundColor:z.string().nullish().transform(stringTransform),
+        canvasBorderColor:z.string().nullish().transform(stringTransform),
+        textColorContentHeader: z.string().nullish().transform(stringTransform),
+        backgroundColorHeader: z.string().nullish().transform(stringTransform),
+        textColorContentSideMenu: z.string().nullish().transform(stringTransform),
+        backgroundColorHeaderContentSide: z.string().nullish().transform(stringTransform),
+        textColorOptionsMenu: z.string().nullish().transform(stringTransform),
+        backgroundColorOptionsMenu: z.string().nullish().transform(stringTransform),
+        textColorButtonSave: z.string().nullish().transform(stringTransform),
+        backgroundColorTextButtonSave: z.string().nullish().transform(stringTransform),
+        textColorHoverButtonSave: z.string().nullish().transform(stringTransform),
+        backgroundColorHoverButtonSave: z.string().nullish().transform(stringTransform),
+        textColorButton: z.string().nullish().transform(stringTransform),
+        backgroundButton: z.string().nullish().transform(stringTransform),
+        textColorHoverButton: z.string().nullish().transform(stringTransform),
+        backgroundColorHoverButton: z.string().nullish().transform(stringTransform),
+        textColorButtonHelp: z.string().nullish().transform(stringTransform),
+        backgroundColorButtonHelp: z.string().nullish().transform(stringTransform),
+        textColorHoverButtonHelp: z.string().nullish().transform(stringTransform),
+        backgroundColorHoverButtonHelp: z.string().nullish().transform(stringTransform),
+        textColorHoverButtonRestartAll: z.string().nullish().transform(stringTransform),
+        backgroundColorHoverButtonRestartAll: z.string().nullish().transform(stringTransform),
+        textColorButtonRestartAll: z.string().nullish().transform(stringTransform),
+        backgroundColorButtonRestartAll: z.string().nullish().transform(stringTransform),
       }),
     ),
 });
@@ -75,6 +77,8 @@ export default function ConfigSettingsThemeColor() {
     settingData || {
       skin: "default",
       colors: {
+        canvasBackgroundColor:"#ffffff",
+        canvasBorderColor:"#ffffff",
         textColorContentHeader: "#000000",
         backgroundColorHeader: "#000000",
         textColorContentSideMenu: "#000000",
@@ -164,6 +168,37 @@ export default function ConfigSettingsThemeColor() {
           </BoxBackground>
         </SpacingBackground>
 
+        <SpacingBackground border="1px solid #DDDDDD" margin="3px 0 0 0">
+          <BoxBackground>
+            <Box paddingInline="300" paddingBlock="1000">
+              <Grid gap={{ lg: "20px" }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <Text as="strong" fontWeight="bold" variant="bodyLg">
+                    Content Canvas
+                  </Text>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <TextColorField
+                    label="Background color"
+                    color={formData.colors.canvasBackgroundColor}
+                    setColor={(value: any) =>
+                      handleColorChange("canvasBackgroundColor", value)
+                    }
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <TextColorField
+                    label="Border color"
+                    color={formData.colors.canvasBorderColor}
+                    setColor={(value: any) =>
+                      handleColorChange("canvasBorderColor", value)
+                    }
+                  />
+                </Grid.Cell>
+              </Grid>
+            </Box>
+          </BoxBackground>
+        </SpacingBackground>
         <SpacingBackground border="1px solid #DDDDDD" margin="3px 0 0 0">
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="1000">

@@ -37,6 +37,7 @@ import {
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
+import { stringTransform } from "~/utils/transfomerZod";
 
 export default function MaterialComponentCreate() {
   const submit = useSubmit();
@@ -186,13 +187,10 @@ export default function MaterialComponentCreate() {
 const formSchema = z.object({
   name: z
     .string({ required_error: "Name is required" })
-    .min(3, "Name is too short")
+    .min(1, "Name is too short")
     .max(100, "Name is too long"),
-  description: z
-    .string({ required_error: "Description is required" })
-    .min(3, "Description is too short")
-    .max(255, "Description is too long"),
-  icon: z.string({ required_error: "Icon file is required" }),
+  description:z.string().nullish().transform(stringTransform),
+  icon: z.string().nullish().transform(stringTransform),
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

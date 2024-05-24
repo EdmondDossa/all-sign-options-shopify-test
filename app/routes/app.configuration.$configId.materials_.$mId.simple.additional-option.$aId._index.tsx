@@ -79,19 +79,13 @@ export default function MaterialAdditionalOptionIndex() {
         <IndexTable.Cell>{title}</IndexTable.Cell>
         <IndexTable.Cell>{description}</IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          <img
+       { icon &&   <img
             style={{ height: "30px" }}
             src={fileUrl(icon)}
             alt={" thumbnail"}
-          />
+          />}
         </IndexTable.Cell>
-        <IndexTable.Cell className="td-center">
-          <img
-            style={{ height: "30px" }}
-            src={fileUrl(image)}
-            alt={" thumbnail"}
-          />
-        </IndexTable.Cell>
+    
         <IndexTable.Cell className="td-center">
           <Badge tone="success">{`${additionalPrice}`}</Badge>
         </IndexTable.Cell>
@@ -155,7 +149,6 @@ export default function MaterialAdditionalOptionIndex() {
           { title: "Title" },
           { title: "Desciption" },
           { title: "Icon", alignment: "center" },
-          { title: "Image", alignment: "center" },
           { title: "Price", alignment: "center" },
           { title: "Default", alignment: "center" },
           { title: "Action", alignment: "center" },

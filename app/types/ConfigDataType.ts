@@ -23,7 +23,7 @@ import { number } from 'zod';
  export interface ConfigCustomColor {
   active: boolean;
    label: string;
-   prevImg: string;
+   prevImg?: string;
 }
   
 export interface ConfigSize {
@@ -47,9 +47,11 @@ export interface ConfigSize {
  }
   
  export interface BorderSettingType {
-  colors:Array<{ codeHex: string; name: string; }>;
+  colors:Array<{ codeHex: string; name: string; additionalPrice: number|string }>;
   enableBorderWidth:boolean,
-  enableBorderColor:boolean,
+   enableBorderColor: boolean,
+   borderColorsLabel: string,
+   customColorsPrevImg:string
  }
   
  export interface ConfigShape {
@@ -65,7 +67,7 @@ export interface ConfigSize {
   
  export interface ConfigFixingMethod {
     fixingMethodId: number;
-    additionalPrice: number;
+    additionalPrice: number|string;
     excludeSizes: number[];
     excludeShapes: number[];
     isDefault?: boolean;
@@ -101,6 +103,7 @@ export interface ConfigColor {
   description: string;
   icon: string;
    image: string;
+   popImg: string;
    excludeColors: number[];
    additionalPrice: number;
    isDefault?: boolean;
@@ -142,14 +145,14 @@ export interface ConfigColor {
    fixingMethods: number[];
     shapeId?: number;
     size: {
-      width: number;
-      height: number;
-      basePrice: number;
-      startPriceAtChar: number;
-      maxTextChar: number;
-      charPrice: number;
+      width: number|string;
+      height: number|string;
+      basePrice: number|string;
+      startPriceAtChar:number|string;
+      maxTextChar: number|string;
+      charPrice: number|string;
     };
-    additionalPrice: number;
+    additionalPrice: number|string;
  }
   
 export interface MaterialAdvanceComponentType{

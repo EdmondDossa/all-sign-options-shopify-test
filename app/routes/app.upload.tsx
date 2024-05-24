@@ -35,7 +35,7 @@ import { fileUrl } from "~/utils/fileUrl";
 import { truncateText } from "~/utils/truncate-text";
 
 const fileExtensions = {
-  image: [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".bmp", ".tiff"],
+  image: [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".bmp", ".tiff",".ico", ".icns", ".svg"],
   icon: [".ico", ".icns", ".svg"],
   video: [".mp4", ".mov", ".avi", ".wmv", ".mkv", ".flv", ".webm"],
   font: [".ttf", ".otf", ".woff", ".woff2"],

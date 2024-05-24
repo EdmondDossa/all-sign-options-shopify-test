@@ -276,10 +276,18 @@ export default function MaterialSizeIndex() {
                             <TextField
                               labelHidden
                               type="number"
-                              autoComplete="on"
+                              autoComplete="off"
                               onChange={(value) => {
+                                formData.thickness.values[index] = value;
+                                handleInputChange(
+                                  "thickness",
+                                  formData.thickness,
+                                );
+                              }}
+
+                              onBlur={(value) => {
                                 formData.thickness.values[index] =
-                                  parseInt(value);
+                                  parseFloat(formData.thickness.values[index]);
                                 handleInputChange(
                                   "thickness",
                                   formData.thickness,

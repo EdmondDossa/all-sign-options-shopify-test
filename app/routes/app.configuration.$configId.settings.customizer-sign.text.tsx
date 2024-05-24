@@ -40,11 +40,12 @@ import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { z } from "zod";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
-import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { ColorType, FontType } from "~/types/ManagePropertyType";
 import { TextColorField } from "~/components/inputs/TextColorField";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
+import { FileInput } from "~/components/inputs/FileInput";
 
 const settingParams: [string, string] = ["customizerSign", "text"];
 const formSchema = z.object({
@@ -59,7 +60,9 @@ const formSchema = z.object({
         maximumFontSize: z.number(),
         defaultFontSize: z.number(),
       }),
-    ),
+  ),
+  colorsLabel: z.string().nullish().transform(stringTransform),
+colorsPrevImg: z.string().nullish().transform(stringTransform),
   colors: z
     .any()
     .transform(jsonTransform)
@@ -111,6 +114,8 @@ export default function ConfigSettingsGeneral() {
         maximumFontSize: 30,
         defaultFontSize: 16,
       },
+      colorsLabel:"Texts Colors",
+      colorsPrevImg:"",
       colors: [],
       enableCustomColor: true,
       enableBold: true,
@@ -210,9 +215,21 @@ export default function ConfigSettingsGeneral() {
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <BlockStack gap="300">
                     <Text as="h3" variant="bodyMd" fontWeight="bold">
-                      {" "}
                       Define text colors
                     </Text>
+                    <Box maxWidth="350px" width="350px">
+
+                    <TextField  
+                              autoComplete="on"
+                              onChange={(value) => {
+                               
+                                formData.colorsLabel = value;
+                                setFormData({ ...formData });
+                              }}
+                              label="Label"
+                              value={formData.colorsLabel}
+                            />
+                    </Box>
                     <Grid gap={{ lg: "30px" }}>
                       {formData.colors?.map((color: any, index: number) => (
                         <Grid.Cell
@@ -268,13 +285,13 @@ export default function ConfigSettingsGeneral() {
                     </Grid>
                     <Box width="150px">
                       <BiAddBtn
-                        title="Add color"
+                        title="Add more colors"
                         handleClick={() => handleAddColor()}
                       />
                     </Box>
                   </BlockStack>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 2, lg: 2, xl: 2 }}>
                   <InlineStack gap="300">
                     <Text as="strong" fontWeight="medium" variant="bodyMd">
                       Enable Custom color
@@ -290,6 +307,10 @@ export default function ConfigSettingsGeneral() {
                       }}
                     />
                   </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                 
+                <FileInput title="Custom color preview image"  buttonTitle="upload image"  path={formData.colorsPrevImg} handlePath={(value:any)=>{formData.colorsPrevImg = value; setFormData({...formData})}}/>
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <InlineStack gap="300">

@@ -18,35 +18,46 @@ import { z } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { stringTransform } from "~/utils/transfomerZod";
 
 const settingParams: [string, string] = ["languageImages", "visualizer"];
 const formSchema = z.object({
-  titleHeader: z.string(),
-  textButtonRefresh: z.string(),
-  textButtonBack: z.string(),
-  textButtonNext: z.string(),
-  // textBeforePrice: "",
-  // textAfterPrice: "TVA Include",
-  textButtonFinish: z.string(),
-  // textAddToCart: z.string(),
-  textPreview: z.string(),
-  textShare: z.string(),
-  textImport: z.string(),
-  textDownload: z.string(),
-  textSave: z.string(),
-  textHelp: z.string(),
-  textMaterial: z.string(),
-  textSize: z.string(),
-  textShape: z.string(),
-  textFixingMethods: z.string(),
-  textColor: z.string(),
-  textOptionText: z.string(),
-  textBorder: z.string(),
-  textProduct: z.string(),
-  textImage: z.string(),
-  customSize: z.string(),
-  customSizeButtonDone: z.string(),
-  thickness: z.string(),
+  textCanvasCenterH:z.string().nullish().transform(stringTransform),
+    textCanvasCenterV:z.string().nullish().transform(stringTransform),
+    textCanvasDelete:z.string().nullish().transform(stringTransform),
+    textCanvasEdit:z.string().nullish().transform(stringTransform),
+    textCanvasClone:z.string().nullish().transform(stringTransform),
+  textPosition:z.string().nullish().transform(stringTransform),
+    textAngle:z.string().nullish().transform(stringTransform),
+    textWidth:z.string().nullish().transform(stringTransform),
+    textHeight:z.string().nullish().transform(stringTransform),
+    textRight:z.string().nullish().transform(stringTransform),
+    textLeft:z.string().nullish().transform(stringTransform),
+    textTop:z.string().nullish().transform(stringTransform),
+    textBottom:z.string().nullish().transform(stringTransform),
+  titleHeader: z.string().nullish().transform(stringTransform),
+  textButtonRefresh: z.string().nullish().transform(stringTransform),
+  textButtonBack: z.string().nullish().transform(stringTransform),
+  textButtonNext: z.string().nullish().transform(stringTransform),
+  textButtonFinish: z.string().nullish().transform(stringTransform),
+  textPreview: z.string().nullish().transform(stringTransform),
+  textShare: z.string().nullish().transform(stringTransform),
+  textImport: z.string().nullish().transform(stringTransform),
+  textDownload: z.string().nullish().transform(stringTransform),
+  textSave: z.string().nullish().transform(stringTransform),
+  textHelp: z.string().nullish().transform(stringTransform),
+  textMaterial: z.string().nullish().transform(stringTransform),
+  textSize: z.string().nullish().transform(stringTransform),
+  textShape: z.string().nullish().transform(stringTransform),
+  textFixingMethods: z.string().nullish().transform(stringTransform),
+  textColor: z.string().nullish().transform(stringTransform),
+  textOptionText: z.string().nullish().transform(stringTransform),
+  textBorder: z.string().nullish().transform(stringTransform),
+  textProduct: z.string().nullish().transform(stringTransform),
+  textImage: z.string().nullish().transform(stringTransform),
+  customSize: z.string().nullish().transform(stringTransform),
+  customSizeButtonDone: z.string().nullish().transform(stringTransform),
+  thickness: z.string().nullish().transform(stringTransform),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -65,7 +76,20 @@ export default function ConfigSettingsGeneral() {
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
   const [formData, setFormData] = useState<any>(
-    settingData || {
+    {
+      textCanvasCenterH:"centerH",
+    textCanvasCenterV:"centerV",
+    textCanvasDelete:"delete",
+    textCanvasEdit:"Edit",
+    textCanvasClone:"Clone",
+      textPosition: "Position",
+      textAngle: "Angle",
+      textWidth: "Width",
+      textHeight: "Height",
+      textRight: "Right",
+      textLeft: "Left",
+      textTop: "Top",
+      textBottom: "Bottom",
       titleHeader: "Plastic Signs",
       textButtonRefresh: "Restart all",
       textButtonBack: "Undo",
@@ -92,6 +116,7 @@ export default function ConfigSettingsGeneral() {
       customSize: "Custom Size",
       customSizeButtonDone: "Done",
       thickness: "Thickness",
+      ...settingData || {}
     },
   );
 
@@ -186,6 +211,201 @@ export default function ConfigSettingsGeneral() {
             </Box>
           </BoxBackground>
         </SpacingBackground>
+
+
+
+        <SpacingBackground border="1px solid #DDDDDD" margin="3px 0 0 0">
+          <BoxBackground>
+            <Box paddingInline="300" paddingBlock="1000">
+              <Grid gap={{ lg: "20px" }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <Text as="strong" fontWeight="bold" variant="bodyLg">
+                    Content Text
+                  </Text>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text  width"
+                    value={formData.textWidth}
+                    onChange={(value) =>
+                      handleInputChange("textWidth", value)
+                    }
+                    error={getError(actionData, "textWidth")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text  Height"
+                    value={formData.textHeight}
+                    onChange={(value) =>
+                      handleInputChange("textHeight", value)
+                    }
+                    error={getError(actionData, "textHeight")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text  Position"
+                    value={formData.textPosition}
+                    onChange={(value) =>
+                      handleInputChange("textPosition", value)
+                    }
+                    error={getError(actionData, "textPosition")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text Angle"
+                    value={formData.textAngle}
+                    onChange={(value) =>
+                      handleInputChange("textAngle", value)
+                    }
+                    error={getError(actionData, "textAngle")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text Top"
+                    value={formData.textTop}
+                    onChange={(value) =>
+                      handleInputChange("textTop", value)
+                    }
+                    error={getError(actionData, "textTop")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text bottom"
+                    value={formData.textBottom}
+                    onChange={(value) =>
+                      handleInputChange("textBottom", value)
+                    }
+                    error={getError(actionData, "textBottom")}
+                    autoComplete="on"
+
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text left"
+                    value={formData.textLeft}
+                    onChange={(value) =>
+                      handleInputChange("textLeft", value)
+                    }
+                    error={getError(actionData, "textLeft")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text Right"
+                    value={formData.textRight}
+                    onChange={(value) =>
+                      handleInputChange("textRight", value)
+                    }
+                    error={getError(actionData, "textRight")}
+                    autoComplete="on"
+                    
+                  />
+                </Grid.Cell>
+                
+                
+              </Grid>
+            </Box>
+          </BoxBackground>
+        </SpacingBackground>
+
+
+
+        <SpacingBackground border="1px solid #DDDDDD" margin="3px 0 0 0">
+          <BoxBackground>
+            <Box paddingInline="300" paddingBlock="1000">
+              <Grid gap={{ lg: "20px" }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <Text as="strong" fontWeight="bold" variant="bodyLg">
+                    Action on selected object in canvas
+                  </Text>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Canvas selected object edit button"
+                    value={formData.textCanvasEdit}
+                    onChange={(value) =>
+                      handleInputChange("textCanvasEdit", value)
+                    }
+                    error={getError(actionData, "textCanvasEdit")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Canvas selected object edit button"
+                    value={formData.textCanvasDelete}
+                    onChange={(value) =>
+                      handleInputChange("textCanvasDelete", value)
+                    }
+                    error={getError(actionData, "textCanvasDelete")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Canvas selected object centerH button"
+                    value={formData.textCanvasCenterH}
+                    onChange={(value) =>
+                      handleInputChange("textCanvasCenterH", value)
+                    }
+                    error={getError(actionData, "textCanvasCenterH")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Canvas selected object centerV button"
+                    value={formData.textCanvasCenterV}
+                    onChange={(value) =>
+                      handleInputChange("textCanvasCenterV", value)
+                    }
+                    error={getError(actionData, "textCanvasCenterV")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Canvas selected object clone button"
+                    value={formData.textCanvasClone}
+                    onChange={(value) =>
+                      handleInputChange("textCanvasClone", value)
+                    }
+                    error={getError(actionData, "textCanvasClone")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+              </Grid>
+            </Box>
+          </BoxBackground>
+        </SpacingBackground>
+
+
+        
 
         <SpacingBackground border="1px solid #DDDDDD" margin="3px 0 0 0">
           <BoxBackground>

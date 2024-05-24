@@ -1,4 +1,4 @@
-import { Material, MaterialSimple } from "~/types/ConfigDataType";
+import { Material } from "~/types/ConfigDataType";
 import ConfigurationService from "./Configuration.service";
 import { ConfigurationType } from "~/types/ConfigurationType";
 
@@ -11,13 +11,13 @@ const initialDataSimple = {
     },
     customSize: {
       width: {
-        max: 0,
+        max: 1000,
         min: 0,
         label: "Custom width",
       },
-      active: false,
+      active: true,
       height: {
-        max: 0,
+        max: 1000,
         min: 0,
         label: "Custom height",
       },
@@ -25,17 +25,18 @@ const initialDataSimple = {
   },
   colors: {
     allColors: [],
-    customColors: {},
+    customColors: {
+      color: {
+        label: "Custom colors",
+        active: false,
+        prevImg: "",
+      },
+    },
   },
   shapes: [],
   borders: {
     settings: {
-      colors: [
-        {
-          name: "red",
-          codeHex: "#9A4444",
-        },
-      ],
+      colors: [],
       enableBorderColor: false,
       enableBorderWidth: false,
     },
@@ -43,18 +44,12 @@ const initialDataSimple = {
   },
   textImages: {
     enableText: true,
-    enableImages: true,
+    enableImages: false,
   },
   fixingMethods: [],
   additionalOptions: [],
 };
-
-const initialDataAdvanced = {
-  
-}
-
-
-
+const initialDataAdvanced = {};
 
 export default class MaterialService {
   static async getAll(
@@ -79,9 +74,9 @@ export default class MaterialService {
     sessionId: string,
     material: Material,
   ): Promise<Material[] | null> {
-    if (material.type=="simple") {
+    if (material.type == "simple") {
       material.data = initialDataSimple;
-    } 
+    }
 
     try {
       let configuration: ConfigurationType =

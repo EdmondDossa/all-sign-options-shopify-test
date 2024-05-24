@@ -115,12 +115,26 @@ export default function ConfigSettingsGeneral() {
                   <ProductConfigItem
                     title="Redirect after adding a custom design to the cart"
                     checked={formData.redirectAfterAddingToCart}
-                    setChecked={(value) =>
-                      handleInputChange("redirectAfterAddingToCart", value)
+                    setChecked={(value) =>{
+                      handleInputChange("redirectToCheckOutPage", !value);
+                      handleInputChange("redirectAfterAddingToCart", value)}
                     }
                   >
                     This options allow you to define what to do after adding a
                     design to the cart
+                  </ProductConfigItem>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                  <ProductConfigItem
+                    title="Redirect to checkout page after adding a custom design to the cart"
+                    checked={formData.redirectToCheckOutPage}
+                    setChecked={(value) =>{
+                      handleInputChange("redirectAfterAddingToCart", !value);
+                      handleInputChange("redirectToCheckOutPage", value);
+}
+                    }
+                  >
+                    This options allow you to define what to do after adding a design to the cart
                   </ProductConfigItem>
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
@@ -163,17 +177,7 @@ export default function ConfigSettingsGeneral() {
                     cart button on the customization page
                   </ProductConfigItem>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
-                  <ProductConfigItem
-                    title="Redirect to  checkout page"
-                    checked={formData.redirectToCheckOutPage}
-                    setChecked={(value) =>
-                      handleInputChange("redirectToCheckOutPage", value)
-                    }
-                  >
-                    This options allow to redirect to checkout page
-                  </ProductConfigItem>
-                </Grid.Cell>
+              
                 <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Display recaps on checkout"

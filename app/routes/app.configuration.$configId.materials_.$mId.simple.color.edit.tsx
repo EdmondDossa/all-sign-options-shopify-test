@@ -62,13 +62,13 @@ export default function MaterialColorCreate() {
               isDefault: false,
               name: "",
               textColor: {
-                active: true,
+                active: false,
                 sameForBorder: false,
                 codeHex: "#000000",
                 name: "",
               },
               pattern: {
-                active: true,
+                active: false,
                 codeHex: "#000000",
                 url: "",
               },
@@ -90,18 +90,19 @@ export default function MaterialColorCreate() {
         isDefault: false,
         name: "",
         textColor: {
-          active: true,
+          active: false,
           sameForBorder: false,
           codeHex: "#000000",
           name: "",
         },
         pattern: {
-          active: true,
+          active: false,
           codeHex: "#000000",
           url: "",
         },
         prevImg: "",
       });
+      setOpenIndex(new Set([...openIndex, formData.colors.length - 1]));
     }
 
     setFormData({ ...formData });
@@ -287,6 +288,7 @@ export default function MaterialColorCreate() {
                               />
                             </InlineStack>
                           </Grid.Cell>
+                         {color.textColor.active &&     <>
                           <Grid.Cell
                             columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
                           >
@@ -321,8 +323,10 @@ export default function MaterialColorCreate() {
                                 setFormData({ ...formData });
                               }}
                             />
-                          </Grid.Cell>
-
+                              </Grid.Cell>
+                              
+                              </>
+}
                           <Grid.Cell
                             columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
                           >
