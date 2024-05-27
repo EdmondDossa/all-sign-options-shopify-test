@@ -113,7 +113,7 @@ export default function ConfigSettingsGeneral() {
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
                   <ProductConfigItem
-                    title="Redirect after adding a custom design to the cart"
+                    title="Redirect to cart after adding a custom design to the cart"
                     checked={formData.redirectAfterAddingToCart}
                     setChecked={(value) =>{
                       handleInputChange("redirectToCheckOutPage", !value);
@@ -135,6 +135,17 @@ export default function ConfigSettingsGeneral() {
                     }
                   >
                     This options allow you to define what to do after adding a design to the cart
+                  </ProductConfigItem>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                  <ProductConfigItem
+                    title="Display or not recaps on checkout page"
+                    checked={formData.displayRecapsOnCheckout}
+                    setChecked={(value) =>
+                      handleInputChange("displayRecapsOnCheckout", value)
+                    }
+                  >
+                    This option allow to display recaps on checkout
                   </ProductConfigItem>
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
@@ -167,7 +178,7 @@ export default function ConfigSettingsGeneral() {
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
                   <ProductConfigItem
-                    title="Hide to cart buttons for custom product on shop"
+                    title="Hide add to cart buttons for custom product on shop"
                     checked={formData.hideAddToCartButtonOnShopPage}
                     setChecked={(value) =>
                       handleInputChange("hideAddToCartButtonOnShopPage", value)
@@ -178,17 +189,7 @@ export default function ConfigSettingsGeneral() {
                   </ProductConfigItem>
                 </Grid.Cell>
               
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
-                  <ProductConfigItem
-                    title="Display recaps on checkout"
-                    checked={formData.displayRecapsOnCheckout}
-                    setChecked={(value) =>
-                      handleInputChange("displayRecapsOnCheckout", value)
-                    }
-                  >
-                    This option allow to display recaps on checkout
-                  </ProductConfigItem>
-                </Grid.Cell>
+               
               </Grid>
             </Box>
           </BoxBackground>
@@ -238,12 +239,12 @@ export const ProductConfigItem = ({
                 <Text as="strong">{title}</Text>
               </Box>
               <InlineStack wrap={false} blockAlign="center" gap="100">
-                <Text as="span"> Yes</Text>
+                <Text as="span"> No</Text>
                 <ReactSwitchCustom
                   checked={checked}
                   setChecked={handleChangeCheck}
                 />
-                <Text as="span"> No</Text>
+                <Text as="span"> Yes</Text>
               </InlineStack>
             </InlineStack>
           </Box>

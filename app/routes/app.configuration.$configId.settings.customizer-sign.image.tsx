@@ -70,6 +70,8 @@ export default function ConfigSettingsGeneral() {
     { label: "PNG", value: "png" },
     { label: "JPEG", value: "jpeg" },
     { label: "SVG", value: "svg" },
+    { label: "WEBP", value: "webp" },
+    { label: "GIF", value: "gif" },
   ];
 
   const submit = useSubmit();

@@ -83,7 +83,7 @@ export default function ConfigSettingsGeneral() {
 
   const [formData, setFormData] = useState<any>(
     settingData || {
-         measurementUnit: measurementUnitOptions[0].value,
+         measurementUnit: "mm",
          showHideMeasurements: showMeasurementOptions[0].value,
          decimalFormatMeasurements: measurementDecimalFormatOptions[0].value,
          desktopColumnOrder: positionOptions[0].value,
