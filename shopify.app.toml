@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://gathered-somebody-unlike-cisco.trycloudflare.com"
+application_url = "https://scout-rest-pills-maintained.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://gathered-somebody-unlike-cisco.trycloudflare.com/auth/callback",
-  "https://gathered-somebody-unlike-cisco.trycloudflare.com/auth/shopify/callback",
-  "https://gathered-somebody-unlike-cisco.trycloudflare.com/api/auth/callback"
+  "https://scout-rest-pills-maintained.trycloudflare.com/auth/callback",
+  "https://scout-rest-pills-maintained.trycloudflare.com/auth/shopify/callback",
+  "https://scout-rest-pills-maintained.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

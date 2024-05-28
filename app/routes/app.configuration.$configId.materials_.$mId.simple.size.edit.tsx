@@ -62,13 +62,13 @@ export default function MaterialSizeIndex() {
     }));
   };
 
-  const handleTextNumber = (value: string) => setFormData({...formData, textNumber:parseInt(value)})
+  const handleTextNumber = (value: string,onBlur=false) => setFormData({...formData, textNumber:onBlur? parseInt(`${formData.textNumber || "0"}`) : value})
 
-  const handleMaxTextChar = (value: string) => setFormData({...formData, maxTextChar:parseInt(value)})
-  const handleStartPriceAtChar = (value: string) => setFormData({...formData, startPriceAtChar:parseInt(value)})
+  const handleMaxTextChar = (value: string,onBlur=false) => setFormData({...formData, maxTextChar:onBlur? parseInt(`${formData.maxTextChar || "0"}`) : value})
+  const handleStartPriceAtChar = (value: string,onBlur=false) => setFormData({...formData, startPriceAtChar: onBlur? parseInt(`${formData.startPriceAtChar || "0"}`) : value})
 
-  const handleCharPrice = (value: string) => setFormData({ ...formData, charPrice: parseFloat(value) })
-  const handleBasePrice = (value: string) => setFormData({ ...formData, basePrice: parseFloat(value) })
+  const handleCharPrice = (value: string,onBlur=false) => setFormData({ ...formData, charPrice:onBlur? parseFloat(`${formData.charPrice || "0"}`) : value })
+  const handleBasePrice = (value: string,onBlur=false) => setFormData({ ...formData, basePrice:  onBlur? parseFloat(`${formData.basePrice || "0"}`) : value })
   
 
   const handleSubmit = (e: any) => {
@@ -103,7 +103,8 @@ export default function MaterialSizeIndex() {
                         label="Width"
                         type="number"
                         value={`${formData.width}`}
-                        onChange={(value) => handleInputChange("width", parseInt(value))}
+                        onChange={(value) => handleInputChange("width", value)}
+                        onBlur={(value) => handleInputChange("width", parseFloat(`${formData.width}`))}
                         autoComplete="on"
                         error={getError(actionData, "width")}
                       />
@@ -114,7 +115,8 @@ export default function MaterialSizeIndex() {
                         label="Height"
                         type="number"
                         value={`${formData.height}`}
-                        onChange={(value) => handleInputChange("height", parseInt(value))}
+                        onChange={(value) => handleInputChange("height", value)}
+                        onBlur={(value) => handleInputChange("height", parseFloat(`${formData.height}`))}
                         autoComplete="on"
                         error={getError(actionData, "height")}
                 />
@@ -124,7 +126,8 @@ export default function MaterialSizeIndex() {
                     label="Text number"
                     type="number"
                     value={`${formData.textNumber}`}
-                    onChange={handleTextNumber}
+                    onChange={value=>handleTextNumber(value)}
+                    onBlur={value=>handleTextNumber("", true)}
                     autoComplete="on"
                     error={getError(actionData, "textNumber")}
                   />
@@ -134,7 +137,8 @@ export default function MaterialSizeIndex() {
                     label="Max text char"
                     type="number"
                     value={`${formData.maxTextChar}`}
-                    onChange={handleMaxTextChar}
+                    onChange={value=>handleMaxTextChar(value)}
+                    onBlur={value=>handleMaxTextChar("",true)}
                     helpText="Max number of characters in text, for without limit set to -1"
                     autoComplete="on"
                     error={getError(actionData, "maxTextChar")}
@@ -146,7 +150,8 @@ export default function MaterialSizeIndex() {
                     label="Base Price"
                     type="number"
                     value={`${formData.basePrice}`}
-                    onChange={handleBasePrice}
+                    onChange={value=>handleBasePrice(value)}
+                    onBlur={value=>handleBasePrice("",true)}
                     autoComplete="on"
                     error={getError(actionData, "basePrice")}
                   />
@@ -157,7 +162,8 @@ export default function MaterialSizeIndex() {
                     label="Number at start pricing char"
                     type="number"
                     value={`${formData.startPriceAtChar}`}
-                    onChange={handleStartPriceAtChar}
+                    onChange={(value) => handleStartPriceAtChar(value)}
+                    onBlur={(value) => handleStartPriceAtChar("", true)}
                     autoComplete="on"
                     error={getError(actionData, "startPriceAtChar")}
                   />
@@ -168,7 +174,8 @@ export default function MaterialSizeIndex() {
                     label="Char Price"
                     type="number"
                     value={`${formData.charPrice}`}
-                    onChange={handleCharPrice}
+                    onChange={value=>handleCharPrice(value)}
+                    onBlur={value=>handleCharPrice("",true)}
                     autoComplete="on"
                     error={getError(actionData, "charPrice")}
                   />

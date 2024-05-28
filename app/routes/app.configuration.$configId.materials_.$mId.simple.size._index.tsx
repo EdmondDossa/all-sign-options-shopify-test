@@ -349,7 +349,12 @@ export default function MaterialSizeIndex() {
                         type="number"
                         value={`${formData.customSize.width.min}`}
                         onChange={(value) => {
-                          formData.customSize.width.min = parseInt(value);
+                          formData.customSize.width.min =value;
+                          handleInputChange("customSize", formData.customSize);
+                        }}
+
+                        onBlur={(value) => {
+                          formData.customSize.width.min = parseFloat(`${formData.customSize.width.min}`);
                           handleInputChange("customSize", formData.customSize);
                         }}
                         autoComplete="on"
@@ -361,7 +366,12 @@ export default function MaterialSizeIndex() {
                         type="number"
                         value={`${formData.customSize.width.max}`}
                         onChange={(value) => {
-                          formData.customSize.width.max = parseInt(value);
+                          formData.customSize.width.max = value;
+                          handleInputChange("customSize", formData.customSize);
+                        }}
+
+                        onBlur={(value) => {
+                          formData.customSize.width.max = parseFloat(`${formData.customSize.width.max}`);
                           handleInputChange("customSize", formData.customSize);
                         }}
                         autoComplete="on"
@@ -388,7 +398,12 @@ export default function MaterialSizeIndex() {
                         type="number"
                         value={`${formData.customSize.height.min}`}
                         onChange={(value) => {
-                          formData.customSize.height.min = parseInt(value);
+                          formData.customSize.height.min = value;
+                          handleInputChange("customSize", formData.customSize);
+                        }}
+
+                        onBlur={(value) => {
+                          formData.customSize.height.min = parseFloat(`${formData.customSize.height.min}`);
                           handleInputChange("customSize", formData.customSize);
                         }}
                         autoComplete="on"
@@ -400,7 +415,12 @@ export default function MaterialSizeIndex() {
                         type="number"
                         value={`${formData.customSize.height.max}`}
                         onChange={(value) => {
-                          formData.customSize.height.max = parseInt(value);
+                          formData.customSize.height.max = value;
+                          handleInputChange("customSize", formData.customSize);
+                        }}
+
+                        onBlur={(value) => {
+                          formData.customSize.height.max = parseFloat(`${formData.customSize.height.max}`);
                           handleInputChange("customSize", formData.customSize);
                         }}
                         autoComplete="on"

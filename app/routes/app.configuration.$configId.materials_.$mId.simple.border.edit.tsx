@@ -94,8 +94,8 @@ export default function MaterialBorderCreate() {
 
   const HandleManageBorderId = (value: string) =>
     setFormData({ ...formData, manageBorderId: parseInt(value) });
-  const handleAdditionalPrice = (value: string) =>
-    setFormData({ ...formData, additionalPrice: parseFloat(value) });
+  const handleAdditionalPrice = (value: string,onBlur=false) =>
+    setFormData({ ...formData, additionalPrice:onBlur? parseFloat(`${formData.additionalPrice || "0"}`) : value });
   const handleExcludeSizes = (value: any[]) =>
     setFormData({
       ...formData,
@@ -147,7 +147,9 @@ export default function MaterialBorderCreate() {
                     label="Additional Price"
                     type="number"
                     value={`${formData.additionalPrice}`}
-                    onChange={handleAdditionalPrice}
+                    onChange={(value) => handleAdditionalPrice(value)}
+                    onBlur={(value)=>handleAdditionalPrice("",true)}
+                    
                     autoComplete="on"
                     error={getError(actionData, "additionalPrice")}
                   />

@@ -155,7 +155,13 @@ export default function MaterialFixingMethod() {
                           type="number"
                           value={`${currConfigShape.additionalPrice}`}
                           onChange={(value) => {
-                            currConfigShape.additionalPrice = parseFloat(value);
+                            currConfigShape.additionalPrice = value;
+                            formData.configShapes[index] = currConfigShape;
+                            setFormData({ ...formData });
+                          }}
+
+                          onBlur={(value) => {
+                            currConfigShape.additionalPrice = parseFloat(`${currConfigShape.additionalPrice}`);
                             formData.configShapes[index] = currConfigShape;
                             setFormData({ ...formData });
                           }}

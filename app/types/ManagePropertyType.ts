@@ -28,7 +28,7 @@ export interface ClipartType{
     id?: number;
     title: string;
     url: string;
-    additionalPrice: number;
+    additionalPrice: number|string;
 }
 
 

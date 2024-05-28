@@ -67,8 +67,7 @@ export default function ClipartCreate() {
   const [apiClipartGroup, setApiClipartGroup] = useState("animals");
   const [selectCliparts, setSelectCliparts] = useState(new Set<string>([]));
   const [saveSelectedCliparts, setSaveSelectedCliparts] = useState<boolean>(false);
-   // animals arrows decorationFestivities emojisFlags foodsDrinks healthcare householdTools mostPopular others peoples 
-  // plantsNature prohibitionsWarnings shapes sportActivities symbolsMarkings vehiclesTraffic
+  
   const apiClipartGroups = [
     {
       label: "Animals",
@@ -307,7 +306,14 @@ export default function ClipartCreate() {
                         type="number"
                         value={`${clipartItem.additionalPrice}`}
                         onChange={(value) => {
-                          clipartItem.additionalPrice = parseFloat(value);
+                          clipartItem.additionalPrice = value;
+                          formData.cliparts[index] = clipartItem;
+                          setFormData({ ...formData });
+                        }}
+                              
+                              
+                        onBlur={(value) => {
+                          clipartItem.additionalPrice = parseFloat(`${clipartItem.additionalPrice}`);
                           formData.cliparts[index] = clipartItem;
                           setFormData({ ...formData });
                         }}

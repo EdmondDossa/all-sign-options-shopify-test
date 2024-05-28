@@ -335,8 +335,12 @@ export default function MaterialColorCreate() {
                               type="number"
                               value={`${color.additionalPrice}`}
                               onChange={(value) => {
-                                color.additionalPrice = Number.parseFloat(value);
-                                formData.colors[index] = color;
+                                formData.colors[index].additionalPrice = value;
+                                setFormData({ ...formData });
+                              }}
+                              onBlur={(value) => {
+                             
+                                formData.colors[index].additionalPrice = Number.parseFloat(`${color.additionalPrice}`);
                                 setFormData({ ...formData });
                               }}
                               autoComplete="off"

@@ -68,8 +68,8 @@ export default function MaterialAdditionalOptionCreate() {
       setFormData({ ...formData, image: value });
       const handlePopImg = (value: string) =>
       setFormData({ ...formData, popImg: value });
-  const handleAdditionalPrice= (value: string) =>
-    setFormData({ ...formData, additionalPrice: parseFloat(value) });
+  const handleAdditionalPrice= (value: string, onBlur = false) =>
+    setFormData({ ...formData, additionalPrice: onBlur ?  parseFloat(`${formData.additionalPrice}`):value });
 
 
   const handleSubmit = (e: any) => {
@@ -120,7 +120,7 @@ export default function MaterialAdditionalOptionCreate() {
                     path={formData.icon} handlePath={handleIcon} />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <FileInput error={getError(actionData, "popImg")} title="Example"
+              <FileInput error={getError(actionData, "popImg")} title="Example" buttonTitle="upload example"
                     path={formData.popImg} handlePath={handlePopImg} />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
@@ -142,7 +142,8 @@ export default function MaterialAdditionalOptionCreate() {
                   type="number"
                 value={`${formData.additionalPrice}`}
                 autoComplete="off"
-              onChange={handleAdditionalPrice}
+              onChange={value=>handleAdditionalPrice(value)}
+              onBlur={value=>handleAdditionalPrice("", true)}
               error={getError(actionData, "additionalPrice")}
               />
               </Grid.Cell>

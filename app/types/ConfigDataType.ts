@@ -5,13 +5,13 @@ import { number } from 'zod';
     active: boolean;
     width: {
       label: string;
-      min: number;
-      max: number;
+      min: number|string;
+      max: number|string;
     };
     height: {
       label: string;
-      min: number;
-      max: number;
+      min: number|string;
+      max: number|string;
     };
  }
 
@@ -28,19 +28,19 @@ import { number } from 'zod';
   
 export interface ConfigSize {
     label: string;
-    width:number,
-    height:number,
-    textNumber: number; 
-    maxTextChar: number;
-    charPrice: number;
-    basePrice: number;
-    startPriceAtChar: number;
+  width: number | string;
+  height: number | string;
+    textNumber: number|string; 
+    maxTextChar: number|string;
+    charPrice: number|string;
+    basePrice: number|string;
+    startPriceAtChar: number|string;
     isDefault?: boolean;
   }
   
  export interface ConfigBorder {
     manageBorderId: number;
-    additionalPrice: number;
+    additionalPrice: number|string;
     excludeSizes: number[];
     excludeShapes: number[];
     isDefault?: boolean;
@@ -56,7 +56,7 @@ export interface ConfigSize {
   
  export interface ConfigShape {
     shapeId: number;
-   additionalPrice: number;
+   additionalPrice: number|string;
    isDefault?: boolean;
   }
   
@@ -75,7 +75,7 @@ export interface ConfigSize {
   
 export interface ConfigColor {
   name: string;
-    additionalPrice: number;
+    additionalPrice: number|string;
    isDefault?: boolean;
     textColor:{
           active:boolean,
@@ -105,7 +105,7 @@ export interface ConfigColor {
    image: string;
    popImg: string;
    excludeColors: number[];
-   additionalPrice: number;
+   additionalPrice: number|string;
    isDefault?: boolean;
 }
   
