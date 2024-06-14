@@ -3,13 +3,16 @@ import { z } from 'zod';
 import { authenticate } from './../shopify.server';
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { parseWithZod } from '@conform-to/zod';
+import { jsonTransform } from '~/utils/transfomerZod';
+import { uploadBase64 } from '~/utils/uploadBase64';
+import  Admzip from 'adm-zip';
 
 
 
 const formSchema = z.object({
     productId: z.string({ required_error: 'Size is required' }),
     price: z.number({ required_error: 'Text number is required' }),
-    option: z.string({ required_error: 'Max Text char is required' }), 
+    option: z.string({ required_error: 'Max Text char is required' }).transform(jsonTransform), 
   });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -39,17 +42,47 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const data = submission.value as {
         productId: string;
         price: number;
-        option: string;
+        option: any;
     };
 
+    let optionName =  `${data.option.recaps.material?.label}: ${data.option.recaps.material?.value}, `
+    let size = data.option.recaps.sign?.size
+    optionName += `${size?.value?.width?.label}: ${size?.value?.width.value}, `
+    optionName += `${size?.value?.height?.label}: ${size?.value?.height.value}, `
+    optionName += `${size?.value?.thickness?.label}: ${size?.value?.thickness.value}, `
+    if (data.option.recaps.sign.color.value?.face1?.name) {
+      optionName += `${data.option.recaps.sign.color?.label}: ${data.option.recaps.sign.color.value?.face1?.name}, `
+    }
+    if (data.option.recaps.sign.border?.value?.face1?.type) {
+      optionName += `${data.option.recaps.sign.border?.label}: ${data.option.recaps.sign.border?.value?.face1?.type}|`
+      optionName += `${data.option.recaps.sign.border.value?.face1?.color||""},`
+    }
+    optionName += `${data.option.recaps.sign.shape?.label}: ${data.option.recaps.sign.shape?.value||''}, `
+    optionName += `${data.option.recaps.sign.fixingMethod?.label}: ${data.option.recaps.sign.fixingMethod?.value||''}`
+
+    let designImage = "";
+    if(data?.option?.recaps?.faces?.face1){
+      designImage = uploadBase64(data.option.recaps.designImages.face1[0].format, data.option.recaps.designImages.face1[0].url)
+    }else{
+      designImage = uploadBase64(data.option.recaps.designImages[0].format, data.option.recaps.designImages[0].url)
+    }
+
+
+
+
+
+
+
+    
 
 
     const variant = await ShopifyProductService.createVariant(
         admin,
         data.productId,
-        data.option,
+        optionName,
         data.price,
-        ""
+        `${process.env.SHOPIFY_APP_URL}/${designImage}`,
+        data.option.recaps
     )
     
     return json(variant);

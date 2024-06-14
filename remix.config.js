@@ -18,4 +18,23 @@ module.exports = {
   dev: { port: process.env.HMR_SERVER_PORT || 8002 },
   future: {},
   serverDependenciesToBundle: [/^remix-utils.*/, "remix-params-helper"],
+  browserNodeBuiltinsPolyfill: {
+    modules: {
+      path: true,
+      zlib: true ,
+      fs: true ,
+      crypto: true,
+      tls: true,
+      child_process: true,
+      os: true,
+      http: true,
+      url: true,
+      events: true,
+      https: true,
+      stream: true,
+      net: true,
+      dns: true,
+      util: true 
+    }
+  }
 };

@@ -58,67 +58,88 @@ async function aso_confiurator_dataFunction(){
   const   currentConfig = await getAsoConfiguration(asoConfigurationId);
   const managesData = await getAsoManagesData();
   return ( {
-
-  skin: "couffo",
-      currentConfig: currentConfig,
-      managesData: managesData
-    })
+    skin: currentConfig['data']['settings']["themeColors"]["skin"],
+    productID: asoProductId,
+    currentConfig: currentConfig,
+    managesData: managesData,
+    currency_pos: asoCurrency_pos ,
+     thousandSep:asoThousandSep,
+    decimalSep: asoDecimalSep,
+    decimals: "0",
+    nbDecimals: "2",
+    currencySymbol: asoCurrency,
+    variations: [],
+    fixing_methods_url:
+      "/apps/aso-proxy/assets/images/fixing-methodes",
+    frontend_nonce: "841fba2b18"
+  })
 };
 
 
 
-function asoAddproductToCart(variantId, quantity=1) { 
+async function asoAddproductToCart(variantId, quantity=1) { 
   let formData = {
     'items': [{
      'id': variantId,
      'quantity': quantity
      }]
    };
-   fetch(window.Shopify.routes.root + 'cart/add.js', {
-     method: 'POST',
-     headers: {
-       'Content-Type': 'application/json'
-     },
-     body: JSON.stringify(formData)
-   })
-   .then(response => {
-     return response.json();
-   })
-   .catch((error) => {
-     console.error('Error:', error);
-   });
+   try {
+      let response =  await fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+
+      if (response.json()) {
+        return true
+      }
+      
+      
+  
+   } catch (error) {
+      console.log("Error adding product  to cart :", error)
+   }
+ 
+   return false;
 }
 
 
 
-function asoCreateVariantAndAddToCart(price, option) {
+async function asoCreateVariantAndAddToCart(price, option) {
+  try {
+    const data = {
+      productId: `gid://shopify/Product/${asoProductId}`,
+      price: parseFloat(
+        price + parseFloat(asoRegularPrice)
+      ),
+      option: JSON.stringify(option)
+    };
+    
+    let response = await fetch('/apps/aso-proxy/api/add-cart-variant', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
   
-  const data = {
-    productId: `gid://shopify/Product/${asoProductId}`,
-    price: price,
-    option: option
-  };
+    let responseData = await response.json();
   
-  fetch('/apps/aso-proxy/api/add-cart-variant', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+    console.log('Success:', responseData);   
+
+    let isAddedToCart = await asoAddproductToCart(parseInt(responseData.variantId),1);
+    if (isAddedToCart) {
+      setTimeout(()=>{
+        document.location = asoCartUrl; 
+      },1)
+       
     }
-    return response.json();
-  })
-  .then(data => {
-    console.log('Success:', data);
-      asoAddproductToCart(parseInt(data.variantId),1)
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+  } catch (error) {
+    console.error('Error: ', error);
+  }
 }
 
 
@@ -175,6 +196,31 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
 });
+
+async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
+
+    console.log("data cart ", cart_data);
+    await asoCreateVariantAndAddToCart( cart_data.recaps.custom_price, cart_data)
+};
+
+
+function setScrollColor_shopify(color) {
+
+}
+
+function formatPrice_shopify(price) {
+  let formattedPrice = parseFloat(
+    price + parseFloat(asoRegularPrice)
+  ).toFixed(2);
+ return `${asoPriceFormat}`.replace("{{amount}}", formattedPrice);
+}
+
+
+ function getAsoUrl_shopify(){
+    return "/apps/aso-proxy";
+ }
+
+
 
 
 

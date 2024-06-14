@@ -54,6 +54,10 @@ const formSchema = z.object({
         backgroundColorHoverButtonRestartAll: z.string().nullish().transform(stringTransform),
         textColorButtonRestartAll: z.string().nullish().transform(stringTransform),
         backgroundColorButtonRestartAll: z.string().nullish().transform(stringTransform),
+        textColorHoverButtonFinish: z.string().nullish().transform(stringTransform),
+        backgroundColorHoverButtonFinish: z.string().nullish().transform(stringTransform),
+        textColorButtonFinish: z.string().nullish().transform(stringTransform),
+        backgroundColorButtonFinish: z.string().nullish().transform(stringTransform)
       }),
     ),
 });
@@ -74,8 +78,8 @@ export default function ConfigSettingsThemeColor() {
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
   const [formData, setFormData] = useState<any>(
-    settingData || {
-      skin: "default",
+   {
+      skin: settingData?.skin || "default",
       colors: {
         canvasBackgroundColor:"#ffffff",
         canvasBorderColor:"#ffffff",
@@ -101,9 +105,15 @@ export default function ConfigSettingsThemeColor() {
         backgroundColorHoverButtonRestartAll: "#000000",
         textColorButtonRestartAll: "#000000",
         backgroundColorButtonRestartAll: "#000000",
+        textColorHoverButtonFinish: "#000000",
+        backgroundColorHoverButtonFinish: "#000000",
+        textColorButtonFinish: "#000000",
+        backgroundColorButtonFinish: "#000000",
+        ...settingData?.colors || {}
       },
     },
   );
+
 
   const handleInputChange = (inputName: string, value: any) => {
     setFormData((prevData: any) => ({
@@ -314,7 +324,7 @@ export default function ConfigSettingsThemeColor() {
                     label="Background color text Button Save"
                     color={formData.colors.backgroundColorTextButtonSave}
                     setColor={(value: any) =>
-                      handleColorChange("textColorContentHeader", value)
+                      handleColorChange("backgroundColorTextButtonSave", value)
                     }
                   />
                 </Grid.Cell>
@@ -477,6 +487,63 @@ export default function ConfigSettingsThemeColor() {
                     setColor={(value: any) =>
                       handleColorChange(
                         "backgroundColorHoverButtonRestartAll",
+                        value,
+                      )
+                    }
+                  />
+                </Grid.Cell>
+              </Grid>
+            </Box>
+          </BoxBackground>
+        </SpacingBackground>
+
+
+        <SpacingBackground border="1px solid #DDDDDD" margin="3px 0 0 0">
+          <BoxBackground>
+            <Box paddingInline="300" paddingBlock="1000">
+              <Grid gap={{ lg: "20px" }}>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 12, xl: 12 }}>
+                  <Text as="strong" fontWeight="bold" variant="bodyLg">
+                    Button Finish
+                  </Text>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextColorField
+                    label="Color Text Button Finish"
+                    color={formData.colors.textColorButtonFinish}
+                    setColor={(value: any) =>
+                      handleColorChange("textColorButtonFinish", value)
+                    }
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextColorField
+                    label="Background  Button  Finish"
+                    color={formData.colors.backgroundColorButtonFinish}
+                    setColor={(value: any) =>
+                      handleColorChange(
+                        "backgroundColorButtonFinish",
+                        value,
+                      )
+                    }
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextColorField
+                    label="color   text hover  Button  Finish "
+                    color={formData.colors.textColorHoverButtonFinish}
+                    setColor={(value: any) =>
+                      handleColorChange("textColorHoverButtonFinish", value)
+                    }
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextColorField
+                    label="Background  color hover  Button  Finish"
+                    color={formData.colors.backgroundColorHoverButtonFinish}
+                    setColor={(value: any) =>
+                      handleColorChange(
+                        "backgroundColorHoverButtonFinish",
                         value,
                       )
                     }

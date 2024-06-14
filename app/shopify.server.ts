@@ -36,12 +36,21 @@ const shopify = shopifyApp({
     SHOP_REDACT: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
+    },
+    ORDERS_CREATE: {
+      deliveryMethod: DeliveryMethod.Http,
+      callbackUrl: "/webhooks",
+      callback: async (topic,shop, body, webwookId)=>{
+        console.log("========= order creatd ========")
+        const  payload = JSON.parse(body)
+        console.log('==== playlod',payload);
+        console.log("========= order creatd end========")
+      }
     }
   },
   hooks: {
     afterAuth: async ({ session }) => {
       shopify.registerWebhooks({ session });
-      
     },
   },
   future: {

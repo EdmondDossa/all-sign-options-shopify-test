@@ -1,5 +1,29 @@
-const shopifyProxyURL = `/api/`;
+var asoConfigurationId = `${parseInt(window.name.split('_')[1])}`;
+var asoProductId = "0";
+var asoCurrency = "";
+var  asoPriceFormat ="{{amount}}";
+var asoRegularPrice ="0";
+var asoCurrency_pos= "right";
+var asoThousandSep= " ";
+var asoDecimalSep= ".";
 
+
+function replaceUploadsPath(data) {
+  function replaceInObject(obj) {
+    for (const key in obj) {
+      if (typeof obj[key] === "string") {
+        obj[key] = obj[key].replace(/^.*?\/apps\/aso-proxy/, "");
+      } else if (typeof obj[key] === "object") {
+        replaceInObject(obj[key]);
+      }
+    }
+  }
+
+  replaceInObject(data);
+  return data;
+}
+
+const shopifyProxyURL = `/api/`;
 async function getAsoConfiguration(configurationId) {
     
   
@@ -53,17 +77,27 @@ async function getAsoManagesData() {
 
 
 
-// console.log("config id and  product id  agin", asoConfigurationId, asoProductId);
+console.log("config id and  product id  agin", asoConfigurationId, asoProductId);
 
 async function aso_confiurator_dataFunction(){
-  const   currentConfig = await getAsoConfiguration(parseInt(window.name.split('_')[1]));
+  const   currentConfig = await getAsoConfiguration(asoConfigurationId);
   const managesData = await getAsoManagesData();
   return ( {
-
-  skin: "couffo",
-      currentConfig: currentConfig,
-      managesData: managesData
-    })
+    skin: currentConfig['data']['settings']["themeColors"]["skin"],
+    productID: asoProductId,
+    currentConfig: replaceUploadsPath(currentConfig),
+    managesData: replaceUploadsPath(managesData),
+    currency_pos: asoCurrency_pos ,
+     thousandSep:asoThousandSep,
+    decimalSep: asoDecimalSep,
+    decimals: "0",
+    nbDecimals: "2",
+    currencySymbol: asoCurrency,
+    variations: [],
+    fixing_methods_url:
+      "/assets/images/fixing-methodes",
+    frontend_nonce: "841fba2b18"
+  })
 };
 
 
@@ -95,7 +129,7 @@ function asoAddproductToCart(variantId, quantity=1) {
 function asoCreateVariantAndAddToCart(price, option) {
   
   const data = {
-    productId: `gid://shopify/Product/${56}`,
+    productId: `gid://shopify/Product/${asoProductId}`,
     price: price,
     option: option
   };
@@ -140,9 +174,18 @@ function asoGetFontFormat(url) {
   }
 }
 
-//  to add  font to  page  ffffffff
+
+function addStylesToBody(cssRules) {
+  var styleElement = document.createElement("style");
+  styleElement.textContent = cssRules;
+  document.body.appendChild(styleElement);
+}
+
+//  to add  font and custom css to  page  ffffffff
 document.addEventListener('DOMContentLoaded', async function () {
-  const managesData = await getAsoManagesData();
+  let managesData = await getAsoManagesData() ;
+  managesData =  replaceUploadsPath(managesData) ;
+  console.log(" log  data manage ", managesData)
   managesData.fonts.forEach(font => {
     let style = document.createElement('style');
     style.textContent = `
@@ -156,13 +199,46 @@ document.addEventListener('DOMContentLoaded', async function () {
       `;
     document.body.appendChild(style);
   });
+
+  const  currentConfig = await getAsoConfiguration(asoConfigurationId);
+
+  try {
+    console.log("Custom CSS", currentConfig)
+    currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
+    console.log('Custom CSS added successfully');
+  } catch (error) {
+    console.error('Error adding custom CSS:', error);
+  }
+
 });
 
+async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
+  // console.log("ajax_url", cart_data, redirectToCheckOut); 
+};
+
+
+function setScrollColor_shopify(color) {
+
+}
+
+function formatPrice_shopify(price) {
+  let formattedPrice = parseFloat(
+    price + parseFloat(asoRegularPrice)
+  ).toFixed(2);
+ return `${asoPriceFormat}`.replace("{{amount}}", formattedPrice);
+}
+
+
+ function getAsoUrl_shopify(){
+    return "";
+ }
 
 
 
 
-// end
+
+
+
 
 
 

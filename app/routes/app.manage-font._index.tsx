@@ -20,11 +20,12 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 
 
+
 export const loader = async ({request}:LoaderFunctionArgs) => { 
   const { session, admin } = await authenticate.admin(request);
 
   const fonts = await FontService.getFonts(session.id);
-
+ 
   return  json({fonts})
 }
 
@@ -55,7 +56,6 @@ export default function ManageFontIndex() {
   let { fonts } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
  
-
   const navigate = useNavigate();
   const onHandleCreate = () => {
     navigate("edit");

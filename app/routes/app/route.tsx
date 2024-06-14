@@ -5,6 +5,7 @@ import polarisStyles from "@shopify/polaris/build/esm/styles.css";
 import { boundary } from "@shopify/shopify-app-remix/server";
 import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { authenticate } from "../../shopify.server";
+import shopify from "../../shopify.server"
 import Sidebar from "~/components/layouts/Sidebar";
 import appStyle from './app.css';
 import { useGlobalPendingState } from "remix-utils/use-global-navigation-state";
@@ -18,8 +19,10 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session }: any = await authenticate.admin(request);
+  
   SettingService.addSetting(session.id, session.shop);
- 
+  
+  console.log("webhook register",shopify.registerWebhooks({ session }));
 
   return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
 };

@@ -58,6 +58,10 @@ const formSchema = z.object({
   customSize: z.string().nullish().transform(stringTransform),
   customSizeButtonDone: z.string().nullish().transform(stringTransform),
   thickness: z.string().nullish().transform(stringTransform),
+  textBeforePrice: z.string().nullish().transform(stringTransform),
+  textAfterPrice: z.string().nullish().transform(stringTransform),
+  textAddToCart: z.string().nullish().transform(stringTransform),
+      
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -116,6 +120,8 @@ export default function ConfigSettingsGeneral() {
       customSize: "Custom Size",
       customSizeButtonDone: "Done",
       thickness: "Thickness",
+
+      
       ...settingData || {}
     },
   );
@@ -198,6 +204,30 @@ export default function ConfigSettingsGeneral() {
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
                   <TextField
                     size="medium"
+                    label="Text Before Price"
+                    value={formData.textBeforePrice}
+                    onChange={(value) =>
+                      handleInputChange("textBeforePrice", value)
+                    }
+                    error={getError(actionData, "textBeforePrice")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text After Price"
+                    value={formData.textAfterPrice}
+                    onChange={(value) =>
+                      handleInputChange("textAfterPrice", value)
+                    }
+                    error={getError(actionData, "textAfterPrice")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
                     label="Text button finish"
                     value={formData.textButtonFinish}
                     onChange={(value) =>
@@ -206,6 +236,20 @@ export default function ConfigSettingsGeneral() {
                     error={getError(actionData, "textButtonFinish")}
                     autoComplete="on"
                   />
+                  
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text button Add to cart"
+                    value={formData.textAddToCart}
+                    onChange={(value) =>
+                      handleInputChange("textAddToCart", value)
+                    }
+                    error={getError(actionData, "textAddToCart")}
+                    autoComplete="on"
+                  />
+                  
                 </Grid.Cell>
               </Grid>
             </Box>

@@ -151,10 +151,14 @@ export class ShopifyProductService {
   }
 
 
+   
 
-
-   static async createVariant(admin: any, id: string, name:string, price:number, image:string  ) {
+   static async createVariant(admin: any, id: string, name:string, price:number, image:string, recaps?:any   ) {
     try {
+
+    
+    
+      const mediaID = await  this.CreateMediaProdutInput(admin, id, image)
       const response = await admin.graphql(
         `#graphql
                 mutation productVariantCreate($input: ProductVariantInput!) {
@@ -177,24 +181,30 @@ export class ShopifyProductService {
           variables: {
             input: {
               "inventoryPolicy": "CONTINUE",
-              "mediaSrc": [
-                image
-              ],
-            
+              "mediaId": mediaID,
               "options": [
-                `${name} f ${Math.random().toString(36).slice(-1)}`
+                `${name} ${Math.random().toString(36).slice(-1)}`
               ],
               "position": 1,
               "price": `${price}`,
               "productId": id, 
               "requiresComponents": false,
-              "sku": "ASOPRREFERENCE"
+              "sku": "ASOPRREFERENCE",
+              "metafields":[
+                {
+                  key: "asoConfigurationRecap",
+                  namespace: "allSignsOptionsAsoAso",
+                  type: "json",
+                  value: JSON.stringify(recaps),
+                }
+              ]
             }
           }
         },
       );
+
       const responseJson = await response.json();
-     
+
       return (responseJson?.data?.productVariantCreate?.productVariant) ?
       (  {
         variantID: responseJson.data.productVariantCreate.productVariant.id,
@@ -209,4 +219,132 @@ export class ShopifyProductService {
       return null  ;
     }
   }
+
+    static  async CreateMediaProdutInput(admin: any, id: string, image:string ){
+     
+
+      try {
+        const response = await admin.graphql(
+          `#graphql
+          mutation productCreateMedia($media: [CreateMediaInput!]!, $productId: ID!) {
+            productCreateMedia(media: $media, productId: $productId) {
+              media {
+                id
+                alt
+                mediaContentType
+                status
+              }
+              mediaUserErrors {
+                field
+                message
+              }
+              product {
+                id
+                title
+              }
+            }
+          }`,
+          {
+            variables: {
+              "media": {
+                "alt": "Image",
+                "mediaContentType": "IMAGE",
+                "originalSource": image
+              },
+              "productId": id
+            },
+          },
+        );
+        
+        const data = await response.json();
+
+        return data.data.productCreateMedia.media[0].id
+      } catch (error) {
+          console.log("error on adding  image to  product", image);
+      }
+
+    }
+
+    static  async  getVariantRecap(admin: any, id: string){
+      try {
+        const response = await admin.graphql(
+          `#graphql
+          query {
+            productVariant(id: "${id}") {
+              title
+              metafield(namespace: "allSignsOptionsAsoAso",
+                key: "asoConfigurationRecap"){
+                value
+                id
+              }
+            }
+          }`,
+        );
+        
+        const data = await response.json();
+        
+        
+
+        return data.data.productVariant.metafield? {title: data.data.productVariant?.title , recaps :JSON.parse( data.data.productVariant?.metafield?.value),id:data.data.productVariant?.metafield?.id}:null;
+
+      } catch (error) {
+        console.log("error  on updating variant",error);
+
+      }
+      
+    }
+
+    static  async  updateVariantRecap(admin: any, variantId: string, metaId:string, metaValue : string){
+      try {
+        const response = await admin.graphql(
+          `#graphql
+          mutation updateProductVariantMetafields($input: ProductVariantInput!) {
+            productVariantUpdate(input: $input) {
+              productVariant {
+                id
+                metafields(first: 3) {
+                  edges {
+                    node {
+                      id
+                      namespace
+                      key
+                      value
+                    }
+                  }
+                }
+              }
+              userErrors {
+                message
+                field
+              }
+            }
+          }`,
+          {
+            variables: {
+              "input": {
+                "metafields": [
+                  {
+                    "id": metaId,
+                    "value":  metaValue
+                  }
+                ],
+                "id": variantId
+              }
+            },
+          },
+        );
+        
+        
+        const data = await response.json();
+        
+        
+
+        return data.data.productVariantUpdate.productVariant?  true :false;
+
+      } catch (error) {
+        console.log("error  on getting variant",error);
+
+      }
+      
+    }
 }

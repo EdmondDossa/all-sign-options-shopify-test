@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://scout-rest-pills-maintained.trycloudflare.com"
+application_url = "https://talk-upon-fw-robinson.trycloudflare.com"
 embedded = true
 
 [build]
@@ -12,13 +12,13 @@ include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_products,write_products"
+scopes = "read_customers,read_fulfillments,read_orders,read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://scout-rest-pills-maintained.trycloudflare.com/auth/callback",
-  "https://scout-rest-pills-maintained.trycloudflare.com/auth/shopify/callback",
-  "https://scout-rest-pills-maintained.trycloudflare.com/api/auth/callback"
+  "https://talk-upon-fw-robinson.trycloudflare.com/auth/callback",
+  "https://talk-upon-fw-robinson.trycloudflare.com/auth/shopify/callback",
+  "https://talk-upon-fw-robinson.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

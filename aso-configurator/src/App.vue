@@ -1,620 +1,62 @@
 <template>
-<div>
-  <div v-if="isLoading">
-    loading ...
-  </div>
- 
-  <!-- <Home v-if="isLoading" :bigData="bigData" /> -->
-  <Home v-else :bigData="bigData" />
-</div>
+  <Home v-if="!isLoading" :bigData="bigData" />
 </template>
 
- <script setup>
-import { ref, onMounted , onBeforeMount} from "vue";
-import Home from "./pages/index.vue";
+<script setup>
+  import { ref, onMounted } from 'vue';
+  import Home from './pages/index.vue';
+  import '../src/assets/libs/tailwindcss.min.js';
+
+  tailwind.config ={
+    prefix: 'aso-',
+    corePlugins: {
+        preflight: false,
+    },
+    
+    content: ["./**/*.{vue,js}"],
+    theme: {
+        extend: {
+            keyframes: {
+                slideToleft: {
+                    'from': { transform: 'translateX(20%)' },
+                    'to': { transform: 'translateX(0)' },
+                },
+                slideDown: {
+                    'from': { transform: 'translateY(-20%)' },
+                    'to': { transform: 'translateY(0)' },
+                },
+                slideUp: {
+                    'from': { transform: 'translateY(0)' },
+                    'to': { transform: 'translateY(-150%)' },
+                },
+            },
+            animation: {
+                slideToleft: 'slideToleft 0.5s ease',
+                slideDown: 'slideDown 0.5s ease',
+                slideUp: 'slideUp 0.5s ease',
+            }
+        }
+    }
+
+}
 
 const isLoading = ref(true);
 
 
-const seedbigData = {
+  var bigData = ref({
   skin: "couffo",
-  productID: "31",
+  productID: "",
   product: {},
-  currentConfig: {
-    name: "Aso test",
-    description: "fsfsdfsd fsf gdf fgh fgf hg h",
-    icon: "",
-    popImg: "",
-    data: {
-      settings: {
-        generals: {
-          mobile: {
-            showNavigatorMenu: "off",
-            showNavigationMenuFirst: "yes",
-            mobileSelectionOptionsDisplay: "horizontally-stack",
-          },
-          output: {
-            filesFormat: "png",
-            waterMark: "",
-            zipOutputFiles: { active: true, zipOutFolderPrefix: "aso_" },
-            designComposition: true,
-          },
-          product: {
-            designFromScratch: true,
-            redirectAfterAddingToCart: true,
-            hideAddToCartButtonOnDetailPage: true,
-            hideDesignButtonsOnShopPage: true,
-            hideAddToCartButtonOnShopPage: true,
-          },
-        },
-        customizerSign: {
-          customizerOptions: {
-            measurementUnit: "mm",
-            showHideMeasurements: "both",
-            decimalFormatMeasurements: "with-decimal",
-            desktopColumnOrder: "right",
-            showDayNightButton: "display",
-          },
-          signPart: {
-            doublePart: {
-              active: true,
-              part1: "A",
-              part2: "B",
-              enableCopyDesignFromSide: true,
-              label: "Switch part",
-            },
-          },
-          text: {
-            selectedFonts: [0, 1, 2],
-            colors: [
-              { name: "Green", codeHex: "#20df2d", additionalPrice: 0 },
-              { name: "Red", codeHex: "#ff1100", additionalPrice: 0 },
-              { name: "Black", codeHex: "#000000", additionalPrice: 0 },
-              { name: "Blue", codeHex: "#0018d1", additionalPrice: 0 },
-              { name: "Orange", codeHex: "#ffb61a", additionalPrice: 0 },
-              { name: "Purple", codeHex: "#f000b0", additionalPrice: 0 },
-            ],
-            enableCustomColor: true,
-            enableFontSize: {
-              active: true,
-              minimumFontSize: 50,
-              maximumFontSize: 200,
-              defaultFontSize: 50,
-            },
-            enableBold: true,
-            enableUnderline: true,
-            enableOverline: true,
-            enableStrike: true,
-            enableItalic: true,
-            enableOpacity: true,
-            enableBorder: true,
-            enableTextAlignment: true,
-            enableCurvedUp: true,
-            enableCurvedDown: true,
-          },
-          images: {
-            enableUploadImage: true,
-            fileUploadScript: {
-              customWithGraphical: false,
-              uploadMinWidth: 100,
-              uploadMaxWidth: 100,
-              uploadMinHeight: 1024,
-              uploadMaxHeight: 1024,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "svg", "gif"],
-            },
-            enableClipart: { active: true, selectedClipartGroups: [0, 1] },
-            filter: {
-              active: false,
-              enableGreyscale: true,
-              enableOpacity: true,
-              enableEmbross: true,
-              enableBlur: true,
-              enableSepia: true,
-              enableSharpen: true,
-            },
-          },
-        },
-        languageImages: {
-          uploadDesign: {
-            activate: false,
-            link: "",
-            phraseSubmitCustom: "Take a customization",
-          },
-          images: {
-            resetAllIcon: "",
-            cancelAnAction: "",
-            icon: "",
-            changeIconPreview: "",
-            changeIconImport: "",
-            changeIconShare: "",
-            changeIconSaveProject: "",
-            changeIconShareSideBar: "",
-            changeIconMaterial: "",
-            changeIconShape: "",
-            changeIconFixingMethod: "",
-            changeIconProduct: "",
-            changeIconSize: "",
-            changeIconText: "",
-            changeIconColor: "",
-            changeIconSizeMenu: "",
-            changeIconBorder: "",
-            changeIconImage: "",
-          },
-          visualizer: {
-            titleHeader: "Plastic Signs",
-            textButtonRefresh: "Restart all",
-            textButtonBack: "Undo",
-            textButtonNext: "Redo",
-            textBeforePrice: "",
-            textAfterPrice: "TVA Include",
-            textButtonFinish: "Finish",
-            textAddToCart: "Add To Cart",
-            textPreview: "Preview",
-            textShare: "Share",
-            textImport: "Import",
-            textDownload: "Download",
-            textSave: "Save",
-            textHelp: "Help",
-            textMaterial: "Material",
-            textSize: "Size",
-            customSize: "Custom Sizee",
-            customSizeButtonDone: "Dones",
-            thickness: "Thickness",
-            textShape: "Shape",
-            textFixingMethods: "Fixing Methods",
-            textColor: "Color",
-            textOptionText: "Text",
-            textBorder: "Border",
-            textProduct: "Product",
-            textImage: "Image",
-          },
-        },
-        themes: {
-          skin: "default",
-          colors: {
-            textColorContentHeader: "#000000",
-            backgroundColorHeader: "#000000",
-            textColorContentSideMenu: "#000000",
-            backgroundColorHeaderContentSide: "#000000",
-            textColorOptionsMenu: "#000000",
-            backgroundColorOptionsMenu: "#000000",
-            textColorButtonSave: "#000000",
-            backgroundColorTextButtonSave: "#000000",
-            textColorHoverButtonSave: "#000000",
-            backgroundColorHoverButtonSave: "#000000",
-            textColorButton: "#000000",
-            backgroundButton: "#000000",
-            textColorHoverButton: "#000000",
-            backgroundColorHoverButton: "#000000",
-            textColorButtonHelp: "#000000",
-            backgroundColorButtonHelp: "#000000",
-            textColorHoverButtonHelp: "#000000",
-            backgroundColorHoverButtonHelp: "#000000",
-            textColorHoverButtonRestartAll: "#000000",
-            backgroundColorHoverButtonRestartAll: "#000000",
-            textColorButtonRestartAll: "#000000",
-            backgroundColorButtonRestartAll: "#000000",
-          },
-        },
-        sortOptions: [],
-        themeColors: {
-          skin: "default",
-          colors: {
-            textColorContentHeader: "#000000",
-            backgroundColorHeader: "#000000",
-            textColorContentSideMenu: "#000000",
-            backgroundColorHeaderContentSide: "#000000",
-            textColorOptionsMenu: "#000000",
-            backgroundColorOptionsMenu: "#000000",
-            textColorButtonSave: "#000000",
-            backgroundColorTextButtonSave: "#000000",
-            textColorHoverButtonSave: "#000000",
-            backgroundColorHoverButtonSave: "#000000",
-            textColorButton: "#000000",
-            backgroundButton: "#000000",
-            textColorHoverButton: "#000000",
-            backgroundColorHoverButton: "#000000",
-            textColorButtonHelp: "#000000",
-            backgroundColorButtonHelp: "#000000",
-            textColorHoverButtonHelp: "#000000",
-            backgroundColorHoverButtonHelp: "#000000",
-            textColorHoverButtonRestartAll: "#000000",
-            backgroundColorHoverButtonRestartAll: "#000000",
-            textColorButtonRestartAll: "#000000",
-            backgroundColorButtonRestartAll: "#000000",
-          },
-        },
-      },
-      materials: [
-        {
-          name: "Acrylic",
-          description: "dq dq qd q qd qj qjqssdqnqpdo,osd, qdnqd qd",
-          icon: "http://localhost/ncpc/wp-content/uploads/2024/03/img.jpg",
-          popImg:
-            "http://localhost/ncpc/wp-content/uploads/2024/03/flower-boy.jpg",
-          type: "simple",
-          data: {
-            sizes: {
-              customSize: {
-                active: true,
-                width: { label: "Width", min: 20, max: 150 },
-                height: { label: "Height", min: 10, max: 150 },
-              },
-              allSizes: [
-                {
-                  manageSizeId: 0,
-                  textNumber: 3,
-                  maxTextChar: 6,
-                  charPrice: 0,
-                  basePrice: 0,
-                },
-                {
-                  manageSizeId: 1,
-                  textNumber: 2,
-                  maxTextChar: 6,
-                  charPrice: 0,
-                  basePrice: 0,
-                },
-                {
-                  manageSizeId: 3,
-                  textNumber: 5,
-                  maxTextChar: 7,
-                  charPrice: 0,
-                  basePrice: 0,
-                },
-                {
-                  manageSizeId: 4,
-                  textNumber: 1,
-                  maxTextChar: 10,
-                  charPrice: 0,
-                  basePrice: 0,
-                },
-              ],
-            },
-            borders: [
-              {
-                manageBorderId: 1,
-                additionalPrice: 0,
-                excludeSizes: [3],
-                settings: {
-                  codeHex: "#ffb10a",
-                  enableBorderWidth: true,
-                  enableBorderColor: true,
-                },
-              },
-              {
-                manageBorderId: 0,
-                additionalPrice: 0,
-                excludeSizes: [],
-                settings: {
-                  codeHex: "#000000",
-                  enableBorderWidth: true,
-                  enableBorderColor: true,
-                },
-              },
-            ],
-            shapes: [
-              { shapeId: 0, additionalPrice: 0 },
-              { shapeId: 1, additionalPrice: 0 },
-              { shapeId: 3, additionalPrice: 0 },
-              { shapeId: 9, additionalPrice: 0 },
-            ],
-            textImages: { enableText: true, enableImage: true },
-            fixingMethods: [
-              { fixingMethodId: 4, additionalPrice: 0 },
-              { fixingMethodId: 9, additionalPrice: 0 },
-              { fixingMethodId: 10, additionalPrice: 0 },
-              { fixingMethodId: 5, additionalPrice: 0 },
-              { fixingMethodId: 3, additionalPrice: 0 },
-              { fixingMethodId: 12, additionalPrice: 0 },
-              { fixingMethodId: 2, additionalPrice: 0 },
-              { fixingMethodId: 6, additionalPrice: 0 },
-              { fixingMethodId: 11, additionalPrice: 0 },
-              { fixingMethodId: 8, additionalPrice: 0 },
-            ],
-            colors: [
-              { manageColorId: 0, additionalPrice: 0 },
-              { manageColorId: 1, additionalPrice: 0 },
-              { manageColorId: 2, additionalPrice: 0 },
-            ],
-            additionalOptions: [],
-          },
-        },
-        {
-          name: "Multimat",
-          description: "fsff sfsdfsfre rt v xvxxvxvxxvx",
-          icon: "",
-          popImg: "",
-          type: "advance",
-          data: [
-            {
-              name: "Proof",
-              description:
-                "Arzer zerzer ezon nkfdslf oieiruzer zorir ffsj zefsdfsf",
-              icon: "",
-              options: [
-                {
-                  name: "Proof 1",
-                  description:
-                    "azert qssvc qqs qsd sarbfc e sdsfddg fg g dfs dfqs dsd f sgsgsf s",
-                  icon: "",
-                  image:
-                    "http://localhost/ncpc/wp-content/uploads/2024/03/img.jpg",
-                  color: { name: "Sky", codeHex: "#FFFFFF", prevImg: "" },
-                  fixingMethods: [0, 4, 10],
-                  shapeId: 1,
-                  size: { width: 25, height: 10 },
-                  additionalPrice: 0,
-                },
-                {
-                  name: "flower",
-                  description: "",
-                  icon: "",
-                  image:
-                    "http://localhost/ncpc/wp-content/uploads/2024/03/flower-boy.jpg",
-                  color: { name: "Orange", color: "#FFFFFF", prevImg: "" },
-                  fixingMethods: [4],
-                  shapeId: 3,
-                  size: { width: 20, height: 20 },
-                  additionalPrice: 0,
-                },
-              ],
-            },
-            {
-              name: "Opinard",
-              description:
-                "aezaze aze aze aze az ea posc wxco,$q ff ljq ffsdfs fso fsnfldsf s sodf s fd fs fd",
-              icon: "",
-              options: [
-                {
-                  name: "Red wine",
-                  description:
-                    "We are using flexbox to center anything inside the body. It's a versatile way of doing this if you are only styling one element.",
-                  icon: "",
-                  image:
-                    "http://localhost/ncpc/wp-content/uploads/2024/03/image.png",
-                  color: { name: "Red", codeHex: "#FFFFFF", prevImg: "" },
-                  fixingMethods: [0, 10],
-                  shapeId: 1,
-                  size: { width: 150, height: 200 },
-                  additionalPrice: 0,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  },
+  currentConfig: {},
   managesData: {
-    fonts: [
-      {
-        label: "Alegreya",
-        url: "http://fonts.gstatic.com/s/alegreya/v35/4UacrEBBsBhlBjvfkQjt71kZfyBzPgNGKBII-aCisSGVrw.woff2",
-        isGoogleFont: true,
-      },
-      {
-        label: "Amiko",
-        url: "http://fonts.gstatic.com/s/amiko/v12/WwkQxPq1DFK04tqgc17MMZgJ.woff2",
-        isGoogleFont: true,
-      },
-      {
-        label: "Combo",
-        url: "http://fonts.gstatic.com/s/combo/v21/BXRlvF3Jh_fIhg0nBu9y8Hf0.woff2",
-        isGoogleFont: true,
-      },
-    ],
-    cliparts: [
-      {
-        title: "Songs cover",
-        description: "dqsd dqqsd ery ryr treyr",
-        cliparts: [
-          {
-            title: "rodeo",
-            url: "http://localhost/ncpc/wp-content/uploads/2024/03/rodeo.jpg",
-            additionalPrice: 0,
-          },
-          {
-            title: "blond",
-            url: "http://localhost/ncpc/wp-content/uploads/2024/03/blond.jpg",
-            additionalPrice: 0,
-          },
-          {
-            title: "pluto to mars",
-            url: "http://localhost/ncpc/wp-content/uploads/2024/03/pluto-to-mars.jpeg",
-            additionalPrice: 0,
-          },
-          {
-            title: "Gb & Gr",
-            url: "http://localhost/ncpc/wp-content/uploads/2024/03/Goodbye-Good-Riddance.webp",
-            additionalPrice: 0,
-          },
-        ],
-      },
-      {
-        title: "Paysages",
-        description: "quelques image représentnt de simages ou des horizons",
-        cliparts: [
-          {
-            title: "Cloud",
-            url: "http://localhost/ncpc/wp-content/uploads/2024/03/img.jpg",
-            additionalPrice: 0,
-          },
-          {
-            title: "night street",
-            url: "http://localhost/ncpc/wp-content/uploads/2024/03/wllp.jpg",
-            additionalPrice: 0,
-          },
-          {
-            title: "Campagne",
-            url: "http://localhost/ncpc/wp-content/uploads/2024/03/vssdv.jpg",
-            additionalPrice: 0,
-          },
-        ],
-      },
-    ],
-    borders: [
-      { name: "None", icon: "", value: "none" },
-      { name: "Normal", icon: "", value: "normal" },
-      { name: "Old World", value: "old-world" },
-    ],
+    fonts: [],
+    cliparts: [],
+    borders: [],
     pageSettings: { titleBalise: "h1" },
-    colors: [
-      {
-        name: "Evil purple",
-        textColor: { active: true, codeHex: "#f9a71a" },
-        backgroundColor: "#942ab2",
-      },
-      {
-        name: "Golden wind",
-        textColor: { active: true, codeHex: "#d21ecc" },
-        backgroundColor: "#f0bc2d",
-      },
-      {
-        name: "Wood",
-        textColor: { active: false, codeHex: "#000000" },
-        backgroundColor: "#b37229",
-      },
-    ],
-    manageSize: [
-      {
-        label: "25x10_thick",
-        width: 25,
-        height: 10,
-        thickness: { active: true, value: 1 },
-      },
-      {
-        label: "60x40",
-        width: 60,
-        height: 40,
-        thickness: { active: false, value: 0 },
-      },
-      {
-        label: "40x40",
-        width: 40,
-        height: 40,
-        thickness: { active: false, value: 0 },
-      },
-      {
-        label: "100x70_thick",
-        width: 100,
-        height: 70,
-        thickness: { active: true, value: 2 },
-      },
-      {
-        label: "150x150",
-        width: 150,
-        height: 150,
-        thickness: { active: false, value: 0 },
-      },
-    ],
-    allShapes: [
-      { name: "Oval", icon: "", value: "oval" },
-      { name: "Square", value: "square" },
-      { name: "Triangle", icon: "", value: "triangle" },
-      { name: "Rounded Square", icon: "", value: "rounded-square" },
-      { name: "Rotated Square", icon: "", value: "rotated-square" },
-      { name: "Turn Left", icon: "", value: "turn-left" },
-      { name: "Turn Right", icon: "", value: "turn-right" },
-      { name: "Arrow Left", value: "arrow-left" },
-      { name: "Arrow Right", icon: "", value: "arrow-right" },
-      { name: "Stop", icon: "", value: "stop" },
-      { name: "Rounded Top", icon: "", value: "rounded-top" },
-      { name: "Rounded Sides", icon: "", value: "rounded-sides" },
-    ],
-    allFixingMethod: [
-      { name: "None", description: "", icon: "", popImg: "", type: "none" },
-      {
-        name: "Screw",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/screw.png",
-        popImg: "",
-        type: "screw",
-      },
-      {
-        name: "Screw Cap",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/screw-cap.png",
-        popImg: "",
-        type: "screw-cap",
-      },
-      {
-        name: "Stand Off",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/standoff.png",
-        popImg: "",
-        type: "standoff",
-      },
-      {
-        name: "Hanging",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/web.ae_.juicewrld.courtesy.jpg",
-        popImg: "",
-        type: "hanging",
-      },
-      {
-        name: "Flag",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/flag.png",
-        popImg: "",
-        type: "flag",
-      },
-      {
-        name: "Suction Cup",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/suction-cup.png",
-        popImg: "",
-        type: "suction-cup",
-      },
-      {
-        name: "Table Stand",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/table-clamp.png",
-        popImg: "",
-        type: "table-stand",
-      },
-      {
-        name: "Ceiling",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/ceiling.png",
-        popImg: "",
-        type: "ceiling",
-      },
-      {
-        name: "Pole Attachment",
-        description: "",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/blond.jpg",
-        popImg: "",
-        type: "pole-attachment",
-      },
-      {
-        name: "Cable Labeling",
-        description:
-          "Lorem i psum dolor sit amet, co psum dolor sit amet, copsum dolor sit amet, conses Lorem i psum dolor sit amet, co psum dolor sit amet, copsum dolor sit amet, conses ff",
-        icon: "http://localhost/ncpc/wp-content/uploads/2024/03/10.jpg",
-        popImg: "",
-        type: "cable-labeling",
-      },
-      {
-        name: "Table Clamp",
-        description: "",
-        icon: "",
-        popImg: "",
-        type: "table-clamp",
-      },
-      {
-        name: "Base Support",
-        description: "",
-        icon: "",
-        popImg: "",
-        type: "base-support",
-      },
-    ],
-    allBorder: [
-      { name: "None", icon: "", value: "none" },
-      { name: "Normal", icon: "", value: "normal" },
-      { name: "Old World", value: "old-world" },
-    ],
+
+    allShapes: [],
+    allFixingMethod: [],
+    allBorder: [],
     outputOptions: [],
   },
   regularPrice: "40",
@@ -622,70 +64,29 @@ const seedbigData = {
   decimalSep: ",",
   decimals: "0",
   nbDecimals: "0",
-  currencySymbol: "CFA",
+  currencySymbol: ``,
   currency_pos: "right_space",
   variations: [],
-  fixing_methods_url:
-    "http://localhost/ncpc/wp-content/plugins/all-signs-options/assets/images/fixing-methodes",
-  frontend_nonce: "841fba2b18",
-};
-
-
-
-
-var bigData = ref({
-  skin: "couffo",
-  productID: "31",
-  product: {},
-  currentConfig:null,
-  managesData: null,
-  regularPrice: "40",
-  thousandSep: "",
-  decimalSep: ",",
-  decimals: "0",
-  nbDecimals: "0",
-  currencySymbol: "CFA",
-  currency_pos: "right_space",
-  variations: [],
-  fixing_methods_url:
-    "http://localhost/ncpc/wp-content/plugins/all-signs-options/assets/images/fixing-methodes",
-  frontend_nonce: "841fba2b18",
+  fixing_methods_url: "/apps/aso-proxy/assets/images/fixing-methodes",
+  frontend_nonce: "841fba2b18"
 });
 
 onMounted(async () => {
-  const aso_confiurator_data =  await aso_confiurator_dataFunction();
-  const   currentConfig = aso_confiurator_data.currentConfig;
-  const managesData = aso_confiurator_data.managesData;
+  const aso_confiurator_data = await aso_confiurator_dataFunction();
+
   // Update currentConfig
 
+  bigData.value = {
+    ...bigData.value,
+    ...aso_confiurator_data
+  };
 
+  isLoading.value = false;
 
- bigData.value = {
-  skin: aso_confiurator_data.skin,
-  productID: "31",
-  product: {},
-  currentConfig: currentConfig,
-  managesData: managesData ,
-  regularPrice: "40",
-  thousandSep: "",
-  decimalSep: ",",
-  decimals: "0",
-  nbDecimals: "0",
-  currencySymbol: "CFA",
-  currency_pos: "right_space",
-  variations: [],
-  fixing_methods_url:
-    "http://localhost/ncpc/wp-content/plugins/all-signs-options/assets/images/fixing-methodes",
-  frontend_nonce: "841fba2b18",
-}
-
-
-isLoading.value = false;
-
-console.log('big  data ', bigData.value);
-  
+  console.log("big  data ", bigData.value);
 });
+</script>
 
- </script>
 
-<style scoped></style>
+<style scoped>
+</style>

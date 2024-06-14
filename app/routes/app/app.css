@@ -444,6 +444,26 @@ img.aso-logo{
     cursor: pointer;
 }
 
+.image-fit{
+    width: -webkit-fill-available;
+    width: -moz-available;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 5px ;
+    border: whitesmoke 1px solid;
+}
+
+.demo-item{
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
+    border: whitesmoke 2px solid;
+}
+
+.demo-item.active{
+    border: 2px solid #016464;
+}
+
 
 
 
