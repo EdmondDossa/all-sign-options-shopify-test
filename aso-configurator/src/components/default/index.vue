@@ -64,8 +64,8 @@
                             {{configVisualiserTexts.textBeforePrice}}
                         </div>
                         <div class="aso-flex aso-text-lg lg:aso-text-3xl aso-font-bold aso-text-center">
-                            <!-- {{formatPrice(finalPrices)}}  -->
-                            {{finalPrices}} 
+                            {{formatPrice(finalPrices)}}  
+                            <!-- {{finalPrices}}  -->
                         </div>
                         <div class="aso-text-center aso-text-lg aso-font-semibold">
                             {{configVisualiserTexts.textAfterPrice}}

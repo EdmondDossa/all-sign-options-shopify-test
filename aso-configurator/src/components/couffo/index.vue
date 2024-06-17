@@ -100,8 +100,8 @@
                         </div>
                         
                         <div class="aso-flex lg:aso-hidden aso-text-lg lg:aso-text-3xl aso-font-bold aso-text-center">
-                            <!-- {{formatPrice(finalPrices)}}  -->
-                            {{finalPrices}} 
+                            {{formatPrice(finalPrices)}} 
+                            <!-- {{finalPrices}}  --> maxm
                         </div>
                     </div>
                 </div>
@@ -189,8 +189,8 @@
                                     {{configVisualiserTexts.textBeforePrice}}
                                 </div>
                                 <div class="aso-flex aso-text-[#FFBC3C] lg:aso-text-black aso-text-lg lg:aso-text-3xl aso-font-bold aso-text-center">
-                                    <!-- {{formatPrice(finalPrices)}} -->
-                                    {{finalPrices}}
+                                    {{formatPrice(finalPrices)}}
+                                    <!-- {{finalPrices}} -->
                                 </div>
                                 <div class="aso-text-center aso-text-lg aso-font-semibold">
                                     {{configVisualiserTexts.textAfterPrice}}
