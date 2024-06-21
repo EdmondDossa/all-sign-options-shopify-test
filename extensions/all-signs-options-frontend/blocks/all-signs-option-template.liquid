@@ -1,0 +1,299 @@
+
+<div>
+    <div id="asoTemplate" class="aso-template-container">
+        <div class="asoTemplateItem">
+            <div class="aso-template-image-container">
+                <div class="aso-template-image-wrapper">
+                    <img class=" asoTemplateItemImg " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
+                </div>
+            </div>
+            <div class="aso-template-details-container">
+                <h5 class="asoTemplateItemName"> template  name</h5>
+                <div class="aso-template-size asoTemplateItemSize">  template size </div>
+                <div><span class="asoTemplateItemPrice">Price</span> <span class="asoTemplateItemTextAfter">  after price</span> </div>
+                <div class="asoTemplateItemBtnWrapper">
+                    <button  class="asoTemplateItemAddToCart">
+                      <svg class="notAddingTocart" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                      </svg>
+                      <svg class="addingTocart" style="display: none;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" height="12" width="12">
+                          <circle cx="50" cy="50" r="32" stroke-width="8" stroke="currentColor" stroke-dasharray="50.26548245743669 50.26548245743669" fill="none" stroke-linecap="round">
+                          <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform>
+                          </circle>
+                      </svg>
+
+                        Add to cart
+                    </button>
+                    <a href="{{ block.settings.asoDesignPageUrl }}"  class="asoTemplateItemCustomize">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                        </svg>
+                        Customize
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% if asoScriptLoad != true %}
+  <script src="{{ 'shopify.js' | asset_url }}"></script>
+{% endif %}
+<script>
+
+var aso_configuration_id = "{{ block.settings.aso_configuration_id }}";
+var asoPriceFormatTemplate ="{{shop.money_format}}";
+
+
+async function getAsotemplates() {
+    
+  
+    try {
+      const response = await fetch(`${shopifyProxyURL}templates`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`ASO Proxy configuration fetch failed with status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching ASO Proxy configuration:', error);
+      // Handle the error appropriately in your application (e.g., display an error message to the user)
+      return null; // Or throw an error if necemmmssuhhh ssscurrentConfig.data.settings.theme.skin
+    }
+}
+
+var asoTemplateData = []
+
+function addTemplateTocart(id){
+      console.log("start  add to  cart");
+      if (typeof addTemplateToCartShopify == "function") {
+        //debut de gestion du loading
+        const templateDiv = document.querySelector('#asoTemplate');
+        templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'none';
+        templateDiv.querySelector('.addingTocart'+template.id).style.display = 'block';
+        //fin
+
+        addTemplateToCartShopify(asoTemplateData.find(template=>(template.id == id) )).then(res=>{
+          //debut de gestion du loading
+          templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'block';
+          templateDiv.querySelector('.addingTocart'+template.id).style.display = 'none';
+          //fin
+          console.log("end of  add to  cart");
+        }).catch((err)=>{
+          console.log("error on adding to cart", error);
+        });
+      }
+}
+
+
+document.addEventListener('DOMContentLoaded', function(){
+    getAsotemplates().then(templates=>{
+    const contentHtml ="";
+    console.log("template dtata", templates)
+
+
+    const templateDiv = document.querySelector('#asoTemplate');
+    const templateItem = templateDiv.querySelector('.asoTemplateItem');
+
+    // Créer un nouveau div pour contenir les éléments clonés
+    const newContainer = document.createElement('div');
+
+// Pour chaque élément dans templates
+    templates.filter(template=>(aso_configuration_id=="0" || template.configurationId==aso_configuration_id ) ).forEach(template => {
+        // Cloner l'élément template
+        const clone = templateItem.cloneNode(true);
+        if (templates?.length) {
+          asoTemplateData.push(...templates)
+        }
+        // Mettre à jour le contenu des divs spécifiques
+        if (template.prevImg){
+            clone.querySelector('.asoTemplateItemImg').setAttribute('src',template.prevImg)
+        }
+        clone.querySelector('.asoTemplateItemName').textContent = template.name;
+        clone.querySelector('.asoTemplateItemSize').textContent = (template.data?.templateData)?   
+        template.data.templateData.sign.size.width + ' ' +template.data.templateData.sign.size.unit + ' x '+
+        template.data.templateData.sign.size.height + ' ' +template.data.templateData.sign.size.unit: "0mm x 0mm";
+        clone.querySelector('.asoTemplateItemPrice').textContent = asoPriceFormatTemplate.replace("{","").replace("{amount}}", (template?.data?.templateData ? template.data.templateData.price.value : template.basePrice));
+        clone.querySelector('.asoTemplateItemTextAfter').textContent =(template?.data?.templateData) ? template.data.templateData.price.textAfter:'';
+        const asoDesignPageUrl =  clone.querySelector('.asoTemplateItemCustomize').getAttribute('href');
+        clone.querySelector('.asoTemplateItemCustomize').setAttribute("href", asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId)
+        clone.querySelector('.asoTemplateItemAddToCart').setAttribute('onclick',"addTemplateTocart("+template.id+")");
+        clone.querySelector('.notAddingTocart').setAttribute('class',"notAddingTocart"+template.id);
+        clone.querySelector('.addingTocart').setAttribute('class',"addingTocart"+template.id);
+        if (template?.enableAddToCart) {
+            clone.querySelector('.asoTemplateItemAddToCart').style.display = 'none';
+        }
+
+        
+        // Ajouter le clone au nouveau conteneur
+        newContainer.appendChild(clone);
+    });
+
+    // Remplacer le contenu de #asoTemplate par le nouveau contenu
+    templateDiv.innerHTML = newContainer.innerHTML;
+
+  
+}).catch((error) =>{
+  console.log(' error  on fetching template',error)
+});
+}); 
+</script>
+<style>
+.asoTemplateItemCustomize {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #febd52;
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  text-decoration: none;
+}
+
+.asoTemplateItemCustomize:hover {
+    background-color: #fcac29;
+}
+
+
+.asoTemplateItemAddToCart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0374e3;
+  border-radius: 5px;
+  width: 100%;
+  padding: 0.75rem;
+}
+
+
+.asoTemplateItemBtnWrapper{
+  gap: 1rem;
+  margin-block-start: 0rem;
+  margin-block-end: 0rem;
+  padding-block-start: 1rem;
+  padding-block-end: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.asoTemplateItemPrice{
+    font-weight: bold;
+}
+
+.asoTemplateItemName{
+    font-weight: bold;
+    margin-block-start: 0px;
+    margin-block-end: 1rem;
+}
+
+.aso-template-details-container{
+  border-width: 1px;
+  border-style: solid;
+  border-left: 0;
+  border-bottom: 0;
+  border-right: 0;
+  border-color: #c3cfd6;
+  padding: 1rem;
+
+}
+
+.asoTemplateItemImg{
+      /* height: 150px; */
+      width: 100%;
+    object-fit: cover;
+}
+
+.aso-template-image-wrapper{
+    width: 100%; /* aso-w-1/2 */
+    height: 100%; /* aso-h-full */
+    display: flex; /* aso-flex */
+    justify-content: center; /* aso-justify-center */
+    align-items: center; /* aso-items-center */
+    overflow: clip;
+    padding: 0px;
+}
+
+.aso-template-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* aso-h-[150px] */
+    overflow: hidden;
+}
+
+.asoTemplateItem{
+    border-width: 1px;
+    border-style: solid;
+    border-color: #c3cfd6;
+    border-radius: 5px; /* aso-rounded */
+    background-color: transparent; /* aso-bg-transparent */
+    overflow: hidden;
+}
+
+.aso-template-container{
+  display: grid;
+  gap: 8px; /* aso-gap-8 */
+}
+
+@media (min-width: 1200px) {
+  .aso-template-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .aso-template-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 600px) and (max-width: 991px) {
+  .aso-template-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .aso-template-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+@media (max-width: 400px) {
+  .aso-template-container {
+    grid-template-columns: 1fr;
+  }
+}
+    
+</style>
+
+{% schema %}
+    {
+      "name": "ASO templates  list",
+      "target": "section",
+      "settings": [
+        {
+          "type": "number",
+          "id": "aso_configuration_id",
+          "label": "Id of template's configuration ",
+          "default":0
+        },
+        {
+          "type": "url",
+          "id": "asoDesignPageUrl",
+          "label": "Design Screen page url",
+          "default":"/"
+        }
+      ]
+    }
+{% endschema %} 

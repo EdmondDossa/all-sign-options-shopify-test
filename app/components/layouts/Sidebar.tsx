@@ -6,12 +6,10 @@ import {
 } from "@shopify/polaris";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
 import ManageClipartsIcon from "~/components/icons/ManageClipartsIcon";
-import ColorPaletteIcon from "~/components/icons/ColorPaletteIcon";
-import ManageSizeIcon from "~/components/icons/ManageSizeIcon";
 import ConfigurationIcon from "~/components/icons/ConfigurationIcon";
 import SettingsGeneralIcon from "~/components/icons/SettingsGeneralIcon";
-import MessageIcon from "~/components/icons/MessageIcon";
 import { NavLink } from "@remix-run/react";
+import TemplatesIcon from "../icons/TemplatesIcon";
 
 
 export default function Sidebar() {
@@ -34,12 +32,13 @@ export default function Sidebar() {
             <ItemSidebar title={"Configuration"} to="/app/configuration">
               <ConfigurationIcon />
             </ItemSidebar>
+            <ItemSidebar title={"Templates"} to="/app/templates" >
+              <TemplatesIcon />
+            </ItemSidebar>
             <ItemSidebar title={"Settings general"} to="/app/settings">
               <SettingsGeneralIcon />
             </ItemSidebar>
-            {/* <ItemSidebar title={"Message"} to="/app/message" >
-              <MessageIcon />
-            </ItemSidebar> */}
+           
           </BlockStack>
         </Box>
         <Box paddingBlock="1200"></Box>

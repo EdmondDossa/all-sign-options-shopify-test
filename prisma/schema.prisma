@@ -23,9 +23,9 @@ model Session {
   isInitialized    Boolean   @default(false)
   configurations  Configuration[]
   fonts       Font[]
-  sizes       Size[]
-  colors      Color[]
   clipartsGroup   ClipartsGroup[]
+  templates      Template[] 
+  categories      Category[] 
   setting    Setting?
 }
 
@@ -46,17 +46,10 @@ model Configuration {
   sessionId   String
   data        Json?
   product     Json?
+  templates      Template[] 
 }
 
-model Size {
-  id          Int      @id @default(autoincrement())
-  label       String?
-  width       Int 
-  height      Int
-  thickness   Json
-  session     Session @relation(fields: [sessionId], references: [id])
-  sessionId   String
-}
+
 
 model Font {
   id            Int      @id @default(autoincrement())
@@ -67,14 +60,7 @@ model Font {
   sessionId   String
 }
 
-model Color{
-  id            Int      @id @default(autoincrement())
-  name              String
-  textColor         Json? 
-  backgroundColor   String
-  session     Session @relation(fields: [sessionId], references: [id])
-  sessionId   String
-}
+
 
 model ClipartsGroup{
   id            Int      @id @default(autoincrement())
@@ -100,5 +86,30 @@ model Setting{
   data        Json?      
   session     Session   @relation(fields: [sessionId], references: [id])
   sessionId   String @unique
+}
+
+
+model Category{
+  id            Int      @id @default(autoincrement())
+  name         String
+  templates      Template[] 
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+}
+
+
+model Template {
+  id                Int      @id @default(autoincrement())
+  name              String
+  basePrice         Float
+  prevImg           String
+  enabledAddToCart  Boolean  @default(false)
+  configuration     Configuration @relation(fields: [configurationId], references: [id])
+  configurationId   Int
+  category          Category? @relation(fields: [categoryId], references: [id])
+  categoryId        Int?
+  session           Session @relation(fields: [sessionId], references: [id])
+  sessionId         String
+  data            Json?
 }
 

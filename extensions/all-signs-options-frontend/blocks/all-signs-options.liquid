@@ -1,6 +1,7 @@
 {% assign asoProduct = block.settings.product %}
 {% assign asoConfigurationId = asoProduct.metafields.allSignsOptionsAsoAso.asoConfigurationId.value  %}
 {% assign asoProductId = asoProduct.id  %}
+{% assign asoScriptLoad = true  %}
 
 <script>
   var asoConfigurationId = "{{asoConfigurationId}}";

@@ -204,6 +204,11 @@ async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
 };
 
 
+ async function addTemplateToCartShopify(template){
+    console.log('template to  add to  cart',template)
+ };
+
+
 function setScrollColor_shopify(color) {
 
 }

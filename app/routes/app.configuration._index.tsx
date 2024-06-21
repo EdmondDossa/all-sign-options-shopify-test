@@ -73,7 +73,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 
     case "POST": {
-      console.log("start deleting");
       const configuration: ConfigurationType =
         await ConfigurationService.getConfiguration(parseInt(id), session.id);
       delete configuration.id;

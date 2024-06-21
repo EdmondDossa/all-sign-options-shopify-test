@@ -174,7 +174,7 @@ export const SelectCombobox = ({
   helpText?: string;
   error?: string;
   labelHidden?: boolean;
-  data: Array<{ label: string; value: any, description:string , image: string}>;
+  data: Array<{ label: string; value: any, description?:string , image?: string}>;
   selectedOptions: any[];
   setSelectedOptions: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
@@ -247,7 +247,7 @@ export const SelectCombobox = ({
               <SpacingBackground display="block" width="100%" height="auto" margin="3px 12px">
                 <Box borderWidth="025" borderRadius="100" borderColor="border" padding="100" >
                   <Grid >
-                  <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
+              <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
                     <BlockStack align="center" inlineAlign="center">
                       
                     <img style={{ width: "60px" , height: "auto" }} src={image} />
@@ -258,7 +258,7 @@ export const SelectCombobox = ({
                         <Text as="strong" variant="bodyMd">
                           {label}
                         </Text>
-                        <Text as="p" tone="subdued">
+                  <Text as="p" tone="subdued">
                          {description}
                         </Text>
                       </BlockStack>
@@ -293,11 +293,11 @@ export const SelectCombobox = ({
           onChange={updateText}
           label={label}
           labelHidden={labelHidden}
+          helpText={helpText}
+          placeholder={placeholder}
           value={inputValue}
           prefix={<LegacyStack>{tagsMarkup}</LegacyStack>}
-          placeholder={placeholder}
           autoComplete="off"
-          helpText={helpText}
         />
       }
     >
