@@ -492,6 +492,63 @@ img.aso-logo{
 }
 
 
+.aso-card-welcome{
+    background: rgb(248,249,253);
+    background: linear-gradient(90deg,#f8f9fd  35%, #80b1b1 100%);
+    /* background: linear-gradient(to right, #f8f9fd, #80b1b1); */
+    height: auto;
+    padding:0px  5px;
+    margin:1.5rem;
+    border: 1px solid #DDE0E1 ; 
+}
+
+.aso-welcome-img{
+    width: 100%;
+    height: auto;
+    margin-top: -0.5rem;
+    margin-bottom: -3.1rem;
+}
+
+.aso-welcome-btn{
+    background-color: #75a1ff;
+    padding: 8px;
+    color: white;
+    border-radius: 8px;
+    border-color: #75a1ff;
+    transition: all .2s ease-in-out;
+    width: fit-content;
+
+}
+
+.aso-welcome-btn:hover,.aso-welcome-card:hover{
+    transform: scale(1.1); 
+    box-shadow: 0 0 11px rgba(33,33,33,.2);
+}
+
+.aso-welcome-card{
+    border-radius: 4px;
+    padding: 22px 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    gap: 10px;
+    height: 100%;
+    transition: all .2s ease-in-out;
+}
+
+.aso-welcome-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    background-color: rgba(234,235,240,0.50);
+}
+
+
 
 
 
