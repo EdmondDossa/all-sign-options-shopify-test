@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import MaterialSizeService from "~/models/MateriaSizeService.service";
 import { authenticate } from "~/shopify.server";
 import {
@@ -7,6 +7,7 @@ import {
   ConfigSize,
   configSizeThickness,
 } from "~/types/ConfigDataType";
+import { ConfigurationType } from "~/types/ConfigurationType";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -29,5 +30,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function MaterialSizes() {
   let { customSize, allSizes, thickness } = useLoaderData<typeof loader>();
-  return <Outlet context={{ customSize, allSizes, thickness }} />;
+  const { configuration } = useOutletContext<{
+    configuration: ConfigurationType;
+  }>();
+  return <Outlet context={{ customSize, allSizes, thickness, configuration }} />;
 }

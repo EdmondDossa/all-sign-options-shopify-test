@@ -1,11 +1,29 @@
-const shopifyProxyURL = `${window.Shopify.routes.root}apps/aso-proxy/api/`;
-const urlParams = new URLSearchParams(window.location.search);
-const paramAsoConfigurationId = urlParams.get('aso-config-id');
-const asoTemplateId = urlParams.get('aso-template-id');
+var asoConfigurationId = `${parseInt(window.name.split('_')[1])}`;
+var asoProductId = "0";
+var asoCurrency = "";
+var  asoPriceFormat ="{{amount}}";
+var asoRegularPrice ="0";
+var asoCurrency_pos= "right";
+var asoThousandSep= " ";
+var asoDecimalSep= ".";
 
-if(asoConfigurationId){
-  asoConfigurationId = paramAsoConfigurationId || asoConfigurationId;
+
+function replaceUploadsPath(data) {
+  function replaceInObject(obj) {
+    for (const key in obj) {
+      if (typeof obj[key] === "string") {
+        obj[key] = obj[key].replace(/^.*?\/apps\/aso-proxy/, "");
+      } else if (typeof obj[key] === "object") {
+        replaceInObject(obj[key]);
+      }
+    }
+  }
+
+  replaceInObject(data);
+  return data;
 }
+
+const shopifyProxyURL = `/api/`;
 async function getAsoConfiguration(configurationId) {
     
   
@@ -64,17 +82,11 @@ console.log("config id and  product id  agin", asoConfigurationId, asoProductId)
 async function aso_confiurator_dataFunction(){
   const   currentConfig = await getAsoConfiguration(asoConfigurationId);
   const managesData = await getAsoManagesData();
-  if (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.data?.cartData) {
-    
-    asoRegularPrice = (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.basePrice) || 0
-    console.log("base price from template", asoRegularPrice)
-  }
-  
   return ( {
     skin: currentConfig['data']['settings']["themeColors"]["skin"],
     productID: asoProductId,
-    currentConfig: currentConfig,
-    managesData: managesData,
+    currentConfig: replaceUploadsPath(currentConfig),
+    managesData: replaceUploadsPath(managesData),
     currency_pos: asoCurrency_pos ,
      thousandSep:asoThousandSep,
     decimalSep: asoDecimalSep,
@@ -83,84 +95,65 @@ async function aso_confiurator_dataFunction(){
     currencySymbol: asoCurrency,
     variations: [],
     fixing_methods_url:
-      "/apps/aso-proxy/assets/images/fixing-methodes",
-    frontend_nonce: "841fba2b18",
-    product: {},
-    regularPrice: "0",
-    borders_url:
-    "/apps/aso-proxy/assets/images/fixing-methodes",
-    templates: {
-      designFromTemplate: currentConfig?.templates?.find(template => template.id == asoTemplateId) ? true : false,
-      template: currentConfig?.templates?.find(template => template.id == asoTemplateId)|| null
-    }
+      "/assets/images/fixing-methodes",
+    frontend_nonce: "841fba2b18"
   })
-}; //kk ll
+};
 
 
 
-async function asoAddproductToCart(variantId, quantity=1) { 
+function asoAddproductToCart(variantId, quantity=1) { 
   let formData = {
     'items': [{
      'id': variantId,
      'quantity': quantity
      }]
    };
-   try {
-      let response =  await fetch(window.Shopify.routes.root + 'cart/add.js', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-
-      if (response.json()) {
-        return true
-      }
-      
-      
-  
-   } catch (error) {
-      console.log("Error adding product  to cart :", error)
-   }
- 
-   return false;
+   fetch(window.Shopify.routes.root + 'cart/add.js', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json'
+     },
+     body: JSON.stringify(formData)
+   })
+   .then(response => {
+     return response.json();
+   })
+   .catch((error) => {
+     console.error('Error:', error);
+   });
 }
 
 
 
-async function asoCreateVariantAndAddToCart(price, option) {
-  try {
-    const data = {
-      productId: `gid://shopify/Product/${asoProductId}`,
-      price: parseFloat(
-        price + parseFloat(asoRegularPrice)
-      ),
-      option: JSON.stringify(option)
-    };
-    
-    let response = await fetch('/apps/aso-proxy/api/add-cart-variant', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
+function asoCreateVariantAndAddToCart(price, option) {
   
-    let responseData = await response.json();
+  const data = {
+    productId: `gid://shopify/Product/${asoProductId}`,
+    price: price,
+    option: option
+  };
   
-    console.log('Success:', responseData);   
-
-    let isAddedToCart = await asoAddproductToCart(parseInt(responseData.variantId),1);
-    if (isAddedToCart) {
-      setTimeout(()=>{
-        document.location = asoCartUrl; 
-      },1)
-       
+  fetch('/apps/aso-proxy/api/add-cart-variant', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
-  } catch (error) {
-    console.error('Error: ', error);
-  }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Success:', data);
+      asoAddproductToCart(parseInt(data.variantId),1)
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 }
 
 
@@ -188,21 +181,22 @@ function addStylesToBody(cssRules) {
   document.body.appendChild(styleElement);
 }
 
-//  to add  font and custom css to  page  
+//  to add  font and custom css to  page  ffffffff
 document.addEventListener('DOMContentLoaded', async function () {
-  const managesData = await getAsoManagesData();
-  
+  let managesData = await getAsoManagesData() ;
+  managesData =  replaceUploadsPath(managesData) ;
+  console.log(" log  data manage ", managesData)
   managesData.fonts.forEach(font => {
     let style = document.createElement('style');
     style.textContent = `
           
   @font-face {
-    font-family: "${font.label.trim().replace(' ', '_')}";
+    font-family: "${font.label}";
     font-display: swap;
     src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
   }
       
-      `; 
+      `;
     document.body.appendChild(style);
   });
 
@@ -219,15 +213,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
-
-    console.log("data cart ", cart_data);
-    await asoCreateVariantAndAddToCart( cart_data.recaps.custom_price, cart_data)
+  // console.log("ajax_url", cart_data, redirectToCheckOut); 
 };
-
-
- async function addTemplateToCartShopify(template){
-    console.log('template to  add to  cart',template)
- };
 
 
 function setScrollColor_shopify(color) {
@@ -243,30 +230,8 @@ function formatPrice_shopify(price) {
 
 
  function getAsoUrl_shopify(){
-    return "/apps/aso-proxy";
+    return "";
  }
-
-
-async function asoUpdateTemplate_shopify(template_id,template_data) {
-   
-}
-
-
-async function  asoGetTemplate_shopify(template_config_id,template_id){
-  // hhh nnn
-}
-
-
-function  getRouteTemplate_shopify(){
-  // if (asoTemplateId) {
-  //   return( {
-  //     name:"template-maker",
-  //     params:JSON.parse(window.name)
-  //   })
-  // }    
-
-  return null;
-}
 
 
 

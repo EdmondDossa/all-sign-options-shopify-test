@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import ConfigurationService from "~/models/Configuration.service";
+import SettingShapesService from "~/models/SettingShapes.service";
+import TemplateService from "~/models/Template.service";
 import { authenticate } from "~/shopify.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -10,8 +11,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     // let sessionId = session.id;
     let sessionId = "offline_quickstart-5c91f330.myshopify.com";
 
-    let data = await ConfigurationService.getConfiguration(parseInt(params.id||"0"),sessionId);
+    let data = await TemplateService.getTemplate(parseInt(`${params.id}`),sessionId);
     
     return json(data );
+
 };
   

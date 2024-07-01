@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function(){
         clone.querySelector('.asoTemplateItemSize').textContent = (template.data?.templateData)?   
         template.data.templateData.sign.size.width + ' ' +template.data.templateData.sign.size.unit + ' x '+
         template.data.templateData.sign.size.height + ' ' +template.data.templateData.sign.size.unit: "0mm x 0mm";
-        clone.querySelector('.asoTemplateItemPrice').textContent = asoPriceFormatTemplate.replace("{","").replace("{amount}}", (template?.data?.templateData ? template.data.templateData.price.value : template.basePrice));
+        clone.querySelector('.asoTemplateItemPrice').textContent = asoPriceFormatTemplate.replace("{","").replace("{amount}}", (template?.data?.cartData?.custom_price ? template.data.cartData.custom_price + template.basePrice : template.basePrice));
         clone.querySelector('.asoTemplateItemTextAfter').textContent =(template?.data?.templateData) ? template.data.templateData.price.textAfter:'';
         const asoDesignPageUrl =  clone.querySelector('.asoTemplateItemCustomize').getAttribute('href');
         clone.querySelector('.asoTemplateItemCustomize').setAttribute("href", asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId)

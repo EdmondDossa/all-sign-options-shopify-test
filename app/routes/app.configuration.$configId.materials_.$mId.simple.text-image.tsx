@@ -21,6 +21,7 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import { jFlashMessage } from "~/utils/message-flash";
+import { booleanTransform } from "~/utils/transfomerZod";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -53,14 +54,14 @@ export default function MaterialTextImage() {
       ? (textImages as ConfigTextImages)
       : {
           enableText: true,
-          enableImages: false,
+          enableImage: false,
         },
   );
 
   const handleEnableText = (value: boolean) =>
     setFormData({ ...formData, enableText: value });
   const handleEnableImages = (value: boolean) =>
-    setFormData({ ...formData, enableImages: value });
+    setFormData({ ...formData, enableImage: value });
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -92,7 +93,7 @@ export default function MaterialTextImage() {
                       Enable Image
                     </Text>
                     <ReactSwitchCustom
-                      checked={formData.enableImages}
+                      checked={formData.enableImage}
                       setChecked={handleEnableImages}
                     />
                   </InlineStack>
@@ -113,8 +114,8 @@ export default function MaterialTextImage() {
 }
 
 const formSchema = z.object({
-  enableText: z.any().transform((val) => `${val}`.toLowerCase() == "true"),
-  enableImages: z.any().transform((val) => `${val}`.toLowerCase() == "true"),
+  enableText: z.any().transform(booleanTransform),
+  enableImage: z.any().transform(booleanTransform),
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

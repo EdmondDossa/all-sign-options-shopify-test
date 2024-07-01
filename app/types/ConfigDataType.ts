@@ -13,6 +13,11 @@ import { number } from 'zod';
       min: number|string;
       max: number|string;
     };
+   pricings: Array<{
+    basePrice: number | string;
+    surface: number | string;
+    charPrice: number | string;
+  }>
  }
 
  export interface configSizeThickness {
@@ -62,7 +67,7 @@ export interface ConfigSize {
   
  export interface ConfigTextImages {
     enableText: boolean;
-    enableImages: boolean;
+    enableImage: boolean;
   }
   
  export interface ConfigFixingMethod {

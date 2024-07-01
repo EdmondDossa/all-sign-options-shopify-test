@@ -124,6 +124,10 @@ export default function ConfigurationTemplates() {
   };
 
 
+  const handlePreview = (id: number) => {
+    navigate(`preview/${id}`);
+  };
+
 
 
   return (
@@ -176,6 +180,7 @@ export default function ConfigurationTemplates() {
                       basePrice={item.basePrice}
                       onDelete={ ()=>handeleDelete(item.value)}
                       onUpdate={ ()=>handleUpdate(item.value)}
+                      onPreview={ ()=>handlePreview(item.value)}
                     />
                   </Grid.Cell>
                 );
@@ -196,11 +201,13 @@ export const AppearanceItem = ({
   title,
   onDelete,
   onUpdate,
+  onPreview,
   basePrice
 }: {
   imgSrc: string;
   title?: string;
   basePrice: number;
+  onPreview: Function;
   onDelete: Function;
   onUpdate: Function;
 }) => {
@@ -244,7 +251,7 @@ export const AppearanceItem = ({
                 />
                     <SettingIconBtn
                     onClick={() => {
-                    console.log("click");
+                   onPreview()
                     }}
                   />
                 

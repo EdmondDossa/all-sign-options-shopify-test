@@ -205,6 +205,7 @@ export default class ConfigurationService {
           id: id,
           sessionId: sessionId,
         },
+        include: {templates: true}
       });
     } catch (error) {
       console.error("Error retrieving configuration:", error);

@@ -42,7 +42,7 @@ export default function Materiels() {
         <Tabheader />
       </BoxBackground>
       <Divider borderWidth="100" />
-      <Outlet />
+      <Outlet context={{ configuration }} />
     </Page>
   );
 }

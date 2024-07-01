@@ -35,7 +35,7 @@ export default function Index() {
                   <Text as="span" fontWeight="semibold" variant="bodyLg">
                     Welcome to All Signs Options
                   </Text>
-                  <Text as="h2"  fontWeight="bold" variant="heading2xl">
+                  <Text as="h2"  fontWeight="bold" variant="headingXl">
                     Test our <br/> plugin now
                   </Text>
 

@@ -51,6 +51,28 @@ export default class TemplateService {
     }
   }
 
+
+  static async configTemplate(id:number,
+    sessionId: string,
+    data: any,
+  ): Promise<any | null> {
+ 
+    try {
+      return await prisma.template.update({
+        where: {
+          id: id,
+          sessionId: sessionId,
+        },
+        data: {
+          data: data
+        },
+      });
+    } catch (error) {
+      console.error("Error on template config:", error);
+      return Promise.resolve(null);
+    }
+  }
+
   static async deleteTemplate(
     id: number,
     sessionId: string,
@@ -77,6 +99,7 @@ export default class TemplateService {
         data: {
           ...template,
           sessionId: sessionId,
+          data: { templateData: [], cartData: []}
         },
       });
     } catch (error) {

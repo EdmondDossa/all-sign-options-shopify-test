@@ -6,7 +6,7 @@ Array(2)
 bold
 : 
 "bold"
-color
+color///      templateObject[0].left = rect.left + ((rect.width/5)*4) 
 {
     "label": "Text",
     "value": [
