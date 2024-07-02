@@ -1,6 +1,7 @@
 [
    {
       "name":"https://<myshopifyDomain>/admin/themes/current/editor?context=apps&template=${template}&activateAppId={uuid}/{handle}",
+      "ulr":"https://shopify.dev/docs/apps/build/online-store/theme-app-extensions/configuration",
       "description":"dsdfdfdfdfsfsfs",
       "icon":"http:\/\/localhost\/ncpc-free.us\/wp-content\/uploads\/2024\/02\/img24.jpg",
       "popImg":"http:\/\/localhost\/ncpc-free.us\/wp-content\/uploads\/2024\/02\/img14.jpg",

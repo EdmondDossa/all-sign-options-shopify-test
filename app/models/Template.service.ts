@@ -8,6 +8,12 @@ export default class TemplateService {
         where: {
           sessionId: sessionId,
         },
+        include: {
+          configuration: {
+          select:{
+            product: true
+          }
+        } }
       });
     } catch (error) {
       console.error("Error retrieving templates:", error);

@@ -37,7 +37,22 @@
     </div>
 </div>
 {% if asoScriptLoad != true %}
-  <script src="{{ 'shopify.js' | asset_url }}"></script>
+<script>
+
+  var asoConfigurationId = "";
+  var asoProductId = "";
+  var asoCurrency = "{{cart.currency.symbol}}";
+  
+  var asoPriceFormat ="{{shop.money_format}}";
+  var asoRegularPrice ="";
+  var asoFormattedPrice ="{{ 123456| money_without_currency }}";
+  var asoCurrency_pos= asoPriceFormat[0] == asoCurrency? "left": "right";
+  var asoThousandSep= asoFormattedPrice[1]=="2"?"":asoFormattedPrice[1];
+  var asoDecimalSep= asoFormattedPrice[4]=="5"?".":asoFormattedPrice[4];
+  var asoCartUrl = "{{ routes.cart_url }}";
+</script>
+<script src="{{ 'shopify.js' | asset_url }}"></script>
+
 {% endif %}
 <script>
 
@@ -71,26 +86,7 @@ async function getAsotemplates() {
 
 var asoTemplateData = []
 
-function addTemplateTocart(id){
-      console.log("start  add to  cart");
-      if (typeof addTemplateToCartShopify == "function") {
-        //debut de gestion du loading
-        const templateDiv = document.querySelector('#asoTemplate');
-        templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'none';
-        templateDiv.querySelector('.addingTocart'+template.id).style.display = 'block';
-        //fin
 
-        addTemplateToCartShopify(asoTemplateData.find(template=>(template.id == id) )).then(res=>{
-          //debut de gestion du loading
-          templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'block';
-          templateDiv.querySelector('.addingTocart'+template.id).style.display = 'none';
-          //fin
-          console.log("end of  add to  cart");
-        }).catch((err)=>{
-          console.log("error on adding to cart", error);
-        });
-      }
-}
 
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -144,6 +140,32 @@ document.addEventListener('DOMContentLoaded', function(){
   console.log(' error  on fetching template',error)
 });
 }); 
+
+
+
+function addTemplateTocart(id){
+  console.log("start  add to  cart");
+  if (typeof addTemplateToCartShopify == "function") {
+    //debut de gestion du loading
+    let template = asoTemplateData.find(template=>(template.id == id) )
+    console.log("template start  add  to  cart",template)
+    const templateDiv = document.querySelector('#asoTemplate');
+    templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'none';
+    templateDiv.querySelector('.addingTocart'+template.id).style.display = 'block';
+   
+    //fin
+
+    addTemplateToCartShopify(template).then(res=>{
+      //debut de gestion du loading
+      templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'block';
+      templateDiv.querySelector('.addingTocart'+template.id).style.display = 'none';
+      //fin
+      console.log("end of  add to  cart");
+    }).catch((err)=>{
+      console.log("error on adding to cart", error);
+    });
+  }
+}
 </script>
 <style>
 .asoTemplateItemCustomize {

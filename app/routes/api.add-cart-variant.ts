@@ -17,12 +17,14 @@ const formSchema = z.object({
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
 
-
+   console.log("request header before authencate");
     const { admin, session } = await authenticate.public.appProxy(request);
     if (!admin||!session) {
         return json({ error: "shop  not found here" });
         
     }
+   
+  
   
   const jsonData = await request.json();
   var formData = new FormData();
@@ -34,6 +36,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const submission = parseWithZod(formData, {schema:formSchema});
 
   if (submission.status !== 'success') {
+    console.log("request header after inssucess");
     return json({status:false,message:null,errors:submission.error})
   }
 

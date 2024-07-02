@@ -8,6 +8,7 @@ import { Material } from "~/types/ConfigDataType";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");

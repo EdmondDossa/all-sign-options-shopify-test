@@ -218,13 +218,13 @@ export const AppearanceItem = ({
         style={{ position: "relative" }}
         className={"template"}
       >
-        <img src={imgSrc} alt={title} className="image-fit" style={{height: "10rem"}} />
+        <img src={imgSrc||"/assets/images/img_rectangle_noir.png"} alt={title} className="image-fit" style={{height: "10rem"}} />
 
         <Box paddingBlock="100">
           <BlockStack gap="100">
             <InlineStack align="space-between" gap="200">
               <Text as="span" variant="bodyMd" fontWeight="bold">
-                {title || "Default skyn"}
+                {title || "Default template"}
               </Text>
             
             </InlineStack>

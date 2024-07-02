@@ -4,7 +4,7 @@ export class ShopifyShopService{
         try {
             const shop =  await admin.rest.resources.Shop.all({
                 session: session,
-                fields: "email",
+                fields: "email,domain,myshopify_domain",
               });
             
             return  shop.data[0];

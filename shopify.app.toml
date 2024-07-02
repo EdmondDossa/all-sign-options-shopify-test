@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://variables-physician-cite-neighbor.trycloudflare.com"
+application_url = "https://voters-kruger-finds-commission.trycloudflare.com"
 embedded = true
 
 [build]
@@ -12,20 +12,20 @@ include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_customers,read_fulfillments,read_orders,read_products,write_products"
+scopes = "read_customers,read_fulfillments,read_orders,read_products,read_themes,write_products"
 
 [auth]
 redirect_urls = [
-  "https://variables-physician-cite-neighbor.trycloudflare.com/auth/callback",
-  "https://variables-physician-cite-neighbor.trycloudflare.com/auth/shopify/callback",
-  "https://variables-physician-cite-neighbor.trycloudflare.com/api/auth/callback"
+  "https://voters-kruger-finds-commission.trycloudflare.com/auth/callback",
+  "https://voters-kruger-finds-commission.trycloudflare.com/auth/shopify/callback",
+  "https://voters-kruger-finds-commission.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://variables-physician-cite-neighbor.trycloudflare.com"
+url = "https://voters-kruger-finds-commission.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

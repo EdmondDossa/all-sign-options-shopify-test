@@ -3,6 +3,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const paramAsoConfigurationId = urlParams.get('aso-config-id');
 const asoTemplateId = urlParams.get('aso-template-id');
 
+
+
+
 if(asoConfigurationId){
   asoConfigurationId = paramAsoConfigurationId || asoConfigurationId;
 }
@@ -59,7 +62,7 @@ async function getAsoManagesData() {
 
 
 
-console.log("config id and  product id  agin", asoConfigurationId, asoProductId);
+console.log("config id and  product dfg   kihhhg ", asoConfigurationId, asoProductId);
 
 async function aso_confiurator_dataFunction(){
   const   currentConfig = await getAsoConfiguration(asoConfigurationId);
@@ -129,13 +132,13 @@ async function asoAddproductToCart(variantId, quantity=1) {
 
 
 
-async function asoCreateVariantAndAddToCart(price, option) {
+async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProductId, regularPrice=asoRegularPrice) {
+  console.log("price and option", price, option, asoProductID);
+
   try {
     const data = {
-      productId: `gid://shopify/Product/${asoProductId}`,
-      price: parseFloat(
-        price + parseFloat(asoRegularPrice)
-      ),
+      productId: `gid://shopify/Product/${asoProductID}`,
+      price: parseFloat(`${price}` )+parseFloat(`${regularPrice}`),
       option: JSON.stringify(option)
     };
     
@@ -190,7 +193,7 @@ function addStylesToBody(cssRules) {
 
 //  to add  font and custom css to  page  
 document.addEventListener('DOMContentLoaded', async function () {
-  const managesData = await getAsoManagesData();
+  if(asoConfigurationId){const managesData = await getAsoManagesData();
   
   managesData.fonts.forEach(font => {
     let style = document.createElement('style');
@@ -214,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.log('Custom CSS added successfully');
   } catch (error) {
     console.error('Error adding custom CSS:', error);
-  }
+  }}
 
 });
 
@@ -226,7 +229,17 @@ async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
 
 
  async function addTemplateToCartShopify(template){
-    console.log('template to  add to  cart',template)
+   console.log('template to   to ', template)
+
+   if (template?.configuration?.product?.id) {
+     await asoCreateVariantAndAddToCart(  template.data.cartData.custom_price,{recaps: template.data.cartData}, template?.configuration?.product?.id.split('/').pop(),template.basePrice)
+   }
+
+
+
+
+
+   
  };
 
 
