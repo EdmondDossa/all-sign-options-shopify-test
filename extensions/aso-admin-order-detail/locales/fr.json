@@ -1,0 +1,7 @@
+{
+  "name": "aso-admin-order-detail",
+  "welcome": "Bienvenue dans l'extension {{TARGET}}!",
+  "title": "ALL SIGNS OPTIONS",
+  "recapTitle": "Recapitulatif de la commande",
+  "bownloadBtn":"Télécharger  les images"
+}

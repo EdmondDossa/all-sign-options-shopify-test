@@ -1,0 +1,88 @@
+value
+: 
+Array(2)
+0
+: 
+bold
+: 
+"bold"
+color///      templateObject[0].left = rect.left + ((rect.width/5)*4) 
+{
+    "label": "Text",
+    "value": [
+        {
+            "id": 50,
+            "values": {
+                "width": {
+                    "label": "width",
+                    "value": 32
+                },
+                "height": {
+                    "label": "height",
+                    "value": 7
+                },
+                "left": {
+                    "label": "Left",
+                    "value": 13
+                },
+                "top": {
+                    "label": "top",
+                    "value": 11
+                },
+                "right": {
+                    "label": "right",
+                    "value": 13
+                },
+                "bottom": {
+                    "label": "bottom",
+                    "value": 11
+                }
+            },
+            "textContent": "Dark Scribe",
+            "bold": "bold",
+            "italic": "italic",
+            "fontFamily": "Roboto",
+            "color": "#571e1e",
+            "underlined": false,
+            "crossed": false,
+            "overlined": false
+        },
+        {
+            "id": 51,
+            "values": {
+                "width": {
+                    "label": "width",
+                    "value": 18
+                },
+                "height": {
+                    "label": "height",
+                    "value": 3
+                },
+                "left": {
+                    "label": "Left",
+                    "value": 19
+                },
+                "top": {
+                    "label": "top",
+                    "value": 19
+                },
+                "right": {
+                    "label": "right",
+                    "value": 22
+                },
+                "bottom": {
+                    "label": "bottom",
+                    "value": 6
+                }
+            },
+            "textContent": "You are special",
+            "bold": "normal",
+            "italic": "normal",
+            "fontFamily": "Calibri",
+            "color": "#5d2828",
+            "underlined": false,
+            "crossed": false,
+            "overlined": false
+        }
+    ]
+}

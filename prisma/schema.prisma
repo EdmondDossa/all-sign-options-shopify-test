@@ -6,9 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.sqlite"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
 
 model Session {
   id          String    @id
@@ -19,4 +20,96 @@ model Session {
   expires     DateTime?
   accessToken String
   userId      BigInt?
+  isInitialized    Boolean   @default(false)
+  configurations  Configuration[]
+  fonts       Font[]
+  clipartsGroup   ClipartsGroup[]
+  templates      Template[] 
+  categories      Category[] 
+  setting    Setting?
 }
+
+model Upload{
+  id          Int    @id @default(autoincrement())
+  files       Json? 
+  shop        String @unique 
+} 
+
+
+model Configuration {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  icon        String
+  popupImg    String
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+  data        Json?
+  product     Json?
+  templates      Template[] 
+}
+
+
+
+model Font {
+  id            Int      @id @default(autoincrement())
+  label         String
+  url           String
+  isGoogleFont  Boolean
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+}
+
+
+
+model ClipartsGroup{
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  cliparts      Clipart[] 
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+}
+
+
+model Clipart{
+    id                Int      @id @default(autoincrement())
+    title             String
+    url               String
+    additionalPrice   Float
+    clipartsGroup     ClipartsGroup @relation(fields: [clipartsGroupId], references: [id])
+    clipartsGroupId   Int 
+}
+
+model Setting{
+  id          Int      @id @default(autoincrement())
+  data        Json?      
+  session     Session   @relation(fields: [sessionId], references: [id])
+  sessionId   String @unique
+}
+
+
+model Category{
+  id            Int      @id @default(autoincrement())
+  name         String
+  templates      Template[] 
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+}
+
+
+model Template {
+  id                Int      @id @default(autoincrement())
+  name              String
+  basePrice         Float
+  prevImg           String
+  enabledAddToCart  Boolean  @default(false)
+  configuration     Configuration @relation(fields: [configurationId], references: [id])
+  configurationId   Int
+  category          Category? @relation(fields: [categoryId], references: [id])
+  categoryId        Int?
+  session           Session @relation(fields: [sessionId], references: [id])
+  sessionId         String
+  data            Json?
+}
+

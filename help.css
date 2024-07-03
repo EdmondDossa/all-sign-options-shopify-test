@@ -1,0 +1,32 @@
+/* const data = {
+  productId: 'gid://shopify/Product/7875608215707',
+  price: 10.99,
+  option: 'your option here 1'
+};
+
+fetch('/apps/aso-proxy/api/add-cart-variant', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})
+.then(response => {
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+})
+.then(data => {
+  console.log('Success:', data);
+})
+.catch(error => {
+  console.error('Error:', error);
+}); */
+
+.call{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

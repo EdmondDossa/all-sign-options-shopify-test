@@ -1,0 +1,241 @@
+import { parseWithZod } from "@conform-to/zod";
+import { ActionFunctionArgs, json } from "@remix-run/node";
+import { Form, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSearchParams, useSubmit } from "@remix-run/react";
+import {
+  Box,
+  Divider,
+  Grid,
+  InlineStack,
+  Text,
+  TextField,
+} from "@shopify/polaris";
+import {  useState } from "react";
+import { z } from "zod";
+import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
+import { FileInput } from "~/components/inputs/FileInput";
+import { MultiCombobox } from "~/components/inputs/MultiCombobox";
+import { BoxBackground } from "~/components/layouts/BoxBackground";
+import { SpacingBackground } from "~/components/layouts/SpacingBackground";
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import MaterialAdditionalOptionItemService from "~/models/MaterialAdditionalOptionItem.service";
+import { authenticate } from "~/shopify.server";
+import {  ConfigAdditionalOptionItem, ConfigColor } from "~/types/ConfigDataType";
+import { getError } from "~/utils/error-getting";
+import { flashMessage } from "~/utils/message-flash";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
+
+export default function MaterialAdditionalOptionCreate() {
+  const submit = useSubmit();
+  const navigation = useNavigation();
+  const { additionalOptionItems, configColors } = useOutletContext<{
+    additionalOptionItems: ConfigAdditionalOptionItem[];
+    configColors: ConfigColor[]
+  }>();
+  const actionData = useActionData<typeof action>();
+  useHandleFlashMessage();
+  const [searchParams] = useSearchParams();
+  const id = parseInt(searchParams.get("id") || "");
+  console.log("action data :", actionData);
+  let additionalOptionItem = additionalOptionItems?.find((curr, index) => index == id);
+  const [formData, setFormData] = useState<ConfigAdditionalOptionItem>(
+    additionalOptionItem?
+    additionalOptionItem as ConfigAdditionalOptionItem
+      : {
+        title: "",
+        description: "",
+        icon: "",
+        image: "",
+        popImg:"",
+        additionalPrice: 0,
+        excludeColors: [],
+        isDefault: false
+      }
+  );
+
+  let isLoading = navigation.state == "loading";
+  let isSubmitting = navigation.state == "submitting";
+  const colors = configColors ? configColors.map((configColor,index) => ({ label: configColor.name||'', value: `${index}` })) : [];
+
+
+  const handleTitle= (value: string) =>
+    setFormData({ ...formData, title: value });
+  const handleDescription = (value: string) =>
+    setFormData({ ...formData, description: value });
+  const handleIcon = (value: string) =>
+    setFormData({ ...formData, icon: value });
+    const handleImage = (value: string) =>
+      setFormData({ ...formData, image: value });
+      const handlePopImg = (value: string) =>
+      setFormData({ ...formData, popImg: value });
+  const handleAdditionalPrice= (value: string, onBlur = false) =>
+    setFormData({ ...formData, additionalPrice: onBlur ?  parseFloat(`${formData.additionalPrice}`):value });
+
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    submit({ ...formData, excludeColors: JSON.stringify(formData.excludeColors) }, { method: "POST" });
+  };
+
+  const navigate = useNavigate();
+  const onBack = () => {
+    navigate("..");
+  };
+
+  return (
+    <SpacingBackground width="100%" height="auto">
+      <BoxBackground>
+        <Box padding="300">
+          <Text as="h2" variant="headingMd">
+          {Number.isNaN(id)?'Add new option ':'Edit option'}
+          
+          </Text>
+        </Box>
+        <Divider borderWidth="050" />
+
+        <Form onSubmit={handleSubmit} method="POST">
+        <Box paddingInline="300" paddingBlock="1000">
+              <Grid gap={{lg:"30px"}}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                <TextField
+                label="Title"
+                  value={`${formData.title}`}
+                  autoComplete="off"
+                onChange={handleTitle}
+                error={getError(actionData, "title")}
+              />
+                </Grid.Cell>
+             
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+              <TextField
+                label="Description"
+                value={`${formData.description}`}
+                autoComplete="off"
+              onChange={handleDescription}
+              error={getError(actionData, "description")}
+              />
+                </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+              <FileInput error={getError(actionData, "icon")} title="Upload icon"
+                    path={formData.icon} handlePath={handleIcon} />
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+              <FileInput error={getError(actionData, "popImg")} title="Example" buttonTitle="upload example"
+                    path={formData.popImg} handlePath={handlePopImg} />
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                    <MultiCombobox
+                      helpText="exclude the colors of this option"
+                      label="Exclude colors"
+                      placeholder="Search colors"
+                      selectedOptions={formData.excludeColors.map((curr) => `${curr}`)}
+                      data={colors}
+                      setSelectedOptions={(value:any) => {
+                        formData.excludeColors = value.map((curr:any) => parseFloat(curr));
+                        setFormData({ ...formData });
+                      }}
+                    ></MultiCombobox>
+                </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+              <TextField
+                  label="Additional  price"
+                  type="number"
+                value={`${formData.additionalPrice}`}
+                autoComplete="off"
+              onChange={value=>handleAdditionalPrice(value)}
+              onBlur={value=>handleAdditionalPrice("", true)}
+              error={getError(actionData, "additionalPrice")}
+              />
+              </Grid.Cell>
+              
+              </Grid>
+            </Box>
+        
+          <Divider borderWidth="050" />
+          <Box paddingInline="300" paddingBlock="300">
+            <InlineStack align="end" gap="600">
+              <button className="back-large-btn" type="button" onClick={onBack}>
+                <Box paddingInline="1000">
+                  <InlineStack gap="300">
+                    <RayStartArrowIcon />{" "}
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      {" "}
+                      Back
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>
+              <BiSaveBtn isLoading={isSubmitting} title="Save" />
+            </InlineStack>
+          </Box>
+        </Form>
+      </BoxBackground>
+    </SpacingBackground>
+  );
+}
+
+
+
+const formSchema = z.object({
+  title: z
+    .string({ required_error: "Title is required" })
+    .min(1, "Title is too short")
+    .max(100, "Title is too long"),
+  description: z.string().nullish().transform(stringTransform),
+  icon:  z.string().nullish().transform(stringTransform),
+  image:  z.string().nullish().transform(stringTransform),
+  additionalPrice: z.number({ required_error: "image file is required" }),
+  excludeColors: z.any().transform(jsonTransform).pipe(z.number().array()),
+  isDefault: z.any().transform(booleanTransform).pipe(z.boolean())
+});
+
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const { session, admin } = await authenticate.admin(request);
+
+  const formData = await request.formData();
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id");
+  const configId = parseInt(params.configId ?? "");
+  const mId = parseInt(params.mId ?? "");
+  const aId = parseInt(params.aId ?? "");
+  const submission = parseWithZod(formData, { schema: formSchema });
+
+  if (submission.status !== "success") {
+    return json({ status: false, message: null, errors: submission.error });
+  }
+
+  let configAdditionalOptionItem: ConfigAdditionalOptionItem = submission.value as ConfigAdditionalOptionItem;
+
+  
+  if (id && !Number.isNaN(configId)  && !Number.isNaN(mId) && !Number.isNaN(aId) && !Number.isNaN(id)) {
+    let res = await MaterialAdditionalOptionItemService.update(
+      configId,
+      session.id,
+      mId, aId,
+      configAdditionalOptionItem,
+      parseInt(id),
+    ); 
+    return res
+      ? redirect(
+          `..${flashMessage("Material  option  updated is completed successfully")}`,
+        )
+      : redirect(
+          `..${flashMessage("Material  option  updated is  fail", "error")}`,
+        );
+  } else {
+    let res = await MaterialAdditionalOptionItemService.add(
+      configId,
+      session.id,
+      mId,
+      aId,
+      configAdditionalOptionItem,
+    );
+    return res
+      ? redirect(
+          `..${flashMessage("Material  option  added is completed successfully")}`,
+        )
+      : redirect(`..${flashMessage("Material  option  added is  fail", "error")}`);
+  }
+
+};
+

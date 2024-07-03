@@ -1,22 +1,23 @@
+import { Outlet } from "@remix-run/react";
 import {
-  Card,
-  Layout,
+  Box,
+  InlineStack,
   Page,
   Text,
 } from "@shopify/polaris";
+import { BoxBackground } from "~/components/layouts/BoxBackground";
 
-export default function ManageCliparts() {
-  return (
-    <Page fullWidth>
-      <Layout>
-        <Layout.Section>
-          <Card>
-          <Text as="h2" variant="headingSm">
-           Manage cliparts page
-          </Text>
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
-  );
+export default function ManageClipart() {
+  return (<Page fullWidth>
+    <BoxBackground>
+      <Box paddingInline="300" paddingBlock="600">
+          <InlineStack gap="100" align="start">
+            <Text as="h2" variant="headingMd">
+            List of clipart group
+            </Text>
+        </InlineStack>
+      </Box>
+    </BoxBackground>
+    <Outlet/>
+  </Page>);
 }

@@ -11,8 +11,8 @@
     "noEmit": true,
     "allowJs": true,
     "jsx": "react-jsx",
-    "module": "Node16",
-    "moduleResolution": "Node16",
+    "module": "es2015",
+    "moduleResolution": "bundler",
     "target": "ES2019",
     "baseUrl": ".",
     "paths": {

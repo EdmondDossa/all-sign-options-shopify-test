@@ -6,6 +6,11 @@
     opacity: 75%;
 }
 
+.hover-btn:hover{
+    opacity: 70%;
+}
+
+
 .inactive{
     opacity: 50%;
 }
@@ -115,6 +120,7 @@
     background-color: white;
     border-radius: 5px;
     border-width: 1px;
+    cursor: pointer;
 }
 
 .next-large-btn{
@@ -123,6 +129,7 @@
     border-radius: 5px;
     border-width: 1px;
     border-color: rgb(1, 100, 100) !important;
+    cursor: pointer;
 }
 
 .primary-btn{
@@ -131,6 +138,8 @@
     border-radius: 5px;
     border-width: 1px;
     border-color: rgb(1, 100, 100) !important;
+
+    cursor: pointer;
 }
 
 .add-option-btn{
@@ -138,6 +147,7 @@
     border-radius: 8px;
     padding: 2px 4px;
     border: 0px;
+    cursor: pointer;
 }
 
 .primary-btn-text{
@@ -225,3 +235,326 @@
     color:  rgb(1, 100, 100);
     background-color: #01646414;
 }
+
+.react-switch{
+    height: auto;
+}
+
+.react-switch .react-switch-bg{
+    border: 1px solid black;
+}
+
+
+.activatable-item{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #3D3D3D;
+    align-items: center
+}
+
+.activatable-item .activatable-item-child{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  margin-bottom: 6px;
+  border: 0.5px solid #BBBBBB;
+  border-radius: 2px;
+  background-color: white;
+}
+
+.activatable-item path{
+    stroke: black;
+}
+
+.activatable-item.no-troke path{
+    stroke: white;
+}
+
+.activatable-item.fill path{
+    fill: black;
+}
+
+.activatable-item .activatable-item-title{
+    text-align: center;
+    font-weight: 600;
+    font-size: 9px;
+    line-height: 1;
+    word-break: break;
+    max-width: 10px;
+   display: flex;
+   justify-content: center;
+}
+
+.activatable-item.active{
+    color: #016464 !important;
+}
+
+.activatable-item.active path{
+    stroke:#016464 ;
+}
+
+.activatable-item.active.fill path{
+    fill:#016464 !important;
+}
+
+
+.activatable-item.active  .activatable-item-child{
+    border: 1px solid #016464;
+}
+
+.activatable-item.no-troke.active path{
+    stroke: white;
+}
+
+.topbar-aso{
+    padding-left: 0.5rem;
+    padding-right: 1.5rem;
+    z-index: 50;
+    position: fixed;
+    display: flex;
+    height: 3rem;
+    width: 100%;
+    background-color: white;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2);
+}
+
+.version-style{
+    color: #3c434a;
+    font-size: 20;
+    font-weight: 700;
+}
+
+.app-content{
+    margin-top: 3rem;
+    min-width: 200px;
+    width: -webkit-fill-available;
+    width: -moz-available;
+}
+
+.sidebar-sticky{
+    width:85px;
+    position: relative;
+}
+
+.content-sidebar-wrapper{
+    display: flex;
+}
+
+img.aso-logo{
+    height: 50px; 
+}
+
+.aso-config-id{
+    font-weight: 600;
+    padding: 5px 10px ;
+    border: 2px solid  rgb(70 104 1);
+    background-color: transparent;
+    border-radius: 5px  ;
+    color: #466801;
+
+}
+
+
+
+.aso-material-btn{
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 7px 10px ;
+    border: 2px solid #EF5A35;
+    background-color: #F8E7E7;
+    border-radius: 5px  ;
+    color:#EF5A35;
+    cursor: pointer;
+
+}
+
+.aso-setting-btn{
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 7px 10px ;
+    border: 2px solid #016464;
+    border-radius: 5px  ;
+    color:#016464;
+    cursor: pointer;
+}
+
+.aso-additonal-btn{
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 7px 10px ;
+    border: 2px solid #f0bb1b;
+    border-radius: 5px  ;
+    color:#f0bb1b;
+    cursor: pointer;
+
+}
+
+
+.aso-additonal-card { 
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 7px 10px ;
+    border-radius: 5px  ;
+    cursor: pointer;
+}
+
+
+.aso-additonal-card.active{
+    color:#016464;
+    border: 2px solid #016464;
+}
+
+.aso-additonal-card.disabled{
+    opacity: 0.5;
+}
+
+
+.td-center{
+   text-align: center;
+
+}
+
+
+.td-end{
+   text-align: end;
+}
+
+.aso-preview{
+    height: 100vh;
+    width: 100%;
+}
+
+.btn-span {
+    cursor: pointer;
+}
+
+.image-fit{
+    width: -webkit-fill-available;
+    width: -moz-available;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 5px ;
+    border: whitesmoke 1px solid;
+}
+
+.demo-item{
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
+    border: whitesmoke 2px solid;
+}
+
+.demo-item.active{
+    border: 2px solid #016464;
+}
+
+
+
+.template{
+    padding: 15px;
+    background-color: white;
+    border: #d3d3d3 1px solid;
+}
+
+.template.active{
+    border: 2px solid #016464;
+}
+
+.template-add-btn{
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
+    padding: 0px;
+    background-color: #d3d3d3;
+    border: #d3d3d3 1px solid;
+    min-height: 100%;
+}
+
+.template-add-btn:hover{
+    border: 2px solid #016464;
+}
+
+
+.aso-card-welcome{
+    background: rgb(248,249,253);
+    background: linear-gradient(90deg,#f8f9fd  35%, #80b1b1 100%);
+    /* background: linear-gradient(to right, #f8f9fd, #80b1b1); */
+    height: auto;
+    padding:0px  5px;
+    margin:1.5rem;
+    border: 1px solid #DDE0E1 ; 
+}
+
+.aso-welcome-img{
+    width: 100%;
+    height: auto;
+    margin-top: -0.5rem;
+    margin-bottom: -3.1rem;
+}
+
+.aso-welcome-btn{
+    background-color: #75a1ff;
+    padding: 8px;
+    color: white;
+    border-radius: 8px;
+    border-color: #75a1ff;
+    transition: all .2s ease-in-out;
+    width: fit-content;
+
+}
+
+.aso-welcome-btn:hover,.aso-welcome-card:hover{
+    transform: scale(1.1); 
+    box-shadow: 0 0 11px rgba(33,33,33,.2);
+}
+
+.aso-welcome-card{
+    border-radius: 4px;
+    padding: 22px 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    gap: 10px;
+    height: 100%;
+    transition: all .2s ease-in-out;
+}
+
+.aso-welcome-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    background-color: rgba(234,235,240,0.50);
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { ExternalScripts } from "remix-utils/external-scripts";
 
 export default function App() {
   return (
@@ -24,8 +25,13 @@ export default function App() {
       <body>
         <Outlet />
         <ScrollRestoration />
+        <ExternalScripts />
         <LiveReload />
         <Scripts />
+       
+        <script>
+       
+        </script>
       </body>
     </html>
   );

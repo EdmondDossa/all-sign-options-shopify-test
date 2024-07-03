@@ -6,47 +6,42 @@ import {
 } from "@shopify/polaris";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
 import ManageClipartsIcon from "~/components/icons/ManageClipartsIcon";
-import ColorPaletteIcon from "~/components/icons/ColorPaletteIcon";
-import ManageSizeIcon from "~/components/icons/ManageSizeIcon";
 import ConfigurationIcon from "~/components/icons/ConfigurationIcon";
 import SettingsGeneralIcon from "~/components/icons/SettingsGeneralIcon";
-import MessageIcon from "~/components/icons/MessageIcon";
 import { NavLink } from "@remix-run/react";
+import TemplatesIcon from "../icons/TemplatesIcon";
 
 
 export default function Sidebar() {
     return (
         <BoxSideBar>
-        <Box paddingInline="400" paddingBlock="600">
-          <BlockStack gap="300">
+        <Box paddingInline="400" paddingBlockStart="1600"  paddingBlockEnd="400">
+          <BlockStack gap="200">
             <ItemSidebar title={"Manage font"} to="/app/manage-font">
               <ManageFontIcon />
             </ItemSidebar>
             <ItemSidebar title={"Manage Cliparts"} to="/app/manage-cliparts">
               <ManageClipartsIcon />
             </ItemSidebar>
-            <ItemSidebar title={"Color palette"} to="/app/color-palette">
-              <ColorPaletteIcon />
-            </ItemSidebar>
-            <ItemSidebar title={"Manage Size"} to="/app/manage-size" >
-              <ManageSizeIcon />
-            </ItemSidebar>
+          
           </BlockStack>
         </Box>
         <Divider borderColor="border-brand" />
-        <Box paddingInline="150" paddingBlock="600">
-          <BlockStack gap="300">
+        <Box paddingInline="150" paddingBlockStart="400"  paddingBlockEnd="2800">
+          <BlockStack gap="200">
             <ItemSidebar title={"Configuration"} to="/app/configuration">
               <ConfigurationIcon />
+            </ItemSidebar>
+            <ItemSidebar title={"Templates"} to="/app/templates" >
+              <TemplatesIcon />
             </ItemSidebar>
             <ItemSidebar title={"Settings general"} to="/app/settings">
               <SettingsGeneralIcon />
             </ItemSidebar>
-            <ItemSidebar title={"Message"} to="/app/message" >
-              <MessageIcon />
-            </ItemSidebar>
+           
           </BlockStack>
         </Box>
+        <Box paddingBlock="1200"></Box>
       </BoxSideBar>
     );
 }

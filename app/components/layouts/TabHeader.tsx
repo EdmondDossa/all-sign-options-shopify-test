@@ -11,34 +11,36 @@ import { AdditinalOptionSvg } from "../svgs/AdditinalOptionSvg";
 export const Tabheader = () => {
     
     return (
-        <Box paddingInline="300" background="bg-surface">
+        <Box paddingInline="050" background="bg-surface">
           <InlineStack gap="100" align="center">
-            <TabItems to="/app/configuration/materiels/size">
-              {" "}
-              <SizeSvg /> Size
+            <TabItems to="size">
+            
+              <SizeSvg /> Sizes
+          </TabItems>
+          <TabItems to="color">
+            
+            <ColorPaletteSvg />  colors
+          </TabItems>
+          <TabItems to="shape">
+            
+            <ShapeSvg /> Shapes
+          </TabItems>
+            <TabItems to="border">
+            
+              <BorderSvg /> Borders
             </TabItems>
-            <TabItems to="/app/configuration/materiels/border">
-              {" "}
-              <BorderSvg /> Border
+           
+            <TabItems to="fixing-method">
+            
+              <FixingMethodSvg /> Fixing methods
             </TabItems>
-            <TabItems to="/app/configuration/materiels/color">
-              {" "}
-              <ColorPaletteSvg /> Material color
-            </TabItems>
-            <TabItems to="/app/configuration/materiels/fixing-method">
-              {" "}
-              <FixingMethodSvg /> Fixing method
-            </TabItems>
-            <TabItems to="/app/configuration/materiels/shape">
-              {" "}
-              <ShapeSvg /> Shape
-            </TabItems>
-            <TabItems to="/app/configuration/materiels/text-image">
-              {" "}
+           
+            <TabItems to="text-image">
+            
               <TextImageSvg /> Text/Image
             </TabItems>
-            <TabItems to="/app/configuration/materiels/additional-option">
-              <AdditinalOptionSvg /> Additional Options
+            <TabItems to="additional-option">
+              <AdditinalOptionSvg /> Additional components
             </TabItems>
           </InlineStack>
         </Box>)
