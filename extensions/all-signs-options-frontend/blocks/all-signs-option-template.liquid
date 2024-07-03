@@ -1,7 +1,7 @@
 
 <div>
     <div id="asoTemplate" class="aso-template-container">
-        <div class="asoTemplateItem">
+        <div class="asoTemplateItem" id="asoTemplateItemModel">
             <div class="aso-template-image-container">
                 <div class="aso-template-image-wrapper">
                     <img class=" asoTemplateItemImg " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
@@ -21,14 +21,15 @@
                           <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform>
                           </circle>
                       </svg>
-
-                        Add to cart
+                      <span> {{ block.settings.text_add_to_cart }}</span>
                     </button>
+                 
+
                     <a href="{{ block.settings.asoDesignPageUrl }}"  class="asoTemplateItemCustomize">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
                         </svg>
-                        Customize
+                        <span> {{ block.settings.text_customize }}</span>
                     </a>
                 </div>
 
@@ -104,6 +105,9 @@ document.addEventListener('DOMContentLoaded', function(){
 // Pour chaque élément dans templates
     templates.filter(template=>(aso_configuration_id=="0" || template.configurationId==aso_configuration_id ) ).forEach(template => {
         // Cloner l'élément template
+        if(!(template?.data?.templateData?.sign)){
+          return false;
+        }
         const clone = templateItem.cloneNode(true);
         if (templates?.length) {
           asoTemplateData.push(...templates)
@@ -112,12 +116,13 @@ document.addEventListener('DOMContentLoaded', function(){
         if (template.prevImg){
             clone.querySelector('.asoTemplateItemImg').setAttribute('src',template.prevImg)
         }
+        clone.setAttribute('id',"asoTemplateItem"+template.id);
         clone.querySelector('.asoTemplateItemName').textContent = template.name;
         clone.querySelector('.asoTemplateItemSize').textContent = (template.data?.templateData)?   
-        template.data.templateData.sign.size.width + ' ' +template.data.templateData.sign.size.unit + ' x '+
-        template.data.templateData.sign.size.height + ' ' +template.data.templateData.sign.size.unit: "0mm x 0mm";
+        template.data.templateData.sign?.size?.width + ' ' +template.data.templateData.sign?.size?.unit + ' x '+
+        template.data.templateData.sign?.size?.height + ' ' +template?.data?.templateData?.sign?.size?.unit: "0mm x 0mm";
         clone.querySelector('.asoTemplateItemPrice').textContent = asoPriceFormatTemplate.replace("{","").replace("{amount}}", (template?.data?.cartData?.custom_price ? template.data.cartData.custom_price + template.basePrice : template.basePrice));
-        clone.querySelector('.asoTemplateItemTextAfter').textContent =(template?.data?.templateData) ? template.data.templateData.price.textAfter:'';
+        clone.querySelector('.asoTemplateItemTextAfter').textContent =(template?.data?.templateData) ? template.data.templateData?.price?.textAfter:'';
         const asoDesignPageUrl =  clone.querySelector('.asoTemplateItemCustomize').getAttribute('href');
         clone.querySelector('.asoTemplateItemCustomize').setAttribute("href", asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId)
         clone.querySelector('.asoTemplateItemAddToCart').setAttribute('onclick',"addTemplateTocart("+template.id+")");
@@ -128,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function(){
         }
 
         
-        // Ajouter le clone au nouveau conteneur
+        // Ajouter le clone au nouveau conteneur  now
         newContainer.appendChild(clone);
     });
 
@@ -168,16 +173,25 @@ function addTemplateTocart(id){
 }
 </script>
 <style>
+  
+    {% if request.design_mode == false %}
+      #asoTemplateItemModel{
+        display: none !important;
+      }
+    {% endif %}
+
 .asoTemplateItemCustomize {
-  color: white;
+  color:  {{ block.settings.colour_text_customize }};
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #febd52;
+  background-color:  {{ block.settings.colour_bg_customize }};
   border-radius: 0.5rem;
   width: 100%;
   padding: 0.75rem;
   text-decoration: none;
+  gap: 8px;
+  font-size: 1.5rem;;
 }
 
 .asoTemplateItemCustomize:hover {
@@ -186,13 +200,18 @@ function addTemplateTocart(id){
 
 
 .asoTemplateItemAddToCart {
+  color: {{ block.settings.colour_text_add_to_cart }};
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #0374e3;
+  background-color:  {{ block.settings.colour_bg_add_to_cart }};
   border-radius: 5px;
+  border-color: {{ block.settings.colour_bg_add_to_cart }} ;
   width: 100%;
   padding: 0.75rem;
+  text-decoration: none;
+  gap: 8px;
+  font-size: 1.5rem;;
 }
 
 
@@ -248,7 +267,7 @@ function addTemplateTocart(id){
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px; /* aso-h-[150px] */
+    height: 200px; /* aso-h-[150px] */
     overflow: hidden;
 }
 
@@ -263,7 +282,7 @@ function addTemplateTocart(id){
 
 .aso-template-container{
   display: grid;
-  gap: 8px; /* aso-gap-8 */
+  gap: 20px; 
 }
 
 @media (min-width: 1200px) {
@@ -282,11 +301,20 @@ function addTemplateTocart(id){
   .aso-template-container {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .aso-template-image-container {
+    height: 150px; 
+  }
 }
 
 @media (max-width: 600px) {
   .aso-template-container {
     grid-template-columns: repeat(2, 1fr);
+    
+  }
+
+  .aso-template-image-container {
+    height: 150px; 
   }
 }
 
@@ -315,7 +343,35 @@ function addTemplateTocart(id){
           "id": "asoDesignPageUrl",
           "label": "Design Screen page url",
           "default":"/"
-        }
+        },
+        { "type": "text", "id": "text_add_to_cart", "label": "Add  to cart text", "default": "Add  to cart" },
+        { "type": "text", "id": "text_customize", "label": "Customize text", "default": "Customize" },
+        {
+           "type": "color", 
+          "id": "colour_bg_add_to_cart", 
+          "label": "Add to  cart  background color", 
+          "default": "#122f81" 
+        },
+        {
+          "type": "color", 
+         "id": "colour_bg_customize", 
+         "label": "Customize  background color", 
+         "default": "#febd52" 
+       },
+       {
+        "type": "color", 
+       "id": "colour_text_add_to_cart", 
+       "label": "Add to  cart  text color", 
+       "default": "#FFFFFF" 
+     },
+     {
+       "type": "color", 
+      "id": "colour_text_customize", 
+      "label": "Customize  text color", 
+      "default": "#FFFFFF" 
+    }
+
+
       ]
     }
 {% endschema %} 

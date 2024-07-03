@@ -23,8 +23,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   let configurationUrl = "";
   try {
     const shop = await ShopifyShopService.getShop(admin, session);
-    templateUrl = `https://${shop.myshopify_domain}/admin/themes/current/editor?context=apps&template=${"product"}&activateAppId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-option-template"}&target=mainSection`;
-      configurationUrl = `https://${shop.myshopify_domain}/admin/themes/current/editor?context=apps&template=${"product"}&activateAppId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-options"}&target=mainSection`;
+    
+    templateUrl = `https://${shop.myshopify_domain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-option-template"}&target=newAppsSection`;
+      configurationUrl = `https://${shop.myshopify_domain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-options"}&target=newAppsSection`;
   } catch (error) {
     console.log('error getting shop  domain', error )
   }
@@ -42,14 +43,27 @@ export default function Index() {
   return (
     <Page fullWidth>
       <Box width="100%" minHeight="100%" padding="300">
-       {templateUrl && configurationUrl && <Box paddingBlock="300">
-          <Banner>
+
+        {templateUrl && configurationUrl && <Box paddingBlock="300">
+          <Grid>
+            
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <Banner>
             Click{" "}
-            <Link target="_blank" url={configurationUrl}>here to install configuration screen</Link>
-            Learn more about and {" "}
-            <Link target="_blank" url={templateUrl}> here to add template screen </Link>
-            to your online store{" "}
+            <Link target="_blank" url={configurationUrl}>here to install configuration screen</Link>{" "}  to your online store
+          
           </Banner>
+            </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <Banner>
+            Click{" "}
+         
+            <Link target="_blank" url={templateUrl}> here to add template screen </Link>{" "}
+            to your online store
+          </Banner>
+              </Grid.Cell>
+        </Grid>
+
         </Box>
 }
         <SpacingBackground backgroundColor="#FFFFFF">
