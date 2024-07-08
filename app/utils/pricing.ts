@@ -39,6 +39,29 @@ export const getPlanProxy = async (admin:any) => {
 
 
 
+export const getPlanProxyPublic = async (shop:any, accessToken:any) => {
+  const plans = await ShopifyBillingService.getBillingRequest(shop, accessToken);
+  
+  if (plans?.length > 0) {
+    for (const plan of plans) {
+      if (plan.test == isTest()) {
+        
+        if (plan.name == MONTHLY_STARTER_PLAN || plan.name == YEARLY_STARTER_PLAN) {
+          return "starter";
+        } else if(plan.name == MONTHLY_PRO_PLAN || plan.name == YEARLY_PRO_PLAN) {
+          return "pro";
+          
+        }
+      }
+      
+    }
+  }
+
+  return "free"
+}
+
+
+
 export const subscriptionRequired = async (billing: any)=>{
   
   const billingCheck = await billing.require({

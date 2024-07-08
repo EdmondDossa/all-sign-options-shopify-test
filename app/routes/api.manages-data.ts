@@ -6,12 +6,18 @@ import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
 import SettingOutputService from "~/models/SettingOutput.service";
 import SettingShapesService from "~/models/SettingShapes.service";
 import { authenticate } from "~/shopify.server";
-import { PRICING_PLANS, getPlanProxy } from "~/utils/pricing";
+import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  let { admin, session }:any = await authenticate.public.appProxy(request);
-  if (!admin || !session) {
-       session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
+  let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
+  let admin: any = null;
+  let session: any = null;
+  if (!asoAccessToken) {
+      ({ admin, session } = await authenticate.public.appProxy(request));
+  }
+
+  if (!admin ) {
+       session = await prisma.session.findFirst({ where: { accessToken: asoAccessToken } }) ;
       if (!session) {
         return json({ error: "Session not found" });
       }
@@ -33,18 +39,25 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   let plan:string = "";
 
-  if (admin) {
 
-    plan = await getPlanProxy(admin);
-    if (plan == "free") {
+  if (admin) {
+    console.log("use private plan ");
+      plan = await getPlanProxy(admin);
+  }else{
+    console.log("use public plan ");
+      plan = await getPlanProxyPublic(session.shop, session.accessToken);
+  }
+
+  if (plan =="free") {
       return json(null);
-    }
-    if (plan == PRICING_PLANS.STARTER) { 
-      data.borders = data.borders.slice(0, 2);
-      data.allBorder = data.allBorder.slice(0, 2);
-      data.allShapes = data.allShapes.slice(0, 5);
-      data.allFixingMethod = data.allFixingMethod.slice(0, 5);
-    }
+  }
+  
+  console.log(" le plan courant est ", plan);
+  if (plan == PRICING_PLANS.STARTER) { 
+    data.borders = data.borders.slice(0, 2);
+    data.allBorder = data.allBorder.slice(0, 2);
+    data.allShapes = data.allShapes.slice(0, 5);
+    data.allFixingMethod = data.allFixingMethod.slice(0, 5);
   }
     
   return json(data);

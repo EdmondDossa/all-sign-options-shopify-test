@@ -25,7 +25,7 @@ import { useId } from "react";
   
 
   export async function loader({ request }:LoaderFunctionArgs) {
-    const { billing } = await authenticate.admin(request);
+    const { billing ,admin, session} = await authenticate.admin(request);
     const plan = await getPlan(billing);
   
     try {

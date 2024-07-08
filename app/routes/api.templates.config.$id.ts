@@ -12,7 +12,13 @@ import { replaceUploadsAddShopUrl } from "~/utils/fileUrl";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     
-  let { admin, session }:any = await authenticate.public.appProxy(request);
+  let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
+  let admin: any = null;
+  let session: any = null;
+  if (!asoAccessToken) {
+      ({ admin, session } = await authenticate.public.appProxy(request));
+  }
+  
   if (!admin || !session) {
        session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
       if (!session) {
