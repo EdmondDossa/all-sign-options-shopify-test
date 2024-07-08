@@ -4,13 +4,17 @@ import TemplateService from "~/models/Template.service";
 import { authenticate } from "~/shopify.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-    // const { admin, session } = await authenticate.public.appProxy(request);
-    // if (!admin||!session) {
-    //   return json({error:"shop  not found here"});
-    // }
-    // let sessionId = session.id;
-    let sessionId = "offline_quickstart-5c91f330.myshopify.com";
-
+    let { admin, session }:any = await authenticate.public.appProxy(request);
+    if (!admin || !session) {
+         session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
+        if (!session) {
+          return json({ error: "Session not found" });
+        }
+    }
+    let sessionId = session.id;
+   
+    
+    
     let data = await TemplateService.getTemplate(parseInt(`${params.id}`),sessionId);
     
     return json(data );

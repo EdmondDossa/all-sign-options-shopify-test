@@ -1,9 +1,10 @@
 
-import {  Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import {  Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { FixingMethodType } from "~/types/SettingsType";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export const loader = async ({request}:LoaderFunctionArgs) => { 
   const { session, admin } = await authenticate.admin(request);
@@ -14,9 +15,15 @@ export const loader = async ({request}:LoaderFunctionArgs) => {
 }
 
 export default function SettingFixingMethod() {
-  const { fixingMethods } = useLoaderData<typeof loader>();
+  let { fixingMethods } = useLoaderData<typeof loader>();
+  const { plan } = useOutletContext<{ plan: string }>();
+
+  if(plan==PRICING_PLANS.STARTER){
+    fixingMethods = fixingMethods?.slice(0, 5) || null;
+  }
+
 
   return (
-    <Outlet context={{fixingMethods:fixingMethods}}/>
+    <Outlet context={{fixingMethods:fixingMethods, plan:plan}}/>
   );
 }

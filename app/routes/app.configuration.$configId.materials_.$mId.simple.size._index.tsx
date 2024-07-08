@@ -46,14 +46,16 @@ import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { jsonTransform } from "~/utils/transfomerZod";
 import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
 import { ConfigurationType } from "~/types/ConfigurationType";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export default function MaterialSizeIndex() {
   const submit = useSubmit();
-  let { customSize, allSizes, thickness , configuration } = useOutletContext<{
+  let { customSize, allSizes, thickness , configuration, plan } = useOutletContext<{
     customSize: ConfigCustomSize;
     allSizes: ConfigSize[];
     thickness: configSizeThickness;
     configuration: ConfigurationType;
+    plan: string;
   }>();
 
   useHandleFlashMessage();
@@ -116,6 +118,19 @@ export default function MaterialSizeIndex() {
           pricings: []
         },
   });
+
+
+
+
+
+  useEffect(() => {
+    if (plan == PRICING_PLANS.STARTER) {
+      formData.customSize.active = false;
+      setFormData({
+          ...formData
+      })
+    }
+  }, [])
 
   const handleInputChange = (inputName: string, value: any) => {
     setFormData((prevData: any) => ({
@@ -228,6 +243,7 @@ export default function MaterialSizeIndex() {
       isDefault: currSize?.isDefault,
     };
   });
+
   const resourceName = {
     singular: "Size",
     plural: "sizes",
@@ -284,7 +300,7 @@ export default function MaterialSizeIndex() {
         <BoxBackground>
           <Box padding="150">
             <InlineStack gap="100" align="end">
-              <button
+             {!(plan == PRICING_PLANS.STARTER && allSizes.length>=10) && <button
                 className="primary-btn"
                 type="button"
                 onClick={handleEdit}
@@ -295,7 +311,7 @@ export default function MaterialSizeIndex() {
                     <span className="primary-btn-text"> Add new SIZE</span>
                   </InlineStack>
                 </Box>
-              </button>
+              </button>}
             </InlineStack>
           </Box>
           <Divider borderWidth="050" />
@@ -388,7 +404,7 @@ export default function MaterialSizeIndex() {
                 </BlockStack>
               )}
             </Box>
-            <Divider borderWidth="050" />
+            {plan == PRICING_PLANS.STARTER || <><Divider borderWidth="050" />
             <Box paddingInline="300" paddingBlock="1000">
               <Box paddingBlockEnd="600">
                 <InlineStack blockAlign="center" gap="200">
@@ -670,7 +686,7 @@ export default function MaterialSizeIndex() {
                   </Grid.Cell>
                 </Grid>
               )}
-            </Box>
+            </Box></>}
             <Divider borderWidth="050" />
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">

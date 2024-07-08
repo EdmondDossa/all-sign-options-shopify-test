@@ -1,7 +1,8 @@
-const shopifyProxyURL = `${window.Shopify.routes.root}apps/aso-proxy/api/`;
-const urlParams = new URLSearchParams(window.location.search);
-const paramAsoConfigurationId = urlParams.get('aso-config-id');
-const asoTemplateId = urlParams.get('aso-template-id');
+
+var shopifyProxyURL = `${window.Shopify.routes.root}apps/aso-proxy/api/`;
+var urlParams = new URLSearchParams(window.location.search);
+var paramAsoConfigurationId = urlParams.get('aso-config-id');
+var asoTemplateId = urlParams.get('aso-template-id');
 
 
 

@@ -1,88 +1,487 @@
-value
-: 
-Array(2)
-0
-: 
-bold
-: 
-"bold"
-color///      templateObject[0].left = rect.left + ((rect.width/5)*4) 
 {
-    "label": "Text",
-    "value": [
-        {
-            "id": 50,
-            "values": {
-                "width": {
-                    "label": "width",
-                    "value": 32
-                },
-                "height": {
-                    "label": "height",
-                    "value": 7
-                },
-                "left": {
-                    "label": "Left",
-                    "value": 13
-                },
-                "top": {
-                    "label": "top",
-                    "value": 11
-                },
-                "right": {
-                    "label": "right",
-                    "value": 13
-                },
-                "bottom": {
-                    "label": "bottom",
-                    "value": 11
-                }
+    "settings": {
+        "generals": {
+            "mobile": {
+                "showNavigatorMenu": "off",
+                "showNavigationMenuFirst": "yes",
+                "mobileSelectionOptionsDisplay": "horizontally"
             },
-            "textContent": "Dark Scribe",
-            "bold": "bold",
-            "italic": "italic",
-            "fontFamily": "Roboto",
-            "color": "#571e1e",
-            "underlined": false,
-            "crossed": false,
-            "overlined": false
+            "output": {
+                "waterMark": "",
+                "filesFormat": "png",
+                "zipOutputFiles": {
+                    "active": true,
+                    "zipOutFolderPrefix": "aso_"
+                },
+                "designComposition": true
+            },
+            "product": {
+                "designFromScratch": true,
+                "redirectToCheckOutPage": false,
+                "displayRecapsOnCheckout": false,
+                "redirectAfterAddingToCart": true,
+                "hideDesignButtonsOnShopPage": false,
+                "hideAddToCartButtonOnShopPage": true,
+                "hideAddToCartButtonOnDetailPage": true
+            }
         },
-        {
-            "id": 51,
-            "values": {
-                "width": {
-                    "label": "width",
-                    "value": 18
+        "themeColors": {
+            "skin": "couffo",
+            "colors": {
+                "bars": {
+                    "help": {
+                        "textColor": "#ffffff",
+                        "borderColor": "#0374e3",
+                        "hoverTextColor": "#ffffff",
+                        "backgroundColor": "#0374e3",
+                        "hoverBorderColor": "#025db7",
+                        "hoverBackgroundColor": "#025db7"
+                    },
+                    "price": {
+                        "textColor": "#000000",
+                        "textAfterColor": "#000000",
+                        "backgroundColor": "#ffffff",
+                        "textBeforeColor": "#000000"
+                    },
+                    "reset": {
+                        "textColor": "#000000",
+                        "borderColor": "#ffffff",
+                        "hoverTextColor": "#dd3232",
+                        "modalTextColor": "#000000",
+                        "backgroundColor": "#ffffff",
+                        "hoverBorderColor": "#f4f8fa",
+                        "hoverBackgroundColor": "#f4f8fa",
+                        "modalBackgroundColor": "#000000",
+                        "modalNoButtonTextColor": "#ffffff",
+                        "modalYesButtonTextColor": "#000000",
+                        "modalContainerBackground": "#ffffff",
+                        "modalNoButtonBackgroundColor": "#dc2626",
+                        "modalYesButtonBackgroundColor": "#f4f8fa"
+                    },
+                    "preview": {
+                        "textColor": "#000000",
+                        "borderColor": "#ffffff",
+                        "hoverTextColor": "#0374e3",
+                        "backgroundColor": "#ffffff",
+                        "hoverBorderColor": "#f4f8fa",
+                        "hoverBackgroundColor": "#f4f8fa"
+                    },
+                    "undoRedo": {
+                        "textColor": "#000000",
+                        "borderColor": "#ffffff",
+                        "hoverTextColor": "#0374e3",
+                        "backgroundColor": "#ffffff",
+                        "hoverBorderColor": "#f4f8fa",
+                        "disabledTextColor": "#c3cfd6",
+                        "hoverBackgroundColor": "#f4f8fa",
+                        "disabledBackgroundColor": "#ffffff"
+                    },
+                    "titleColor": "#000000",
+                    "backgroundColor": "#ffffff"
                 },
-                "height": {
-                    "label": "height",
-                    "value": 3
+                "canvas": {
+                    "borderColor": "#ffffff",
+                    "backgroundColor": "#ffffff"
                 },
-                "left": {
-                    "label": "Left",
-                    "value": 19
+                "recaps": {
+                    "backgroundColor": "#ffffff",
+                    "headerTextColor": "#ffffff",
+                    "optionTextColor": "#000000",
+                    "optionBorderColor": "#eef3f6",
+                    "buttonEditTextColor": "#ffffff",
+                    "optionHoverTextColor": "#000000",
+                    "buttonFinishTextColor": "#14213d",
+                    "headerBackgroundColor": "#3590ea",
+                    "optionHoverBorderColor": "#eef3f6",
+                    "buttonAddToCartTextColor": "#14213d",
+                    "buttonEditHoverTextColor": "#f4f8fa",
+                    "buttonEditBackgroundColor": "#0374e3",
+                    "buttonFinishHoverTextColor": "#313e52",
+                    "optionHoverBackgroundColor": "#eef3f6",
+                    "buttonFinishBackgroundColor": "#febd52",
+                    "buttonAddToCartHoverTextColor": "#313e52",
+                    "buttonAddToCartBackgroundColor": "#febd52",
+                    "buttonEditHoverBackgroundColor": "#025db7",
+                    "buttonFinishHoverBackgroundColor": "#fcac29",
+                    "buttonAddToCartHoverBackgroundColor": "#fcac29"
                 },
-                "top": {
-                    "label": "top",
-                    "value": 19
+                "objectsOptions": {
+                    "edit": {
+                        "textColor": "#000000",
+                        "buttonColor": "#ffffff",
+                        "hoverTextColor": "#ffffff",
+                        "hoverButtonColor": "#787878"
+                    },
+                    "clone": {
+                        "textColor": "#000000",
+                        "buttonColor": "#ffffff",
+                        "hoverTextColor": "#ffffff",
+                        "hoverButtonColor": "#787878"
+                    },
+                    "center": {
+                        "textColor": "#000000",
+                        "buttonColor": "#ffffff",
+                        "hoverTextColor": "#ffffff",
+                        "hoverButtonColor": "#787878"
+                    },
+                    "delete": {
+                        "textColor": "#dd3232",
+                        "buttonColor": "#ffffff",
+                        "hoverTextColor": "#dd3232",
+                        "hoverButtonColor": "#787878"
+                    },
+                    "backgroundColor": "#ffffff"
                 },
-                "right": {
-                    "label": "right",
-                    "value": 22
-                },
-                "bottom": {
-                    "label": "bottom",
-                    "value": 6
+                "optionsSideBar": {
+                    "options": {
+                        "modals": {
+                            "option": {
+                                "textColor": "#000000",
+                                "hoverTextColor": "#000000",
+                                "activeTextColor": "#0374e3",
+                                "hoverBackgroundColor": "#eef3f6"
+                            },
+                            "buttons": {
+                                "textColor": "#ffffff",
+                                "hoverTextColor": "#ffffff",
+                                "backgroundColor": "#0374e3",
+                                "hoverBackgroundColor": "#3590ea"
+                            },
+                            "textColor": "#C24A4A",
+                            "backgroundColor": "#ffffff",
+                            "headerTextColor": "#ffffff",
+                            "headerBackgroundColor": "#0374e3"
+                        },
+                        "buttons": {
+                            "textColor": "#000000",
+                            "hoverTextColor": "#000000",
+                            "backgroundColor": "#ffffff",
+                            "hoverBackgroundColor": "#ffffff"
+                        }
+                    },
+                    "backgroundColor": "#eef3f6",
+                    "scrollButtonsTextColor": "#ffffff",
+                    "scrollButtonsHoverTextColor": "#ffffff",
+                    "scrollButtonsBackgroundColor": "#4a4a4a",
+                    "scrollButtonsHoverBackgroundColor": "#74848d"
                 }
             },
-            "textContent": "You are special",
-            "bold": "normal",
-            "italic": "normal",
-            "fontFamily": "Calibri",
-            "color": "#5d2828",
-            "underlined": false,
-            "crossed": false,
-            "overlined": false
+            "customCss": ""
+        },
+        "customizerSign": {
+            "text": {
+                "colors": [
+                    {
+                        "name": "black",
+                        "codeHex": "#000000"
+                    }
+                ],
+                "enableBold": true,
+                "enableBorder": true,
+                "enableItalic": true,
+                "enableStrike": true,
+                "enableOpacity": true,
+                "selectedFonts": [],
+                "enableCurvedUp": false,
+                "enableFontSize": {
+                    "active": true,
+                    "defaultFontSize": 16,
+                    "maximumFontSize": 40,
+                    "minimumFontSize": 12
+                },
+                "enableOverline": true,
+                "enableUnderline": true,
+                "enableCurvedDown": false,
+                "enableCustomColor": true,
+                "enableTextAlignment": true
+            },
+            "images": {
+                "filter": {
+                    "active": true,
+                    "enableBlur": true,
+                    "enableSepia": true,
+                    "enableEmbross": true,
+                    "enableOpacity": true,
+                    "enableSharpen": true,
+                    "enableGreyscale": false
+                },
+                "enableClipart": {
+                    "active": true,
+                    "selectClipartGroups": [
+                        1,
+                        2,
+                        4,
+                        5
+                    ]
+                },
+                "fileUploadScript": {
+                    "uploadMaxWidth": 100,
+                    "uploadMinWidth": 100,
+                    "customWithGraphical": false,
+                    "allowedUploadsExtentions": [
+                        "png",
+                        "jpeg",
+                        "svg"
+                    ]
+                },
+                "enableUploadImage": true
+            },
+            "signPart": {
+                "doublePart": {
+                    "label": "Switch Face",
+                    "part1": "Face A",
+                    "part2": "Face B",
+                    "active": false,
+                    "enableCopyDesignFromSide": true
+                }
+            },
+            "customizerOptions": {
+                "measurementUnit": "mm",
+                "desktopColumnOrder": "right",
+                "showHideMeasurements": "both",
+                "decimalFormatMeasurements": "with-decimal"
+            }
+        },
+        "languageImages": {
+            "images": {
+                "icon": "",
+                "resetAllIcon": "",
+                "cancelAnAction": "",
+                "changeIconSize": "",
+                "changeIconText": "",
+                "changeIconColor": "",
+                "changeIconImage": "",
+                "changeIconShape": "",
+                "changeIconShare": "",
+                "changeIconBorder": "",
+                "changeIconImport": "",
+                "changeIconPreview": "",
+                "changeIconProduct": "",
+                "changeIconMaterial": "",
+                "changeIconSizeMenu": "",
+                "changeIconSaveProject": "",
+                "changeIconFixingMethod": "",
+                "changeIconShareSideBar": ""
+            },
+            "visualizer": {
+                "textTop": "Top",
+                "textHelp": "Help",
+                "textLeft": "Left",
+                "textSave": "Save",
+                "textSize": "Size",
+                "textAngle": "Angle",
+                "textColor": "Color",
+                "textImage": "Image",
+                "textRight": "Right",
+                "textShape": "Shape",
+                "textShare": "Share",
+                "textWidth": "Width",
+                "thickness": "Thickness",
+                "customSize": "Custom Size",
+                "textBorder": "Border",
+                "textBottom": "Bottom",
+                "textHeight": "Height",
+                "textImport": "Import",
+                "textPreview": "Preview",
+                "textProduct": "Product",
+                "titleHeader": "Plastic Signs",
+                "textDownload": "Download",
+                "textMaterial": "Material",
+                "textPosition": "Position",
+                "textAddToCart": "Add To Cart",
+                "textAfterPrice": "TVA Include",
+                "textButtonBack": "Undo",
+                "textButtonNext": "Redo",
+                "textCanvasEdit": "Edit",
+                "textOptionText": "Text",
+                "textBeforePrice": "",
+                "textCanvasClone": "Clone",
+                "textButtonFinish": "Finish",
+                "textCanvasDelete": "delete",
+                "textButtonRefresh": "Restart all",
+                "textCanvasCenterH": "centerH",
+                "textCanvasCenterV": "centerV",
+                "textFixingMethods": "Fixing Methods",
+                "customSizeButtonDone": "Done"
+            },
+            "uploadDesign": {
+                "link": "",
+                "activate": false,
+                "phraseSubmitCustom": "Take a customization"
+            }
         }
-    ]
+    },
+    "materials": [
+        {
+            "data": {
+                "sizes": {
+                    "allSizes": [
+                      
+                        {
+                            "label": "1100x1100",
+                            "width": 1100,
+                            "height": 1100,
+                            "basePrice": 0,
+                            "charPrice": 0,
+                            "isDefault": false,
+                            "textNumber": 0,
+                            "maxTextChar": -1,
+                            "startPriceAtChar": 0
+                        }
+                    ],
+                    "thickness": {
+                        "active": false,
+                        "values": []
+                    },
+                    "customSize": {
+                        "width": {
+                            "max": 200,
+                            "min": 50,
+                            "label": "Custom width"
+                        },
+                        "active": true,
+                        "height": {
+                            "max": 210,
+                            "min": 40,
+                            "label": "Custom height"
+                        },
+                        "pricings": [
+                            {
+                                "surface": 10,
+                                "basePrice": 0,
+                                "charPrice": 0
+                            }
+                        ]
+                    }
+                },
+                "colors": {
+                    "allColors": [
+                        {
+                            "name": "Wood",
+                            "pattern": {
+                                "url": "https://quickstart-5c91f330.myshopify.com/apps/aso-proxy/uploads/wood-birch.png",
+                                "active": true,
+                                "codeHex": "#000000"
+                            },
+                            "prevImg": "https://quickstart-5c91f330.myshopify.com/apps/aso-proxy/uploads/wood-birch.png",
+                            "isDefault": true,
+                            "textColor": {
+                                "name": "",
+                                "active": false,
+                                "codeHex": "#000000",
+                                "sameForBorder": false
+                            },
+                            "additionalPrice": 9.19
+                        }
+                    ],
+                    "customColors": {
+                        "color": {
+                            "label": "Custom colors",
+                            "active": false,
+                            "prevImg": ""
+                        }
+                    }
+                },
+                "shapes": [
+                    {
+                        "shapeId": 3,
+                        "isDefault": true,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 1,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 0,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 7,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 8,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 9,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 4,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 2,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 5,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    },
+                    {
+                        "shapeId": 6,
+                        "isDefault": false,
+                        "additionalPrice": 0
+                    }
+                ],
+                "borders": {
+                    "settings": {
+                        "colors": [
+                          
+                            {
+                                "name": "Brown",
+                                "codeHex": "#523d2a",
+                                "additionalPrice": 0
+                            }
+                        ],
+                        "borderColorsLabel": "Borders Colors",
+                        "enableBorderColor": true,
+                        "enableBorderWidth": false,
+                        "customColorsPrevImg": "https://quickstart-5c91f330.myshopify.com/apps/aso-proxy/uploads/door-sign.svg"
+                    },
+                    "allBorders": [
+                   
+                        {
+                            "isDefault": false,
+                            "excludeSizes": [],
+                            "excludeShapes": [],
+                            "manageBorderId": 3,
+                            "additionalPrice": 0
+                        }
+                    ]
+                },
+                "textImages": {
+                    "enableText": true,
+                    "enableImage": true
+                },
+                "fixingMethods": [
+                 
+                    {
+                        "isDefault": false,
+                        "excludeSizes": [],
+                        "excludeShapes": [],
+                        "fixingMethodId": 9,
+                        "additionalPrice": 14.5
+                    }
+                ],
+                "additionalOptions": []
+            },
+            "icon": "https://quickstart-5c91f330.myshopify.com/apps/aso-proxy/uploads/wood_birch (1).png",
+            "name": "Birch",
+            "type": "simple",
+            "popImg": "",
+            "description": "Birch"
+        }
+    ],
+    "additionalOptions": []
 }

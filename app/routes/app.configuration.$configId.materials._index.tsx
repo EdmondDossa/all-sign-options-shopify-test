@@ -27,10 +27,11 @@ import { BorderCircleText } from "~/components/feactures/BorderCircleText";
 import { truncateText } from "~/utils/truncate-text";
 import { fileUrl } from "~/utils/fileUrl";
 import { ManageBtn } from "~/components/buttons/ManageBtn";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export default function MaterialIndex() {
   const submit = useSubmit();
-  let { materials } = useOutletContext<{ materials: Material[] }>();
+  let { materials , plan} = useOutletContext<{ materials: Material[], plan: string }>();
 
   useHandleFlashMessage();
 
@@ -117,7 +118,7 @@ export default function MaterialIndex() {
         <Box padding="300">
           <BlockStack gap="300">
             <InlineStack align="end">
-              <button
+             {!(plan == PRICING_PLANS.STARTER && materials.length>=2 ) && <button
                 className="primary-btn"
                 type="button"
                 onClick={handleEdit}
@@ -128,7 +129,7 @@ export default function MaterialIndex() {
                     <span className="primary-btn-text"> Add new Material</span>
                   </InlineStack>
                 </Box>
-              </button>
+              </button>}
             </InlineStack>
           </BlockStack>
         </Box>

@@ -1,13 +1,14 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import MaterialSizeService from "~/models/MateriaSizeService.service";
 import MaterialBorderService from "~/models/MaterialBorderService.service";
 
 import SettingBorderService from "~/models/SettingBorder.service";
 import SettingShapesService from "~/models/SettingShapes.service";
 import { authenticate } from "~/shopify.server";
-import { ConfigSize } from "~/types/ConfigDataType";
+import { ConfigBorder, ConfigSize } from "~/types/ConfigDataType";
 import { BorderType, ShapeType } from "~/types/SettingsType";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -15,7 +16,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const mId = parseInt(params.mId ?? "");
   console.log("configID materialID", configId, mId);
 
-  let borders = null;
+  let borders:ConfigBorder[] | null = null;
 
   let borderSetting = null;
 
@@ -33,7 +34,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       configId,
       mId,
     );
-    borders = bordersResponse?.allBorders;
+    borders = bordersResponse?.allBorders||[];
     borderSetting = bordersResponse?.settings;
     let materialSizes = await MaterialSizeService.getAll(
       session.id,
@@ -55,6 +56,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function MaterialBorder() {
   let { configSizes, manageBorders, borders, manageShapes, borderSetting } =
     useLoaderData<typeof loader>();
+    const {  plan } = useOutletContext<{
+      plan: string;
+    }>();
+    if (plan == PRICING_PLANS.STARTER) {
+      manageShapes = manageShapes?.slice(0, 5) || [];
+      configSizes = configSizes?.slice(0, 10) || [];
+      manageBorders = manageBorders?.slice(0, 2) || [];
+      borders = borders?.filter(curr => curr.manageBorderId < 2 ) .slice(0, 2) || [];
+    }
   return (
     <Outlet
       context={{
@@ -63,6 +73,7 @@ export default function MaterialBorder() {
         borders,
         manageShapes,
         borderSetting,
+        plan
       }}
     />
   );

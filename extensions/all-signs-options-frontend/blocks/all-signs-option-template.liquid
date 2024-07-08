@@ -37,9 +37,10 @@
         </div>
     </div>
 </div>
-{% if asoScriptLoad != true %}
-<script>
 
+<script>
+  
+  if(!asoConfigurationId){
   var asoConfigurationId = "";
   var asoProductId = "";
   var asoCurrency = "{{cart.currency.symbol}}";
@@ -51,10 +52,16 @@
   var asoThousandSep= asoFormattedPrice[1]=="2"?"":asoFormattedPrice[1];
   var asoDecimalSep= asoFormattedPrice[4]=="5"?".":asoFormattedPrice[4];
   var asoCartUrl = "{{ routes.cart_url }}";
-</script>
-<script src="{{ 'shopify.js' | asset_url }}"></script>
+ 
+    document.write('<script src="{{ 'shopify.js' | asset_url }}"><\/script>');
 
-{% endif %}
+
+  
+}
+</script>
+
+
+
 <script>
 
 var aso_configuration_id = "{{ block.settings.aso_configuration_id }}";
@@ -65,7 +72,7 @@ async function getAsotemplates() {
     
   
     try {
-      const response = await fetch(`${shopifyProxyURL}templates`, {
+      const response = await fetch(`${window.Shopify.routes.root}apps/aso-proxy/api/templates`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

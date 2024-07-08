@@ -1,10 +1,11 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import MaterialShapeService from "~/models/MaterialShape.service";
 import SettingShapesService from "~/models/SettingShapes.service";
 import { authenticate } from "~/shopify.server";
 import { ConfigShape } from "~/types/ConfigDataType";
 import { ShapeType } from "~/types/SettingsType";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -27,5 +28,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function MaterialColors() {
   let { manageShapes, shapes } = useLoaderData<typeof loader>();
-  return <Outlet context={{ manageShapes, shapes }} />;
+  const {  plan } = useOutletContext<{
+    plan: string;
+  }>();
+  if (plan == PRICING_PLANS.STARTER && manageShapes) {
+    manageShapes = manageShapes.slice(0, 5);
+    shapes = shapes?.filter(curr => curr.shapeId < 5)?.slice(0, 5)||[];
+  }
+  return <Outlet context={{ manageShapes, shapes, plan }} />;
 }

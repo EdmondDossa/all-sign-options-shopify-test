@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import MaterialSizeService from "~/models/MateriaSizeService.service";
 import MaterialFixingMethodService from "~/models/MaterialFixingMethod.service";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
@@ -7,6 +7,7 @@ import SettingShapesService from "~/models/SettingShapes.service";
 import { authenticate } from "~/shopify.server";
 import { ConfigFixingMethod, ConfigSize } from "~/types/ConfigDataType";
 import { FixingMethodType, ShapeType } from "~/types/SettingsType";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -48,6 +49,16 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function MaterialFixingMethodsIndex() {
   let { manageFixingMethods, fixingMethods, manageShapes, configSizes } =
     useLoaderData<typeof loader>();
+    const {  plan } = useOutletContext<{
+      plan: string;
+    }>();
+    if (plan == PRICING_PLANS.STARTER) {
+      manageShapes = manageShapes?.slice(0, 5) || [];
+      configSizes = configSizes?.slice(0, 10) || [];
+      manageFixingMethods = manageFixingMethods?.slice(0, 5) || [];
+      fixingMethods = fixingMethods?.filter(curr => curr.fixingMethodId < 5) 
+        ?.slice(0, 5) || [];
+    }
   return (
     <Outlet
       context={{
@@ -55,6 +66,7 @@ export default function MaterialFixingMethodsIndex() {
         fixingMethods,
         manageShapes,
         configSizes,
+        plan
       }}
     />
   );

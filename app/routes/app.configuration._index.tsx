@@ -19,6 +19,7 @@ import {
   json,
   useLoaderData,
   useNavigate,
+  useOutletContext,
   useSubmit,
 } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
@@ -36,6 +37,7 @@ import { truncateText } from "~/utils/truncate-text";
 import { fileUrl } from "~/utils/fileUrl";
 import { DuplicateIconBtn } from "~/components/buttons/DuplicateIconBtn";
 import { ConfigurationType } from "~/types/ConfigurationType";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -99,6 +101,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function Configuration() {
   const submit = useSubmit();
   let { configurations } = useLoaderData<typeof loader>();
+  let { plan } = useOutletContext<{ plan: string }>()
+  
+  if (plan == PRICING_PLANS.STARTER) {
+    configurations = configurations.slice(0, 1);
+  }
   useHandleFlashMessage();
 
   const [configTitle, setConfigTitle] = useState<string>("");
@@ -209,7 +216,7 @@ export default function Configuration() {
                 </Text>
               </InlineGrid>
 
-              <InlineStack align="end">
+     { !(plan == PRICING_PLANS.STARTER && configurations?.length>=1)      &&   <InlineStack align="end">
                 
                 <button
                   className="primary-btn"
@@ -226,7 +233,7 @@ export default function Configuration() {
                     </InlineStack>
                   </Box>
                 </button>
-              </InlineStack>
+              </InlineStack>}
             </BlockStack>
           </Box>
         </BoxBackground>

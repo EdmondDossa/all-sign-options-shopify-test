@@ -4,11 +4,16 @@ import {
   DeliveryMethod,
   shopifyApp,
   LATEST_API_VERSION,
+  BillingInterval,
 } from "@shopify/shopify-app-remix/server";
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-01";
 import prisma from "./db.server";
-import SettingService from "./models/Setting.service";
+export const MONTHLY_STARTER_PLAN = "Monthly starter plan";
+export const YEARLY_STARTER_PLAN = "Yearly starter plan";
+export const MONTHLY_PRO_PLAN = "Monthly pro plan";
+export const YEARLY_PRO_PLAN = "Yearly pro plan";
+
 
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
@@ -47,6 +52,33 @@ const shopify = shopifyApp({
         console.log("========= order creatd end========")
       }
     }
+  },
+  billing: {
+    [MONTHLY_STARTER_PLAN]: {
+      amount: 33,
+      currencyCode: 'USD',
+      interval: BillingInterval.Every30Days,
+      trialDays: 7,
+    },
+    [YEARLY_STARTER_PLAN]: {
+      amount: 201,
+      currencyCode: 'USD',
+      interval: BillingInterval.Every30Days,
+      trialDays: 7,
+    },
+    [MONTHLY_PRO_PLAN]: {
+      amount: 49,
+      currencyCode: 'USD',
+      interval: BillingInterval.Every30Days,
+      trialDays: 7,
+    },
+    [YEARLY_PRO_PLAN]: {
+      amount: 471,
+      currencyCode: 'USD',
+      interval: BillingInterval.Every30Days,
+      trialDays: 7,
+    },
+   
   },
   hooks: {
     afterAuth: async ({ session }) => {

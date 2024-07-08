@@ -6,16 +6,34 @@ import {
     Text,
   } from "@shopify/polaris";
   
-  import {NavLink, Outlet, redirect} from "@remix-run/react";
+  import {NavLink, Outlet, redirect, useLoaderData} from "@remix-run/react";
   import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { FixingMethodSvg } from "~/components/svgs/FixingMethodSvg";
 import { ShapeSvg } from "~/components/svgs/ShapeSvg";
 import { BorderSvg } from "~/components/svgs/BorderSvg";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { OutputSvg } from "~/components/svgs/OutputSvg";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { authenticate } from "~/shopify.server";
+import { getPlan, subscriptionRequired } from "~/utils/pricing";
+
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { billing } = await authenticate.admin(request);
+  
+  await subscriptionRequired(billing);
+
+  let plan = await getPlan(billing);
+
+  return json({ plan });
+
+}
+
   
 
-export default function Settings(){
+export default function Settings() {
+
+    const { plan } = useLoaderData<typeof loader>();
     
     return (<Page fullWidth>
         <BoxBackground>
@@ -31,7 +49,7 @@ export default function Settings(){
       </BoxBackground>
       <SpacingBackground width="100%" height="auto" margin="20px 0 0 0">
         <SettingTabheader />
-        <Outlet/>
+        <Outlet context={{plan}}/>
       </SpacingBackground>
        
       </Page>)

@@ -8,9 +8,10 @@ import { Material } from "~/types/ConfigDataType";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
+import { PRICING_PLANS, getPlan } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session, admin, billing } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
   let materials: Material[] | null = null;
 
@@ -18,14 +19,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     materials = await MaterialService.getAll(session.id, configId);
   }
 
-  return json({ materials });
+  const  plan = await getPlan(billing);
+
+  return json({ materials, plan });
 };
 
 export default function Materiels() {
-  let { materials } = useLoaderData<typeof loader>();
+  let { materials, plan } = useLoaderData<typeof loader>();
   const { configuration } = useOutletContext<{
     configuration: ConfigurationType;
   }>();
+
+  if (plan == PRICING_PLANS.STARTER && materials) {  
+    materials = materials?.filter((m,i)=>m.type=="simple")?.slice(0, 2)||[];
+  }
 
   return (
     <Page fullWidth>
@@ -46,7 +53,7 @@ export default function Materiels() {
         </Box>
       </BoxBackground>
 
-      <Outlet context={{ materials: materials }} />
+      <Outlet context={{ materials: materials , plan}} />
     </Page>
   );
 }

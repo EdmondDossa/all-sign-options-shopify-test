@@ -37,6 +37,7 @@ import { z } from "zod";
 import { booleanTransform, stringTransform } from "~/utils/transfomerZod";
 import { parseWithZod } from "@conform-to/zod";
 import { fileUrl } from "~/utils/fileUrl";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export default function MaterialColorIndex() {
   const submit = useSubmit();
@@ -46,9 +47,10 @@ export default function MaterialColorIndex() {
 
   
 
-  let {  colors, customColors } = useOutletContext<{
+  let {  colors, customColors, plan } = useOutletContext<{
     colors: ConfigColor[];
     customColors: ConfigCustomColor;
+    plan: string;
   }>();
 
   const [formData, setFormData] = useState<any>(
@@ -196,7 +198,7 @@ export default function MaterialColorIndex() {
         <BoxBackground>
           <Box padding="150">
             <InlineStack gap="100" align="end">
-              <button
+{ plan == PRICING_PLANS.STARTER ||      <button
                 className="primary-btn"
                 type="button"
                 onClick={handleEdit}
@@ -209,7 +211,7 @@ export default function MaterialColorIndex() {
                     </span>
                   </InlineStack>
                 </Box>
-              </button>
+              </button>}
             </InlineStack>
           </Box>
           <Divider borderWidth="050" />
@@ -230,8 +232,7 @@ export default function MaterialColorIndex() {
           {rowMarkup}
         </IndexTable>
       </BoxBackground>
-
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+{ plan == PRICING_PLANS.STARTER ||    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
         <BoxBackground>
           <Form onSubmit={handleFormSubmit} method="POST">
             <Box paddingInline="300" paddingBlock="1000">
@@ -282,7 +283,7 @@ export default function MaterialColorIndex() {
             </Box>
           </Form>
         </BoxBackground>
-      </SpacingBackground>
+      </SpacingBackground>}
     </div>
   );
 }

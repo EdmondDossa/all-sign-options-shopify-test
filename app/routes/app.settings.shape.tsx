@@ -1,8 +1,9 @@
-import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import { Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import SettingShapesService from "~/models/SettingShapes.service";
 import { ShapeType } from "~/types/SettingsType";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export const loader = async ({request}:LoaderFunctionArgs) => { 
   const { session, admin } = await authenticate.admin(request);
@@ -13,10 +14,15 @@ export const loader = async ({request}:LoaderFunctionArgs) => {
 }
 
 export default function MaterialFixingMethod() {
-  const navigate = useNavigate();
-  const { shapes } = useLoaderData<typeof loader>();
+ 
+  let { shapes} = useLoaderData<typeof loader>();
+  const { plan } = useOutletContext<{ plan: string }>();
+
+  if(plan==PRICING_PLANS.STARTER){
+    shapes = shapes.slice(0,5)
+  }
 
   return (
-    <Outlet context={{shapes:shapes}}/>
+    <Outlet context={{shapes:shapes, plan:plan}}/>
   );
 }
