@@ -12,9 +12,10 @@ import { ClipartsGroupType, ColorType, FontType } from "~/types/ManagePropertyTy
 import { ShapeType } from "~/types/SettingsType";
 import SettingShapesService from "~/models/SettingShapes.service";
 import ClipartsGroupService from "~/models/ClipartsGroup.service";
+import { getPlan } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session, admin, billing } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
   const mId = parseInt(params.mId ?? "");
   console.log('configID materialID', configId, mId);
@@ -25,14 +26,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const manageFonts : FontType[] | null =  await FontService.getFonts(session.id)
   const manageShapes : ShapeType[] | null =  await SettingShapesService.get(session.id)
   const manageClipartGroups : ClipartsGroupType[] | null =  await ClipartsGroupService.getClipartsGroups(session.id)
-  
+  const plan =  await  getPlan(billing)
 
   
-  return json({ manageFonts,manageShapes, manageClipartGroups });
+  return json({ manageFonts,manageShapes, manageClipartGroups, plan});
 };
 
 export default function ConfigSettingsGeneral() {
-  let  { manageFonts, manageShapes, manageClipartGroups } = useLoaderData<typeof loader>();
+  let  { manageFonts, manageShapes, manageClipartGroups, plan } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -56,7 +57,7 @@ export default function ConfigSettingsGeneral() {
         </Box>
       </SpacingBackground>
 
-        <Outlet context={  { manageFonts ,manageShapes, manageClipartGroups}}></Outlet>
+        <Outlet context={  { manageFonts ,manageShapes, manageClipartGroups, plan}}></Outlet>
     </>
   );
 }

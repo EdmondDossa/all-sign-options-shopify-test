@@ -36,7 +36,7 @@ export default function MaterialSizes() {
     plan: string;
   }>();
   if (plan == PRICING_PLANS.STARTER) {
-    allSizes =allSizes?.slice(0, 10)||[];
+    allSizes =allSizes?.slice(0, PRICING_PLANS.STARTER_RULES.materialSizes)||[];
   }
   return <Outlet context={{ customSize, allSizes, thickness, configuration, plan }} />;
 }

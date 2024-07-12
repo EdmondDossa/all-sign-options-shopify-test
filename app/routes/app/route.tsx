@@ -22,7 +22,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   
   SettingService.addSetting(session.id, session.shop);
   
-  // console.log("webhook register",shopify.registerWebhooks({ session }));
+  console.log("webhook register",shopify.registerWebhooks({ session }));
 
   return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
 };

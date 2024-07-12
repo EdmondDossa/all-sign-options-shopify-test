@@ -19,7 +19,7 @@ export default function SettingFixingMethod() {
   const { plan } = useOutletContext<{ plan: string }>();
 
   if(plan==PRICING_PLANS.STARTER){
-    fixingMethods = fixingMethods?.slice(0, 5) || null;
+    fixingMethods = fixingMethods?.slice(0, PRICING_PLANS.STARTER_RULES.materialFixingMethods) || null;
   }
 
 

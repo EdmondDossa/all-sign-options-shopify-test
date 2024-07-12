@@ -32,7 +32,7 @@ export default function MaterialColors() {
   let { colors } = useLoaderData<typeof loader>();
 
   if (plan == PRICING_PLANS.STARTER && colors) {
-    colors.allColors =colors.allColors?.slice(0, 10);
+    colors.allColors =colors.allColors?.slice(0, PRICING_PLANS.STARTER_RULES.materialColors);
   }
   return (
     <Outlet

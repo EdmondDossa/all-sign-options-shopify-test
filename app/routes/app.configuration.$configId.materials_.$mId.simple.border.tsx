@@ -60,10 +60,10 @@ export default function MaterialBorder() {
       plan: string;
     }>();
     if (plan == PRICING_PLANS.STARTER) {
-      manageShapes = manageShapes?.slice(0, 5) || [];
-      configSizes = configSizes?.slice(0, 10) || [];
-      manageBorders = manageBorders?.slice(0, 2) || [];
-      borders = borders?.filter(curr => curr.manageBorderId < 2 ) .slice(0, 2) || [];
+      manageShapes = manageShapes?.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes) || [];
+      configSizes = configSizes?.slice(0, PRICING_PLANS.STARTER_RULES.materialSizes) || [];
+      manageBorders = manageBorders?.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders) || [];
+      borders = borders?.filter(curr => curr.manageBorderId < PRICING_PLANS.STARTER_RULES.materialBorders ) .slice(0, PRICING_PLANS.STARTER_RULES.materialBorders) || [];
     }
   return (
     <Outlet

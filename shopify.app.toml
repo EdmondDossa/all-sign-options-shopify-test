@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://contact-letters-enquiry-titans.trycloudflare.com"
+application_url = "https://directions-board-stops-engineering.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_products,read_themes
 
 [auth]
 redirect_urls = [
-  "https://contact-letters-enquiry-titans.trycloudflare.com/auth/callback",
-  "https://contact-letters-enquiry-titans.trycloudflare.com/auth/shopify/callback",
-  "https://contact-letters-enquiry-titans.trycloudflare.com/api/auth/callback"
+  "https://directions-board-stops-engineering.trycloudflare.com/auth/callback",
+  "https://directions-board-stops-engineering.trycloudflare.com/auth/shopify/callback",
+  "https://directions-board-stops-engineering.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://contact-letters-enquiry-titans.trycloudflare.com"
+url = "https://directions-board-stops-engineering.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

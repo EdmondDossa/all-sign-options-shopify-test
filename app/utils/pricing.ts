@@ -16,6 +16,17 @@ export const getPlan = async (billing:any) => {
     return hasProPlan?'pro':hasStarterPlan?'starter':"free"
 }
 
+
+export const getPlanDuration = async (billing:any) => {
+  const {hasActivePayment:hasYearPlan } = await billing.check({
+      plans: [YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
+      isTest: isTest()
+    });
+  
+  return hasYearPlan?'year':"month"
+}
+
+
 export const getPlanProxy = async (admin:any) => {
   const plans = await ShopifyBillingService.getBilling(admin);
   
@@ -87,5 +98,23 @@ export const isTest = () => process.env.IS_TEST ? true : false;
 export const PRICING_PLANS = {
     FREE: "free",
     STARTER: "starter",
-    PRO: "pro"
+  PRO: "pro",
+  STARTER_RULES: {
+    configurations: 1,
+    materials: 2,
+    materialTypes: ["simple"],
+    materialColors: 10,
+    materialSizes: 10,
+    materialCustomSizes: false,
+    materialCustomColors: false,
+    materialShapes: 5,
+    materialBorders: 2,
+    materialFixingMethods: 6,
+    doublePart: false,
+    textColors: 10,
+    textCustomColors: false,
+    imageColors: 10,
+    imageCustomColors: false,
+  }
+
 }

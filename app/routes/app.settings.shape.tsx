@@ -19,7 +19,7 @@ export default function MaterialFixingMethod() {
   const { plan } = useOutletContext<{ plan: string }>();
 
   if(plan==PRICING_PLANS.STARTER){
-    shapes = shapes.slice(0,5)
+    shapes = shapes.slice(0,PRICING_PLANS.STARTER_RULES.materialShapes)
   }
 
   return (

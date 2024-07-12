@@ -198,7 +198,7 @@ export default function MaterialColorIndex() {
         <BoxBackground>
           <Box padding="150">
             <InlineStack gap="100" align="end">
-{ plan == PRICING_PLANS.STARTER ||      <button
+{ (plan == PRICING_PLANS.STARTER && colors?.length>=PRICING_PLANS.STARTER_RULES.materialColors )||      <button
                 className="primary-btn"
                 type="button"
                 onClick={handleEdit}
@@ -232,7 +232,7 @@ export default function MaterialColorIndex() {
           {rowMarkup}
         </IndexTable>
       </BoxBackground>
-{ plan == PRICING_PLANS.STARTER ||    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+{ (plan == PRICING_PLANS.STARTER && PRICING_PLANS.STARTER_RULES.materialCustomColors) ||    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
         <BoxBackground>
           <Form onSubmit={handleFormSubmit} method="POST">
             <Box paddingInline="300" paddingBlock="1000">

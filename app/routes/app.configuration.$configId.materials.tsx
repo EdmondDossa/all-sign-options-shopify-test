@@ -31,7 +31,8 @@ export default function Materiels() {
   }>();
 
   if (plan == PRICING_PLANS.STARTER && materials) {  
-    materials = materials?.filter((m,i)=>m.type=="simple")?.slice(0, 2)||[];
+    materials = materials?.filter((m, i) => PRICING_PLANS.STARTER_RULES.materialTypes.includes(m.type))
+      ?.slice(0, PRICING_PLANS.STARTER_RULES.materials) || [];
   }
 
   return (

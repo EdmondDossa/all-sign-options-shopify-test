@@ -42,11 +42,7 @@ import { PRICING_PLANS } from "~/utils/pricing";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
 
-  const configurations = await prisma.configuration.findMany({
-    where: {
-      sessionId: session.id,
-    },
-  });
+  const configurations = await ConfigurationService.getConfigurations(session.id);
 
   console.log("my head :", request.headers);
 
@@ -104,7 +100,7 @@ export default function Configuration() {
   let { plan } = useOutletContext<{ plan: string }>()
   
   if (plan == PRICING_PLANS.STARTER) {
-    configurations = configurations.slice(0, 1);
+    configurations = configurations?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)||[];
   }
   useHandleFlashMessage();
 
@@ -216,7 +212,7 @@ export default function Configuration() {
                 </Text>
               </InlineGrid>
 
-     { !(plan == PRICING_PLANS.STARTER && configurations?.length>=1)      &&   <InlineStack align="end">
+     { !(plan == PRICING_PLANS.STARTER && configurations?.length>=PRICING_PLANS.STARTER_RULES.configurations)      &&   <InlineStack align="end">
                 
                 <button
                   className="primary-btn"

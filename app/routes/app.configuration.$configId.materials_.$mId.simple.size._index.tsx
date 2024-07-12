@@ -125,7 +125,7 @@ export default function MaterialSizeIndex() {
 
   useEffect(() => {
     if (plan == PRICING_PLANS.STARTER) {
-      formData.customSize.active = false;
+      formData.customSize.active = PRICING_PLANS.STARTER_RULES.materialCustomSizes;
       setFormData({
           ...formData
       })
@@ -300,7 +300,7 @@ export default function MaterialSizeIndex() {
         <BoxBackground>
           <Box padding="150">
             <InlineStack gap="100" align="end">
-             {!(plan == PRICING_PLANS.STARTER && allSizes.length>=10) && <button
+             {!(plan == PRICING_PLANS.STARTER && allSizes.length>=PRICING_PLANS.STARTER_RULES.materialSizes) && <button
                 className="primary-btn"
                 type="button"
                 onClick={handleEdit}
@@ -404,7 +404,7 @@ export default function MaterialSizeIndex() {
                 </BlockStack>
               )}
             </Box>
-            {plan == PRICING_PLANS.STARTER || <><Divider borderWidth="050" />
+            {(plan == PRICING_PLANS.STARTER && PRICING_PLANS.STARTER_RULES.materialCustomSizes) || <><Divider borderWidth="050" />
             <Box paddingInline="300" paddingBlock="1000">
               <Box paddingBlockEnd="600">
                 <InlineStack blockAlign="center" gap="200">

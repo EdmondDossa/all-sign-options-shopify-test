@@ -29,19 +29,22 @@ import { useId } from "react";
     const plan = await getPlan(billing);
   
     try {
-      // Attempt to check if the shop has an active payment for any plan
+      
+      if (plan === "free") {
+        throw new Error('No active plan');
+      }
+  
+      // Check if the shop has an active subscription
       const billingCheck = await billing.require({
-        plans: [MONTHLY_PRO_PLAN, MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN, YEARLY_PRO_PLAN],
+        plans: [MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
         isTest:isTest(),
-        // Instead of redirecting on failure, just catch the error
-        onFailure: () => {
-          throw new Error('No active plan');
-        },
+        onFailure: async () => billing.request({ plan: MONTHLY_STARTER_PLAN, isTest:isTest() }),
       });
   
       // If the shop has an active subscription, log and return the details
       const subscription = billingCheck.appSubscriptions[0];
      
+      console.log("subscription :", subscription);
       
       return json({ billing, subscription: subscription,plan });
   
@@ -63,8 +66,8 @@ import { useId } from "react";
       description: "Starter plan with basic features",
       price: "21",
       year_price: "201",
-      action: " Subscribe  Month",
-      year_action: "Subscribe  Year",
+      action: " Subscribe to Monthly",
+      year_action: "Subscribe to Yearly",
       name: "starter",
       url: "/app/subscribe/monthly-starter",
       year_url: "/app/subscribe/yearly-starter",
@@ -88,8 +91,8 @@ import { useId } from "react";
       price: "49",
       year_price: "470",
       name: "pro",
-      action: " Subscribe  Month",
-      year_action: "Subscribe  Year",
+      action: " Subscribe to Monthly",
+      year_action: "Subscribe to Yearly",
       url: "/app/subscribe/monthly-pro",
       year_url: "/app/subscribe/yearly-pro",
       features: [
@@ -223,8 +226,9 @@ import { useId } from "react";
                         You're currently on this plan
                           </Text>
                           
-                         {subscription.name.startsWith("Monthly") && <Button variant="primary" tone="success" url={plan_item.year_url}>
-                        {plan_item.year_action.replace("subscribe", "upgrade to") }
+                         {subscription.name.startsWith("Monthly") ? <Button variant="primary" tone="success" url={plan_item.year_url}>
+                        {plan_item.year_action.replace("Subscribe to", "upgrade to") }
+                      </Button>: <Button variant="primary" tone="success" url={plan_item.url}>  {plan_item.action.replace("Subscribe to", "switch to") }
                       </Button>}
                       </InlineStack>
                         

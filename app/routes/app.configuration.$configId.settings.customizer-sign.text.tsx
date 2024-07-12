@@ -46,6 +46,7 @@ import { TextColorField } from "~/components/inputs/TextColorField";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
 import { FileInput } from "~/components/inputs/FileInput";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 const settingParams: [string, string] = ["customizerSign", "text"];
 const formSchema = z.object({
@@ -151,17 +152,12 @@ export default function ConfigSettingsGeneral() {
     submit(data, { method: "POST" });
   };
 
-  let { manageColors, manageFonts } = useOutletContext<{
-    manageColors: ColorType[];
+  let {  manageFonts, plan } = useOutletContext<{
     manageFonts: FontType[];
+    plan: string;
   }>();
 
-  const colors = manageColors
-    ? manageColors?.map((manageColor) => ({
-        label: manageColor.name || "",
-        value: `${manageColor.id}`,
-      }))
-    : [];
+
 
   const fonts = manageFonts
     ? manageFonts?.map((manageFont) => ({
@@ -231,7 +227,8 @@ export default function ConfigSettingsGeneral() {
                             />
                     </Box>
                     <Grid gap={{ lg: "30px" }}>
-                      {formData.colors?.map((color: any, index: number) => (
+                      {formData.colors?.filter((curr: any, index: number) => plan===PRICING_PLANS.STARTER ? index < PRICING_PLANS.STARTER_RULES.textColors : true)
+                        .map((color: any, index: number) => (
                         <Grid.Cell
                           columnSpan={{ xs: 6, sm: 3, md: 2, lg: 4, xl: 4 }}
                         >
@@ -283,15 +280,17 @@ export default function ConfigSettingsGeneral() {
                         </Grid.Cell>
                       ))}
                     </Grid>
-                    <Box width="150px">
+                   {(plan===PRICING_PLANS.STARTER  ? formData.colors.length < PRICING_PLANS.STARTER_RULES.textColors : true) && <Box width="150px">
                       <BiAddBtn
                         title="Add more colors"
                         handleClick={() => handleAddColor()}
                       />
-                    </Box>
+                    </Box>}
                   </BlockStack>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 2, lg: 2, xl: 2 }}>
+                {(plan == PRICING_PLANS.STARTER ? PRICING_PLANS.STARTER_RULES.textCustomColors : true) &&
+                  <>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 2, lg: 2, xl: 2 }}>
                   <InlineStack gap="300">
                     <Text as="strong" fontWeight="medium" variant="bodyMd">
                       Enable Custom color
@@ -307,11 +306,15 @@ export default function ConfigSettingsGeneral() {
                       }}
                     />
                   </InlineStack>
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  </Grid.Cell>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
                  
-                <FileInput title="Custom color preview image"  buttonTitle="upload image"  path={formData.colorsPrevImg} handlePath={(value:any)=>{formData.colorsPrevImg = value; setFormData({...formData})}}/>
-                </Grid.Cell>
+                 <FileInput title="Custom color preview image"  buttonTitle="upload image"  path={formData.colorsPrevImg} handlePath={(value:any)=>{formData.colorsPrevImg = value; setFormData({...formData})}}/>
+                 </Grid.Cell>
+                  </>
+                
+                }
+               
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <InlineStack gap="300">
                     <Text as="strong" fontWeight="medium" variant="bodyMd">

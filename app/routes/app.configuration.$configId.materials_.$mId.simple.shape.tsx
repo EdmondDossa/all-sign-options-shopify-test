@@ -32,8 +32,9 @@ export default function MaterialColors() {
     plan: string;
   }>();
   if (plan == PRICING_PLANS.STARTER && manageShapes) {
-    manageShapes = manageShapes.slice(0, 5);
-    shapes = shapes?.filter(curr => curr.shapeId < 5)?.slice(0, 5)||[];
+    manageShapes = manageShapes.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes);
+    shapes = shapes?.filter(curr => curr.shapeId < PRICING_PLANS.STARTER_RULES.materialShapes)
+      ?.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes) || [];
   }
   return <Outlet context={{ manageShapes, shapes, plan }} />;
 }

@@ -2,10 +2,16 @@ import AdmZip from "adm-zip";
 import { sendRecapMail } from "~/email";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
 import { ShopifyShopService } from "~/models/ShopifyShop.service";
-import { fileBuffer, generateUniqueId, getExtensionFromBase64, uploadBufferWithName } from "~/utils/uploadBase64";
+import { calculateImagePlacement, fileBuffer, generateUniqueId, getExtensionFromBase64, uploadBufferWithName } from "~/utils/uploadBase64";
+import { jsPDF } from "jspdf";
 
 export async function OrderCreateWebhook(admin:any,session:any,payload:any){
-    const  order =  payload;
+  const order = payload;
+
+
+  
+
+
   
     const variantsData:any =  []
     if (order) {
@@ -34,6 +40,9 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
               let zip = new AdmZip();
               let designImages = [];
               let images = [];
+              let designImagesPdf = [];
+
+            
 
               if (!variantMetaData.recaps?.faces) {
                 for(const designImage of variantMetaData?.recaps.designImages){
@@ -41,7 +50,14 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                   let fileName =`preview_${generateUniqueId()}.${designImage.format}`
                   if(content){
                     zip.addFile(fileName, content,"image");
-                    designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName,content)}`)
+                    designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName, content)}`)
+                    
+                    let doc = new jsPDF({ orientation: "landscape", });
+                    let imageSize = calculateImagePlacement(content);
+                    doc.addImage(content, "JPEG", imageSize.x, imageSize.y, imageSize.width, imageSize.height);
+                    doc.save(`public/upload_designs_files/${fileName}.pdf`);
+                    zip.addLocalFile(`public/upload_designs_files/${fileName}.pdf`,undefined,`${fileName}.pdf`, "application/pdf");
+                    designImagesPdf.push(`${process.env.SHOPIFY_APP_URL}/${fileName}.pdf`)
                   }
                 }
     
@@ -66,7 +82,13 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                     let fileName =`preview_${face}_${generateUniqueId()}.${designImage.format}`
                     if(content){
                       zip.addFile(fileName, content,"image");
-                      designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName,content)}`)
+                      designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName, content)}`)
+                      let doc = new jsPDF({ orientation: "landscape", });
+                      let imageSize = calculateImagePlacement(content);
+                      doc.addImage(content, "JPEG", imageSize.x, imageSize.y, imageSize.width, imageSize.height);
+                      doc.save(`public/upload_designs_files/${fileName}.pdf`);
+                      zip.addLocalFile(`public/upload_designs_files/${fileName}.pdf`,undefined,`${fileName}.pdf`, "application/pdf");
+                      designImagesPdf.push(`${process.env.SHOPIFY_APP_URL}/${fileName}.pdf`)
                     }
                   }
                 }
@@ -88,7 +110,6 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
               }
   
              
-  
             
   
               let zipPath = `public/upload_designs_files/${ variantMetaData?.recaps?.output?.prefix}_${order.id}.zip`;

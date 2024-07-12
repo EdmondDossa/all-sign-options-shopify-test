@@ -5,5 +5,6 @@
     icon: string;
      popupImg: string;
     data?: any;
-    product?: any;
+     product?: any;
+     templates?: any
 }

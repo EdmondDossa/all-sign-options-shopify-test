@@ -23,6 +23,7 @@ export const loader = async ({ request, params }:LoaderFunctionArgs) => {
       }
     
     }
+  console.log("fetch variants cart", params.id)
 
     return  cors(json(variantsData));
     

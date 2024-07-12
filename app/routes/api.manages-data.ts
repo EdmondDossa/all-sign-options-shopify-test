@@ -54,10 +54,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   
   console.log(" le plan courant est ", plan);
   if (plan == PRICING_PLANS.STARTER) { 
-    data.borders = data.borders.slice(0, 2);
-    data.allBorder = data.allBorder.slice(0, 2);
-    data.allShapes = data.allShapes.slice(0, 5);
-    data.allFixingMethod = data.allFixingMethod.slice(0, 5);
+    data.borders = data.borders.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders);
+    data.allBorder = data.allBorder.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders);
+    data.allShapes = data.allShapes.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes);
+    data.allFixingMethod = data.allFixingMethod.slice(0, PRICING_PLANS.STARTER_RULES.materialFixingMethods);
   }
     
   return json(data);

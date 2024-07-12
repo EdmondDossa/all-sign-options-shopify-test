@@ -53,11 +53,11 @@ export default function MaterialFixingMethodsIndex() {
       plan: string;
     }>();
     if (plan == PRICING_PLANS.STARTER) {
-      manageShapes = manageShapes?.slice(0, 5) || [];
-      configSizes = configSizes?.slice(0, 10) || [];
-      manageFixingMethods = manageFixingMethods?.slice(0, 5) || [];
-      fixingMethods = fixingMethods?.filter(curr => curr.fixingMethodId < 5) 
-        ?.slice(0, 5) || [];
+      manageShapes = manageShapes?.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes) || [];
+      configSizes = configSizes?.slice(0, PRICING_PLANS.STARTER_RULES.materialSizes) || [];
+      manageFixingMethods = manageFixingMethods?.slice(0, PRICING_PLANS.STARTER_RULES.materialFixingMethods) || [];
+      fixingMethods = fixingMethods?.filter(curr => curr.fixingMethodId < PRICING_PLANS.STARTER_RULES.materialFixingMethods) 
+        ?.slice(0, PRICING_PLANS.STARTER_RULES.materialFixingMethods) || [];
     }
   return (
     <Outlet

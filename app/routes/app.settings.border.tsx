@@ -17,7 +17,7 @@ export default function MaterialFixingMethod() {
   let { borders } = useLoaderData<typeof loader>();
   const { plan } = useOutletContext<{ plan: string }>();
   if(plan ==PRICING_PLANS.STARTER){
-    borders = borders?.slice(0, 2) || null;
+    borders = borders?.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders) || null;
   }
 
 

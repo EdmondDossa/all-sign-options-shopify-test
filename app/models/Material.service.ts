@@ -21,17 +21,16 @@ const initialDataSimple = {
         min: 0,
         label: "Custom height",
       },
+      pricings: []
     },
   },
   colors: {
     allColors: [],
     customColors: {
-      color: {
-        label: "Custom colors",
-        active: false,
-        prevImg: "",
-      },
-    },
+      label: "custom  colors",
+      active: false,
+      prevImg: ""
+    }
   },
   shapes: [],
   borders: {
@@ -39,6 +38,8 @@ const initialDataSimple = {
       colors: [],
       enableBorderColor: false,
       enableBorderWidth: false,
+      borderColorsLabel: "Borders Colors",
+      customColorsPrevImg: ""
     },
     allBorders: [],
   },

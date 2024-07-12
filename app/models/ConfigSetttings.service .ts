@@ -47,7 +47,6 @@ export default class ConfigSettingsService {
         console.log("Configuration not found");
         return null
       };
-      console.log('configuration',configuration)
       let data = configuration?.data
       if (data instanceof Object && "settings" in data) {
         let settings = data["settings"];

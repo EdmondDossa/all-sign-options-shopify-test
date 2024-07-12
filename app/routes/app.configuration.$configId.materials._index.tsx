@@ -118,7 +118,7 @@ export default function MaterialIndex() {
         <Box padding="300">
           <BlockStack gap="300">
             <InlineStack align="end">
-             {!(plan == PRICING_PLANS.STARTER && materials.length>=2 ) && <button
+             {!(plan == PRICING_PLANS.STARTER && materials.length>=PRICING_PLANS.STARTER_RULES.materials ) && <button
                 className="primary-btn"
                 type="button"
                 onClick={handleEdit}
