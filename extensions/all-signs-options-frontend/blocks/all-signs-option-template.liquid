@@ -1,5 +1,10 @@
 
 <div>
+    <div id="asoTemplateCategories">
+      <ul class="aso-categories" id="asoTemplateUl">
+        <li id="asoTemplateCategory" class="asoTemplateLi asoTemplateLiItem aso-active" data-id=""  onclick="toggleActive(this)"> {{ block.settings.text_all }} </li>
+      </ul>
+    </div>
     <div id="asoTemplate" class="aso-template-container">
         <div class="asoTemplateItem" id="asoTemplateItemModel">
             <div class="aso-template-image-container">
@@ -8,7 +13,7 @@
                 </div>
             </div>
             <div class="aso-template-details-container">
-                <h5 class="asoTemplateItemName"> template  name</h5>
+                <h5 class="asoTemplateItemName"> template  name </h5>
                 <div class="aso-template-size asoTemplateItemSize">  template size </div>
                 <div><span class="asoTemplateItemPrice">Price</span> <span class="asoTemplateItemTextAfter">  after price</span> </div>
                 <div class="asoTemplateItemBtnWrapper">
@@ -106,8 +111,14 @@ document.addEventListener('DOMContentLoaded', function(){
     const templateDiv = document.querySelector('#asoTemplate');
     const templateItem = templateDiv.querySelector('.asoTemplateItem');
 
+    const templateUl = document.querySelector('#asoTemplateUl');
+    const templateLiItem = templateUl.querySelector('.asoTemplateLiItem'); 
+
     // Créer un nouveau div pour contenir les éléments clonés
     const newContainer = document.createElement('div');
+    const newContainerUl = document.createElement('ul');
+
+    const categories = []; 
 
 // Pour chaque élément dans templates
     templates.filter(template=>(aso_configuration_id=="0" || template.configurationId==aso_configuration_id ) ).forEach(template => {
@@ -119,16 +130,23 @@ document.addEventListener('DOMContentLoaded', function(){
         if (templates?.length) {
           asoTemplateData.push(...templates)
         }
-        // Mettre à jour le contenu des divs spécifiques
+
+        if(template.category){
+          if(!categories.find((curr)=> curr.id == template.categoryId)){
+            categories.push(template.category)
+          };
+        } 
+        // Mettre à jour le contenu
         if (template.prevImg){
             clone.querySelector('.asoTemplateItemImg').setAttribute('src',template.prevImg)
         }
+        clone.setAttribute("data-id", template.categoryId)
         clone.setAttribute('id',"asoTemplateItem"+template.id);
         clone.querySelector('.asoTemplateItemName').textContent = template.name;
         clone.querySelector('.asoTemplateItemSize').textContent = (template.data?.templateData)?   
         template.data.templateData.sign?.size?.width + ' ' +template.data.templateData.sign?.size?.unit + ' x '+
         template.data.templateData.sign?.size?.height + ' ' +template?.data?.templateData?.sign?.size?.unit: "0mm x 0mm";
-        clone.querySelector('.asoTemplateItemPrice').textContent = asoPriceFormatTemplate.replace("{","").replace("{amount}}", (template?.data?.cartData?.custom_price ? template.data.cartData.custom_price + template.basePrice : template.basePrice));
+        clone.querySelector('.asoTemplateItemPrice').textContent = asoPriceFormatTemplate.replace("{","").replace("{amount}}", (template?.data?.cartData?.custom_price ? (template.data.cartData.custom_price + template.basePrice).toFixed(2) : template.basePrice.toFixed(2)));
         clone.querySelector('.asoTemplateItemTextAfter').textContent =(template?.data?.templateData) ? template.data.templateData?.price?.textAfter:'';
         const asoDesignPageUrl =  clone.querySelector('.asoTemplateItemCustomize').getAttribute('href');
         clone.querySelector('.asoTemplateItemCustomize').setAttribute("href", asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId)
@@ -140,12 +158,27 @@ document.addEventListener('DOMContentLoaded', function(){
         }
 
         
-        // Ajouter le clone au nouveau conteneur  now
         newContainer.appendChild(clone);
+    });
+
+    if(templates?.length){
+      templateLiItem.setAttribute("id","asoTemplateCategoryAll")
+      newContainerUl.appendChild(templateLiItem);
+    }
+
+   categories.forEach((category)=>{
+      const clone = templateLiItem.cloneNode(true);
+      clone.setAttribute("data-id", category.id);
+      clone.setAttribute("class"," asoTemplateLi asoTemplateLiItem")
+      clone.innerHTML = category.name;
+      newContainerUl.appendChild(clone);
     });
 
     // Remplacer le contenu de #asoTemplate par le nouveau contenu
     templateDiv.innerHTML = newContainer.innerHTML;
+    templateUl.innerHTML = newContainerUl.innerHTML; 
+
+
 
   
 }).catch((error) =>{
@@ -178,11 +211,57 @@ function addTemplateTocart(id){
     });
   }
 }
+
+
+function toggleActive(element) {
+  // Check if the clicked element is already active
+  var isActive = element.classList.contains('aso-active');
+
+  // Remove the active class from all list items
+  var items = document.querySelectorAll('.aso-categories li');
+  items.forEach(function(item) {
+      item.classList.remove('aso-active');
+  });
+
+  // Hide all content items
+  var contentItems = document.querySelectorAll('.asoTemplateItem');
+  contentItems.forEach(function(contentItem) {
+      contentItem.classList.add('hidden');
+  });
+
+  // If the clicked element was not active, activate it and show corresponding content
+
+      element.classList.add('aso-active');
+
+      // Get the data-id attribute of the clicked element
+      var id = element.getAttribute('data-id');
+
+      // Show the content items with the same data-id
+      if(id==""|| id == null){
+        contentItems.forEach(function(contentItem) {
+              contentItem.classList.remove('hidden');
+        });
+      }else{
+        contentItems.forEach(function(contentItem) {
+            if (contentItem.getAttribute('data-id') === id) {
+                contentItem.classList.remove('hidden');
+            }
+        });
+      };
+  
+
+  // Log the active category ID to the console
+  var element_id = element.getAttribute('data-id');
+}
 </script>
 <style>
   
     {% if request.design_mode == false %}
       #asoTemplateItemModel{
+        display: none !important;
+      }
+
+      #asoTemplateCategory{
         display: none !important;
       }
     {% endif %}
@@ -331,6 +410,28 @@ function addTemplateTocart(id){
     grid-template-columns: 1fr;
   }
 }
+
+.aso-categories {
+  list-style-type: none;
+  padding: 0;
+  margin: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.aso-categories li {
+  border-bottom: 1px solid #6c757d; /* Secondary border color */
+  padding: 10px 15px;
+  margin-right: 10px;
+  color: black;
+  font-weight: 600; /* Slightly bold */
+  transition: background-color 0.3s ease, color 0.3s ease, border-bottom 0.3s ease;
+}
+
+.aso-categories li.aso-active {
+  background-color: #343a40; /* Darker secondary color */
+  color: white;
+}
     
 </style>
 
@@ -351,6 +452,7 @@ function addTemplateTocart(id){
           "label": "Design Screen page url",
           "default":"/"
         },
+        { "type": "text", "id": "text_all", "label": "ALl  template text", "default": "All templates" },
         { "type": "text", "id": "text_add_to_cart", "label": "Add  to cart text", "default": "Add  to cart" },
         { "type": "text", "id": "text_customize", "label": "Customize text", "default": "Customize" },
         {
