@@ -37,6 +37,7 @@ import { PRICING_PLANS } from "~/utils/pricing";
 
 const settingParams: [string, string] = ["customizerSign", "images"];
 const formSchema = z.object({
+  enableDownloadImage: z.any().transform(booleanTransform).pipe(z.boolean()),    
   enableUploadImage: z.any().transform(booleanTransform).pipe(z.boolean()),    
   colorsLabel: z.string().nullish().transform(stringTransform),
   colorsPrevImg: z.string().nullish().transform(stringTransform),
@@ -101,6 +102,7 @@ export default function ConfigSettingsGeneral() {
   const [formData, setFormData] = useState<any>(
     {
       "enableUploadImage": true,
+      enableDownloadImage: true,
       colorsLabel:"Image Colors",
       colorsPrevImg:"",
       colors: [],
@@ -126,7 +128,7 @@ export default function ConfigSettingsGeneral() {
          "enableSepia":true,
          "enableSharpen":true
       },
-      ...((settingData?.enableCustomColor) ? settingData : {})
+      ...((settingData?.enableDownloadImage) ? settingData : {})
     },
   );
 
@@ -193,6 +195,12 @@ export default function ConfigSettingsGeneral() {
           <BoxBackground>
           <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+              <InlineStack gap="300" blockAlign="center">
+                      <Text as="strong" fontWeight="bold" variant="bodyMd">Enable Download Image </Text>
+                      <ReactSwitchCustom checked={formData.enableDownloadImage} setChecked={(value:any)=>handleInputChange("enableDownloadImage",value)}/>
+                    </InlineStack>
+                </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
               <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyMd">Enable upload Image </Text>

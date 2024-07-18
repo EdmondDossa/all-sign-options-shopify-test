@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     style.textContent = `
           
   @font-face {
-    font-family: "${font.label.trim().replace(' ', '_')}";
+    font-family: "${font.label?.replaceAll(/\s+/g, '-')}";
     font-display: swap;
     src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
   }

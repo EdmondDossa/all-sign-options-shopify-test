@@ -24,8 +24,10 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 const settingParams: [string, string] = ["languageImages", "images"];
 const formSchema = z.object({
   resetAllIcon: z.string().nullish().transform(stringTransform),
+  undoIcon: z.string().nullish().transform(stringTransform),
+  redoIcon: z.string().nullish().transform(stringTransform),
   cancelAnAction: z.string().nullish().transform(stringTransform),
-  icon: z.string().nullish().transform(stringTransform),
+  changeIconHelp: z.string().nullish().transform(stringTransform),
   changeIconPreview: z.string().nullish().transform(stringTransform),
   changeIconImport: z.string().nullish().transform(stringTransform),
   changeIconShare: z.string().nullish().transform(stringTransform),
@@ -38,7 +40,7 @@ const formSchema = z.object({
   changeIconSize: z.string().nullish().transform(stringTransform),
   changeIconText: z.string().nullish().transform(stringTransform),
   changeIconColor: z.string().nullish().transform(stringTransform),
-  changeIconSizeMenu: z.string().nullish().transform(stringTransform),
+  changeIconDownload: z.string().nullish().transform(stringTransform),
   changeIconBorder: z.string().nullish().transform(stringTransform),
   changeIconImage: z.string().nullish().transform(stringTransform),
 });
@@ -59,15 +61,15 @@ export default function ConfigSettingsGeneral() {
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
   const [formData, setFormData] = useState<any>(
-    settingData || {
+    settingData?.changeIconDownload? settingData:  {
       resetAllIcon: "",
-      cancelAnAction: "",
-      icon: "",
+      undoIcon: "",
+      redoIcon: "",
       changeIconPreview: "",
+      changeIconHelp: "",
       changeIconImport: "",
       changeIconShare: "",
       changeIconSaveProject: "",
-      changeIconShareSideBar: "",
       changeIconMaterial: "",
       changeIconShape: "",
       changeIconFixingMethod: "",
@@ -75,7 +77,7 @@ export default function ConfigSettingsGeneral() {
       changeIconSize: "",
       changeIconText: "",
       changeIconColor: "",
-      changeIconSizeMenu: "",
+      changeIconDownload: "",
       changeIconBorder: "",
       changeIconImage: "",
     },
@@ -120,25 +122,26 @@ export default function ConfigSettingsGeneral() {
                     }
                   />
                 </Grid.Cell>
+               
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <FileInput
-                    error={getError(actionData, "cancelAnAction")}
-                    title="Cancel an action"
+                    error={getError(actionData, "undoIcon")}
+                    title="Change Undo icon"
                     buttonTitle="Upload icon"
-                    path={formData.cancelAnAction}
+                    path={formData.undoIcon}
                     handlePath={(value: any) =>
-                      handleInputChange("cancelAnAction", value)
+                      handleInputChange("undoIcon", value)
                     }
                   />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <FileInput
-                    error={getError(actionData, "icon")}
-                    title="Undo icon"
+                    error={getError(actionData, "redoIcon")}
+                    title=" Change Redo icon"
                     buttonTitle="Upload icon"
-                    path={formData.icon}
+                    path={formData.redoIcon}
                     handlePath={(value: any) =>
-                      handleInputChange("icon", value)
+                      handleInputChange("redoIcon", value)
                     }
                   />
                 </Grid.Cell>
@@ -164,6 +167,17 @@ export default function ConfigSettingsGeneral() {
                     path={formData.changeIconPreview}
                     handlePath={(value: any) =>
                       handleInputChange("changeIconPreview", value)
+                    }
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                  <FileInput
+                    error={getError(actionData, "changeIconHelp")}
+                    title="Change help icon"
+                    buttonTitle="Upload icon"
+                    path={formData.changeIconHelp}
+                    handlePath={(value: any) =>
+                      handleInputChange("changeIconHelp", value)
                     }
                   />
                 </Grid.Cell>
@@ -272,12 +286,12 @@ export default function ConfigSettingsGeneral() {
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <FileInput
-                    error={getError(actionData, "changeIconSizeMenu")}
-                    title="Change Icon  Size Menu"
+                    error={getError(actionData, "changeIconDownload")}
+                    title="Change download"
                     buttonTitle="Upload icon"
-                    path={formData.changeIconSizeMenu}
+                    path={formData.changeIconDownload}
                     handlePath={(value: any) =>
-                      handleInputChange("changeIconSizeMenu", value)
+                      handleInputChange("changeIconDownload", value)
                     }
                   />
                 </Grid.Cell>
