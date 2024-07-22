@@ -1,9 +1,9 @@
 name: Build and Deploy to Prod Pipeline
 on: 
   push:
-      branches: [ "ops/ci-pipeline" ]
-    pull_request:
-      branches: [ "ops/ci-pipeline" ]
+    branches: [ "ops/ci-pipeline" ]
+  pull_request:
+    branches: [ "ops/ci-pipeline" ]
 jobs:
   build:
     name: Build && push frontend image to docker hub
