@@ -19,7 +19,7 @@ const TARGET = 'admin.order-details.block.render';
 
 export default reactExtension(TARGET, () => <App />);
 
-async function getVariantRecaps(id) {
+async function getVariantRecaps(id:any) {
   const res = await fetch(`/api/order-recaps/${id}`);
   return res.json();
 }
@@ -58,7 +58,7 @@ function App() {
         </InlineStack>
         <BlockStack >
 
-         { variantRecaps?.map(variantRecap => <Box paddingBlockEnd="base">
+         { variantRecaps?.map((variantRecap:any) => <Box paddingBlockEnd="base">
            <InlineStack inlineAlignment="start" blockAlignment="center" gap="base" >
                 <Heading size={5} > {variantRecap.line_item?.title}   </Heading>
                 <Heading  size={3} > x {variantRecap.line_item?.quantity}   </Heading>

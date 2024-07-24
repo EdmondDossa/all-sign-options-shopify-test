@@ -480,7 +480,7 @@ export default function ConfigSettingsGeneral() {
                       >
                         <TextAlignmentSvg />{" "}
                       </ActivatabaleItem>
-                      <ActivatabaleItem
+                      {/* <ActivatabaleItem
                         title="Curved-up"
                         status={formData.enableCurvedUp}
                         toggleStatus={(value: any) =>
@@ -497,7 +497,7 @@ export default function ConfigSettingsGeneral() {
                         }
                       >
                         <CurvedDownSvg />{" "}
-                      </ActivatabaleItem>
+                      </ActivatabaleItem> */}
                     </InlineStack>
                   </BlockStack>
                 </Grid.Cell>

@@ -1,3 +1,4 @@
+import { FontType } from "~/types/ManagePropertyType";
 import { ConfigurationType } from "~/types/ConfigurationType";
 
 export const configurationDemoData: ConfigurationType[] = [
@@ -36,16 +37,16 @@ export const configurationDemoData: ConfigurationType[] = [
           },
         },
         themeColors: {
-          skin: "couffo",
+          skin: "default",
           colors: {
             bars: {
               help: {
                 textColor: "#ffffff",
-                borderColor: "#0374e3",
+                borderColor: "#016464",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBorderColor: "#025db7",
-                hoverBackgroundColor: "#025db7",
+                backgroundColor: "#016464",
+                hoverBorderColor: "#016464",
+                hoverBackgroundColor: "#016464",
               },
               price: {
                 textColor: "#000000",
@@ -71,7 +72,7 @@ export const configurationDemoData: ConfigurationType[] = [
               preview: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 hoverBackgroundColor: "#f4f8fa",
@@ -79,14 +80,14 @@ export const configurationDemoData: ConfigurationType[] = [
               undoRedo: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 disabledTextColor: "#c3cfd6",
                 hoverBackgroundColor: "#f4f8fa",
                 disabledBackgroundColor: "#ffffff",
               },
-              titleColor: "#14213d",
+              titleColor: "#000000",
               backgroundColor: "#ffffff",
             },
             canvas: {
@@ -101,17 +102,17 @@ export const configurationDemoData: ConfigurationType[] = [
               buttonEditTextColor: "#ffffff",
               optionHoverTextColor: "#000000",
               buttonFinishTextColor: "#14213d",
-              headerBackgroundColor: "#3590ea",
+              headerBackgroundColor: "#058585",
               optionHoverBorderColor: "#eef3f6",
               buttonAddToCartTextColor: "#14213d",
               buttonEditHoverTextColor: "#f4f8fa",
-              buttonEditBackgroundColor: "#0374e3",
+              buttonEditBackgroundColor: "#016464",
               buttonFinishHoverTextColor: "#313e52",
               optionHoverBackgroundColor: "#eef3f6",
               buttonFinishBackgroundColor: "#febd52",
               buttonAddToCartHoverTextColor: "#313e52",
               buttonAddToCartBackgroundColor: "#febd52",
-              buttonEditHoverBackgroundColor: "#025db7",
+              buttonEditHoverBackgroundColor: "#058585",
               buttonFinishHoverBackgroundColor: "#fcac29",
               buttonAddToCartHoverBackgroundColor: "#fcac29",
             },
@@ -148,23 +149,24 @@ export const configurationDemoData: ConfigurationType[] = [
                   option: {
                     textColor: "#000000",
                     hoverTextColor: "#000000",
-                    activeTextColor: "#0374e3",
+                    activeTextColor: "#016464",
                     hoverBackgroundColor: "#eef3f6",
                   },
                   buttons: {
                     textColor: "#ffffff",
                     hoverTextColor: "#ffffff",
-                    backgroundColor: "#0374e3",
-                    hoverBackgroundColor: "#3590ea",
+                    backgroundColor: "#016464",
+                    hoverBackgroundColor: "#028383",
                   },
-                  textColor: "#14213d",
+                  textColor: "#000000",
                   backgroundColor: "#ffffff",
                   headerTextColor: "#ffffff",
-                  headerBackgroundColor: "#0374e3",
+                  headerBackgroundColor: "#016464",
                 },
                 buttons: {
                   textColor: "#000000",
-                  hoverTextColor: "#000000",
+                  hoverTextColor: "#016464",
+                  hovertextColor: "#016464",
                   backgroundColor: "#ffffff",
                   hoverBackgroundColor: "#ffffff",
                 },
@@ -189,6 +191,42 @@ export const configurationDemoData: ConfigurationType[] = [
                 name: "White",
                 codeHex: "#FFFFFF",
               },
+              {
+                name: "Blue",
+                codeHex: "#004f86",
+              },
+              {
+                name: "Red",
+                codeHex: "#c4271d",
+              },
+              {
+                name: "Pink",
+                codeHex: "#eb3f77",
+              },
+              {
+                name: "Green",
+                codeHex: "#009251",
+              },
+              {
+                name: "Yellow",
+                codeHex: "#fee900",
+              },
+              {
+                name: "Gray",
+                codeHex: "#4f575b",
+              },
+              {
+                name: "Orange",
+                codeHex: "#e15616",
+              },
+              {
+                name: "Purple",
+                codeHex: "#554585",
+              },
+              {
+                name: "Brown",
+                codeHex: "#523d2a",
+              },
             ],
             enableBold: true,
             colorsLabel: "Text  Colors",
@@ -203,7 +241,7 @@ export const configurationDemoData: ConfigurationType[] = [
               active: true,
               defaultFontSize: 16,
               maximumFontSize: 100,
-              minimumFontSize: 12,
+              minimumFontSize: 4,
             },
             enableOverline: true,
             enableUnderline: true,
@@ -226,16 +264,17 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [],
+              selectClipartGroups: [1],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
               uploadMinWidth: 100,
               customWithGraphical: false,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+              allowedUploadsExtentions: ["png"],
             },
             enableCustomColor: true,
             enableUploadImage: true,
+            enableDownloadImage: true,
           },
           signPart: {
             doublePart: {
@@ -255,9 +294,11 @@ export const configurationDemoData: ConfigurationType[] = [
         },
         languageImages: {
           images: {
-            icon: "",
+            redoIcon: "",
+            undoIcon: "",
             resetAllIcon: "",
             cancelAnAction: "",
+            changeIconHelp: "",
             changeIconSize: "",
             changeIconText: "",
             changeIconColor: "",
@@ -268,8 +309,8 @@ export const configurationDemoData: ConfigurationType[] = [
             changeIconImport: "",
             changeIconPreview: "",
             changeIconProduct: "",
+            changeIconDownload: "",
             changeIconMaterial: "",
-            changeIconSizeMenu: "",
             changeIconSaveProject: "",
             changeIconFixingMethod: "",
             changeIconShareSideBar: "",
@@ -318,8 +359,8 @@ export const configurationDemoData: ConfigurationType[] = [
           uploadDesign: {
             link: "",
             activate: false,
+            helpContent: "",
             phraseSubmitCustom: "Take a customization",
-             helpContent: "",
           },
         },
       },
@@ -554,7 +595,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 50,
                   label: "Height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -733,8 +774,8 @@ export const configurationDemoData: ConfigurationType[] = [
               customColors: {
                 label: "custom  colors",
                 active: false,
-                prevImg: ""
-              }
+                prevImg: "",
+              },
             },
             shapes: [
               {
@@ -815,7 +856,7 @@ export const configurationDemoData: ConfigurationType[] = [
                 enableBorderColor: true,
                 enableBorderWidth: false,
                 borderColorsLabel: "Borders Colors",
-                customColorsPrevImg: ""
+                customColorsPrevImg: "",
               },
               allBorders: [
                 {
@@ -901,6 +942,7 @@ export const configurationDemoData: ConfigurationType[] = [
                 icon: "/uploads/frosted-1716291683175.svg",
                 title: "Frosted",
                 description: "",
+                options: [],
               },
             ],
           },
@@ -950,16 +992,16 @@ export const configurationDemoData: ConfigurationType[] = [
           },
         },
         themeColors: {
-          skin: "couffo",
+          skin: "default",
           colors: {
             bars: {
               help: {
                 textColor: "#ffffff",
-                borderColor: "#0374e3",
+                borderColor: "#016464",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBorderColor: "#025db7",
-                hoverBackgroundColor: "#025db7",
+                backgroundColor: "#016464",
+                hoverBorderColor: "#016464",
+                hoverBackgroundColor: "#016464",
               },
               price: {
                 textColor: "#000000",
@@ -985,7 +1027,7 @@ export const configurationDemoData: ConfigurationType[] = [
               preview: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 hoverBackgroundColor: "#f4f8fa",
@@ -993,14 +1035,14 @@ export const configurationDemoData: ConfigurationType[] = [
               undoRedo: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 disabledTextColor: "#c3cfd6",
                 hoverBackgroundColor: "#f4f8fa",
                 disabledBackgroundColor: "#ffffff",
               },
-              titleColor: "#14213d",
+              titleColor: "#000000",
               backgroundColor: "#ffffff",
             },
             canvas: {
@@ -1015,17 +1057,17 @@ export const configurationDemoData: ConfigurationType[] = [
               buttonEditTextColor: "#ffffff",
               optionHoverTextColor: "#000000",
               buttonFinishTextColor: "#14213d",
-              headerBackgroundColor: "#3590ea",
+              headerBackgroundColor: "#058585",
               optionHoverBorderColor: "#eef3f6",
               buttonAddToCartTextColor: "#14213d",
               buttonEditHoverTextColor: "#f4f8fa",
-              buttonEditBackgroundColor: "#0374e3",
+              buttonEditBackgroundColor: "#016464",
               buttonFinishHoverTextColor: "#313e52",
               optionHoverBackgroundColor: "#eef3f6",
               buttonFinishBackgroundColor: "#febd52",
               buttonAddToCartHoverTextColor: "#313e52",
               buttonAddToCartBackgroundColor: "#febd52",
-              buttonEditHoverBackgroundColor: "#025db7",
+              buttonEditHoverBackgroundColor: "#058585",
               buttonFinishHoverBackgroundColor: "#fcac29",
               buttonAddToCartHoverBackgroundColor: "#fcac29",
             },
@@ -1062,23 +1104,24 @@ export const configurationDemoData: ConfigurationType[] = [
                   option: {
                     textColor: "#000000",
                     hoverTextColor: "#000000",
-                    activeTextColor: "#0374e3",
+                    activeTextColor: "#016464",
                     hoverBackgroundColor: "#eef3f6",
                   },
                   buttons: {
                     textColor: "#ffffff",
                     hoverTextColor: "#ffffff",
-                    backgroundColor: "#0374e3",
-                    hoverBackgroundColor: "#3590ea",
+                    backgroundColor: "#016464",
+                    hoverBackgroundColor: "#028383",
                   },
-                  textColor: "#14213d",
+                  textColor: "#000000",
                   backgroundColor: "#ffffff",
                   headerTextColor: "#ffffff",
-                  headerBackgroundColor: "#0374e3",
+                  headerBackgroundColor: "#016464",
                 },
                 buttons: {
                   textColor: "#000000",
-                  hoverTextColor: "#000000",
+                  hoverTextColor: "#016464",
+                  hovertextColor: "#016464",
                   backgroundColor: "#ffffff",
                   hoverBackgroundColor: "#ffffff",
                 },
@@ -1103,6 +1146,42 @@ export const configurationDemoData: ConfigurationType[] = [
                 name: "White",
                 codeHex: "#FFFFFF",
               },
+              {
+                name: "Blue",
+                codeHex: "#004f86",
+              },
+              {
+                name: "Red",
+                codeHex: "#c4271d",
+              },
+              {
+                name: "Pink",
+                codeHex: "#eb3f77",
+              },
+              {
+                name: "Green",
+                codeHex: "#009251",
+              },
+              {
+                name: "Yellow",
+                codeHex: "#fee900",
+              },
+              {
+                name: "Gray",
+                codeHex: "#4f575b",
+              },
+              {
+                name: "Orange",
+                codeHex: "#e15616",
+              },
+              {
+                name: "Purple",
+                codeHex: "#554585",
+              },
+              {
+                name: "Brown",
+                codeHex: "#523d2a",
+              },
             ],
             enableBold: true,
             colorsLabel: "Text  Colors",
@@ -1117,7 +1196,7 @@ export const configurationDemoData: ConfigurationType[] = [
               active: true,
               defaultFontSize: 16,
               maximumFontSize: 100,
-              minimumFontSize: 12,
+              minimumFontSize: 4,
             },
             enableOverline: true,
             enableUnderline: true,
@@ -1140,16 +1219,17 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [],
+              selectClipartGroups: [1],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
               uploadMinWidth: 100,
               customWithGraphical: false,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+              allowedUploadsExtentions: ["png"],
             },
             enableCustomColor: true,
             enableUploadImage: true,
+            enableDownloadImage: true,
           },
           signPart: {
             doublePart: {
@@ -1169,9 +1249,11 @@ export const configurationDemoData: ConfigurationType[] = [
         },
         languageImages: {
           images: {
-            icon: "",
+            redoIcon: "",
+            undoIcon: "",
             resetAllIcon: "",
             cancelAnAction: "",
+            changeIconHelp: "",
             changeIconSize: "",
             changeIconText: "",
             changeIconColor: "",
@@ -1182,8 +1264,8 @@ export const configurationDemoData: ConfigurationType[] = [
             changeIconImport: "",
             changeIconPreview: "",
             changeIconProduct: "",
+            changeIconDownload: "",
             changeIconMaterial: "",
-            changeIconSizeMenu: "",
             changeIconSaveProject: "",
             changeIconFixingMethod: "",
             changeIconShareSideBar: "",
@@ -1232,8 +1314,8 @@ export const configurationDemoData: ConfigurationType[] = [
           uploadDesign: {
             link: "",
             activate: false,
+            helpContent: "",
             phraseSubmitCustom: "Take a customization",
-             helpContent: "",
           },
         },
       },
@@ -1970,16 +2052,16 @@ export const configurationDemoData: ConfigurationType[] = [
           },
         },
         themeColors: {
-          skin: "couffo",
+          skin: "default",
           colors: {
             bars: {
               help: {
                 textColor: "#ffffff",
-                borderColor: "#0374e3",
+                borderColor: "#016464",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBorderColor: "#025db7",
-                hoverBackgroundColor: "#025db7",
+                backgroundColor: "#016464",
+                hoverBorderColor: "#016464",
+                hoverBackgroundColor: "#016464",
               },
               price: {
                 textColor: "#000000",
@@ -2005,7 +2087,7 @@ export const configurationDemoData: ConfigurationType[] = [
               preview: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 hoverBackgroundColor: "#f4f8fa",
@@ -2013,14 +2095,14 @@ export const configurationDemoData: ConfigurationType[] = [
               undoRedo: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 disabledTextColor: "#c3cfd6",
                 hoverBackgroundColor: "#f4f8fa",
                 disabledBackgroundColor: "#ffffff",
               },
-              titleColor: "#14213d",
+              titleColor: "#000000",
               backgroundColor: "#ffffff",
             },
             canvas: {
@@ -2035,17 +2117,17 @@ export const configurationDemoData: ConfigurationType[] = [
               buttonEditTextColor: "#ffffff",
               optionHoverTextColor: "#000000",
               buttonFinishTextColor: "#14213d",
-              headerBackgroundColor: "#3590ea",
+              headerBackgroundColor: "#058585",
               optionHoverBorderColor: "#eef3f6",
               buttonAddToCartTextColor: "#14213d",
               buttonEditHoverTextColor: "#f4f8fa",
-              buttonEditBackgroundColor: "#0374e3",
+              buttonEditBackgroundColor: "#016464",
               buttonFinishHoverTextColor: "#313e52",
               optionHoverBackgroundColor: "#eef3f6",
               buttonFinishBackgroundColor: "#febd52",
               buttonAddToCartHoverTextColor: "#313e52",
               buttonAddToCartBackgroundColor: "#febd52",
-              buttonEditHoverBackgroundColor: "#025db7",
+              buttonEditHoverBackgroundColor: "#058585",
               buttonFinishHoverBackgroundColor: "#fcac29",
               buttonAddToCartHoverBackgroundColor: "#fcac29",
             },
@@ -2082,23 +2164,24 @@ export const configurationDemoData: ConfigurationType[] = [
                   option: {
                     textColor: "#000000",
                     hoverTextColor: "#000000",
-                    activeTextColor: "#0374e3",
+                    activeTextColor: "#016464",
                     hoverBackgroundColor: "#eef3f6",
                   },
                   buttons: {
                     textColor: "#ffffff",
                     hoverTextColor: "#ffffff",
-                    backgroundColor: "#0374e3",
-                    hoverBackgroundColor: "#3590ea",
+                    backgroundColor: "#016464",
+                    hoverBackgroundColor: "#028383",
                   },
-                  textColor: "#14213d",
+                  textColor: "#000000",
                   backgroundColor: "#ffffff",
                   headerTextColor: "#ffffff",
-                  headerBackgroundColor: "#0374e3",
+                  headerBackgroundColor: "#016464",
                 },
                 buttons: {
                   textColor: "#000000",
-                  hoverTextColor: "#000000",
+                  hoverTextColor: "#016464",
+                  hovertextColor: "#016464",
                   backgroundColor: "#ffffff",
                   hoverBackgroundColor: "#ffffff",
                 },
@@ -2123,6 +2206,42 @@ export const configurationDemoData: ConfigurationType[] = [
                 name: "White",
                 codeHex: "#FFFFFF",
               },
+              {
+                name: "Blue",
+                codeHex: "#004f86",
+              },
+              {
+                name: "Red",
+                codeHex: "#c4271d",
+              },
+              {
+                name: "Pink",
+                codeHex: "#eb3f77",
+              },
+              {
+                name: "Green",
+                codeHex: "#009251",
+              },
+              {
+                name: "Yellow",
+                codeHex: "#fee900",
+              },
+              {
+                name: "Gray",
+                codeHex: "#4f575b",
+              },
+              {
+                name: "Orange",
+                codeHex: "#e15616",
+              },
+              {
+                name: "Purple",
+                codeHex: "#554585",
+              },
+              {
+                name: "Brown",
+                codeHex: "#523d2a",
+              },
             ],
             enableBold: true,
             colorsLabel: "Text  Colors",
@@ -2137,7 +2256,7 @@ export const configurationDemoData: ConfigurationType[] = [
               active: true,
               defaultFontSize: 16,
               maximumFontSize: 100,
-              minimumFontSize: 12,
+              minimumFontSize: 4,
             },
             enableOverline: true,
             enableUnderline: true,
@@ -2160,16 +2279,17 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [],
+              selectClipartGroups: [1],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
               uploadMinWidth: 100,
               customWithGraphical: false,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+              allowedUploadsExtentions: ["png"],
             },
             enableCustomColor: true,
             enableUploadImage: true,
+            enableDownloadImage: true,
           },
           signPart: {
             doublePart: {
@@ -2189,9 +2309,11 @@ export const configurationDemoData: ConfigurationType[] = [
         },
         languageImages: {
           images: {
-            icon: "",
+            redoIcon: "",
+            undoIcon: "",
             resetAllIcon: "",
             cancelAnAction: "",
+            changeIconHelp: "",
             changeIconSize: "",
             changeIconText: "",
             changeIconColor: "",
@@ -2202,8 +2324,8 @@ export const configurationDemoData: ConfigurationType[] = [
             changeIconImport: "",
             changeIconPreview: "",
             changeIconProduct: "",
+            changeIconDownload: "",
             changeIconMaterial: "",
-            changeIconSizeMenu: "",
             changeIconSaveProject: "",
             changeIconFixingMethod: "",
             changeIconShareSideBar: "",
@@ -2252,8 +2374,8 @@ export const configurationDemoData: ConfigurationType[] = [
           uploadDesign: {
             link: "",
             activate: false,
+            helpContent: "",
             phraseSubmitCustom: "Take a customization",
-             helpContent: "",
           },
         },
       },
@@ -2515,7 +2637,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -2852,7 +2974,7 @@ export const configurationDemoData: ConfigurationType[] = [
                 enableBorderColor: true,
                 enableBorderWidth: false,
                 borderColorsLabel: "Borders Colors",
-                customColorsPrevImg: ""
+                customColorsPrevImg: "",
               },
               allBorders: [
                 {
@@ -2966,6 +3088,7 @@ export const configurationDemoData: ConfigurationType[] = [
                 icon: "/uploads/frosted-1716291683175.svg",
                 title: "Reflective",
                 description: "",
+                options: [],
               },
             ],
           },
@@ -3015,16 +3138,16 @@ export const configurationDemoData: ConfigurationType[] = [
           },
         },
         themeColors: {
-          skin: "couffo",
+          skin: "default",
           colors: {
             bars: {
               help: {
                 textColor: "#ffffff",
-                borderColor: "#0374e3",
+                borderColor: "#016464",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBorderColor: "#025db7",
-                hoverBackgroundColor: "#025db7",
+                backgroundColor: "#016464",
+                hoverBorderColor: "#016464",
+                hoverBackgroundColor: "#016464",
               },
               price: {
                 textColor: "#000000",
@@ -3050,7 +3173,7 @@ export const configurationDemoData: ConfigurationType[] = [
               preview: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 hoverBackgroundColor: "#f4f8fa",
@@ -3058,14 +3181,14 @@ export const configurationDemoData: ConfigurationType[] = [
               undoRedo: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 disabledTextColor: "#c3cfd6",
                 hoverBackgroundColor: "#f4f8fa",
                 disabledBackgroundColor: "#ffffff",
               },
-              titleColor: "#14213d",
+              titleColor: "#000000",
               backgroundColor: "#ffffff",
             },
             canvas: {
@@ -3080,17 +3203,17 @@ export const configurationDemoData: ConfigurationType[] = [
               buttonEditTextColor: "#ffffff",
               optionHoverTextColor: "#000000",
               buttonFinishTextColor: "#14213d",
-              headerBackgroundColor: "#3590ea",
+              headerBackgroundColor: "#058585",
               optionHoverBorderColor: "#eef3f6",
               buttonAddToCartTextColor: "#14213d",
               buttonEditHoverTextColor: "#f4f8fa",
-              buttonEditBackgroundColor: "#0374e3",
+              buttonEditBackgroundColor: "#016464",
               buttonFinishHoverTextColor: "#313e52",
               optionHoverBackgroundColor: "#eef3f6",
               buttonFinishBackgroundColor: "#febd52",
               buttonAddToCartHoverTextColor: "#313e52",
               buttonAddToCartBackgroundColor: "#febd52",
-              buttonEditHoverBackgroundColor: "#025db7",
+              buttonEditHoverBackgroundColor: "#058585",
               buttonFinishHoverBackgroundColor: "#fcac29",
               buttonAddToCartHoverBackgroundColor: "#fcac29",
             },
@@ -3127,23 +3250,24 @@ export const configurationDemoData: ConfigurationType[] = [
                   option: {
                     textColor: "#000000",
                     hoverTextColor: "#000000",
-                    activeTextColor: "#0374e3",
+                    activeTextColor: "#016464",
                     hoverBackgroundColor: "#eef3f6",
                   },
                   buttons: {
                     textColor: "#ffffff",
                     hoverTextColor: "#ffffff",
-                    backgroundColor: "#0374e3",
-                    hoverBackgroundColor: "#3590ea",
+                    backgroundColor: "#016464",
+                    hoverBackgroundColor: "#028383",
                   },
-                  textColor: "#14213d",
+                  textColor: "#000000",
                   backgroundColor: "#ffffff",
                   headerTextColor: "#ffffff",
-                  headerBackgroundColor: "#0374e3",
+                  headerBackgroundColor: "#016464",
                 },
                 buttons: {
                   textColor: "#000000",
-                  hoverTextColor: "#000000",
+                  hoverTextColor: "#016464",
+                  hovertextColor: "#016464",
                   backgroundColor: "#ffffff",
                   hoverBackgroundColor: "#ffffff",
                 },
@@ -3168,6 +3292,42 @@ export const configurationDemoData: ConfigurationType[] = [
                 name: "White",
                 codeHex: "#FFFFFF",
               },
+              {
+                name: "Blue",
+                codeHex: "#004f86",
+              },
+              {
+                name: "Red",
+                codeHex: "#c4271d",
+              },
+              {
+                name: "Pink",
+                codeHex: "#eb3f77",
+              },
+              {
+                name: "Green",
+                codeHex: "#009251",
+              },
+              {
+                name: "Yellow",
+                codeHex: "#fee900",
+              },
+              {
+                name: "Gray",
+                codeHex: "#4f575b",
+              },
+              {
+                name: "Orange",
+                codeHex: "#e15616",
+              },
+              {
+                name: "Purple",
+                codeHex: "#554585",
+              },
+              {
+                name: "Brown",
+                codeHex: "#523d2a",
+              },
             ],
             enableBold: true,
             colorsLabel: "Text  Colors",
@@ -3182,7 +3342,7 @@ export const configurationDemoData: ConfigurationType[] = [
               active: true,
               defaultFontSize: 16,
               maximumFontSize: 100,
-              minimumFontSize: 12,
+              minimumFontSize: 4,
             },
             enableOverline: true,
             enableUnderline: true,
@@ -3205,16 +3365,17 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [],
+              selectClipartGroups: [1],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
               uploadMinWidth: 100,
               customWithGraphical: false,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+              allowedUploadsExtentions: ["png"],
             },
             enableCustomColor: true,
             enableUploadImage: true,
+            enableDownloadImage: true,
           },
           signPart: {
             doublePart: {
@@ -3234,9 +3395,11 @@ export const configurationDemoData: ConfigurationType[] = [
         },
         languageImages: {
           images: {
-            icon: "",
+            redoIcon: "",
+            undoIcon: "",
             resetAllIcon: "",
             cancelAnAction: "",
+            changeIconHelp: "",
             changeIconSize: "",
             changeIconText: "",
             changeIconColor: "",
@@ -3247,8 +3410,8 @@ export const configurationDemoData: ConfigurationType[] = [
             changeIconImport: "",
             changeIconPreview: "",
             changeIconProduct: "",
+            changeIconDownload: "",
             changeIconMaterial: "",
-            changeIconSizeMenu: "",
             changeIconSaveProject: "",
             changeIconFixingMethod: "",
             changeIconShareSideBar: "",
@@ -3297,8 +3460,8 @@ export const configurationDemoData: ConfigurationType[] = [
           uploadDesign: {
             link: "",
             activate: false,
+            helpContent: "",
             phraseSubmitCustom: "Take a customization",
-             helpContent: "",
           },
         },
       },
@@ -3544,7 +3707,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -3791,8 +3954,8 @@ export const configurationDemoData: ConfigurationType[] = [
               customColors: {
                 label: "custom  colors",
                 active: false,
-                prevImg: ""
-              }
+                prevImg: "",
+              },
             },
             shapes: [
               {
@@ -4203,7 +4366,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -4789,8 +4952,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: []
-
+                pricings: [],
               },
             },
             colors: {
@@ -5209,16 +5371,16 @@ export const configurationDemoData: ConfigurationType[] = [
           },
         },
         themeColors: {
-          skin: "couffo",
+          skin: "default",
           colors: {
             bars: {
               help: {
                 textColor: "#ffffff",
-                borderColor: "#0374e3",
+                borderColor: "#016464",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBorderColor: "#025db7",
-                hoverBackgroundColor: "#025db7",
+                backgroundColor: "#016464",
+                hoverBorderColor: "#016464",
+                hoverBackgroundColor: "#016464",
               },
               price: {
                 textColor: "#000000",
@@ -5244,7 +5406,7 @@ export const configurationDemoData: ConfigurationType[] = [
               preview: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 hoverBackgroundColor: "#f4f8fa",
@@ -5252,14 +5414,14 @@ export const configurationDemoData: ConfigurationType[] = [
               undoRedo: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 disabledTextColor: "#c3cfd6",
                 hoverBackgroundColor: "#f4f8fa",
                 disabledBackgroundColor: "#ffffff",
               },
-              titleColor: "#14213d",
+              titleColor: "#000000",
               backgroundColor: "#ffffff",
             },
             canvas: {
@@ -5274,17 +5436,17 @@ export const configurationDemoData: ConfigurationType[] = [
               buttonEditTextColor: "#ffffff",
               optionHoverTextColor: "#000000",
               buttonFinishTextColor: "#14213d",
-              headerBackgroundColor: "#3590ea",
+              headerBackgroundColor: "#058585",
               optionHoverBorderColor: "#eef3f6",
               buttonAddToCartTextColor: "#14213d",
               buttonEditHoverTextColor: "#f4f8fa",
-              buttonEditBackgroundColor: "#0374e3",
+              buttonEditBackgroundColor: "#016464",
               buttonFinishHoverTextColor: "#313e52",
               optionHoverBackgroundColor: "#eef3f6",
               buttonFinishBackgroundColor: "#febd52",
               buttonAddToCartHoverTextColor: "#313e52",
               buttonAddToCartBackgroundColor: "#febd52",
-              buttonEditHoverBackgroundColor: "#025db7",
+              buttonEditHoverBackgroundColor: "#058585",
               buttonFinishHoverBackgroundColor: "#fcac29",
               buttonAddToCartHoverBackgroundColor: "#fcac29",
             },
@@ -5321,23 +5483,24 @@ export const configurationDemoData: ConfigurationType[] = [
                   option: {
                     textColor: "#000000",
                     hoverTextColor: "#000000",
-                    activeTextColor: "#0374e3",
+                    activeTextColor: "#016464",
                     hoverBackgroundColor: "#eef3f6",
                   },
                   buttons: {
                     textColor: "#ffffff",
                     hoverTextColor: "#ffffff",
-                    backgroundColor: "#0374e3",
-                    hoverBackgroundColor: "#3590ea",
+                    backgroundColor: "#016464",
+                    hoverBackgroundColor: "#028383",
                   },
-                  textColor: "#14213d",
+                  textColor: "#000000",
                   backgroundColor: "#ffffff",
                   headerTextColor: "#ffffff",
-                  headerBackgroundColor: "#0374e3",
+                  headerBackgroundColor: "#016464",
                 },
                 buttons: {
                   textColor: "#000000",
-                  hoverTextColor: "#000000",
+                  hoverTextColor: "#016464",
+                  hovertextColor: "#016464",
                   backgroundColor: "#ffffff",
                   hoverBackgroundColor: "#ffffff",
                 },
@@ -5362,6 +5525,42 @@ export const configurationDemoData: ConfigurationType[] = [
                 name: "White",
                 codeHex: "#FFFFFF",
               },
+              {
+                name: "Blue",
+                codeHex: "#004f86",
+              },
+              {
+                name: "Red",
+                codeHex: "#c4271d",
+              },
+              {
+                name: "Pink",
+                codeHex: "#eb3f77",
+              },
+              {
+                name: "Green",
+                codeHex: "#009251",
+              },
+              {
+                name: "Yellow",
+                codeHex: "#fee900",
+              },
+              {
+                name: "Gray",
+                codeHex: "#4f575b",
+              },
+              {
+                name: "Orange",
+                codeHex: "#e15616",
+              },
+              {
+                name: "Purple",
+                codeHex: "#554585",
+              },
+              {
+                name: "Brown",
+                codeHex: "#523d2a",
+              },
             ],
             enableBold: true,
             colorsLabel: "Text  Colors",
@@ -5376,7 +5575,7 @@ export const configurationDemoData: ConfigurationType[] = [
               active: true,
               defaultFontSize: 16,
               maximumFontSize: 100,
-              minimumFontSize: 12,
+              minimumFontSize: 4,
             },
             enableOverline: true,
             enableUnderline: true,
@@ -5399,16 +5598,17 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [],
+              selectClipartGroups: [1],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
               uploadMinWidth: 100,
               customWithGraphical: false,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+              allowedUploadsExtentions: ["png"],
             },
             enableCustomColor: true,
             enableUploadImage: true,
+            enableDownloadImage: true,
           },
           signPart: {
             doublePart: {
@@ -5428,9 +5628,11 @@ export const configurationDemoData: ConfigurationType[] = [
         },
         languageImages: {
           images: {
-            icon: "",
+            redoIcon: "",
+            undoIcon: "",
             resetAllIcon: "",
             cancelAnAction: "",
+            changeIconHelp: "",
             changeIconSize: "",
             changeIconText: "",
             changeIconColor: "",
@@ -5441,8 +5643,8 @@ export const configurationDemoData: ConfigurationType[] = [
             changeIconImport: "",
             changeIconPreview: "",
             changeIconProduct: "",
+            changeIconDownload: "",
             changeIconMaterial: "",
-            changeIconSizeMenu: "",
             changeIconSaveProject: "",
             changeIconFixingMethod: "",
             changeIconShareSideBar: "",
@@ -5491,8 +5693,8 @@ export const configurationDemoData: ConfigurationType[] = [
           uploadDesign: {
             link: "",
             activate: false,
+            helpContent: "",
             phraseSubmitCustom: "Take a customization",
-             helpContent: "",
           },
         },
       },
@@ -5639,7 +5841,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 10,
                   label: "Height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -5903,8 +6105,8 @@ export const configurationDemoData: ConfigurationType[] = [
               customColors: {
                 label: "custom  colors",
                 active: false,
-                prevImg: ""
-              }
+                prevImg: "",
+              },
             },
             shapes: [
               {
@@ -6210,7 +6412,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 10,
                   label: "Height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -6457,8 +6659,8 @@ export const configurationDemoData: ConfigurationType[] = [
               customColors: {
                 label: "custom  colors",
                 active: false,
-                prevImg: ""
-              }
+                prevImg: "",
+              },
             },
             shapes: [
               {
@@ -6661,16 +6863,16 @@ export const configurationDemoData: ConfigurationType[] = [
           },
         },
         themeColors: {
-          skin: "couffo",
+          skin: "default",
           colors: {
             bars: {
               help: {
                 textColor: "#ffffff",
-                borderColor: "#0374e3",
+                borderColor: "#016464",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBorderColor: "#025db7",
-                hoverBackgroundColor: "#025db7",
+                backgroundColor: "#016464",
+                hoverBorderColor: "#016464",
+                hoverBackgroundColor: "#016464",
               },
               price: {
                 textColor: "#000000",
@@ -6696,7 +6898,7 @@ export const configurationDemoData: ConfigurationType[] = [
               preview: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 hoverBackgroundColor: "#f4f8fa",
@@ -6704,14 +6906,14 @@ export const configurationDemoData: ConfigurationType[] = [
               undoRedo: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 disabledTextColor: "#c3cfd6",
                 hoverBackgroundColor: "#f4f8fa",
                 disabledBackgroundColor: "#ffffff",
               },
-              titleColor: "#14213d",
+              titleColor: "#000000",
               backgroundColor: "#ffffff",
             },
             canvas: {
@@ -6726,17 +6928,17 @@ export const configurationDemoData: ConfigurationType[] = [
               buttonEditTextColor: "#ffffff",
               optionHoverTextColor: "#000000",
               buttonFinishTextColor: "#14213d",
-              headerBackgroundColor: "#3590ea",
+              headerBackgroundColor: "#058585",
               optionHoverBorderColor: "#eef3f6",
               buttonAddToCartTextColor: "#14213d",
               buttonEditHoverTextColor: "#f4f8fa",
-              buttonEditBackgroundColor: "#0374e3",
+              buttonEditBackgroundColor: "#016464",
               buttonFinishHoverTextColor: "#313e52",
               optionHoverBackgroundColor: "#eef3f6",
               buttonFinishBackgroundColor: "#febd52",
               buttonAddToCartHoverTextColor: "#313e52",
               buttonAddToCartBackgroundColor: "#febd52",
-              buttonEditHoverBackgroundColor: "#025db7",
+              buttonEditHoverBackgroundColor: "#058585",
               buttonFinishHoverBackgroundColor: "#fcac29",
               buttonAddToCartHoverBackgroundColor: "#fcac29",
             },
@@ -6773,23 +6975,24 @@ export const configurationDemoData: ConfigurationType[] = [
                   option: {
                     textColor: "#000000",
                     hoverTextColor: "#000000",
-                    activeTextColor: "#0374e3",
+                    activeTextColor: "#016464",
                     hoverBackgroundColor: "#eef3f6",
                   },
                   buttons: {
                     textColor: "#ffffff",
                     hoverTextColor: "#ffffff",
-                    backgroundColor: "#0374e3",
-                    hoverBackgroundColor: "#3590ea",
+                    backgroundColor: "#016464",
+                    hoverBackgroundColor: "#028383",
                   },
-                  textColor: "#14213d",
+                  textColor: "#000000",
                   backgroundColor: "#ffffff",
                   headerTextColor: "#ffffff",
-                  headerBackgroundColor: "#0374e3",
+                  headerBackgroundColor: "#016464",
                 },
                 buttons: {
                   textColor: "#000000",
-                  hoverTextColor: "#000000",
+                  hoverTextColor: "#016464",
+                  hovertextColor: "#016464",
                   backgroundColor: "#ffffff",
                   hoverBackgroundColor: "#ffffff",
                 },
@@ -6814,6 +7017,42 @@ export const configurationDemoData: ConfigurationType[] = [
                 name: "White",
                 codeHex: "#FFFFFF",
               },
+              {
+                name: "Blue",
+                codeHex: "#004f86",
+              },
+              {
+                name: "Red",
+                codeHex: "#c4271d",
+              },
+              {
+                name: "Pink",
+                codeHex: "#eb3f77",
+              },
+              {
+                name: "Green",
+                codeHex: "#009251",
+              },
+              {
+                name: "Yellow",
+                codeHex: "#fee900",
+              },
+              {
+                name: "Gray",
+                codeHex: "#4f575b",
+              },
+              {
+                name: "Orange",
+                codeHex: "#e15616",
+              },
+              {
+                name: "Purple",
+                codeHex: "#554585",
+              },
+              {
+                name: "Brown",
+                codeHex: "#523d2a",
+              },
             ],
             enableBold: true,
             colorsLabel: "Text  Colors",
@@ -6828,7 +7067,7 @@ export const configurationDemoData: ConfigurationType[] = [
               active: true,
               defaultFontSize: 16,
               maximumFontSize: 100,
-              minimumFontSize: 12,
+              minimumFontSize: 4,
             },
             enableOverline: true,
             enableUnderline: true,
@@ -6851,16 +7090,17 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [],
+              selectClipartGroups: [1],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
               uploadMinWidth: 100,
               customWithGraphical: false,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+              allowedUploadsExtentions: ["png"],
             },
             enableCustomColor: true,
             enableUploadImage: true,
+            enableDownloadImage: true,
           },
           signPart: {
             doublePart: {
@@ -6880,9 +7120,11 @@ export const configurationDemoData: ConfigurationType[] = [
         },
         languageImages: {
           images: {
-            icon: "",
+            redoIcon: "",
+            undoIcon: "",
             resetAllIcon: "",
             cancelAnAction: "",
+            changeIconHelp: "",
             changeIconSize: "",
             changeIconText: "",
             changeIconColor: "",
@@ -6893,8 +7135,8 @@ export const configurationDemoData: ConfigurationType[] = [
             changeIconImport: "",
             changeIconPreview: "",
             changeIconProduct: "",
+            changeIconDownload: "",
             changeIconMaterial: "",
-            changeIconSizeMenu: "",
             changeIconSaveProject: "",
             changeIconFixingMethod: "",
             changeIconShareSideBar: "",
@@ -6943,8 +7185,8 @@ export const configurationDemoData: ConfigurationType[] = [
           uploadDesign: {
             link: "",
             activate: false,
+            helpContent: "",
             phraseSubmitCustom: "Take a customization",
-             helpContent: "",
           },
         },
       },
@@ -6992,7 +7234,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 0,
                   label: "Custom height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -7188,8 +7430,8 @@ export const configurationDemoData: ConfigurationType[] = [
               customColors: {
                 label: "custom  colors",
                 active: false,
-                prevImg: ""
-              }
+                prevImg: "",
+              },
             },
             shapes: [
               {
@@ -7351,7 +7593,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 0,
                   label: "Custom height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -7547,8 +7789,8 @@ export const configurationDemoData: ConfigurationType[] = [
               customColors: {
                 label: "custom  colors",
                 active: false,
-                prevImg: ""
-              }
+                prevImg: "",
+              },
             },
             shapes: [],
             borders: {
@@ -7701,16 +7943,16 @@ export const configurationDemoData: ConfigurationType[] = [
           },
         },
         themeColors: {
-          skin: "couffo",
+          skin: "default",
           colors: {
             bars: {
               help: {
                 textColor: "#ffffff",
-                borderColor: "#0374e3",
+                borderColor: "#016464",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBorderColor: "#025db7",
-                hoverBackgroundColor: "#025db7",
+                backgroundColor: "#016464",
+                hoverBorderColor: "#016464",
+                hoverBackgroundColor: "#016464",
               },
               price: {
                 textColor: "#000000",
@@ -7736,7 +7978,7 @@ export const configurationDemoData: ConfigurationType[] = [
               preview: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 hoverBackgroundColor: "#f4f8fa",
@@ -7744,14 +7986,14 @@ export const configurationDemoData: ConfigurationType[] = [
               undoRedo: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 disabledTextColor: "#c3cfd6",
                 hoverBackgroundColor: "#f4f8fa",
                 disabledBackgroundColor: "#ffffff",
               },
-              titleColor: "#14213d",
+              titleColor: "#000000",
               backgroundColor: "#ffffff",
             },
             canvas: {
@@ -7766,17 +8008,17 @@ export const configurationDemoData: ConfigurationType[] = [
               buttonEditTextColor: "#ffffff",
               optionHoverTextColor: "#000000",
               buttonFinishTextColor: "#14213d",
-              headerBackgroundColor: "#3590ea",
+              headerBackgroundColor: "#058585",
               optionHoverBorderColor: "#eef3f6",
               buttonAddToCartTextColor: "#14213d",
               buttonEditHoverTextColor: "#f4f8fa",
-              buttonEditBackgroundColor: "#0374e3",
+              buttonEditBackgroundColor: "#016464",
               buttonFinishHoverTextColor: "#313e52",
               optionHoverBackgroundColor: "#eef3f6",
               buttonFinishBackgroundColor: "#febd52",
               buttonAddToCartHoverTextColor: "#313e52",
               buttonAddToCartBackgroundColor: "#febd52",
-              buttonEditHoverBackgroundColor: "#025db7",
+              buttonEditHoverBackgroundColor: "#058585",
               buttonFinishHoverBackgroundColor: "#fcac29",
               buttonAddToCartHoverBackgroundColor: "#fcac29",
             },
@@ -7813,23 +8055,24 @@ export const configurationDemoData: ConfigurationType[] = [
                   option: {
                     textColor: "#000000",
                     hoverTextColor: "#000000",
-                    activeTextColor: "#0374e3",
+                    activeTextColor: "#016464",
                     hoverBackgroundColor: "#eef3f6",
                   },
                   buttons: {
                     textColor: "#ffffff",
                     hoverTextColor: "#ffffff",
-                    backgroundColor: "#0374e3",
-                    hoverBackgroundColor: "#3590ea",
+                    backgroundColor: "#016464",
+                    hoverBackgroundColor: "#028383",
                   },
-                  textColor: "#14213d",
+                  textColor: "#000000",
                   backgroundColor: "#ffffff",
                   headerTextColor: "#ffffff",
-                  headerBackgroundColor: "#0374e3",
+                  headerBackgroundColor: "#016464",
                 },
                 buttons: {
                   textColor: "#000000",
-                  hoverTextColor: "#000000",
+                  hoverTextColor: "#016464",
+                  hovertextColor: "#016464",
                   backgroundColor: "#ffffff",
                   hoverBackgroundColor: "#ffffff",
                 },
@@ -7854,6 +8097,42 @@ export const configurationDemoData: ConfigurationType[] = [
                 name: "White",
                 codeHex: "#FFFFFF",
               },
+              {
+                name: "Blue",
+                codeHex: "#004f86",
+              },
+              {
+                name: "Red",
+                codeHex: "#c4271d",
+              },
+              {
+                name: "Pink",
+                codeHex: "#eb3f77",
+              },
+              {
+                name: "Green",
+                codeHex: "#009251",
+              },
+              {
+                name: "Yellow",
+                codeHex: "#fee900",
+              },
+              {
+                name: "Gray",
+                codeHex: "#4f575b",
+              },
+              {
+                name: "Orange",
+                codeHex: "#e15616",
+              },
+              {
+                name: "Purple",
+                codeHex: "#554585",
+              },
+              {
+                name: "Brown",
+                codeHex: "#523d2a",
+              },
             ],
             enableBold: true,
             colorsLabel: "Text  Colors",
@@ -7868,7 +8147,7 @@ export const configurationDemoData: ConfigurationType[] = [
               active: true,
               defaultFontSize: 16,
               maximumFontSize: 100,
-              minimumFontSize: 12,
+              minimumFontSize: 4,
             },
             enableOverline: true,
             enableUnderline: true,
@@ -7891,16 +8170,17 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [],
+              selectClipartGroups: [1],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
               uploadMinWidth: 100,
               customWithGraphical: false,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+              allowedUploadsExtentions: ["png"],
             },
             enableCustomColor: true,
             enableUploadImage: true,
+            enableDownloadImage: true,
           },
           signPart: {
             doublePart: {
@@ -7920,9 +8200,11 @@ export const configurationDemoData: ConfigurationType[] = [
         },
         languageImages: {
           images: {
-            icon: "",
+            redoIcon: "",
+            undoIcon: "",
             resetAllIcon: "",
             cancelAnAction: "",
+            changeIconHelp: "",
             changeIconSize: "",
             changeIconText: "",
             changeIconColor: "",
@@ -7933,8 +8215,8 @@ export const configurationDemoData: ConfigurationType[] = [
             changeIconImport: "",
             changeIconPreview: "",
             changeIconProduct: "",
+            changeIconDownload: "",
             changeIconMaterial: "",
-            changeIconSizeMenu: "",
             changeIconSaveProject: "",
             changeIconFixingMethod: "",
             changeIconShareSideBar: "",
@@ -7983,8 +8265,8 @@ export const configurationDemoData: ConfigurationType[] = [
           uploadDesign: {
             link: "",
             activate: false,
+            helpContent: "",
             phraseSubmitCustom: "Take a customization",
-             helpContent: "",
           },
         },
       },
@@ -8252,16 +8534,16 @@ export const configurationDemoData: ConfigurationType[] = [
           },
         },
         themeColors: {
-          skin: "couffo",
+          skin: "default",
           colors: {
             bars: {
               help: {
                 textColor: "#ffffff",
-                borderColor: "#0374e3",
+                borderColor: "#016464",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBorderColor: "#025db7",
-                hoverBackgroundColor: "#025db7",
+                backgroundColor: "#016464",
+                hoverBorderColor: "#016464",
+                hoverBackgroundColor: "#016464",
               },
               price: {
                 textColor: "#000000",
@@ -8287,7 +8569,7 @@ export const configurationDemoData: ConfigurationType[] = [
               preview: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 hoverBackgroundColor: "#f4f8fa",
@@ -8295,14 +8577,14 @@ export const configurationDemoData: ConfigurationType[] = [
               undoRedo: {
                 textColor: "#000000",
                 borderColor: "#ffffff",
-                hoverTextColor: "#0374e3",
+                hoverTextColor: "#016464",
                 backgroundColor: "#ffffff",
                 hoverBorderColor: "#f4f8fa",
                 disabledTextColor: "#c3cfd6",
                 hoverBackgroundColor: "#f4f8fa",
                 disabledBackgroundColor: "#ffffff",
               },
-              titleColor: "#14213d",
+              titleColor: "#000000",
               backgroundColor: "#ffffff",
             },
             canvas: {
@@ -8317,17 +8599,17 @@ export const configurationDemoData: ConfigurationType[] = [
               buttonEditTextColor: "#ffffff",
               optionHoverTextColor: "#000000",
               buttonFinishTextColor: "#14213d",
-              headerBackgroundColor: "#3590ea",
+              headerBackgroundColor: "#058585",
               optionHoverBorderColor: "#eef3f6",
               buttonAddToCartTextColor: "#14213d",
               buttonEditHoverTextColor: "#f4f8fa",
-              buttonEditBackgroundColor: "#0374e3",
+              buttonEditBackgroundColor: "#016464",
               buttonFinishHoverTextColor: "#313e52",
               optionHoverBackgroundColor: "#eef3f6",
               buttonFinishBackgroundColor: "#febd52",
               buttonAddToCartHoverTextColor: "#313e52",
               buttonAddToCartBackgroundColor: "#febd52",
-              buttonEditHoverBackgroundColor: "#025db7",
+              buttonEditHoverBackgroundColor: "#058585",
               buttonFinishHoverBackgroundColor: "#fcac29",
               buttonAddToCartHoverBackgroundColor: "#fcac29",
             },
@@ -8364,23 +8646,24 @@ export const configurationDemoData: ConfigurationType[] = [
                   option: {
                     textColor: "#000000",
                     hoverTextColor: "#000000",
-                    activeTextColor: "#0374e3",
+                    activeTextColor: "#016464",
                     hoverBackgroundColor: "#eef3f6",
                   },
                   buttons: {
                     textColor: "#ffffff",
                     hoverTextColor: "#ffffff",
-                    backgroundColor: "#0374e3",
-                    hoverBackgroundColor: "#3590ea",
+                    backgroundColor: "#016464",
+                    hoverBackgroundColor: "#028383",
                   },
-                  textColor: "#14213d",
+                  textColor: "#000000",
                   backgroundColor: "#ffffff",
                   headerTextColor: "#ffffff",
-                  headerBackgroundColor: "#0374e3",
+                  headerBackgroundColor: "#016464",
                 },
                 buttons: {
                   textColor: "#000000",
-                  hoverTextColor: "#000000",
+                  hoverTextColor: "#016464",
+                  hovertextColor: "#016464",
                   backgroundColor: "#ffffff",
                   hoverBackgroundColor: "#ffffff",
                 },
@@ -8405,6 +8688,42 @@ export const configurationDemoData: ConfigurationType[] = [
                 name: "White",
                 codeHex: "#FFFFFF",
               },
+              {
+                name: "Blue",
+                codeHex: "#004f86",
+              },
+              {
+                name: "Red",
+                codeHex: "#c4271d",
+              },
+              {
+                name: "Pink",
+                codeHex: "#eb3f77",
+              },
+              {
+                name: "Green",
+                codeHex: "#009251",
+              },
+              {
+                name: "Yellow",
+                codeHex: "#fee900",
+              },
+              {
+                name: "Gray",
+                codeHex: "#4f575b",
+              },
+              {
+                name: "Orange",
+                codeHex: "#e15616",
+              },
+              {
+                name: "Purple",
+                codeHex: "#554585",
+              },
+              {
+                name: "Brown",
+                codeHex: "#523d2a",
+              },
             ],
             enableBold: true,
             colorsLabel: "Text  Colors",
@@ -8419,7 +8738,7 @@ export const configurationDemoData: ConfigurationType[] = [
               active: true,
               defaultFontSize: 16,
               maximumFontSize: 100,
-              minimumFontSize: 12,
+              minimumFontSize: 4,
             },
             enableOverline: true,
             enableUnderline: true,
@@ -8442,16 +8761,17 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [],
+              selectClipartGroups: [1],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
               uploadMinWidth: 100,
               customWithGraphical: false,
-              allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+              allowedUploadsExtentions: ["png"],
             },
             enableCustomColor: true,
             enableUploadImage: true,
+            enableDownloadImage: true,
           },
           signPart: {
             doublePart: {
@@ -8471,9 +8791,11 @@ export const configurationDemoData: ConfigurationType[] = [
         },
         languageImages: {
           images: {
-            icon: "",
+            redoIcon: "",
+            undoIcon: "",
             resetAllIcon: "",
             cancelAnAction: "",
+            changeIconHelp: "",
             changeIconSize: "",
             changeIconText: "",
             changeIconColor: "",
@@ -8484,8 +8806,8 @@ export const configurationDemoData: ConfigurationType[] = [
             changeIconImport: "",
             changeIconPreview: "",
             changeIconProduct: "",
+            changeIconDownload: "",
             changeIconMaterial: "",
-            changeIconSizeMenu: "",
             changeIconSaveProject: "",
             changeIconFixingMethod: "",
             changeIconShareSideBar: "",
@@ -8534,8 +8856,8 @@ export const configurationDemoData: ConfigurationType[] = [
           uploadDesign: {
             link: "",
             activate: false,
+            helpContent: "",
             phraseSubmitCustom: "Take a customization",
-             helpContent: "",
           },
         },
       },
@@ -8770,8 +9092,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: []
-
+                pricings: [],
               },
             },
             colors: {
@@ -8797,8 +9118,8 @@ export const configurationDemoData: ConfigurationType[] = [
               customColors: {
                 label: "custom  colors",
                 active: false,
-                prevImg: ""
-              }
+                prevImg: "",
+              },
             },
             shapes: [
               {
@@ -9245,7 +9566,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: []
+                pricings: [],
               },
             },
             colors: {
@@ -9271,8 +9592,8 @@ export const configurationDemoData: ConfigurationType[] = [
               customColors: {
                 label: "custom  colors",
                 active: false,
-                prevImg: ""
-              }
+                prevImg: "",
+              },
             },
             shapes: [
               {
@@ -9493,5 +9814,56 @@ export const configurationDemoData: ConfigurationType[] = [
       additionalOptions: [],
     },
     product: {},
+  },
+];
+
+export const fontData: FontType[] = [
+  {
+    id: 9,
+    label: "longlineregular",
+    url: "/uploads/Longline Regular Demo.ttf",
+    isGoogleFont: false
+  },
+  {
+    id: 8,
+    label: "sundaychilling",
+    url: "/uploads/Sunday Chillin.ttf",
+    isGoogleFont: false
+  },
+  {
+    id: 6,
+    label: "Deutschlands",
+    url: "/uploads/Deutschlands.ttf",
+    isGoogleFont: false
+  },
+  {
+    id: 10,
+    label: "Time new roman",
+    url: "/uploads/times new roman.ttf",
+    isGoogleFont: false
+  },
+  {
+    id: 11,
+    label: "Quinnie",
+    url: "/uploads/ss-quinnie.otf",
+    isGoogleFont: false
+  },
+  {
+    id: 12,
+    label: "Queen Temoz",
+    url: "/uploads/Queen-Temoz-Trial-BF666948ed84d3c.ttf",
+    isGoogleFont: false
+  },
+  {
+    id: 13,
+    label: "Nostalgin",
+    url: "/uploads/Nostalgin-BF66876ed87f5b4.otf",
+    isGoogleFont: false
+  },
+  {
+    id: 14,
+    label: "Wast-Lovely",
+    url: "/uploads/Wast-Lovely-BF66977e0e301dd.ttf",
+    isGoogleFont: false
   },
 ];

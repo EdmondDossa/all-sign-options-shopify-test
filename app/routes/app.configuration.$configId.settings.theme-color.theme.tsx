@@ -62,13 +62,13 @@ export default function ConfigSettingsThemeColor() {
     skin: settingData?.skin || "default",
     colors: {
       canvas: {
-        backgroundColor: "#ffffff",
-        borderColor: "#ffffff",
+      backgroundColor: "#f4f8fa",
+      borderColor: "#c3cfd6"
       },
       bars: {
-        titleColor: "#000000",
-        backgroundColor: "#ffffff",
-        reset: {
+      titleColor: "#000000",
+      backgroundColor: "#ffffff",
+      reset: {
           textColor: "#000000",
           hoverTextColor: "#dd3232",
           backgroundColor: "#ffffff",
@@ -81,125 +81,127 @@ export default function ConfigSettingsThemeColor() {
           modalYesButtonBackgroundColor: "#f4f8fa",
           modalYesButtonTextColor: "#000000",
           modalNoButtonBackgroundColor: "#dc2626",
-          modalNoButtonTextColor: "#ffffff",
-        },
-        undoRedo: {
+          modalNoButtonTextColor: "#ffffff"
+      },
+      undoRedo: {
           textColor: "#000000",
-          hoverTextColor: "#0374e3",
+          hoverTextColor: "#016464",
           backgroundColor: "#ffffff",
           hoverBackgroundColor: "#f4f8fa",
           borderColor: "#ffffff",
           hoverBorderColor: "#f4f8fa",
           disabledBackgroundColor: "#ffffff",
-          disabledTextColor: "#c3cfd6",
-        },
-        preview: {
+          disabledTextColor: "#c3cfd6"
+      },
+      preview: {
           textColor: "#000000",
-          hoverTextColor: "#0374e3",
+          hoverTextColor: "#016464",
           backgroundColor: "#ffffff",
           hoverBackgroundColor: "#f4f8fa",
           borderColor: "#ffffff",
-          hoverBorderColor: "#f4f8fa",
-        },
-        help: {
+          hoverBorderColor: "#f4f8fa"
+      },
+      help: {
           textColor: "#ffffff",
           hoverTextColor: "#ffffff",
-          backgroundColor: "#0374e3",
-          hoverBackgroundColor: "#025db7",
-          borderColor: "#0374e3",
-          hoverBorderColor: "#025db7",
-        },
-        price: {
+          backgroundColor: "#016464",
+          hoverBackgroundColor: "#016464",
+          borderColor: "#016464",
+          hoverBorderColor: "#016464"
+      },
+      price: {
           backgroundColor: "#ffffff",
           textColor: "#000000",
           textAfterColor: "#000000",
-          textBeforeColor: "#000000",
-        },
+          textBeforeColor: "#000000"
+      }
       },
       optionsSideBar: {
-        backgroundColor: "#eef3f6",
-        scrollButtonsBackgroundColor: "#4a4a4a",
-        scrollButtonsHoverBackgroundColor: "#74848d",
-        scrollButtonsTextColor: "#ffffff",
-        scrollButtonsHoverTextColor: "#ffffff",
-        options: {
+      backgroundColor: "#eef3f6",
+      scrollButtonsBackgroundColor: "#4a4a4a",
+      scrollButtonsHoverBackgroundColor: "#74848d",
+      scrollButtonsTextColor: "#ffffff",
+      scrollButtonsHoverTextColor: "#ffffff",
+      options: {
           buttons: {
-            backgroundColor: "#ffffff",
-            hoverBackgroundColor: "#ffffff",
-            textColor: "#000000",
-            hoverTextColor: "#000000",
+          backgroundColor: "#ffffff",
+          hoverBackgroundColor: "#ffffff",
+          textColor: "#000000",
+          hoverTextColor: "#016464",
+          hovertextColor: "#016464"
           },
           modals: {
-            headerBackgroundColor: "#0374e3",
-            headerTextColor: "#ffffff",
-            textColor: "#ffffff",
-            backgroundColor: "#ffffff",
-            option: {
+          headerBackgroundColor: "#016464",
+          headerTextColor: "#ffffff",
+          textColor: "#000000",
+          option: {
               textColor: "#000000",
               hoverBackgroundColor: "#eef3f6",
               hoverTextColor: "#000000",
-              activeTextColor: "#0374e3",
-            },
-            buttons: {
-              backgroundColor: "#0374e3",
-              hoverBackgroundColor: "#3590ea",
-              textColor: "#ffffff",
-              hoverTextColor: "#ffffff",
-            },
+              activeTextColor: "#016464"
           },
-        },
+          buttons: {
+              backgroundColor: "#016464",
+              hoverBackgroundColor: "#028383",
+              textColor: "#ffffff",
+              hoverTextColor: "#ffffff"
+          },
+          backgroundColor: "#ffffff"
+          }
+      }
       },
       objectsOptions: {
-        backgroundColor: "#ffffff",
-        edit: {
+      backgroundColor: "#ffffff",
+      edit: {
           buttonColor: "#ffffff",
           hoverButtonColor: "#787878",
           textColor: "#000000",
-          hoverTextColor: "#ffffff",
-        },
-        clone: {
+          hoverTextColor: "#ffffff"
+      },
+      clone: {
           buttonColor: "#ffffff",
           hoverButtonColor: "#787878",
           textColor: "#000000",
-          hoverTextColor: "#ffffff",
-        },
-        delete: {
+          hoverTextColor: "#ffffff"
+      },
+      delete: {
           buttonColor: "#ffffff",
           hoverButtonColor: "#787878",
           textColor: "#dd3232",
-          hoverTextColor: "#dd3232",
-        },
-        center: {
+          hoverTextColor: "#dd3232"
+      },
+      center: {
           buttonColor: "#ffffff",
           hoverButtonColor: "#787878",
           textColor: "#000000",
-          hoverTextColor: "#ffffff",
-        },
+          hoverTextColor: "#ffffff"
+      }
       },
       recaps: {
-        headerBackgroundColor: "#3590ea",
-        headerTextColor: "#ffffff",
-        backgroundColor: "#ffffff",
-        optionTextColor: "#000000",
-        optionHoverBackgroundColor: "#eef3f6",
-        optionHoverTextColor: "#000000",
-        optionBorderColor: "#eef3f6",
-        optionHoverBorderColor: "#eef3f6",
-        buttonFinishBackgroundColor: "#febd52",
-        buttonFinishTextColor: "#14213d",
-        buttonFinishHoverBackgroundColor: "#fcac29",
-        buttonFinishHoverTextColor: "#313e52",
-        buttonAddToCartBackgroundColor: "#febd52",
-        buttonAddToCartHoverBackgroundColor: "#fcac29",
-        buttonAddToCartTextColor: "#14213d",
-        buttonAddToCartHoverTextColor: "#313e52",
-        buttonEditBackgroundColor: "#0374e3",
-        buttonEditHoverBackgroundColor: "#025db7",
-        buttonEditTextColor: "#ffffff",
-        buttonEditHoverTextColor: "#f4f8fa",
+      headerBackgroundColor: "#058585",
+      headerTextColor: "#ffffff",
+      backgroundColor: "#ffffff",
+      optionTextColor: "#000000",
+      optionHoverBackgroundColor: "#eef3f6",
+      optionHoverTextColor: "#000000",
+      optionBorderColor: "#eef3f6",
+      optionHoverBorderColor: "#eef3f6",
+      buttonFinishBackgroundColor: "#febd52",
+      buttonFinishTextColor: "#14213d",
+      buttonFinishHoverBackgroundColor: "#fcac29",
+      buttonFinishHoverTextColor: "#313e52",
+      buttonAddToCartBackgroundColor: "#febd52",
+      buttonAddToCartHoverBackgroundColor: "#fcac29",
+      buttonAddToCartTextColor: "#14213d",
+      buttonAddToCartHoverTextColor: "#313e52",
+      buttonEditBackgroundColor: "#016464",
+      buttonEditHoverBackgroundColor: "#058585",
+      buttonEditTextColor: "#ffffff",
+      buttonEditHoverTextColor: "#f4f8fa"
       },
-      ...(settingData?.colors?.recaps ? settingData.colors : {}),
-    },
+      ...(settingData?.colors?.recaps ? settingData.colors : {})
+  },
+    
   });
 
   const handleInputChange = (inputName: string, value: any) => {

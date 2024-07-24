@@ -52,13 +52,14 @@ export default class ClipartService {
     clipartsGroupId: number,
   ): Promise<any | null> {
     const { id, ...data } = clipart;
+    let newData:any = data;
     try {
       return await prisma.clipart.update({
         where: {
           id: id,
           clipartsGroupId: clipartsGroupId,
         },
-        data: data,
+        data: newData,
       });
     } catch (error) {
       console.error("Error updating clipart:", error);
@@ -91,10 +92,11 @@ export default class ClipartService {
     clipart: ClipartType,
     clipartsGroupId: number,
   ): Promise<any | null> {
+    let newdata:any = clipart
     try {
       return await prisma.clipart.create({
         data: {
-          ...clipart,
+          ...newdata,
           clipartsGroupId: clipartsGroupId
         },
       });

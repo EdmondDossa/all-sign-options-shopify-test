@@ -22,6 +22,7 @@ export default class MaterialAdditionalOptionService {
     materialId: number,
     additionalOption: ConfigAdditionalOption
   ): Promise<ConfigAdditionalOption[] | null> {
+    additionalOption.options = [];
     try {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let materialData = configuration["data"]["materials"][materialId]["data"];

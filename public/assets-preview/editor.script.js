@@ -5685,6 +5685,8 @@ function handleAddTextToSign(clone) {
       activeCanvas.add(newText);
       newText.enterEditing();
 
+      handleChangeTextFontFam(currenTextFontFam.replaceAll(/\s+/g, '-'))
+
       handleCenterHorizontally(newText);
       handleCenterVertically(newText);
 

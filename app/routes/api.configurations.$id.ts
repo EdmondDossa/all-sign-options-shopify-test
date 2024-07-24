@@ -32,7 +32,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         plan = await getPlanProxy(admin);
     }else{
         plan = await getPlanProxyPublic(session.shop, session.accessToken);
-        console.log("use public plan ");
     }
 
 
@@ -46,7 +45,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     
     if (plan == PRICING_PLANS.STARTER) {
         configs = configs?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)
-        console.log("config ", config, "configs length ", configs?.length, "config id",configs[0].id);
         config = configs?.find((curr: any) => curr.id == params.id)
     } else {
         config = configs?.find((curr: any) => curr.id == params.id)
@@ -54,7 +52,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     
 
-    console.log(" le plan courant est ", plan);
     if (plan == PRICING_PLANS.STARTER) {
         if (config?.data?.materials?.length) {
             let materials = config.data.materials.filter((material: any) => PRICING_PLANS.STARTER_RULES.materialTypes.includes(material.type))?.slice(0, PRICING_PLANS.STARTER_RULES.materials);
@@ -126,6 +123,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
             config.data.settings.customizerSign.text.colors = config.data.settings.customizerSign.text.colors.slice(0, PRICING_PLANS.STARTER_RULES.textColors);
         }
     }
+
+    
+  
 
     
     return json(config );
