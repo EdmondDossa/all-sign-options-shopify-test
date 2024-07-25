@@ -3,9 +3,11 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
 import { authenticate } from "~/shopify.server";
 import { ConfigAdditionalOption } from "~/types/ConfigDataType";
+import { proSubscriptionRequired } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session, admin, billing } = await authenticate.admin(request);
+  await proSubscriptionRequired(billing)
   const configId = parseInt(params.configId ?? "");
   const mId = parseInt(params.mId ?? "");
   console.log("configID materialID", configId, mId);

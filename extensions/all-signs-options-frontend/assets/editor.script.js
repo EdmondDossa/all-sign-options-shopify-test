@@ -4,7 +4,7 @@ var borderUrl = "/apps/aso-proxy/assets/images/borders";
 // if (aso_data.page == "configurator" || aso_data.page == "admin") {
 //   fixingUrl = aso_configurator_data.fixing_methods_url;
 //   borderUrl = aso_configurator_data.borders_url;
-// }   
+// }
 var canvas = null;
 var canvasBackground = "";
 var backCanvas = null;
@@ -35,7 +35,7 @@ function handleCheckActiveSignFace(face) {
 var isTemplate = false
 function handleCheckTemplate(statut){
   isTemplate = statut
-}    
+}
 
 // function handleCloneCanvas(canvas1, canvas2){
 //     console.log("handledqsdqsd")
@@ -93,7 +93,9 @@ function handleCloneCanvas() {
     "lockRotate",
     "lockEdition",
     "fixingRatio",
-    "ratioScale"
+    "ratioScale",
+    "objectType",
+    "imageUrl"
   ]);
   var canvasAsJson = JSON.stringify(jsonData);
 
@@ -495,7 +497,9 @@ function updateModifications(good, position) {
       "lockRotate",
       "lockEdition",
       "fixingRatio",
-      "ratioScale"
+      "ratioScale",
+      "objectType",
+      "imageUrl",
     ]);
     var backJsonData = backCanvas.toJSON([
       "fill",
@@ -513,7 +517,9 @@ function updateModifications(good, position) {
       "lockRotate",
       "lockEdition",
       "fixingRatio",
-      "ratioScale"
+      "ratioScale",
+      "objectType",
+      "imageUrl"
     ]);
 
     // var jsonData = handleGetObjectByName('safeObject', canvas).toObject(['name', 'id', 'selectable']);z
@@ -584,6 +590,11 @@ function handleUndo() {
             canva.clear();
             currentState.objects.forEach(function (obj) {
               fabric.util.enlivenObjects([obj], function (prevObject) {
+                if (prevObject[0].name === "safeObject"){
+                  if(typeof  prevObject[0].fill !== 'string'){
+                    prevObject[0].fill = 'transparent'
+                  }
+                }
                 if (prevObject[0].name === "aso-SignText") {
                   prevObject[0].on("editing:entered", () => {
                     handleGetAddedTextValues(prevObject[0]);
@@ -757,6 +768,11 @@ function handleRedo() {
           canva.clear();
           currentState.objects.forEach(function (obj) {
             fabric.util.enlivenObjects([obj], function (prevObject) {
+              if (prevObject[0].name === "safeObject"){
+                if(typeof  prevObject[0].fill !== 'string'){
+                  prevObject[0].fill = 'transparent'
+                }
+              }
               if (prevObject[0].name === "aso-SignText") {
                 prevObject[0].on("editing:entered", () => {
                   handleGetAddedTextValues(prevObject[0]);
@@ -873,8 +889,8 @@ function handleRedo() {
   backTextCharLength = sumOptionsPrice(BtextObjects, "text").length;
 
   console.log(currentConfig.canvasObjects, "Redo");
-  // centerSign(canvas)
-  // centerSign(backCanvas)
+  centerSign(canvas)
+  centerSign(backCanvas)
 
   readyToSave = true;
 
@@ -959,49 +975,44 @@ function handleReadyToSaveState(statut, start) {
   }
 }
 
-function centerSign(canva) {
-  // console.log(canva, "center")
-  var sign = handleGetObjectByName("safeObject");
-  var canvasCenter = getCanvasCenter();
-
-  const allObjects = canvas.getObjects();
+function centerSign(canva){
+  var sign = handleGetObjectByName('safeObject', canva)
+  var canvasCenter = getCanvasCenter()
+  const allObjects = canva.getObjects();
 
   if (allObjects.length > 0) {
-    const group = new fabric.Group(allObjects);
-    canva.discardActiveObject();
+      const group = new fabric.Group(allObjects);
+      canva.discardActiveObject();
 
-    // Centrer le groupe
-    group.set("left", canvasCenter.x - group.width / 2);
-    group.set("top", canvasCenter.y - group.height / 2);
+      // Centrer le groupe
+      group.set('left', canvasCenter.x - sign.width/2)
+      group.set('top', canvasCenter.y - sign.height/2)
 
-    group.setCoords();
+      group.setCoords();
 
-    // currentSizeValues.value.left = canvasCenter.x - group.width/2
-    // currentSizeValues.value.top = canvasCenter.y - group.height/2
-    handleGetNewPosition(
-      canvasCenter.x - group.width / 2,
-      canvasCenter.y - group.height / 2
-    );
+      // currentSizeValues.value.left = canvasCenter.x - sign.width/2
+      // currentSizeValues.value.top = canvasCenter.y - sign.height/2
+      handleGetNewPosition(canvasCenter.x - sign.width/2, canvasCenter.y - sign.height/2)
 
-    // Dégrouper les objets
-    group._restoreObjectsState();
-    canva.remove(group);
-    canva.getObjects().forEach((obj) => {
-      if (obj.name === "aso-signText") {
-        if (firstLoad) {
-          // obj.left = obj.left*obj.scaleX
-          // obj.top = obj.top*obj.scaleY
-        }
-      }
-      obj.setCoords();
-    });
+
+      // Dégrouper les objets
+      group._restoreObjectsState();
+      canva.remove(group);
+      canva.getObjects().forEach((obj) => {
+          if(obj.name === 'aso-signText'){
+              if(obj.isEditing){
+                  obj.exitEditing();
+              }
+              obj.clipPath = handleClipAddedObject(canva);
+
+          }
+          if (obj.name === 'aso-SignImage') {
+              obj.clipPath = handleClipAddedObject(canva);
+          }
+          obj.setCoords()
+      })
   }
-  // sign.set('left', canvasCenter.x - sign.width/2)
-  // sign.set('top', canvasCenter.y - sign.height/2)
-
-  // sign.setCoords();
-
-  canva.renderAll();
+  canva.renderAll()
 }
 
 function convertToPx(dimension, unit) {
@@ -1072,14 +1083,17 @@ function handleMiseAEchelle(rW, rH) {
 
   if ((signWPx || signHPx) > 10000) {
     fixScale = 0.25;
-    sizeRatio = "big";
     canvas.fixingRatio = sizeRatio
     backCanvas.fixingRatio = sizeRatio
   } else {
-    fixScale = 0.5;
-    sizeRatio = "small";
+    fixScale = 0.35;
     canvas.fixingRatio = sizeRatio
     backCanvas.fixingRatio = sizeRatio
+  }
+  if(signHPx >= (signWPx/2)){
+    sizeRatio = "big";
+  }else{
+    sizeRatio = "small";
   }
 
   if (signWPx > signHPx) {
@@ -1328,7 +1342,7 @@ function handleChangeSize(width, height, name, maxChar) {
       if (object.name == "height-value") {
         object.text = String(height + " " + currentUnit);
         object.top = newRectTop + newSignHeight / 2;
-        object.left = newRectLeft + newSignWidth + 35;
+        object.left = newRectLeft + newSignWidth + 55;
       }
       if (object.name == "width-value") {
         object.text = String(width + " " + currentUnit);
@@ -1495,6 +1509,8 @@ function handleGetSignPosition() {
     height: sign.height,
     top: sign.top,
     left: sign.left,
+    maxChar: maxTextCharForSize,
+    sizeName: currentSizeName,
 
     texts: addedTexts,
   };
@@ -1605,8 +1621,10 @@ function handleDeleteObject(object) {
 
     return addedTexts;
   }
-  if (target.type == "image") {
+  if (target.name == "aso-SignImage") {
     removeTextById(target.id, addedImages);
+
+    console.log(addedImages, "added images")
 
     if (readyToSave) {
       updateModifications(true, "selection de fixing");
@@ -1626,19 +1644,35 @@ function handleCloneObject(object, imageId) {
       // console.log(cloned.canvas, "cloned canvas");
       handleAddTextToSign(cloned);
     }
-    if (cloned.type == "image") {
-      // cloned.id = newId += 1
-      // cloned.set('name', 'aso-SignImage')
-      // cloned.on('mousedown', function() {
-      //     handleGetAddedImageValues(cloned);
-      // });
-      // canvas.add(cloned);
-      // lockToCanvas(cloned)
-      handleAddImageToSign(cloned.getSrc(), imageId);
-      // console.log(addedImages)
+    if (cloned.type == "image" || cloned.type == "path" || cloned.type == "group") {
+      cloned.uniScaleTransform = true;
+      cloned.centeredScaling = true;
+      cloned.lockScalingFlip = true;
+      cloned.originX = "center";
+      cloned.originY = "center";
+      cloned.canvasName = object.canvasName;
+      cloned.price = object.price
+      cloned.lockMoving = {
+        x: object.lockMoving.x,
+        y: object.lockMoving.y,
+      }
+      cloned.lockScale = object.lockScale
+      cloned.id = newId += 1
+      cloned.objectType = (object.objectType === "svg" ? 'svg' : 'no-svg');
+      cloned.imageUrl = (object.objectType === "svg" ? object.imageUrl : cloned.getSrc());
+      cloned.set('name', 'aso-SignImage')
+      cloned.on('mousedown', function() {
+          handleGetAddedImageValues(cloned);
+      });
+      cloned.on('mouseup', function() {
+          handleGetAddedImageValues(cloned);
+      });
+
+      addedImages.push({ id: cloned.id, url: (object.objectType === "svg" ? object.imageUrl : cloned.getSrc()), object: cloned });
+      canvas.add(cloned);
     }
   });
-  if (object.type === "image") {
+  if (object.name === "aso-SignImage") {
     return addedImages;
   }
 }
@@ -2047,8 +2081,10 @@ function handlechangeBorderColor(color, position) {
 var currentSignColor = "";
 var currentSignTextColor = "";
 var firstColorSet = true;
-var signBackground = "color";
-var patternUrl = "";
+var signBackground1 = "color";
+var signBackground2 = "color";
+var patternUrl1 = "";
+var patternUrl2 = "";
 function handleChangeSignColor(
   name,
   pattern,
@@ -2065,11 +2101,20 @@ function handleChangeSignColor(
       if (object.type !== "line") {
         if (object.name == "safeObject") {
           if (pattern.active) {
-            signBackground = "pattern";
-            patternUrl = pattern.url;
+            if(canva.name == 'front-face'){
+              signBackground1 = "pattern";
+              patternUrl1 = pattern.url;
+            }else{
+              signBackground2 = "pattern";
+              patternUrl2 = pattern.url;
+            }
             setPattern(canva, pattern.url);
           } else {
-            signBackground = "color";
+            if(canva.name == 'front-face'){
+              signBackground1 = "color";
+            }else{
+              signBackground2 = "color";
+            }
             object.set("fill", pattern.codeHex);
           }
         }
@@ -2085,11 +2130,11 @@ function handleChangeSignColor(
           }
         } else {
           currentSignTextColor = defTextColor;
-          if (object.name == "aso-SignText") {
-            if (defTextColor) {
-              object.set("fill", defTextColor);
-            }
-          }
+          // if (object.name == "aso-SignText") {
+          //   if (defTextColor) {
+          //     object.set("fill", defTextColor);
+          //   }
+          // }
         }
       }
     });
@@ -2112,6 +2157,7 @@ function handleChangeSignColor(
 }
 function setPattern(canva, image) {
   const imgElement = new Image();
+  imgElement.crossOrigin = 'anonymous';
   imgElement.src = image;
   // console.log(image, "setPattern")
   // var object = handleGetObjectByName('safeObject', canvas)
@@ -2131,12 +2177,11 @@ function setPattern(canva, image) {
         object.set("fill", pattern);
         // canvas.add(pattern);
         canva.renderAll();
-      });
+      }, { crossOrigin: 'anonymous' });
     }
   });
 }
 function handleSetImageToSignBackground(image) {
-  // console.log("setImageToSignBackground", image)
   setPattern(canvas, image);
   setPattern(backCanvas, image);
   // updateModifications(true, 'changer sign color')
@@ -2166,7 +2211,13 @@ function handleSelectShape(shape, nwidth, nheight, nTop, nLeft) {
         // var left = canvasCenter.x - (nheight/2);
         var width = nwidth;
         var height = nheight;
-        var objectfill = object.fill;
+        var objectfill;
+
+        if(typeof  object.fill !== 'string'){
+          object.fill = 'transparent'
+        }else{
+          objectfill = object.fill;
+        }
         var objectId = object.id;
 
         if (object.name == "safeObject") {
@@ -2438,10 +2489,13 @@ function handleSelectShape(shape, nwidth, nheight, nTop, nLeft) {
   }
 
   setShape(canvas);
-  if (signBackground === "pattern") {
-    setPattern(canvas, patternUrl);
-  }
   setShape(backCanvas);
+  if (signBackground1 === "pattern") {
+    setPattern(canvas, patternUrl1);
+  }
+  if (signBackground2 === "pattern") {
+    setPattern(backCanvas, patternUrl2);
+  }
   // if(firstLoad){
   //     if(signBackground === 'pattern'){
   //         setPattern(canvas, patternUrl);
@@ -2570,6 +2624,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 7;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2589,6 +2644,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 8;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2609,6 +2665,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 7;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2628,6 +2685,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 8;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2647,6 +2705,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 9;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2666,6 +2725,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 10;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2685,6 +2745,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 7;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
 
@@ -2701,6 +2762,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 8;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
 
@@ -2718,6 +2780,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 9;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
             }
@@ -2737,6 +2800,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 7;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
 
@@ -2754,6 +2818,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 8;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
             }
@@ -2773,6 +2838,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 7;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
 
@@ -2789,6 +2855,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 8;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
             }
@@ -2809,6 +2876,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 7;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
 
@@ -2826,6 +2894,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 8;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
             }
@@ -2843,6 +2912,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 7;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
 
@@ -2859,6 +2929,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 8;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
               });
             }
@@ -2889,6 +2960,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 11;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2908,6 +2980,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 12;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2928,6 +3001,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 11;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2947,6 +3021,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 12;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2966,6 +3041,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 13;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -2985,6 +3061,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 14;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3006,6 +3083,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 11;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3025,6 +3103,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 12;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3045,6 +3124,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 13;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3067,6 +3147,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 11;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3087,6 +3168,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 12;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3109,6 +3191,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 11;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3128,6 +3211,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 12;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3151,6 +3235,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 11;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3171,6 +3256,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 12;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3191,6 +3277,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 11;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3210,6 +3297,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 12;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3239,6 +3327,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 15;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3258,6 +3347,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 16;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3277,6 +3367,7 @@ function handleSelectFixingMethode(methode) {
                     img.set("name", "suction-cup1");
                     img.id = 15;
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3296,6 +3387,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 16;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3315,6 +3407,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 17;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3334,6 +3427,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 18;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3355,6 +3449,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 15;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3374,6 +3469,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 16;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3394,6 +3490,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 17;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3416,6 +3513,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 15;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3436,6 +3534,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 16;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3458,6 +3557,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 15;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3477,6 +3577,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 16;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3500,6 +3601,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 15;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3520,6 +3622,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 16;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3540,6 +3643,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 15;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3559,6 +3663,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 16;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3588,6 +3693,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 19;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3607,6 +3713,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 20;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3626,6 +3733,7 @@ function handleSelectFixingMethode(methode) {
                     img.set("name", "standoff1");
                     img.id = 19;
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3645,6 +3753,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 20;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3664,6 +3773,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 21;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3683,6 +3793,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 22;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3704,6 +3815,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 19;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3723,6 +3835,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 20;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3743,6 +3856,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 21;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3765,6 +3879,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 19;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3785,6 +3900,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 20;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3807,6 +3923,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 19;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3826,6 +3943,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 20;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3849,6 +3967,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 19;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3869,6 +3988,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 20;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3889,6 +4009,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 19;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3908,6 +4029,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 20;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -3939,6 +4061,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 23;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                     img.bringToFront();
                   }
@@ -3960,6 +4083,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 23;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3980,6 +4104,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 24;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -3999,6 +4124,7 @@ function handleSelectFixingMethode(methode) {
                 img.id = 23;
 
                 img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                 canva.add(img);
                 img.bringToFront();
               });
@@ -4020,6 +4146,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 23;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                     img.bringToFront();
                   }
@@ -4041,6 +4168,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 23;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -4061,6 +4189,7 @@ function handleSelectFixingMethode(methode) {
                     img.id = 24;
 
                     img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                     canva.add(img);
                   }
                 );
@@ -4127,6 +4256,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 26;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4146,6 +4276,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 27;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4166,6 +4297,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 26;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4186,6 +4318,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 26;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4205,6 +4338,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 27;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4225,6 +4359,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 26;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4244,6 +4379,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 27;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4447,6 +4583,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 35;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4466,6 +4603,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 36;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4494,6 +4632,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 37;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                   // img.sendToBack()
                 }
@@ -4514,6 +4653,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 38;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                   // img.sendToBack()
                 }
@@ -4542,6 +4682,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 39;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4561,6 +4702,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 40;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4582,6 +4724,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 41;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4602,6 +4745,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 42;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4630,6 +4774,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 44;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4664,6 +4809,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 44;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4699,6 +4845,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 44;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4734,6 +4881,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 44;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4778,6 +4926,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 45;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4813,6 +4962,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 45;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4848,6 +4998,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 45;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4885,6 +5036,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 47;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4904,6 +5056,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 48;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4927,6 +5080,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 47;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -4947,6 +5101,7 @@ function handleSelectFixingMethode(methode) {
                   img.id = 48;
 
                   img.selectable = false;
+                    img.objectType = "aso-fixingMethods";
                   canva.add(img);
                 }
               );
@@ -5530,6 +5685,8 @@ function handleAddTextToSign(clone) {
       activeCanvas.add(newText);
       newText.enterEditing();
 
+      handleChangeTextFontFam(currenTextFontFam.replaceAll(/\s+/g, '-'))
+
       handleCenterHorizontally(newText);
       handleCenterVertically(newText);
 
@@ -5770,57 +5927,120 @@ function handleGetAddedImageValues(object) {
 }
 var addedImages = [];
 function handleAddImageToSign(image, imageId, price) {
+  function isSVGImage(image) {
+      var src = image;
+      return src.endsWith('.svg') || src.startsWith('data:image/svg+xml');
+  }
   function useImage(imgUrl, imgId, price) {
-    fabric.Image.fromURL(imgUrl, function (img) {
-      img.scale(0.4);
+    if(isSVGImage(imgUrl)){
+      fabric.loadSVGFromURL(imgUrl, function (image) {
+        const img = fabric.util.groupSVGElements(image);
 
-      img.setCoords();
-      var newWidth = img.width * img.scaleX;
-      var newHeight = img.height * img.scaleY;
-
-      img.top = sign.top + sign.height / 2;
-      img.left = sign.left + sign.width / 2;
-      // img.flipX = true
-      img.uniScaleTransform = true;
-      img.centeredScaling = true;
-      (img.lockScalingFlip = true), (img.originX = "center");
-      img.originY = "center";
-
-      img.id = newId += 1;
-      img.name = "aso-SignImage";
-      img.canvasName = activeCanvas.name;
-      img.priceId = imgId ? imgId : 0;
-      img.price = price ? price : null;
-      // img.clipPath = handleClipAddedObject(activeCanvas);
-
-      img.lockMoving = {
-        x: false,
-        y: false,
-      }
-      img.lockScale = false
-
-      img.on("mousedown", function () {
-        handleGetAddedImageValues(img);
-        // updateModifications(true, "deposer l'image ")
+        img.scale(0.4);
+  
+        img.setCoords();
+        var newWidth = img.width * img.scaleX;
+        var newHeight = img.height * img.scaleY;
+  
+        img.top = sign.top + sign.height / 2;
+        img.left = sign.left + sign.width / 2;
+        // img.flipX = true
+        img.uniScaleTransform = true;
+        img.centeredScaling = true;
+        (img.lockScalingFlip = true), (img.originX = "center");
+        img.originY = "center";
+  
+        img.id = newId += 1;
+        img.name = "aso-SignImage";
+        img.canvasName = activeCanvas.name;
+        img.priceId = imgId ? imgId : 0;
+        img.price = price ? price : null;
+        img.objectType = 'svg'
+        img.imageUrl = imgUrl
+        // img.clipPath = handleClipAddedObject(activeCanvas);
+  
+        img.lockMoving = {
+          x: false,
+          y: false,
+        }
+        img.lockScale = false
+  
+        img.on("mousedown", function () {
+          handleGetAddedImageValues(img);
+          // updateModifications(true, "deposer l'image ")
+        });
+        img.on("mouseup", function () {
+          handleGetAddedImageValues(img);
+          // updateModifications(true, "deposer l'image ")
+        });
+  
+        activeCanvas.add(img);
+        img.bringToFront();
+        activeCanvas.setActiveObject(img);
+        // lockToCanvas(img)
+  
+        handleCenterHorizontally(img);
+        handleCenterVertically(img);
+  
+        addedImages.push({ id: img.id, url: imgUrl, object: img });
+  
+        updateModifications(true, "==ajout d'image ==");
+        // console.log(img.getSrc(), "image source")
       });
-      img.on("mouseup", function () {
-        handleGetAddedImageValues(img);
-        // updateModifications(true, "deposer l'image ")
-      });
-
-      activeCanvas.add(img);
-      img.bringToFront();
-      activeCanvas.setActiveObject(img);
-      // lockToCanvas(img)
-
-      handleCenterHorizontally(img);
-      handleCenterVertically(img);
-
-      addedImages.push({ id: img.id, url: imgUrl, object: img });
-
-      updateModifications(true, "==ajout d'image ==");
-      // console.log(img.getSrc(), "image source")
-    });
+    }else{
+      fabric.Image.fromURL(imgUrl, function (img) {
+        img.scale(0.4);
+  
+        img.setCoords();
+        var newWidth = img.width * img.scaleX;
+        var newHeight = img.height * img.scaleY;
+  
+        img.top = sign.top + sign.height / 2;
+        img.left = sign.left + sign.width / 2;
+        // img.flipX = true
+        img.uniScaleTransform = true;
+        img.centeredScaling = true;
+        (img.lockScalingFlip = true), (img.originX = "center");
+        img.originY = "center";
+  
+        img.id = newId += 1;
+        img.name = "aso-SignImage";
+        img.canvasName = activeCanvas.name;
+        img.priceId = imgId ? imgId : 0;
+        img.price = price ? price : null;
+        img.objectType = "no-svg";
+        img.imageUrl = imgUrl
+        // img.clipPath = handleClipAddedObject(activeCanvas);
+  
+        img.lockMoving = {
+          x: false,
+          y: false,
+        }
+        img.lockScale = false
+  
+        img.on("mousedown", function () {
+          handleGetAddedImageValues(img);
+          // updateModifications(true, "deposer l'image ")
+        });
+        img.on("mouseup", function () {
+          handleGetAddedImageValues(img);
+          // updateModifications(true, "deposer l'image ")
+        });
+  
+        activeCanvas.add(img);
+        img.bringToFront();
+        activeCanvas.setActiveObject(img);
+        // lockToCanvas(img)
+  
+        handleCenterHorizontally(img);
+        handleCenterVertically(img);
+  
+        addedImages.push({ id: img.id, url: imgUrl, object: img });
+  
+        updateModifications(true, "==ajout d'image ==");
+        // console.log(img.getSrc(), "image source")
+      }, { crossOrigin: 'anonymous' });
+    }
   }
 
   var sign = handleGetObjectByName("safeObject");
@@ -5914,7 +6134,7 @@ function handleAddImageToSign(image, imageId, price) {
 }
 function handleChangeImageWidth(scale) {
   var currentImage = activeCanvas.getActiveObject();
-  if (currentImage.type === "image") {
+  if (currentImage.type === "image" || currentImage.type === "path" || currentImage.type === "group") {
     currentImage.scaleX = scale;
     currentImage.scaleY = scale;
     activeCanvas.requestRenderAll();
@@ -6078,6 +6298,29 @@ function handleSelectFilter(filter) {
     return selectedImage.filters;
   }
 }
+function handleChangeAddedSvgColor(color){
+  var currentImage = activeCanvas.getActiveObject();
+  
+  if(currentImage.objectType == 'svg'){
+    activeCanvas.getObjects().forEach((objet) => {
+      if (objet.name === "aso-SignImage" && objet === currentImage) {
+        console.log(objet)
+        if(objet._objects && objet._objects.length > 0){
+          objet.getObjects().forEach(path => {
+            path.set("fill", color);
+          });
+        }else{
+          objet.set("fill", color);
+        }
+      }
+    });
+
+    activeCanvas.renderAll();
+  }
+
+  return color;
+}
+
 
 var totalCharPrice = 0;
 var charPrice = 0;
@@ -6355,6 +6598,23 @@ function handleClipAddedObject(canva) {
 }
 
 
+function handleMoveobject(to){
+  var object = activeCanvas.getActiveObject();
+  const index = activeCanvas.getObjects().indexOf(object);
+
+  const objects = activeCanvas.getObjects();
+  const lastIndex = objects.length - 1;
+  if(to === 'up'){
+    object.moveTo(index + 1);
+  }
+  if(to === 'down'){
+    object.moveTo(index - 1);
+  }
+
+  activeCanvas.renderAll()
+  // console.log('Index de l\'image:', index, "last index", lastIndex);
+}
+
 
 function handleAddTemplateText(canvas1Json, canvas2Json, templateData, statut){
   // console.log(canvasJson)
@@ -6399,7 +6659,7 @@ function handleAddTemplateText(canvas1Json, canvas2Json, templateData, statut){
                   templateObject[0].set("fill", pattern);
                   // canvas.add(pattern);
                   canva.renderAll();
-                });
+                }, { crossOrigin: 'anonymous' });
               }
             }
             if(templateObject[0].name === 'aso-SignText'){
@@ -6486,7 +6746,8 @@ function handleAddTemplateText(canvas1Json, canvas2Json, templateData, statut){
                   handleGetAddedImageValues(templateObject[0]); 
               });
 
-              addUniqueObject(addedImages, {id: templateObject[0].id, url: templateObject[0].getSrc(), object: templateObject[0]}, 'id');
+              var objectUrl = (templateObject[0].objectType == 'svg' ? templateObject[0].imageUrl : templateObject[0].getSrc())
+              addUniqueObject(addedImages, {id: templateObject[0].id, url: objectUrl, object: templateObject[0]}, 'id');
             }
   
             if(templateData){
@@ -7410,7 +7671,7 @@ function handleAddTemplateText(canvas1Json, canvas2Json, templateData, statut){
           if(object.name == 'height-value'){
               object.text = String(signData.size.height + ' ' + currentUnit)
               object.top = sign.top + (sign.height/2)
-              object.left = sign.left + sign.width + 35
+              object.left = sign.left + sign.width + 55
           }
           if(object.name == 'width-value'){
               object.text = String(signData.size.width + ' ' + currentUnit)
@@ -7445,10 +7706,6 @@ function handleAddTemplateText(canvas1Json, canvas2Json, templateData, statut){
       images: addedImages,
   }
 }
-
-
-
-
 
 
 function handleFinishConfiguration(textsTable, imagesTable) {
@@ -7524,7 +7781,7 @@ function handleFinishConfiguration(textsTable, imagesTable) {
         imagesValues,
         {
           id: image.id,
-          url: image.getSrc(),
+          url: (image.objectType === 'svg' ? image.imageUrl : image.getSrc()),
           values: formatValues(handleGetAddedImageValues(image)),
         },
         "id"
@@ -7598,4 +7855,6 @@ function handleFinishConfiguration(textsTable, imagesTable) {
 //   handleLockRotating,
 //   handleLockEdition,
 //   handleAddTemplateText,
+//   handleMoveobject,
+//   handleChangeAddedSvgColor,
 // };

@@ -32,6 +32,7 @@ import { authenticate } from "~/shopify.server";
 import { Material, MaterialType } from "~/types/ConfigDataType";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
+import { PRICING_PLANS } from "~/utils/pricing";
 import { stringTransform } from "~/utils/transfomerZod";
 
 export default function MaterialEdit() {
@@ -39,7 +40,7 @@ export default function MaterialEdit() {
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
   console.log("action data :", actionData);
-  let { materials } = useOutletContext<{ materials: Material[] }>();
+  let { materials, plan } = useOutletContext<{ materials: Material[], plan: string }>();
   const [searchParams] = useSearchParams();
   const id = parseInt(searchParams.get("id") || "");
   let material = materials?.find((curr, index) => index === id);
@@ -59,8 +60,12 @@ export default function MaterialEdit() {
   let isSubmitting = navigation.state == "submitting";
   let types = [
     { value: "simple", label: "Simple" },
-    { value: "advance", label: "Advance" },
+  
   ];
+
+  if (plan ==  PRICING_PLANS.PRO) {
+    types.push(  { value: "advance", label: "Advance" })
+  }
 
   const handleName = (value: string) =>
     setFormData({ ...formData, name: value });

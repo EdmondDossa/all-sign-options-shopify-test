@@ -1,4 +1,5 @@
 import { writeFileSync } from "fs";
+import sizeOf from 'buffer-image-size';
 
 export function uploadBase64(ext:string, base64: string){
     const path = `public/upload_designs_files/${generateUniqueId()}.${ext}`;
@@ -64,4 +65,53 @@ export function  getExtensionFromBase64(baseString64:string){
         return null;
     }
 }
+
+
+
+export const calculateImagePlacement = (imgBuffer: Buffer) => {
+  // Dimensions d'une page A4 en mode paysage en millimètres
+  const pageWidth = 297;
+  const pageHeight = 210;
+
+  // Obtenir les dimensions de l'image
+  const dimensions = sizeOf(imgBuffer);
+  const imgWidth = dimensions.width;
+  const imgHeight = dimensions.height;
+
+  // Calculer le rapport d'aspect de l'image
+  const aspectRatio = imgWidth / imgHeight;
+
+  // Dimensions de l'image redimensionnée
+  let newImgWidth, newImgHeight;
+  if (imgWidth > imgHeight) {
+    newImgWidth = pageWidth;
+    newImgHeight = pageWidth / aspectRatio;
+  } else {
+    newImgHeight = pageHeight;
+    newImgWidth = pageHeight * aspectRatio;
+  }
+
+  // Assurer que l'image s'adapte à la page sans déformation
+  if (newImgWidth > pageWidth) {
+    newImgWidth = pageWidth;
+    newImgHeight = pageWidth / aspectRatio;
+  }
+  if (newImgHeight > pageHeight) {
+    newImgHeight = pageHeight;
+    newImgWidth = pageHeight * aspectRatio;
+  }
+
+  // Calculer les coordonnées pour centrer l'image
+  const x = (pageWidth - newImgWidth) / 2;
+  const y = (pageHeight - newImgHeight) / 2;
+
+  return {
+    x: x,
+    y: y,
+    width: newImgWidth,
+    height: newImgHeight
+  };
+};
+
+
   

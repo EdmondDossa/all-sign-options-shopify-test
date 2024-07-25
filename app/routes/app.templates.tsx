@@ -9,6 +9,21 @@ import {
 
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { SubTabItem } from "~/components/layouts/SubTabItem";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { authenticate } from "~/shopify.server";
+import { proSubscriptionRequired } from "~/utils/pricing";
+
+
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const { billing } = await authenticate.admin(request);
+    
+    await proSubscriptionRequired(billing);
+  
+    return null;
+  
+}
+
   
 
 export default function Settings(){
@@ -22,6 +37,9 @@ export default function Settings(){
     </Page>
     )
 }
+
+
+
 
 
 

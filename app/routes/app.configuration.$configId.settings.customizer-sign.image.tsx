@@ -6,6 +6,7 @@ import {
   BlockStack,
   Box,
   Grid,
+  InlineError,
   InlineStack,
   Text,
   TextField,
@@ -26,12 +27,27 @@ import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { z } from "zod";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
-import { booleanTransform, jsonTransform } from "~/utils/transfomerZod";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { ClipartsGroupType} from "~/types/ManagePropertyType";
+import { BiAddBtn } from "~/components/buttons/BiAddBtn";
+import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
+import { TextColorField } from "~/components/inputs/TextColorField";
+import { FileInput } from "~/components/inputs/FileInput";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 const settingParams: [string, string] = ["customizerSign", "images"];
 const formSchema = z.object({
-  enableUploadImage:z.any().transform(booleanTransform).pipe(z.boolean()),     
+  enableDownloadImage: z.any().transform(booleanTransform).pipe(z.boolean()),    
+  enableUploadImage: z.any().transform(booleanTransform).pipe(z.boolean()),    
+  colorsLabel: z.string().nullish().transform(stringTransform),
+  colorsPrevImg: z.string().nullish().transform(stringTransform),
+  colors: z.any().transform(jsonTransform).pipe(
+      z.object({
+          name: z.string(),
+          codeHex: z.string(),
+      }).array(),
+  ),
+  enableCustomColor: z.any().transform(booleanTransform).pipe(z.boolean()),
   fileUploadScript:z.any().transform(jsonTransform).pipe(z.object({
     customWithGraphical:z.boolean(),
     uploadMinWidth:z.number(),
@@ -84,8 +100,13 @@ export default function ConfigSettingsGeneral() {
   console.log("setting data :", settingData);
 
   const [formData, setFormData] = useState<any>(
-    settingData || {
-      "enableUploadImage":true,
+    {
+      "enableUploadImage": true,
+      enableDownloadImage: true,
+      colorsLabel:"Image Colors",
+      colorsPrevImg:"",
+      colors: [],
+      enableCustomColor: true,
       "fileUploadScript":{
          "customWithGraphical":false,
          "uploadMinWidth":100,
@@ -106,7 +127,8 @@ export default function ConfigSettingsGeneral() {
          "enableBlur":true,
          "enableSepia":true,
          "enableSharpen":true
-      }
+      },
+      ...((settingData?.enableDownloadImage) ? settingData : {})
     },
   );
 
@@ -122,6 +144,7 @@ export default function ConfigSettingsGeneral() {
 
     const data = {
       ...formData,
+      colors: JSON.stringify(formData.colors),
       fileUploadScript: JSON.stringify(formData.fileUploadScript),
       enableClipart: JSON.stringify(formData.enableClipart),
       filter: JSON.stringify(formData.filter)
@@ -130,8 +153,9 @@ export default function ConfigSettingsGeneral() {
     submit(data, { method: "POST" });
   };
 
-  let { manageClipartGroups } = useOutletContext<{
+  let { manageClipartGroups , plan} = useOutletContext<{
     manageClipartGroups: ClipartsGroupType[];
+    plan: string;
   }>();
 
   
@@ -145,6 +169,22 @@ export default function ConfigSettingsGeneral() {
 
   
   
+    const handleAddColor = () => {
+      if (!formData.colors) {
+        formData.colors = [];
+      }
+      formData.colors.push({
+        name: "",
+        codeHex: "#FFFFFF",
+      });
+  
+      setFormData({ ...formData });
+    };
+  
+    const handleDeleteColor = (index: number) => {
+      formData.colors.splice(index, 1);
+      setFormData({ ...formData });
+    };
 
 
 
@@ -157,10 +197,124 @@ export default function ConfigSettingsGeneral() {
               <Grid gap={{ lg: "30px" }}>
               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
               <InlineStack gap="300" blockAlign="center">
+                      <Text as="strong" fontWeight="bold" variant="bodyMd">Enable Download Image </Text>
+                      <ReactSwitchCustom checked={formData.enableDownloadImage} setChecked={(value:any)=>handleInputChange("enableDownloadImage",value)}/>
+                    </InlineStack>
+                </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+              <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyMd">Enable upload Image </Text>
                       <ReactSwitchCustom checked={formData.enableUploadImage} setChecked={(value:any)=>handleInputChange("enableUploadImage",value)}/>
                     </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <BlockStack gap="300">
+                    <Text as="h3" variant="bodyMd" fontWeight="bold">
+                      Define text colors
+                    </Text>
+                    <Box maxWidth="350px" width="350px">
+
+                    <TextField  
+                              autoComplete="on"
+                              onChange={(value) => {
+                               
+                                formData.colorsLabel = value;
+                                setFormData({ ...formData });
+                              }}
+                              label="Label"
+                              value={formData.colorsLabel}
+                            />
+                    </Box>
+                    <Grid gap={{ lg: "30px" }}>
+                      {formData.colors
+                        .filter((curr: any, index: number) => plan===PRICING_PLANS.STARTER ? index < PRICING_PLANS.STARTER_RULES.imageColors : true)
+                        ?.map((color: any, index: number) => (
+                        <Grid.Cell
+                          columnSpan={{ xs: 6, sm: 3, md: 2, lg: 4, xl: 4 }}
+                        >
+                          <InlineStack
+                            gap={"300"}
+                            blockAlign="end"
+                            align="space-between"
+                            wrap={false}
+                          >
+                            <TextField
+                              autoComplete="on"
+                              onChange={(value) => {
+                                color.name = value;
+                                formData.colors[index] = color;
+                                setFormData({ ...formData });
+                              }}
+                              label="Name"
+                              value={color.name}
+                            />
+                            <InlineStack
+                              gap={"300"}
+                              blockAlign="center"
+                              align="space-between"
+                              wrap={false}
+                            >
+                              <TextColorField
+                                color={color.codeHex}
+                                setColor={(value: any) => {
+                                  color.codeHex = value;
+                                  formData.colors[index] = color;
+                                  setFormData({ ...formData });
+                                }}
+                              />
+                              <DeleteNowIconBtn
+                                onClick={() => handleDeleteColor(index)}
+                              />
+                            </InlineStack>
+                          </InlineStack>
+                          {true && (
+                            <InlineError
+                              message={
+                                getError(actionData, `colors[${index}].name`) ||
+                                getError(actionData, `colors[${index}].name`) ||
+                                ""
+                              }
+                              fieldID="myFieldID"
+                            />
+                          )}
+                        </Grid.Cell>
+                      ))}
+                    </Grid>
+                   {(plan===PRICING_PLANS.STARTER  ? formData.colors.length < PRICING_PLANS.STARTER_RULES.imageColors : true) && <Box width="150px">
+                      <BiAddBtn
+                        title="Add more colors"
+                        handleClick={() => handleAddColor()}
+                      />
+                    </Box>}
+                  </BlockStack>
+                </Grid.Cell>
+                {
+                  (plan == PRICING_PLANS.STARTER ? PRICING_PLANS.STARTER_RULES.imageCustomColors : true) && <>
+                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 2, lg: 2, xl: 2 }}>
+                  <InlineStack gap="300">
+                    <Text as="strong" fontWeight="medium" variant="bodyMd">
+                      Enable Custom color
+                    </Text>
+                    <ReactSwitchCustom
+                      checked={formData.enableCustomColor}
+                      setChecked={(value: any) => {
+                        formData.enableCustomColor = value;
+                        handleInputChange(
+                          "enableCustomColor",
+                          formData.enableCustomColor,
+                        );
+                      }}
+                    />
+                  </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                 
+                 <FileInput title="Custom color preview image"  buttonTitle="upload image"  path={formData.colorsPrevImg} handlePath={(value:any)=>{formData.colorsPrevImg = value; setFormData({...formData})}}/>
                  </Grid.Cell>
+                  
+                  </>
+                }
+               
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <BlockStack gap="100">
                   

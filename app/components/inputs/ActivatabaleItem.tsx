@@ -1,3 +1,5 @@
+import { InlineStack } from "@shopify/polaris";
+import { ReactSwitchCustom } from "./ReactSwitchCustom";
 
 export const ActivatabaleItem = ({title, status, toggleStatus ,children, fillIcon = false, noTrokeIcon=false }: {
     title: string;
@@ -8,7 +10,10 @@ export const ActivatabaleItem = ({title, status, toggleStatus ,children, fillIco
   noTrokeIcon?: boolean;
   })=>{
   
-    return (<div
+  return (
+    <InlineStack gap="100"  blockAlign="baseline">
+    
+    <div
       onClick={() => { toggleStatus(!status) }}
       className={status ? `activatable-item active ${fillIcon && 'fill'}  ${noTrokeIcon && 'no-troke'}` : `activatable-item ${fillIcon && 'fill'}   ${noTrokeIcon && 'no-troke'}`}>
       <div className="activatable-item-child" >
@@ -17,6 +22,9 @@ export const ActivatabaleItem = ({title, status, toggleStatus ,children, fillIco
       <div className="activatable-item-title">
         {title}
       </div>
-    </div>)
+      </div>
+       <ReactSwitchCustom  checked={status} setChecked={()=>toggleStatus(!status)}/>
+    </InlineStack>
+  )
   }
   

@@ -9,6 +9,7 @@ export default class TemplateService {
           sessionId: sessionId,
         },
         include: {
+          category:  true,
           configuration: {
           select:{
             product: true

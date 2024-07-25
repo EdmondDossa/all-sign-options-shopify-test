@@ -1,9 +1,10 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import MaterialColorService from "~/models/MaterialColors.service";
 
 import { authenticate } from "~/shopify.server";
 import { ConfigColor, ConfigCustomColor } from "~/types/ConfigDataType";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -24,12 +25,21 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 };
 
 export default function MaterialColors() {
+  const {  plan } = useOutletContext<{
+
+    plan: string;
+  }>();
   let { colors } = useLoaderData<typeof loader>();
+
+  if (plan == PRICING_PLANS.STARTER && colors) {
+    colors.allColors =colors.allColors?.slice(0, PRICING_PLANS.STARTER_RULES.materialColors);
+  }
   return (
     <Outlet
       context={{
         colors: colors?.allColors,
         customColors: colors?.customColors,
+        plan: plan
       }}
     />
   );

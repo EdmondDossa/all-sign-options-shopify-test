@@ -27,11 +27,13 @@ import { z } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { CustomTinymce } from "~/components/inputs/CustomTinymce";
 
 const settingParams: [string, string] = ["languageImages", "uploadDesign"];
 const formSchema = z.object({
   link: z.string().nullish().transform(stringTransform),
   phraseSubmitCustom: z.string().nullish().transform(stringTransform),
+  helpContent: z.string().nullish().transform(stringTransform),
   activate: z.any().transform(booleanTransform).pipe(z.boolean()),
 });
 
@@ -51,10 +53,12 @@ export default function ConfigSettingsGeneral() {
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
   const [formData, setFormData] = useState<any>(
-    settingData || {
+     {
       activate: false,
       link: "",
       phraseSubmitCustom: "Take a customization",
+      helpContent: "",
+      ...settingData
     },
   );
 
@@ -138,6 +142,32 @@ export default function ConfigSettingsGeneral() {
                     </Grid.Cell>
                   </>
                 )}
+              </Grid>
+            </Box>
+          </BoxBackground>
+        </SpacingBackground>
+
+        <SpacingBackground border="1px solid #DDDDDD" margin="4px 0px">
+          <BoxBackground>
+            <Box paddingInline="300" paddingBlock="1000">
+              <Grid gap={{ lg: "25px" }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <Text as="strong" fontWeight="bold" variant="bodyLg">
+                    Help content
+                  </Text>
+                </Grid.Cell>
+
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                <CustomTinymce
+                    error={getError(actionData, "helpContent")}
+                    title=""
+                    onEditorChange={(value: any) =>
+                      handleInputChange("helpContent", value)
+                    }
+                    value={formData.helpContent}
+                  />
+                </Grid.Cell>
+              
               </Grid>
             </Box>
           </BoxBackground>

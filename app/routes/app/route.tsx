@@ -22,7 +22,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   
   SettingService.addSetting(session.id, session.shop);
   
-  // console.log("webhook register",shopify.registerWebhooks({ session }));
+  console.log("webhook register",shopify.registerWebhooks({ session }));
 
   return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
 };
@@ -47,6 +47,7 @@ export default function App() {
         <Link to="/app/manage-font">Manage fonts</Link>
         <Link to="/app/manage-cliparts">Manage cliparts</Link>
         <Link to="/app/settings"> Settings Generals</Link>
+        <Link to="/app/pricing"> Pricing</Link>
       </ui-nav-menu>
       <HeaderTopMenu />
      

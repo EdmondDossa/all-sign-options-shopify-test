@@ -4,8 +4,8 @@ import { authenticate } from './../shopify.server';
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { parseWithZod } from '@conform-to/zod';
 import { jsonTransform } from '~/utils/transfomerZod';
-import { uploadBase64 } from '~/utils/uploadBase64';
-import  Admzip from 'adm-zip';
+import { uploadBase64,  fileBuffer, calculateImagePlacement } from '~/utils/uploadBase64';
+
 
 
 

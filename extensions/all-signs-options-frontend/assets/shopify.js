@@ -1,7 +1,8 @@
-const shopifyProxyURL = `${window.Shopify.routes.root}apps/aso-proxy/api/`;
-const urlParams = new URLSearchParams(window.location.search);
-const paramAsoConfigurationId = urlParams.get('aso-config-id');
-const asoTemplateId = urlParams.get('aso-template-id');
+
+var shopifyProxyURL = `${window.Shopify.routes.root}apps/aso-proxy/api/`;
+var urlParams = new URLSearchParams(window.location.search);
+var paramAsoConfigurationId = urlParams.get('aso-config-id');
+var asoTemplateId = urlParams.get('aso-template-id');
 
 
 
@@ -65,12 +66,37 @@ async function getAsoManagesData() {
 console.log("config id and  product dfg   kihhhg ", asoConfigurationId, asoProductId);
 
 async function aso_confiurator_dataFunction(){
-  const   currentConfig = await getAsoConfiguration(asoConfigurationId);
   const managesData = await getAsoManagesData();
+  const currentConfig = await getAsoConfiguration(asoConfigurationId);
+
+   //  to add  font and custom css to  page
+   managesData.fonts.forEach(font => {
+    let style = document.createElement('style');
+    style.textContent = `
+          
+  @font-face {
+    font-family: "${font.label?.replaceAll(/\s+/g, '-')}";
+    font-display: swap;
+    src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
+  }
+      
+      `; 
+    document.body.appendChild(style);
+  });
+  try {
+    console.log("Custom CSS", currentConfig)
+    currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
+    console.log('Custom CSS added successfully');
+  } catch (error) {
+    console.error('Error adding custom CSS:', error);
+  }
+  // end to add  font and custom css to  page
+
+
   if (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.data?.cartData) {
     
-    asoRegularPrice = (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.basePrice) || 0
-    console.log("base price from template", asoRegularPrice)
+    asoRegularPrice = (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.basePrice) || 0;
+  
   }
   
   return ( {
@@ -191,35 +217,17 @@ function addStylesToBody(cssRules) {
   document.body.appendChild(styleElement);
 }
 
-//  to add  font and custom css to  page  
-document.addEventListener('DOMContentLoaded', async function () {
-  if(asoConfigurationId){const managesData = await getAsoManagesData();
+// //  to add  font and custom css to  page  
+// document.addEventListener('DOMContentLoaded', async function () {
+//   if(asoConfigurationId){const managesData = await getAsoManagesData();
   
-  managesData.fonts.forEach(font => {
-    let style = document.createElement('style');
-    style.textContent = `
-          
-  @font-face {
-    font-family: "${font.label.trim().replace(' ', '_')}";
-    font-display: swap;
-    src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
-  }
-      
-      `; 
-    document.body.appendChild(style);
-  });
+ 
 
-  const  currentConfig = await getAsoConfiguration(asoConfigurationId);
+//   const  currentConfig = await getAsoConfiguration(asoConfigurationId);
 
-  try {
-    console.log("Custom CSS", currentConfig)
-    currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
-    console.log('Custom CSS added successfully');
-  } catch (error) {
-    console.error('Error adding custom CSS:', error);
-  }}
+//  }
 
-});
+// });
 
 async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
 

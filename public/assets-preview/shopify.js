@@ -90,8 +90,32 @@ async function getAsoManagesData() {
 console.log("config id and  product id  agin", asoConfigurationId, asoProductId);
 
 async function aso_confiurator_dataFunction(){
-  const   currentConfig = await getAsoConfiguration(asoConfigurationId);
   const managesData = await getAsoManagesData();
+  const   currentConfig = await getAsoConfiguration(asoConfigurationId);
+
+  // Add custom CSS and fonts
+
+  try {
+    managesDataCustom  =  replaceUploadsPath(managesData) ;
+    managesDataCustom.fonts.forEach(font => {
+      let style = document.createElement('style');
+      style.textContent = `
+            
+    @font-face {
+      font-family: "${font.label?.replaceAll(/\s+/g, '-')}";
+      font-display: swap;
+      src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
+    }
+        
+        `; 
+      document.body.appendChild(style);
+    });
+    currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
+    console.log('Custom CSS added successfully');
+  } catch (error) {
+    console.error('Error adding custom CSS:', error);
+  }
+
   if (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.data?.cartData) {
     
     asoRegularPrice = (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.basePrice) || 0
@@ -215,35 +239,29 @@ function addStylesToBody(cssRules) {
   document.body.appendChild(styleElement);
 }
 
-//  to add  font and custom css to  page  
-document.addEventListener('DOMContentLoaded', async function () {
-  let managesData = await getAsoManagesData();
-  managesData =  replaceUploadsPath(managesData) ;
-  managesData.fonts.forEach(font => {
-    let style = document.createElement('style');
-    style.textContent = `
+// //  to add  font and custom css to  page  
+// document.addEventListener('DOMContentLoaded', async function () {
+//   let managesData = await getAsoManagesData();
+//   managesData =  replaceUploadsPath(managesData) ;
+//   managesData.fonts.forEach(font => {
+//     let style = document.createElement('style');
+//     style.textContent = `
           
-  @font-face {
-    font-family: "${font.label.trim().replace(' ', '_')}";
-    font-display: swap;
-    src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
-  }
+//   @font-face {
+//     font-family: "${font.label?.replaceAll(/\s+/g, '-')}";
+//     font-display: swap;
+//     src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
+//   }
       
-      `; 
-    document.body.appendChild(style);
-  });
+//       `; 
+//     document.body.appendChild(style);
+//   });
 
-  const  currentConfig = await getAsoConfiguration(asoConfigurationId);
+//   const  currentConfig = await getAsoConfiguration(asoConfigurationId);
 
-  try {
-    console.log("Custom CSS", currentConfig)
-    currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
-    console.log('Custom CSS added successfully');
-  } catch (error) {
-    console.error('Error adding custom CSS:', error);
-  }
 
-});
+
+// });
 
 async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
 

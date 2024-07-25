@@ -7,8 +7,9 @@ import { Tabheader } from "~/components/layouts/TabHeader";
 import { ConfigurationType } from "~/types/ConfigurationType";
 
 export default function Materiels() {
-  const { configuration } = useOutletContext<{
+  const { configuration,plan } = useOutletContext<{
     configuration: ConfigurationType;
+    plan: string;
   }>();
   const params = useParams();
   const material = configuration?.data?.materials?.find(
@@ -42,7 +43,7 @@ export default function Materiels() {
         <Tabheader />
       </BoxBackground>
       <Divider borderWidth="100" />
-      <Outlet context={{ configuration }} />
+      <Outlet context={{ configuration, plan }} />
     </Page>
   );
 }

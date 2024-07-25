@@ -8,12 +8,13 @@ import {
   configSizeThickness,
 } from "~/types/ConfigDataType";
 import { ConfigurationType } from "~/types/ConfigurationType";
+import { PRICING_PLANS } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
   const mId = parseInt(params.mId ?? "");
-  console.log("configID materialID", configId, mId);
+  // console.log("configID materialID", configId, mId);
 
   let materialSizes: {
     customSize: ConfigCustomSize;
@@ -30,8 +31,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function MaterialSizes() {
   let { customSize, allSizes, thickness } = useLoaderData<typeof loader>();
-  const { configuration } = useOutletContext<{
+  const { configuration, plan } = useOutletContext<{
     configuration: ConfigurationType;
+    plan: string;
   }>();
-  return <Outlet context={{ customSize, allSizes, thickness, configuration }} />;
+  if (plan == PRICING_PLANS.STARTER) {
+    allSizes =allSizes?.slice(0, PRICING_PLANS.STARTER_RULES.materialSizes)||[];
+  }
+  return <Outlet context={{ customSize, allSizes, thickness, configuration, plan }} />;
 }

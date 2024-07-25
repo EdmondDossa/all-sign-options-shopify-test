@@ -1,3 +1,4 @@
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import {
   Box,
@@ -6,6 +7,18 @@ import {
   Text,
 } from "@shopify/polaris";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
+import { authenticate } from "~/shopify.server";
+import { subscriptionRequired } from "~/utils/pricing";
+
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { billing } = await authenticate.admin(request);
+  
+  await subscriptionRequired(billing);
+
+  return null;
+
+}
 
 export default function ManageSize() {
   return (<Page fullWidth>

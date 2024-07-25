@@ -25,7 +25,7 @@ import { CheckSpan } from "~/components/inputs/CheckSpan";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import ConfigurationService from "~/models/Configuration.service";
-import { configurationDemoData } from "~/models/demoData";
+import { configurationDemoData, fontData } from "~/models/demoData";
 import { authenticate } from "~/shopify.server";
 import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
@@ -33,6 +33,7 @@ import { truncateText } from "~/utils/truncate-text";
 import { SearchIcon } from "@shopify/polaris-icons";
 import { BackBtn } from "~/components/buttons/BackBtn";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import FontService from "~/models/Font.service";
 
 export default function ConfigurationDemo() {
   const [includeDemoData, setIncludeDemoData] = useState(false);
@@ -115,9 +116,27 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   let demoId = submission.value.demoId;
   let id = parseInt(params.id || "");
 
-  console.log("demo  demoid", demoId, id);
+
 
   if (!Number.isNaN(id)) {
+    const fontIds = [];
+    const allFonts = await FontService.getFonts(session.id);
+
+    if(!allFonts || allFonts.length <3) {
+      for (let currentfont  of fontData) {
+        let fontWith:any = replaceUploadsPath(currentfont, `https://${session.shop}/apps/aso-proxy/uploads/`);
+        let newfont = await FontService.addFont({
+          url: fontWith.url,
+          label: currentfont.label,
+          isGoogleFont: currentfont.isGoogleFont
+        }, session.id);
+        fontIds.push(newfont.id);
+      };
+      if (configurationDemoData[parseInt(demoId)]?.data?.settings?.customizerSign?.text) {
+        configurationDemoData[parseInt(demoId)].data.settings.customizerSign.text.selectedFonts = fontIds;
+      }
+    }
+
     const configuration = await ConfigurationService.getConfiguration(
       id,
       session.id,

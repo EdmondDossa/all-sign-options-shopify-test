@@ -101,10 +101,9 @@ export default function MaterialAdditionalOptionIndex() {
       <BoxBackground>
         <Box padding="300">
           <BlockStack gap="300">
-            <InlineStack gap="100" align="space-between">
-              <Text as="h2" variant="headingMd">
-                {/* List of configurations */}
-              </Text>
+            <InlineStack gap="100" align="end">
+              
+          
               <button
                 className="primary-btn"
                 type="button"

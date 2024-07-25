@@ -56,6 +56,7 @@ export default function ConfigurationEdit() {
   const actionData = useActionData<typeof action>();
   console.log("action data :", actionData);
   let { configuration } = useLoaderData<typeof loader>();
+  
   console.log("configuration :", configuration);
   const [formData, setFormData] = useState<ConfigurationType>(
     (configuration as ConfigurationType) || {
