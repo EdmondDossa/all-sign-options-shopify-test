@@ -39,8 +39,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_NAME,PROJECT_DIR
-          scripts: |
-            cd $PROJECT_DIR && 
+          script: |
+            cd $PROJECT_DIR 
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
-            docker-compose pull &&
+            docker-compose pull 
             docker-compose -p $PROJECT_DIR up -d
