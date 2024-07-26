@@ -1,8 +1,7 @@
 
 import { Box, ColorPicker, InlineStack, Popover, Tag, TextField } from "@shopify/polaris";
-import ColorConvertor from "color-convert";
 import { useCallback, useEffect, useState } from "react";
-
+import * as ColorConvertor from "color-convert"
 
 
 export function TextColorField({ label, color, setColor, helpText, error }: { error?:string; helpText?: string; label?: string; color?: string | undefined;  setColor?:Function}) {

@@ -40,6 +40,7 @@
     "@shopify/shopify-app-session-storage-prisma": "^3.0.0",
     "@tinymce/tinymce-react": "^5.0.1",
     "@types/adm-zip": "^0.5.5",
+    "@types/color-convert": "^2.0.3",
     "@types/jsonwebtoken": "^9.0.6",
     "adm-zip": "^0.5.14",
     "buffer-image-size": "^0.6.4",
