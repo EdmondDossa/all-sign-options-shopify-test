@@ -17,9 +17,6 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./app/*"]
-    },
-    "types": [
-      "node", "@shopify/app-bridge-types"
-    ]
+    }
   }
 }
