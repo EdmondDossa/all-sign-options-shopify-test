@@ -166,6 +166,7 @@ async function asoAddproductToCart(variantId, quantity=1) {
       })
 
       if (response.json()) {
+        console.log("added to cart", response.json())
         return true
       }
       
