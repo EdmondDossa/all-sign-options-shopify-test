@@ -1,9 +1,9 @@
 import { render } from '@react-email/render';
 import { RecapMail } from './components/emails/RecapMail';
-import { createTransport } from 'nodemailer';
+import * as nodemailer from 'nodemailer'
 
 
-const transporter = createTransport({
+const transporter = nodemailer.createTransport({
   host: 'smtp-view.alwaysdata.net',
   port: 587,
   secure: false,
