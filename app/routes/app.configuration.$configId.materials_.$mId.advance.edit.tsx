@@ -54,7 +54,7 @@ export default function MaterialComponentCreate() {
   const id = parseInt(searchParams.get("id") || "");
   console.log("action data :", actionData);
   let materialComponent = materialComponents?.find(
-    (curr, index) => index == id,
+    (curr:any, index:number) => index == id,
   );
   const [formData, setFormData] = useState<MaterialAdvanceComponentType>(
     materialComponent

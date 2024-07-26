@@ -1,6 +1,6 @@
 
 import { Box, ColorPicker, InlineStack, Popover, Tag, TextField } from "@shopify/polaris";
-import ColorConvertor from "color-convert";
+import *  as  ColorConvertor from "color-convert";
 import { useCallback, useEffect, useState } from "react";
 
 

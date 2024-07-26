@@ -157,6 +157,44 @@ async function asoAddproductToCart(variantId, quantity=1) {
 }
 
 
+async function getAsoCheckoutUrl(cartId) {
+    
+  
+  try {
+    const response = await fetch(`${shopifyProxyURL}checkout-url/${cartId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`ASO Proxy configuration fetch failed with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching ASO Proxy configuration:', error);
+    // Handle the error appropriately in your application (e.g., display an error message to the user)
+    return null; // Or throw an error if necemmmssuhhh ssscurrentConfig.data.settings.theme.skin
+  }
+}      
+
+async function  asoReidirectToCheckout() {
+  try {
+    const response = await fetch(window.Shopify.routes.root + 'cart.js');
+    const data = await response.json();
+
+    const checkoutUrl = await getAsoCheckoutUrl(encodeURIComponent(data.token));
+
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+    }
+  } catch (error) {
+    console.error('Error redirecting to checkout:', error);
+  }
+}
 
 async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProductId, regularPrice=asoRegularPrice) {
   console.log("price and option", price, option, asoProductID);
@@ -182,9 +220,9 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
 
     let isAddedToCart = await asoAddproductToCart(parseInt(responseData.variantId),1);
     if (isAddedToCart) {
-      setTimeout(()=>{
+      setTimeout(async() => {
         document.location = asoCartUrl; 
-      },1)
+      },200)
        
     }
   } catch (error) {

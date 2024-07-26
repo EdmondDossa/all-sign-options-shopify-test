@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://lithuania-assured-icons-watch.trycloudflare.com"
+application_url = "https://faq-investigators-charges-tee.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_products,read_themes
 
 [auth]
 redirect_urls = [
-  "https://lithuania-assured-icons-watch.trycloudflare.com/auth/callback",
-  "https://lithuania-assured-icons-watch.trycloudflare.com/auth/shopify/callback",
-  "https://lithuania-assured-icons-watch.trycloudflare.com/api/auth/callback"
+  "https://faq-investigators-charges-tee.trycloudflare.com/auth/callback",
+  "https://faq-investigators-charges-tee.trycloudflare.com/auth/shopify/callback",
+  "https://faq-investigators-charges-tee.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://lithuania-assured-icons-watch.trycloudflare.com"
+url = "https://faq-investigators-charges-tee.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
