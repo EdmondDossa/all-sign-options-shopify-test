@@ -9,10 +9,10 @@ import {
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-01";
 import prisma from "./db.server";
-export const MONTHLY_STARTER_PLAN = "Monthly starter plan";
-export const YEARLY_STARTER_PLAN = "Yearly starter plan";
-export const MONTHLY_PRO_PLAN = "Monthly pro plan";
-export const YEARLY_PRO_PLAN = "Yearly pro plan";
+export const MONTHLY_STARTER_PLAN = "Monthly Basic Plan";
+export const YEARLY_STARTER_PLAN = "Yearly Basic Plan";
+export const MONTHLY_PRO_PLAN = "Monthly Premium Plan";
+export const YEARLY_PRO_PLAN = "Yearly Premium plan";
 
 
 const shopify = shopifyApp({
@@ -55,28 +55,28 @@ const shopify = shopifyApp({
   },
   billing: {
     [MONTHLY_STARTER_PLAN]: {
-      amount: 33,
+      amount: 39,
       currencyCode: 'USD',
       interval: BillingInterval.Every30Days,
-      trialDays: 7,
+      trialDays: 15,
     },
     [YEARLY_STARTER_PLAN]: {
-      amount: 201,
+      amount: 375,
       currencyCode: 'USD',
       interval: BillingInterval.Every30Days,
-      trialDays: 7,
+      trialDays: 15,
     },
     [MONTHLY_PRO_PLAN]: {
-      amount: 49,
+      amount: 79,
       currencyCode: 'USD',
       interval: BillingInterval.Every30Days,
-      trialDays: 7,
+      trialDays: 15,
     },
     [YEARLY_PRO_PLAN]: {
-      amount: 471,
+      amount: 759,
       currencyCode: 'USD',
       interval: BillingInterval.Every30Days,
-      trialDays: 7,
+      trialDays: 15,
     },
    
   },

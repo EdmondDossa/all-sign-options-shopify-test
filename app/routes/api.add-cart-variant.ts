@@ -48,21 +48,32 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         option: any;
     };
 
-    let optionName =  `${data.option.recaps.material?.label}: ${data.option.recaps.material?.value}, `
+    let optionName =  `${data.option.recaps.material?.label} ${data.option.recaps.material?.value}, `
     let size = data.option.recaps.sign?.size
-    optionName += `${size?.value?.width?.label}: ${size?.value?.width.value}, `
-    optionName += `${size?.value?.height?.label}: ${size?.value?.height.value}, `
-    optionName += `${size?.value?.thickness?.label}: ${size?.value?.thickness.value}, `
-    if (data.option.recaps.sign.color.value?.face1?.name) {
-      optionName += `${data.option.recaps.sign.color?.label}: ${data.option.recaps.sign.color.value?.face1?.name}, `
+    optionName += `${size?.value?.width?.label} ${size?.value?.width.value}, `
+    optionName += `${size?.value?.height?.label} ${size?.value?.height.value}, `
+    if (size?.value?.thickness.value) {
+      optionName += `${size?.value?.thickness?.label} ${size?.value?.thickness.value}, `
     }
-    if (data.option.recaps.sign.border?.value?.face1?.type) {
-      optionName += `${data.option.recaps.sign.border?.label}: ${data.option.recaps.sign.border?.value?.face1?.type}|`
-      optionName += `${data.option.recaps.sign.border.value?.face1?.color||""},`
-    }
-    optionName += `${data.option.recaps.sign.shape?.label}: ${data.option.recaps.sign.shape?.value||''}, `
-    optionName += `${data.option.recaps.sign.fixingMethod?.label}: ${data.option.recaps.sign.fixingMethod?.value||''}`
 
+    optionName += `${data.option.recaps.sign.shape?.label} ${data.option.recaps.sign.shape?.value||''}, `
+    optionName += `${data.option.recaps.sign.fixingMethod?.label} ${data.option.recaps.sign.fixingMethod?.value||''}, `
+  if (data.option.recaps?.faces?.face1) {
+      optionName += `${data.option.recaps?.faces?.face1} `;
+      optionName += `${data.option.recaps.sign.color?.label}  ${data.option.recaps.sign.color.value?.face1?.name},`
+      optionName += `${data.option.recaps.sign.border?.label} ${data.option.recaps.sign.border?.value?.face1?.type} `
+      optionName += `${data.option.recaps.sign.border.value?.face1?.codeHex || ""}`
+
+      optionName += `, ${data.option.recaps?.faces?.face2} `;
+      optionName += `${data.option.recaps.sign.color?.label} ${data.option.recaps.sign.color.value?.face2?.name}, `
+      optionName += `${data.option.recaps.sign.border?.label} ${data.option.recaps.sign.border?.value?.face2?.type} `
+      optionName += `${data.option.recaps.sign.border.value?.face2?.codeHex || ""}`
+      
+    }
+    if (!data.option.recaps?.faces?.face1) {
+      optionName += ` ${data.option.recaps.sign.color?.label} ${data.option.recaps.sign.color?.value.name} ${data.option.recaps.sign.color?.value.codeHex||''}, `
+      optionName += `${data.option.recaps.sign.border?.label} ${data.option.recaps.sign.border?.value?.type||''} ${data.option.recaps.sign.border.value?.codeHex}`
+    }
     let designImage = "";
     if(data?.option?.recaps?.faces?.face1){
       designImage = uploadBase64(data.option.recaps.designImages.face1[0].format, data.option.recaps.designImages.face1[0].url)
@@ -77,17 +88,26 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 
     
+    const product = await ShopifyProductService.create(
+      data.option.recaps.configuration?.id,
+      admin,
+      `${data.option.recaps.configuration?.name}`
+      ,
+      optionName,
+      `${process.env.SHOPIFY_APP_URL}/${designImage}`,
+      optionName
+    )
+  
+    await ShopifyProductService.publish(admin, product.id)
 
-
-    const variant = await ShopifyProductService.createVariant(
-        admin,
-        data.productId,
-        optionName,
-        data.price,
-        `${process.env.SHOPIFY_APP_URL}/${designImage}`,
-        data.option.recaps
+    const variant = await ShopifyProductService.updateVariant(
+          admin,
+          product.variants.edges[0].node.id,
+          optionName,
+          data.price,
+          data.option.recaps
     )
     
-    return json(variant);
+  return json(variant);
 };
   

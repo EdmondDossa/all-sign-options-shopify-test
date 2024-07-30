@@ -62,10 +62,10 @@ import { useId } from "react";
   
   let planData = [
     {
-      title: "STARTER",
-      description: "Starter plan with basic features",
-      price: "21",
-      year_price: "201",
+      title: "Basic",
+      description: "Basic  with basic features",
+      price: "39",
+      year_price: "375",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",
       name: "starter",
@@ -86,10 +86,10 @@ import { useId } from "react";
       ]
     },
     {
-      title: "PRO",
-      description: "Pro plan with advanced features",
-      price: "49",
-      year_price: "470",
+      title: "Premium",
+      description: "Premium  with advanced features",
+      price: "79",
+      year_price: "759",
       name: "pro",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",

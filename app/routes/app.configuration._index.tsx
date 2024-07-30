@@ -44,11 +44,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const configurations = await ConfigurationService.getConfigurations(session.id);
 
-  console.log("my head :", request.headers);
-
-  // let messageFlash = sessionCookie.get("messageFlash")
-
-  return json({ configurations, messageFlash: null });
+  return json({ configurations });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
