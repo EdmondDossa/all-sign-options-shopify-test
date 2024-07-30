@@ -75,10 +75,7 @@ export default function ManageFontCreate() {
     submit({ ...formData }, { method: "POST" });
   };
 
-  let options = [
-    { value: "arial.com", label: "Arial" },
-    { value: "noserif.com", label: "Arial No Serif" },
-  ];
+
 
   return (
     <div>
@@ -96,13 +93,21 @@ export default function ManageFontCreate() {
           <SpacingBackground backgroundColor="#F8F9FB">
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
-                {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                <InlineStack gap="300" blockAlign="center">
-                      <Text as="strong" fontWeight="bold" variant="bodyMd">Google font (default) </Text>
-                      <ReactSwitchCustom checked={formData.isGoogleFont} setChecked={handleIsGoogleFont} />
-                    </InlineStack>
-                   
-                </Grid.Cell> */}
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <FileInput
+                    type="font"
+                    helperText=".ttf, .woff Font File Type (Required)"
+                    error={getError(actionData, "url")}
+                    title="Upload font file"
+                    path={formData.url}
+                    handlePath={(value: string) => {
+                      handleUrl(value);
+                      if (value!=="" && formData.label === "") {
+                        handleLabel(`${value.split('/').pop()?.split('.')[0]}`);
+                      }
+                    }}
+                  />
+                </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
                   <TextField
                     label="Label"
@@ -112,16 +117,7 @@ export default function ManageFontCreate() {
                     error={getError(actionData, "label")}
                   />
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <FileInput
-                    type="font"
-                    helperText=".ttf, .woff Font File Type (Required)"
-                    error={getError(actionData, "url")}
-                    title="Upload font file"
-                    path={formData.url}
-                    handlePath={handleUrl}
-                  />
-                </Grid.Cell>
+             
               </Grid>
             </Box>
           </SpacingBackground>

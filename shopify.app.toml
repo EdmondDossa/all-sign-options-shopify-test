@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://adaptation-ethnic-witch-operators.trycloudflare.com"
+application_url = "https://informed-pc-towards-modelling.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://adaptation-ethnic-witch-operators.trycloudflare.com/auth/callback",
-  "https://adaptation-ethnic-witch-operators.trycloudflare.com/auth/shopify/callback",
-  "https://adaptation-ethnic-witch-operators.trycloudflare.com/api/auth/callback"
+  "https://informed-pc-towards-modelling.trycloudflare.com/auth/callback",
+  "https://informed-pc-towards-modelling.trycloudflare.com/auth/shopify/callback",
+  "https://informed-pc-towards-modelling.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://adaptation-ethnic-witch-operators.trycloudflare.com"
+url = "https://informed-pc-towards-modelling.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

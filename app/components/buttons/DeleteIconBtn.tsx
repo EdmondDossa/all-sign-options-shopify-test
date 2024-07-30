@@ -15,7 +15,8 @@ export const DeleteIconBtn = (props: ButtonProps) => {
                 </Box>
               
                 <TitleBar title="Confirm deletion">
-                    <button variant="primary" tone="critical" onClick={() => {
+                    <button variant="primary" tone="critical" onClick={(e) => {
+                        e.preventDefault();
                         if (props.onClick) {
                             props.onClick();
                         }
