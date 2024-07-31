@@ -44,7 +44,7 @@ import { useId } from "react";
       // If the shop has an active subscription, log and return the details
       const subscription = billingCheck.appSubscriptions[0];
      
-      console.log("subscription :", subscription);
+    
       
       return json({ billing, subscription: subscription,plan });
   

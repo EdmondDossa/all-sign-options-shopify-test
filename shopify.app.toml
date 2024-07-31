@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://informed-pc-towards-modelling.trycloudflare.com"
+application_url = "https://debut-biographies-slight-denial.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://informed-pc-towards-modelling.trycloudflare.com/auth/callback",
-  "https://informed-pc-towards-modelling.trycloudflare.com/auth/shopify/callback",
-  "https://informed-pc-towards-modelling.trycloudflare.com/api/auth/callback"
+  "https://debut-biographies-slight-denial.trycloudflare.com/auth/callback",
+  "https://debut-biographies-slight-denial.trycloudflare.com/auth/shopify/callback",
+  "https://debut-biographies-slight-denial.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://informed-pc-towards-modelling.trycloudflare.com"
+url = "https://debut-biographies-slight-denial.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
