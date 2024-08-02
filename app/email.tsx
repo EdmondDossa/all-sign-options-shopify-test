@@ -1,6 +1,6 @@
 import { render } from '@react-email/render';
 import { RecapMail } from './components/emails/RecapMail';
-import * as nodemailer from 'nodemailer'
+import  * as nodemailer  from   'nodemailer'
 
 
 const transporter = nodemailer.createTransport({

@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://lithuania-assured-icons-watch.trycloudflare.com"
+application_url = "https://debut-biographies-slight-denial.trycloudflare.com"
 embedded = true
 
 [build]
@@ -12,20 +12,20 @@ include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_customers,read_fulfillments,read_orders,read_products,read_themes,write_products"
+scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,read_products,read_publications,read_themes,write_products,write_publications"
 
 [auth]
 redirect_urls = [
-  "https://lithuania-assured-icons-watch.trycloudflare.com/auth/callback",
-  "https://lithuania-assured-icons-watch.trycloudflare.com/auth/shopify/callback",
-  "https://lithuania-assured-icons-watch.trycloudflare.com/api/auth/callback"
+  "https://debut-biographies-slight-denial.trycloudflare.com/auth/callback",
+  "https://debut-biographies-slight-denial.trycloudflare.com/auth/shopify/callback",
+  "https://debut-biographies-slight-denial.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://lithuania-assured-icons-watch.trycloudflare.com"
+url = "https://debut-biographies-slight-denial.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

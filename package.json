@@ -66,6 +66,7 @@
     "@shopify/api-codegen-preset": "^0.0.2",
     "@shopify/app-bridge-types": "^0.0.6",
     "@types/color": "^3.0.6",
+    "@types/color-convert": "^2.0.3",
     "@types/eslint": "^8.40.0",
     "@types/node": "^20.6.3",
     "@types/nodemailer": "^6.4.15",

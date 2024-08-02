@@ -14,6 +14,7 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="shopify-api-key" content="adf4506adb0b3a2e093f1a910b28e181" />
         <link rel="preconnect" href="https://cdn.shopify.com/" />
         <link
           rel="stylesheet"
