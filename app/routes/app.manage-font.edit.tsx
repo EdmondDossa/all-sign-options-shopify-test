@@ -96,7 +96,7 @@ export default function ManageFontCreate() {
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
                   <FileInput
                     type="font"
-                    helperText=".ttf, .woff Font File Type (Required)"
+                    helperText=".ttf, .otf Font File Type (Required)"
                     error={getError(actionData, "url")}
                     title="Upload font file"
                     path={formData.url}
@@ -144,7 +144,7 @@ const formSchema = z.object({
   url: z
     .string({ required_error: "Url is required" })
     .min(3, "Url is too short")
-    .max(255, "Url is too long"),
+    .max(255, "Url is too long").endsWith(".ttf,.otf", "Font file must be .ttf or .otf file type"),
   isGoogleFont: z
     .any()
     .transform((val) => `${val}`.toLowerCase() == "true")

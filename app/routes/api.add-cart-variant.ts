@@ -76,9 +76,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
     let designImage = "";
     if(data?.option?.recaps?.faces?.face1){
-      designImage = uploadBase64(data.option.recaps.designImages.face1[0].format, data.option.recaps.designImages.face1[0].url)
+      designImage = uploadBase64(data.option.recaps.designImages.face1[0].format, data.option.recaps.designImages.face1[0].url,session.id)
     }else{
-      designImage = uploadBase64(data.option.recaps.designImages[0].format, data.option.recaps.designImages[0].url)
+      designImage = uploadBase64(data.option.recaps.designImages[0].format, data.option.recaps.designImages[0].url,session.id)
     }
 
 

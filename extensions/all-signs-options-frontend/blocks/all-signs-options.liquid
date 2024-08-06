@@ -15,13 +15,19 @@
   var asoThousandSep= asoFormattedPrice[1]=="2"?"":asoFormattedPrice[1];
   var asoDecimalSep= asoFormattedPrice[4]=="5"?".":asoFormattedPrice[4];
   var asoCartUrl = "{{ routes.cart_url }}";
-
+  {% if asoConfigurationId == null or asoConfigurationId == "" %}
+    {% if request.design_mode == false %}
+    if(!(new URLSearchParams(window.location.search)).get('aso-template-id')){
+    
+      document.write('<style>.shopify-app-wrapper{display: none !important;}<\/style>');
+    }
+   {% endif %} 
+  {% endif %}
 </script>
 
 <link rel="stylesheet" crossorigin href="{{'index.css' |asset_url }}">
 <script src="{{'shopify.js'|asset_url}}"></script>
 <script src="{{'fabric.min.js'|asset_url}}"></script>
-<script src="{{'editor.script.js'|asset_url }}"></script>
 <script type="module" crossorigin src="{{'index.js' |asset_url }}"></script>
 
 <div class="shopify-app-wrapper">
@@ -103,6 +109,9 @@
 </div> 
 
 
+
+
+
 <style>
   .aso-app p {
     margin-top: 0px !important;
@@ -156,7 +165,7 @@
     display: none;
   }
 
-  .aso-app .aso-advanceModel-img{
+  .aso-app .aso-advanceModel-img,.aso-app img.aso-w-auto{
     width: -webkit-fill-available;
     width: -moz-available; /* For Firefox */
     width: fill-available;
@@ -176,13 +185,7 @@
 
 
   
-  {% if asoConfigurationId == null or asoConfigurationId == "" %}
-    {% if request.design_mode == false %}
-    .shopify-app-wrapper{
-      display: none !important;
-    }
-    {% endif %}
-  {% endif %}
+ 
 
 
   .bg-loader{

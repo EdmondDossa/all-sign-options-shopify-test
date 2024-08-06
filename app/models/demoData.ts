@@ -6,7 +6,7 @@ export const configurationDemoData: ConfigurationType[] = [
     id: 114,
     name: "Acrylic Sign",
     description: "Acrylic Sign",
-    icon: "/uploads/im_acrylic_sign.webp",
+    icon: "/aso_default_files/im_acrylic_sign.webp",
     popupImg: "",
 
     data: {
@@ -275,6 +275,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCustomColor: true,
             enableUploadImage: true,
             enableDownloadImage: true,
+            scenes:[]
           },
           signPart: {
             doublePart: {
@@ -939,14 +940,14 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [
               {
-                icon: "/uploads/frosted-1716291683175.svg",
+                icon: "/aso_default_files/frosted-1716291683175.svg",
                 title: "Frosted",
                 description: "",
                 options: [],
               },
             ],
           },
-          icon: "/uploads/im_acrylic_sign.webp",
+          icon: "/aso_default_files/im_acrylic_sign.webp",
           name: "Acrylic",
           type: "simple",
           popImg: "",
@@ -961,7 +962,7 @@ export const configurationDemoData: ConfigurationType[] = [
     id: 115,
     name: "Brass Sign",
     description: "Brass Sign",
-    icon: "/uploads/im_brass_sign.webp",
+    icon: "/aso_default_files/im_brass_sign.webp",
     popupImg: "",
 
     data: {
@@ -1230,6 +1231,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCustomColor: true,
             enableUploadImage: true,
             enableDownloadImage: true,
+            scenes:[]
           },
           signPart: {
             doublePart: {
@@ -1323,11 +1325,11 @@ export const configurationDemoData: ConfigurationType[] = [
         {
           data: [
             {
-              icon: "/uploads/door-sign.svg",
+              icon: "/aso_default_files/door-sign.svg",
               name: "Doors Sign",
               options: [
                 {
-                  icon: "/uploads/london1.png",
+                  icon: "/aso_default_files/london1.png",
                   name: "London",
                   size: {
                     width: 104,
@@ -1342,7 +1344,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "#F4DBDB",
                     prevImg: "",
                   },
-                  image: "/uploads/london1-prev.png",
+                  image: "/aso_default_files/london1-prev.png",
                   shapeId: 0,
                   isDefault: true,
                   description: "Chrome-plated brass",
@@ -1350,7 +1352,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 37,
                 },
                 {
-                  icon: "/uploads/london2-1716373252411.png",
+                  icon: "/aso_default_files/london2-1716373252411.png",
                   name: "London",
                   size: {
                     width: 104,
@@ -1365,7 +1367,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/london2-prev-1716373252182.png",
+                  image: "/aso_default_files/london2-prev-1716373252182.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1373,7 +1375,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 37.69,
                 },
                 {
-                  icon: "/uploads/london3.png",
+                  icon: "/aso_default_files/london3.png",
                   name: "London",
                   size: {
                     width: 104,
@@ -1388,7 +1390,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/london3-prev.png",
+                  image: "/aso_default_files/london3-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Brushed nickel-plated brass",
@@ -1396,7 +1398,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 3.69,
                 },
                 {
-                  icon: "/uploads/oslo.png",
+                  icon: "/aso_default_files/oslo.png",
                   name: "Oslo",
                   size: {
                     width: 80,
@@ -1411,7 +1413,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/oslo-prev.png",
+                  image: "/aso_default_files/oslo-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Matte brass  ",
@@ -1419,7 +1421,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 20.89,
                 },
                 {
-                  icon: "/uploads/paris1.png",
+                  icon: "/aso_default_files/paris1.png",
                   name: "Paris",
                   size: {
                     width: 165,
@@ -1434,7 +1436,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/paris1-prev.png",
+                  image: "/aso_default_files/paris1-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Matte brass",
@@ -1442,7 +1444,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 39.79,
                 },
                 {
-                  icon: "/uploads/paris2.png",
+                  icon: "/aso_default_files/paris2.png",
                   name: "Paris",
                   size: {
                     width: 165,
@@ -1457,7 +1459,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/paris2.png",
+                  image: "/aso_default_files/paris2.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1465,7 +1467,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 39.79,
                 },
                 {
-                  icon: "/uploads/paris3.png",
+                  icon: "/aso_default_files/paris3.png",
                   name: "Paris",
                   size: {
                     width: 165,
@@ -1480,7 +1482,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/paris3-prev.png",
+                  image: "/aso_default_files/paris3-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Black/oxide brass",
@@ -1488,7 +1490,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 39.79,
                 },
                 {
-                  icon: "/uploads/stockholm1.png",
+                  icon: "/aso_default_files/stockholm1.png",
                   name: "Stockhlom",
                   size: {
                     width: 154,
@@ -1503,7 +1505,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stockholm1-prev.png",
+                  image: "/aso_default_files/stockholm1-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1511,7 +1513,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 35.99,
                 },
                 {
-                  icon: "/uploads/stockholm2.png",
+                  icon: "/aso_default_files/stockholm2.png",
                   name: "Stockhlom",
                   size: {
                     width: 154,
@@ -1526,7 +1528,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stockholm2-prev.png",
+                  image: "/aso_default_files/stockholm2-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Brushed nickel-plated brass",
@@ -1534,7 +1536,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 37.69,
                 },
                 {
-                  icon: "/uploads/berlin1-prev.png",
+                  icon: "/aso_default_files/berlin1-prev.png",
                   name: "Berlin",
                   size: {
                     width: 170,
@@ -1549,7 +1551,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/berlin1-prev.png",
+                  image: "/aso_default_files/berlin1-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1557,7 +1559,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 43.99,
                 },
                 {
-                  icon: "/uploads/berlin2.png",
+                  icon: "/aso_default_files/berlin2.png",
                   name: "Berlin",
                   size: {
                     width: 170,
@@ -1572,7 +1574,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/berlin2-prev.png",
+                  image: "/aso_default_files/berlin2-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Brushed nickel-plated brass",
@@ -1580,7 +1582,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 43.99,
                 },
                 {
-                  icon: "/uploads/copenhagen.png",
+                  icon: "/aso_default_files/copenhagen.png",
                   name: "Copenhagen",
                   size: {
                     width: 260,
@@ -1595,7 +1597,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/copenhagen-prev.png",
+                  image: "/aso_default_files/copenhagen-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1603,7 +1605,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 129.59,
                 },
                 {
-                  icon: "/uploads/athens.png",
+                  icon: "/aso_default_files/athens.png",
                   name: "Athens",
                   size: {
                     width: 300,
@@ -1618,7 +1620,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/athens-prev.png",
+                  image: "/aso_default_files/athens-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1626,7 +1628,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 188.09,
                 },
                 {
-                  icon: "/uploads/amsterdam.png",
+                  icon: "/aso_default_files/amsterdam.png",
                   name: "Amsterdam",
                   size: {
                     width: 400,
@@ -1641,7 +1643,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/amsterdam-prev.png",
+                  image: "/aso_default_files/amsterdam-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1649,7 +1651,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 224.89,
                 },
                 {
-                  icon: "/uploads/tallinn.png",
+                  icon: "/aso_default_files/tallinn.png",
                   name: "Tallinn",
                   size: {
                     width: 400,
@@ -1664,7 +1666,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/tallinn-prev.png",
+                  image: "/aso_default_files/tallinn-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1672,7 +1674,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 269.69,
                 },
                 {
-                  icon: "/uploads/rome1.png",
+                  icon: "/aso_default_files/rome1.png",
                   name: "Rome",
                   size: {
                     width: 120,
@@ -1687,7 +1689,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/rome1-prev.png",
+                  image: "/aso_default_files/rome1-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1695,7 +1697,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 36.79,
                 },
                 {
-                  icon: "/uploads/rome2.png",
+                  icon: "/aso_default_files/rome2.png",
                   name: "Rome",
                   size: {
                     width: 120,
@@ -1710,7 +1712,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/rome2-prev.png",
+                  image: "/aso_default_files/rome2-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Brushed nickel-plated brass",
@@ -1718,7 +1720,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 36.79,
                 },
                 {
-                  icon: "/uploads/rome3-prev.png",
+                  icon: "/aso_default_files/rome3-prev.png",
                   name: "Rome",
                   size: {
                     width: 120,
@@ -1733,7 +1735,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/rome3-prev.png",
+                  image: "/aso_default_files/rome3-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Brushed brass",
@@ -1741,7 +1743,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 36.79,
                 },
                 {
-                  icon: "/uploads/sydney-prev.png",
+                  icon: "/aso_default_files/sydney-prev.png",
                   name: "Sydney",
                   size: {
                     width: 160,
@@ -1756,7 +1758,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/sydney-prev.png",
+                  image: "/aso_default_files/sydney-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Brushed brass",
@@ -1764,7 +1766,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 41.89,
                 },
                 {
-                  icon: "/uploads/prague.png",
+                  icon: "/aso_default_files/prague.png",
                   name: "Prague",
                   size: {
                     width: 145,
@@ -1779,7 +1781,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/prague-prev.png",
+                  image: "/aso_default_files/prague-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1787,7 +1789,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 28.39,
                 },
                 {
-                  icon: "/uploads/dublin.png",
+                  icon: "/aso_default_files/dublin.png",
                   name: "Dublin",
                   size: {
                     width: 145,
@@ -1802,7 +1804,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/dublin-prev.png",
+                  image: "/aso_default_files/dublin-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1810,7 +1812,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 28.38,
                 },
                 {
-                  icon: "/uploads/lisbon1.png",
+                  icon: "/aso_default_files/lisbon1.png",
                   name: "Lisbon",
                   size: {
                     width: 170,
@@ -1825,7 +1827,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/lisbon1-prev.png",
+                  image: "/aso_default_files/lisbon1-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Shiny brass",
@@ -1833,7 +1835,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 43.99,
                 },
                 {
-                  icon: "/uploads/lisbon2.png",
+                  icon: "/aso_default_files/lisbon2.png",
                   name: "Lisbon",
                   size: {
                     width: 170,
@@ -1848,7 +1850,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/lisbon2-prev.png",
+                  image: "/aso_default_files/lisbon2-prev.png",
                   shapeId: 1,
                   isDefault: false,
                   description: "Brushed nickel-plated brass",
@@ -1864,7 +1866,7 @@ export const configurationDemoData: ConfigurationType[] = [
               name: "Label Tags",
               options: [
                 {
-                  icon: "/uploads/madrid1.png",
+                  icon: "/aso_default_files/madrid1.png",
                   name: "Madrid",
                   size: {
                     width: 60,
@@ -1879,7 +1881,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/laiton-pattern.png",
+                  image: "/aso_default_files/laiton-pattern.png",
                   shapeId: 3,
                   isDefault: true,
                   description: "Brass",
@@ -1887,7 +1889,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 5.89,
                 },
                 {
-                  icon: "/uploads/madrid2.png",
+                  icon: "/aso_default_files/madrid2.png",
                   name: "Madrid",
                   size: {
                     width: 60,
@@ -1902,7 +1904,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/nickel-pattern.png",
+                  image: "/aso_default_files/nickel-pattern.png",
                   shapeId: 3,
                   isDefault: false,
                   description: "Brushed nickel-plated brass",
@@ -1910,7 +1912,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 5.89,
                 },
                 {
-                  icon: "/uploads/kiev1.png",
+                  icon: "/aso_default_files/kiev1.png",
                   name: "Kiev",
                   size: {
                     width: 50,
@@ -1925,7 +1927,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/kiev1.png",
+                  image: "/aso_default_files/kiev1.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Brass",
@@ -1933,7 +1935,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 7.79,
                 },
                 {
-                  icon: "/uploads/kiev2.png",
+                  icon: "/aso_default_files/kiev2.png",
                   name: "Kiev",
                   size: {
                     width: 50,
@@ -1948,7 +1950,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/nickel-pattern (1).png",
+                  image: "/aso_default_files/nickel-pattern (1).png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Brushed nickel-plated brass",
@@ -1956,7 +1958,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 7.79,
                 },
                 {
-                  icon: "/uploads/budapest1.png",
+                  icon: "/aso_default_files/budapest1.png",
                   name: "Budapest",
                   size: {
                     width: 60,
@@ -1971,7 +1973,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/laiton-pattern.png",
+                  image: "/aso_default_files/laiton-pattern.png",
                   shapeId: 3,
                   isDefault: false,
                   description: "Brass",
@@ -1979,7 +1981,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 7.79,
                 },
                 {
-                  icon: "/uploads/budapest2.png",
+                  icon: "/aso_default_files/budapest2.png",
                   name: "Budapest",
                   size: {
                     width: 60,
@@ -1994,7 +1996,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/nickel-pattern.png",
+                  image: "/aso_default_files/nickel-pattern.png",
                   shapeId: 3,
                   isDefault: false,
                   description: "Brushed nickel-plated brass",
@@ -2006,7 +2008,7 @@ export const configurationDemoData: ConfigurationType[] = [
               description: "",
             },
           ],
-          icon: "/uploads/im_brass_sign.webp",
+          icon: "/aso_default_files/im_brass_sign.webp",
           name: "Brass",
           type: "advance",
           popImg: "",
@@ -2021,7 +2023,7 @@ export const configurationDemoData: ConfigurationType[] = [
     id: 119,
     name: "Aluminium sign",
     description: "Aluminium sign",
-    icon: "/uploads/im_aluminium_sign.webp",
+    icon: "/aso_default_files/im_aluminium_sign.webp",
     popupImg: "",
 
     data: {
@@ -2290,6 +2292,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCustomColor: true,
             enableUploadImage: true,
             enableDownloadImage: true,
+            scenes:[]
           },
           signPart: {
             doublePart: {
@@ -3085,14 +3088,14 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [
               {
-                icon: "/uploads/frosted-1716291683175.svg",
+                icon: "/aso_default_files/frosted-1716291683175.svg",
                 title: "Reflective",
                 description: "",
                 options: [],
               },
             ],
           },
-          icon: "/uploads/im_acrylic_sign.webp",
+          icon: "/aso_default_files/im_acrylic_sign.webp",
           name: "Aluminium",
           type: "simple",
           popImg: "",
@@ -3107,7 +3110,7 @@ export const configurationDemoData: ConfigurationType[] = [
     id: 120,
     name: "Double-Sided Sign",
     description: "",
-    icon: "/uploads/im_double_side_sign.gif",
+    icon: "/aso_default_files/im_double_side_sign.gif",
     popupImg: "",
 
     data: {
@@ -3376,6 +3379,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCustomColor: true,
             enableUploadImage: true,
             enableDownloadImage: true,
+            scenes:[]
           },
           signPart: {
             doublePart: {
@@ -4140,7 +4144,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/aluminium.png",
+          icon: "/aso_default_files/aluminium.png",
           name: "Aluminium",
           type: "simple",
           popImg: "",
@@ -4738,7 +4742,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/aluminium.png",
+          icon: "/aso_default_files/aluminium.png",
           name: "Plastic",
           type: "simple",
           popImg: "",
@@ -5324,7 +5328,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/aluminium.png",
+          icon: "/aso_default_files/aluminium.png",
           name: "Eco board",
           type: "simple",
           popImg: "",
@@ -5340,7 +5344,7 @@ export const configurationDemoData: ConfigurationType[] = [
     id: 121,
     name: "Plastic sign",
     description: "",
-    icon: "/uploads/im_plastic_sign.webp",
+    icon: "/aso_default_files/im_plastic_sign.webp",
     popupImg: "",
 
     data: {
@@ -5609,6 +5613,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCustomColor: true,
             enableUploadImage: true,
             enableDownloadImage: true,
+            scenes:[]
           },
           signPart: {
             doublePart: {
@@ -6263,7 +6268,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/engraving.svg",
+          icon: "/aso_default_files/engraving.svg",
           name: "Engraving",
           type: "simple",
           popImg: "",
@@ -6817,7 +6822,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/form_pvc.svg",
+          icon: "/aso_default_files/form_pvc.svg",
           name: "Foam PVC",
           type: "simple",
           popImg: "",
@@ -6832,7 +6837,7 @@ export const configurationDemoData: ConfigurationType[] = [
     id: 122,
     name: "Rollup Sign",
     description: "",
-    icon: "/uploads/im_rollup_sign.webp",
+    icon: "/aso_default_files/im_rollup_sign.webp",
     popupImg: "",
 
     data: {
@@ -7101,6 +7106,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCustomColor: true,
             enableUploadImage: true,
             enableDownloadImage: true,
+            scenes:[]
           },
           signPart: {
             doublePart: {
@@ -7543,7 +7549,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/standard.svg",
+          icon: "/aso_default_files/standard.svg",
           name: "Standard",
           type: "simple",
           popImg: "",
@@ -7896,7 +7902,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/eco.svg",
+          icon: "/aso_default_files/eco.svg",
           name: "ECO",
           type: "simple",
           popImg: "",
@@ -7912,7 +7918,7 @@ export const configurationDemoData: ConfigurationType[] = [
     id: 123,
     name: "Stainless Stell Sign",
     description: "",
-    icon: "/uploads/im_stainlessSteel_sign.webp",
+    icon: "/aso_default_files/im_stainlessSteel_sign.webp",
     popupImg: "",
 
     data: {
@@ -8181,6 +8187,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCustomColor: true,
             enableUploadImage: true,
             enableDownloadImage: true,
+            scenes:[]
           },
           signPart: {
             doublePart: {
@@ -8274,11 +8281,11 @@ export const configurationDemoData: ConfigurationType[] = [
         {
           data: [
             {
-              icon: "/uploads/im_stainlessSteel_sign.webp",
+              icon: "/aso_default_files/im_stainlessSteel_sign.webp",
               name: "Label tags",
               options: [
                 {
-                  icon: "/uploads/stainless_steel1.png",
+                  icon: "/aso_default_files/stainless_steel1.png",
                   name: "Stainless steel",
                   size: {
                     width: 28,
@@ -8293,7 +8300,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel1-prev.png",
+                  image: "/aso_default_files/stainless_steel1-prev.png",
                   shapeId: 10,
                   isDefault: true,
                   description: "Stainless steel",
@@ -8301,7 +8308,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 6.49,
                 },
                 {
-                  icon: "/uploads/stainless_steel2.png",
+                  icon: "/aso_default_files/stainless_steel2.png",
                   name: "Stainless steel",
                   size: {
                     width: 30,
@@ -8316,7 +8323,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel2-prev.png",
+                  image: "/aso_default_files/stainless_steel2-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Stainless steel",
@@ -8324,7 +8331,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 5.99,
                 },
                 {
-                  icon: "/uploads/stainless_steel3.png",
+                  icon: "/aso_default_files/stainless_steel3.png",
                   name: "Stainless steel",
                   size: {
                     width: 60,
@@ -8339,7 +8346,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel3-prev.png",
+                  image: "/aso_default_files/stainless_steel3-prev.png",
                   shapeId: 3,
                   isDefault: false,
                   description: "Stainless steel",
@@ -8347,7 +8354,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 8.29,
                 },
                 {
-                  icon: "/uploads/stainless_steel4.png",
+                  icon: "/aso_default_files/stainless_steel4.png",
                   name: "Stainless steel",
                   size: {
                     width: 60,
@@ -8362,7 +8369,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel4-prev.png",
+                  image: "/aso_default_files/stainless_steel4-prev.png",
                   shapeId: 3,
                   isDefault: false,
                   description: "Stainless steel",
@@ -8370,7 +8377,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 8.29,
                 },
                 {
-                  icon: "/uploads/stainless_steel5.png",
+                  icon: "/aso_default_files/stainless_steel5.png",
                   name: "Stainless steel",
                   size: {
                     width: 50,
@@ -8385,7 +8392,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel5-prev.png",
+                  image: "/aso_default_files/stainless_steel5-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Stainless steel",
@@ -8393,7 +8400,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 9.49,
                 },
                 {
-                  icon: "/uploads/stainless_steel6.png",
+                  icon: "/aso_default_files/stainless_steel6.png",
                   name: "Stainless steel",
                   size: {
                     width: 80,
@@ -8408,14 +8415,14 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel6-prev.png",
+                  image: "/aso_default_files/stainless_steel6-prev.png",
                   shapeId: 3,
                   description: "Stainless steel",
                   fixingMethods: [0, 1, 2],
                   additionalPrice: 10.69,
                 },
                 {
-                  icon: "/uploads/stainless_steel7.png",
+                  icon: "/aso_default_files/stainless_steel7.png",
                   name: "Stainless steel",
                   size: {
                     width: 100,
@@ -8430,7 +8437,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel7-prev.png",
+                  image: "/aso_default_files/stainless_steel7-prev.png",
                   shapeId: 0,
                   isDefault: false,
                   description: "Stainless steel",
@@ -8438,7 +8445,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 14.29,
                 },
                 {
-                  icon: "/uploads/stainless_steel8.png",
+                  icon: "/aso_default_files/stainless_steel8.png",
                   name: "Stainless steel",
                   size: {
                     width: 150,
@@ -8453,7 +8460,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel8-prev.png",
+                  image: "/aso_default_files/stainless_steel8-prev.png",
                   shapeId: 3,
                   isDefault: false,
                   description: "Stainless steel",
@@ -8461,7 +8468,7 @@ export const configurationDemoData: ConfigurationType[] = [
                   additionalPrice: 17.89,
                 },
                 {
-                  icon: "/uploads/stainless_steel9.png",
+                  icon: "/aso_default_files/stainless_steel9.png",
                   name: "Stainless steel",
                   size: {
                     width: 170,
@@ -8476,7 +8483,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     codeHex: "",
                     prevImg: "",
                   },
-                  image: "/uploads/stainless_steel9-prev.png",
+                  image: "/aso_default_files/stainless_steel9-prev.png",
                   shapeId: 3,
                   isDefault: false,
                   description: "Stainless steel",
@@ -8488,7 +8495,7 @@ export const configurationDemoData: ConfigurationType[] = [
               description: "",
             },
           ],
-          icon: "/uploads/im_stainlessSteel_sign.webp",
+          icon: "/aso_default_files/im_stainlessSteel_sign.webp",
           name: "Stainless steel",
           type: "advance",
           popImg: "",
@@ -8503,7 +8510,7 @@ export const configurationDemoData: ConfigurationType[] = [
     id: 124,
     name: "Woods Sign",
     description: "Woods Sign",
-    icon: "/uploads/im_wood_sign.webp",
+    icon: "/aso_default_files/im_wood_sign.webp",
     popupImg: "",
 
     data: {
@@ -8772,6 +8779,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCustomColor: true,
             enableUploadImage: true,
             enableDownloadImage: true,
+            scenes:[]
           },
           signPart: {
             doublePart: {
@@ -9100,11 +9108,11 @@ export const configurationDemoData: ConfigurationType[] = [
                 {
                   name: "Wood",
                   pattern: {
-                    url: "/uploads/wood-birch.png",
+                    url: "/aso_default_files/wood-birch.png",
                     active: true,
                     codeHex: "#000000",
                   },
-                  prevImg: "/uploads/wood-birch.png",
+                  prevImg: "/aso_default_files/wood-birch.png",
                   isDefault: true,
                   textColor: {
                     name: "",
@@ -9330,7 +9338,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/wood_birch (1).png",
+          icon: "/aso_default_files/wood_birch (1).png",
           name: "Birch",
           type: "simple",
           popImg: "",
@@ -9574,11 +9582,11 @@ export const configurationDemoData: ConfigurationType[] = [
                 {
                   name: "Wood",
                   pattern: {
-                    url: "/uploads/wood-oak.png",
+                    url: "/aso_default_files/wood-oak.png",
                     active: true,
                     codeHex: "#000000",
                   },
-                  prevImg: "/uploads/wood-oak.png",
+                  prevImg: "/aso_default_files/wood-oak.png",
                   isDefault: true,
                   textColor: {
                     name: "",
@@ -9804,7 +9812,7 @@ export const configurationDemoData: ConfigurationType[] = [
             ],
             additionalOptions: [],
           },
-          icon: "/uploads/wood_birch (1).png",
+          icon: "/aso_default_files/wood_birch (1).png",
           name: "Oak",
           type: "simple",
           popImg: "",
@@ -9821,49 +9829,49 @@ export const fontData: FontType[] = [
   {
     id: 9,
     label: "longlineregular",
-    url: "/uploads/Longline Regular Demo.ttf",
+    url: "/aso_default_files/Longline Regular Demo.ttf",
     isGoogleFont: false
   },
   {
     id: 8,
     label: "sundaychilling",
-    url: "/uploads/Sunday Chillin.ttf",
+    url: "/aso_default_files/Sunday Chillin.ttf",
     isGoogleFont: false
   },
   {
     id: 6,
     label: "Deutschlands",
-    url: "/uploads/Deutschlands.ttf",
+    url: "/aso_default_files/Deutschlands.ttf",
     isGoogleFont: false
   },
   {
     id: 10,
     label: "Time new roman",
-    url: "/uploads/times new roman.ttf",
+    url: "/aso_default_files/times new roman.ttf",
     isGoogleFont: false
   },
   {
     id: 11,
     label: "Quinnie",
-    url: "/uploads/ss-quinnie.otf",
+    url: "/aso_default_files/ss-quinnie.otf",
     isGoogleFont: false
   },
   {
     id: 12,
     label: "Queen Temoz",
-    url: "/uploads/Queen-Temoz-Trial-BF666948ed84d3c.ttf",
+    url: "/aso_default_files/Queen-Temoz-Trial-BF666948ed84d3c.ttf",
     isGoogleFont: false
   },
   {
     id: 13,
     label: "Nostalgin",
-    url: "/uploads/Nostalgin-BF66876ed87f5b4.otf",
+    url: "/aso_default_files/Nostalgin-BF66876ed87f5b4.otf",
     isGoogleFont: false
   },
   {
     id: 14,
     label: "Wast-Lovely",
-    url: "/uploads/Wast-Lovely-BF66977e0e301dd.ttf",
+    url: "/aso_default_files/Wast-Lovely-BF66977e0e301dd.ttf",
     isGoogleFont: false
   },
 ];

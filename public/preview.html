@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 </head>
 <body>
+    <script>
+        var asoAdminConfig = "admin";
+
+    </script>
     <div id="app" class="aso-app" >
 
     </div>
@@ -65,11 +69,12 @@
           display: none;
         }
       
-        .aso-app .aso-advanceModel-img{
+        .aso-app .aso-advanceModel-img,.aso-app img.aso-w-auto{
           width: -webkit-fill-available;
           width: -moz-available; /* For Firefox */
           width: fill-available;
         }
+      
       
         .aso-app .aso-inputImage {
           /* aso-text-md  */   
@@ -117,7 +122,6 @@
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script src="/assets-preview/shopify.js"></script>
     <script src="/assets-preview/fabric.min.js"></script>
-    <script src="/assets-preview/editor.script.js"></script>
-    <script src="/assets-preview/index.js"></script>
+    <script type="module" crossorigin  src="/assets-preview/index.js"></script>
 </body>
 </html>

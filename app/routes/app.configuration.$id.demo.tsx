@@ -124,7 +124,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     if(!allFonts || allFonts.length <3) {
       for (let currentfont  of fontData) {
-        let fontWith:any = replaceUploadsPath(currentfont, `https://${session.shop}/apps/aso-proxy/uploads/`);
+        let fontWith:any = replaceUploadsPath(currentfont, `https://${session.shop}/apps/aso-proxy/aso_default_files/`);
         let newfont = await FontService.addFont({
           url: fontWith.url,
           label: currentfont.label,
@@ -143,7 +143,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     configuration.data = replaceUploadsPath(
       configurationDemoData[parseInt(demoId)].data,
-      `https://${session.shop}/apps/aso-proxy/uploads/`,
+      `https://${session.shop}/apps/aso-proxy/aso_default_files/`,
     );
     await ConfigurationService.updateConfiguration(configuration, session.id);
 
@@ -164,7 +164,7 @@ function replaceUploadsPath(data: object, newPath: string): object {
   function replaceInObject(obj: any) {
     for (const key in obj) {
       if (typeof obj[key] === "string") {
-        obj[key] = obj[key].replace(/\/uploads\//g, newPath);
+        obj[key] = obj[key].replace(/\/aso_default_files\//g, newPath);
       } else if (typeof obj[key] === "object") {
         replaceInObject(obj[key]);
       }

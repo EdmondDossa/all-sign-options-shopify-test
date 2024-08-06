@@ -7,7 +7,7 @@ var asoTemplateId = urlParams.get('aso-template-id');
 
 
 
-if(asoConfigurationId){
+if(!asoConfigurationId){
   asoConfigurationId = paramAsoConfigurationId || asoConfigurationId;
 }
 async function getAsoConfiguration(configurationId) {
