@@ -124,7 +124,7 @@ export default function ConfigSettingsGeneral() {
                     design to the cart
                   </ProductConfigItem>
                 </Grid.Cell>
-                {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Redirect to checkout page after adding a custom design to the cart"
                     checked={formData.redirectToCheckOutPage}
@@ -136,7 +136,7 @@ export default function ConfigSettingsGeneral() {
                   >
                     This options allow you to define what to do after adding a design to the cart
                   </ProductConfigItem>
-                </Grid.Cell> */}
+                </Grid.Cell>
                 {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Display or not recaps on checkout page"
