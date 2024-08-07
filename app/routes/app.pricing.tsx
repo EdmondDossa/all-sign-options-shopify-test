@@ -9,7 +9,9 @@ import {
     Divider,
     BlockStack,
     ExceptionList,
-    InlineStack
+    InlineStack,
+    Bleed,
+    Badge
   } from "@shopify/polaris";
   import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
   import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
@@ -143,12 +145,12 @@ import { useId } from "react";
           >
             { plan == PRICING_PLANS.PRO? (
               <p>
-                You're currently on pro plan. All features are unlocked.
+                You're currently on premium plan. All features are unlocked.
               </p>
           ) : plan == PRICING_PLANS.STARTER ?
             (
               <p>
-                You're currently on starter plan. Upgrade to pro to unlock more features.
+                You're currently on basic plan. Upgrade to pro to unlock more features.
               </p>
               ) : (
                 <p>
@@ -164,7 +166,11 @@ import { useId } from "react";
   
           {planData.map((plan_item, index) => (
             <Grid.Cell key={index} columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
-              <Card background={ plan_item.name == plan ? "bg-surface-success" : "bg-surface" } >
+              <Card background={plan_item.name == plan ? "bg-surface-success" : "bg-surface"} >
+                <Bleed marginBlockEnd="800">
+                  <InlineStack align="end"><Badge tone="info">+15 days free trial</Badge> </InlineStack>
+                </Bleed>
+              
                 <Box padding="400">
                   <Text as="h1" variant="headingMd" fontWeight="bold">
                     {plan_item.title} 

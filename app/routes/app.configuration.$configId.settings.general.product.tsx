@@ -62,7 +62,7 @@ export default function ConfigSettingsGeneral() {
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
 
-  console.log("setting data :", settingData);
+  
 
   const [formData, setFormData] = useState<any>(
     settingData || {
@@ -98,7 +98,7 @@ export default function ConfigSettingsGeneral() {
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "10px" }}>
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Enable design from scratch"
                     checked={formData.designFromScratch}
@@ -111,7 +111,7 @@ export default function ConfigSettingsGeneral() {
                     only for templates assigned to the custom product ?
                   </ProductConfigItem>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Redirect to cart after adding a custom design to the cart"
                     checked={formData.redirectAfterAddingToCart}
@@ -124,7 +124,7 @@ export default function ConfigSettingsGeneral() {
                     design to the cart
                   </ProductConfigItem>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Redirect to checkout page after adding a custom design to the cart"
                     checked={formData.redirectToCheckOutPage}
@@ -136,8 +136,8 @@ export default function ConfigSettingsGeneral() {
                   >
                     This options allow you to define what to do after adding a design to the cart
                   </ProductConfigItem>
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                </Grid.Cell> */}
+                {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Display or not recaps on checkout page"
                     checked={formData.displayRecapsOnCheckout}
@@ -147,8 +147,8 @@ export default function ConfigSettingsGeneral() {
                   >
                     This option allow to display recaps on checkout
                   </ProductConfigItem>
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                </Grid.Cell> */}
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Hide add to cart button for custom on product detail page"
                     checked={formData.hideAddToCartButtonOnDetailPage}
@@ -164,7 +164,7 @@ export default function ConfigSettingsGeneral() {
                     products page.
                   </ProductConfigItem>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Hide design buttons on shop page"
                     checked={formData.hideDesignButtonsOnShopPage}
@@ -176,7 +176,7 @@ export default function ConfigSettingsGeneral() {
                     cart button on the customization page
                   </ProductConfigItem>
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Hide add to cart buttons for custom product on shop"
                     checked={formData.hideAddToCartButtonOnShopPage}

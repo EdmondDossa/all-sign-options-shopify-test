@@ -355,7 +355,13 @@ img.aso-logo{
     background-color: transparent;
     border-radius: 5px  ;
     color: #466801;
+    white-space: nowrap;
+}
 
+@media screen and (max-width: 767px){
+    .additonal-options-text{
+        display: none;
+    }
 }
 
 

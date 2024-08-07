@@ -198,15 +198,20 @@ export default function Configuration() {
   );
   return (
     <Page fullWidth>
-      <SpacingBackground>
+       <BoxBackground>
+      <Box paddingInline="300" paddingBlock="600">
+          <InlineStack gap="100" align="start">
+            <Text as="h2" variant="headingMd">
+              Configurations list
+            </Text>
+        </InlineStack>
+      </Box>
+    </BoxBackground>
+      <SpacingBackground  margin="16px 0px ">
         <BoxBackground>
           <Box padding="300">
             <BlockStack gap="300">
-              <InlineGrid columns="1fr auto">
-                <Text as="h2" variant="headingMd">
-                  List of configurations
-                </Text>
-              </InlineGrid>
+              
 
      { !(plan == PRICING_PLANS.STARTER && configurations?.length>=PRICING_PLANS.STARTER_RULES.configurations)      &&   <InlineStack align="end">
                 
