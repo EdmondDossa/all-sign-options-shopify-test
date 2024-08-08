@@ -22,7 +22,10 @@ jobs:
 
       - name: Get version from package.json
         id: get_version
-        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "$VERSION" >> $GITHUB_ENV
+          echo "::set-output name=version::${VERSION}"
 
       - name: Setup docker builder
         uses: docker/setup-buildx-action@v3
@@ -89,7 +92,7 @@ jobs:
           PROJECT_NAME: ${{ github.repository }}
           PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
           SUBDIR: ${{ env.BRANCH_NAME }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ needs.build-images.outputs.version }}
         with: 
           host: ${{ secrets.VERTIM_HOST }}
           port: ${{ secrets.SSH_PORT }}
@@ -100,8 +103,7 @@ jobs:
           script: |
             cd $PROJECT_DIR
             cd $SUBDIR 
-            ASOIMGVERS
-            sed -i 's@ASOIMGVERS@$VERSION@' docker-compose.yml
+            sed -i 's@ASOIMGVERS@$VERSION@' .env
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
             docker-compose pull
             docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
