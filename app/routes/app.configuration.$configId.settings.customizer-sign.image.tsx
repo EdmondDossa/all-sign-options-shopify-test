@@ -482,7 +482,7 @@ export default function ConfigSettingsGeneral() {
                   <Grid gap={{ lg: "30px" }}>
                     { formData.scenes?.map((scene: string) => (
                       
-                      <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
+                      <Grid.Cell columnSpan={{ xs: 3, sm: 3, md: 2, lg: 2, xl: 2 }}>
                         <ClipartItem imgSrc={scene}  onDelete={()=>handleSceneDelete(scene)}/>
                       </Grid.Cell>
                     ))

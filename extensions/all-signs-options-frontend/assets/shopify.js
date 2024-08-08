@@ -7,7 +7,7 @@ var asoTemplateId = urlParams.get('aso-template-id');
 
 
 
-if(asoConfigurationId){
+if(!asoConfigurationId){
   asoConfigurationId = paramAsoConfigurationId || asoConfigurationId;
 }
 async function getAsoConfiguration(configurationId) {
@@ -196,7 +196,7 @@ async function  asoReidirectToCheckout() {
   }
 }
 
-async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProductId, regularPrice=asoRegularPrice) {
+async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProductId, regularPrice=asoRegularPrice, redirectToCheckOut=false) {
   console.log("price and option", price, option, asoProductID);
 
   try {
@@ -218,12 +218,11 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
   
     console.log('Success:', responseData);   
 
-    let isAddedToCart = await asoAddproductToCart(parseInt(responseData.variantId),1);
-    if (isAddedToCart) {
-      setTimeout(async() => {
-        document.location = asoCartUrl; 
-      },200)
-       
+  
+    if (redirectToCheckOut) {
+      document.location = window.location.origin + `/cart/${responseData.variantId}:1`;
+    } else {
+      document.location = window.location.origin + `/cart/${responseData.variantId}:1?storefront=true`;
     }
   } catch (error) {
     console.error('Error: ', error);
@@ -270,7 +269,7 @@ function addStylesToBody(cssRules) {
 async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
 
     console.log("data cart ", cart_data);
-    await asoCreateVariantAndAddToCart( cart_data.recaps.custom_price, cart_data)
+    await asoCreateVariantAndAddToCart( cart_data.recaps.custom_price, cart_data,asoProductId, asoRegularPrice , redirectToCheckOut);
 };
 
 

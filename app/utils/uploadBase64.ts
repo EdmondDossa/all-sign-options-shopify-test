@@ -1,14 +1,16 @@
-import { writeFileSync } from "fs";
+import { writeFileSync,mkdirSync } from "fs";
 import sizeOf from 'buffer-image-size';
+import { assignShopDesignPath, getShopDesignPath } from "./fileUrl";
 
-export function uploadBase64(ext:string, base64: string){
-    const path = `public/upload_designs_files/${generateUniqueId()}.${ext}`;
+export function uploadBase64(ext:string, base64: string, sessionId: string) {
+    const path = assignShopDesignPath(sessionId, `${generateUniqueId()}.${ext}`);
     const matches = base64.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
     if (matches && matches.length === 3) {
         base64 = matches[2];
     }
     try {
         const buffer = Buffer.from(base64, "base64");
+        mkdirSync(getShopDesignPath(sessionId), { recursive: true });
         writeFileSync(path, buffer);
         return path.replace("public/",'')
     } catch (error) {
@@ -18,10 +20,11 @@ export function uploadBase64(ext:string, base64: string){
 }
 
 
-export function uploadBufferWithName(name:string, buffer: any){
-    const path = `public/upload_designs_files/${name}`;
+export function uploadBufferWithName(name:string, buffer: any,sessionId:string){
+    const path = assignShopDesignPath(sessionId, name);
     
     try {
+        mkdirSync(getShopDesignPath(sessionId), { recursive: true });
         writeFileSync(path, buffer);
         return path.replace("public/",'')
     } catch (error) {
