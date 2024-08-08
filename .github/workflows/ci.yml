@@ -23,8 +23,9 @@ jobs:
       - name: Get version from package.json
         id: get_version
         run: |
+          echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
           VERSION=$(node -p "require('./package.json').version")
-          echo "$VERSION" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}"
           echo "::set-output name=version::${VERSION}"
 
       - name: Setup docker builder
