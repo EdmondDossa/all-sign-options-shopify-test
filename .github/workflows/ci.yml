@@ -48,7 +48,7 @@ jobs:
       - name: Push Docker image (dev)
         if: github.ref == 'refs/heads/stage'
         run: |
-          docker tag vertimcoders/all-signs-options:${{ env.VERSION }}-dev
+          docker tag vertimcoders/all-signs-options:${{ env.VERSION }} vertimcoders/all-signs-options:${{ env.VERSION }}-dev
           docker push vertimcoders/all-signs-options:${{ env.VERSION }}-dev
         env:
           DOCKER_BUILDKIT: 1
@@ -56,8 +56,8 @@ jobs:
       - name: Tag and push Docker image (main)
         if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
         run: |
-          docker tag vertimcoders/all-signs-options:latest all-signs-options:${{ env.VERSION }}
-          docker tag vertimcoders/all-signs-options:latest all-signs-options:latest
+          docker tag vertimcoders/all-signs-options:${{ env.VERSION }} vertimcoders/all-signs-options:latest
+          docker tag vertimcoders/all-signs-options:latest vertimcoders/all-signs-options:latest
           docker push vertimcoders/all-signs-options:${{ env.VERSION }}
           docker push vertimcoders/all-signs-options:latest
         env:
