@@ -43,7 +43,7 @@ jobs:
       - name: Build Docker image
         id: build
         run: |
-          docker build -t all-signs-options:${{ env.VERSION }} .
+          docker build -t vertimcoders/all-signs-options:${{ env.VERSION }} .
 
       - name: Push Docker image (dev)
         if: github.ref == 'refs/heads/stage'
