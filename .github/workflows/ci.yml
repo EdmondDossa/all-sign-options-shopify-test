@@ -100,6 +100,8 @@ jobs:
           script: |
             cd $PROJECT_DIR
             cd $SUBDIR 
+            ASOIMGVERS
+            sed -i 's@ASOIMGVERS@$VERSION@' docker-compose.yml
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
             docker-compose pull
-            docker-compose -p $PROJECT_DIR up -d --force-recreate
+            docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
