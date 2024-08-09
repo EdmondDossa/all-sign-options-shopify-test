@@ -12,9 +12,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
 
     if (!admin || !session) {
-         session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
+        try {
+            session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
         if (!session) {
           return json({ error: "Session not found" });
+        } 
+        }catch (error) {
+          return json({ error: "Session not found" , allerros: error });
         }
     }
 
