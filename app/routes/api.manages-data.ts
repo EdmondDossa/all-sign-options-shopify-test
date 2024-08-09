@@ -7,6 +7,7 @@ import SettingOutputService from "~/models/SettingOutput.service";
 import SettingShapesService from "~/models/SettingShapes.service";
 import { authenticate } from "~/shopify.server";
 import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
+import prisma from "~/db.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;

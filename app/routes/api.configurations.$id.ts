@@ -2,6 +2,8 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import ConfigurationService from "~/models/Configuration.service";
 import { authenticate } from "~/shopify.server";
 import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
+import prisma from "~/db.server";
+
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
