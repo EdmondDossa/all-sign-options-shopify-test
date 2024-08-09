@@ -49,7 +49,7 @@ export default function ManageFontCreate() {
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
-  console.log("action data :", actionData);
+ 
   let { font } = useLoaderData<typeof loader>();
   const [formData, setFormData] = useState<FontType>(
     (font as FontType) || {

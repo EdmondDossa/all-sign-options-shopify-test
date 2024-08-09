@@ -77,7 +77,7 @@ export const subscriptionRequired = async (billing: any)=>{
   
   const billingCheck = await billing.require({
     plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
-    isTest:true,
+    isTest:isTest(),
       onFailure: async () => redirect('/app/pricing')
   });
 }
@@ -88,7 +88,7 @@ export const proSubscriptionRequired = async (billing: any)=>{
   
   const billingCheck = await billing.require({
     plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
-    isTest:true,
+    isTest:isTest(),
       onFailure: async () => redirect('/app/pricing')
   });
 }

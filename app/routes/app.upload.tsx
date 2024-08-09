@@ -112,7 +112,7 @@ export async function action({ request }: ActionFunctionArgs) {
       },
     });
 
-    console.log("upload ", upload.files);
+   
   }
 
 
@@ -175,7 +175,7 @@ export const FileUploader = ({
     setFiles(images.length > 0 ? [...images, ...files] : files);
   }, [images.length > 0]);
 
-  console.log("files ", files);
+
 
   const handleDropZoneDrop = useCallback(
     (_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
