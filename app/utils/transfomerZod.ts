@@ -1,5 +1,5 @@
 export const booleanTransform = (value: any) => {
-    console.log(" valeu is ", value);
+   
     return value == true || value == "true" || value ==1 || value == "1";
 };
   

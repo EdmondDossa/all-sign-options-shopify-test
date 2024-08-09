@@ -16,11 +16,16 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       ({ admin, session } = await authenticate.public.appProxy(request));
   }
 
-  if (!admin ) {
-       session = await prisma.session.findFirst({ where: { accessToken: asoAccessToken } }) ;
+  if (!admin) {
+    try {
+      session = await prisma.session.findFirst({ where: { accessToken: asoAccessToken } }) ;
       if (!session) {
         return json({ error: "Session not found" });
       }
+    } catch (error) {
+      return json({ error: "Session not found" , allerros: error });
+    }
+       
   }
   
   let sessionId = session.id;
@@ -41,10 +46,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 
   if (admin) {
-    console.log("use private plan ");
       plan = await getPlanProxy(admin);
   }else{
-    console.log("use public plan ");
       plan = await getPlanProxyPublic(session.shop, session.accessToken);
   }
 
@@ -52,7 +55,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       return json(null);
   }
   
-  console.log(" le plan courant est ", plan);
   if (plan == PRICING_PLANS.STARTER) { 
     data.borders = data.borders.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders);
     data.allBorder = data.allBorder.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders);

@@ -9827,12 +9827,6 @@ export const configurationDemoData: ConfigurationType[] = [
 
 export const fontData: FontType[] = [
   {
-    id: 9,
-    label: "longlineregular",
-    url: "/aso_default_files/Longline Regular Demo.ttf",
-    isGoogleFont: false
-  },
-  {
     id: 8,
     label: "sundaychilling",
     url: "/aso_default_files/Sunday Chillin.ttf",
