@@ -1,29 +1,47 @@
-version: '3.8'
-
+name: all-signs-options-shopify
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  pgdb:
+    container_name: pgdb
+    image: postgres
+    restart: unless-stopped
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASSWD}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_DB: ${PG_DB} 
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - aso-network
     ports:
-      - "3000:3000"
+      - 5432:5432
+
+  frontend-app:
+    image: vertimcoders/all-signs-options:latest
+    restart: unless-stopped
     environment:
-      NODE_ENV: production
-      DATABASE_URL: postgres://user:password@db:5432/database_name
-    volumes:
-      - .:/app
-    command: ["npm", "run", "docker-start"]
+      SHOPIFY_API_KEY: ${SHOPIFY_API_KEY}
+      SHOPIFY_API_SECRET: ${SHOPIFY_API_SECRET}
+      SCOPES: ${SCOPES}
+      SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID: ${SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}
+      SHOPIFY_ASO_ADMIN_ORDER_DETAIL_ID: ${SHOPIFY_ASO_ADMIN_ORDER_DETAIL_ID}
+      DATABASE_URL: ${DATABASE_URL}
+      SHOP_CUSTOM_DOMAIN: ${SHOP_CUSTOM_DOMAIN}
+      SHOPIFY_APP_URL: ${SHOPIFY_APP_URL}
+      IS_TEST: ${IS_TEST}
+      APP_URL: ${APP_URL}
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+    ports:
+      - ${PORT}:${PORT}
     depends_on:
-      - db
+      - pgdb 
+    networks:
+      - aso-network
+      - proxy-network
 
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: database_name
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
+networks:
+  aso-network:
+  proxy-network:
+    name: proxy-network
+    external: true
