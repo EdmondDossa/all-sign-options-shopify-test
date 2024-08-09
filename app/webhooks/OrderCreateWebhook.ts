@@ -4,6 +4,8 @@ import { ShopifyProductService } from "~/models/ShopifyProduct.service";
 import { ShopifyShopService } from "~/models/ShopifyShop.service";
 import { calculateImagePlacement, fileBuffer, generateUniqueId, getExtensionFromBase64, uploadBufferWithName } from "~/utils/uploadBase64";
 import { jsPDF } from "jspdf";
+import { assignShopDesignPath } from "~/utils/fileUrl";
+import { unlink } from "fs";
 
 export async function OrderCreateWebhook(admin:any,session:any,payload:any){
   const order = payload;
@@ -50,14 +52,15 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                   let fileName =`preview_${generateUniqueId()}.${designImage.format}`
                   if(content){
                     zip.addFile(fileName, content,"image");
-                    designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName, content)}`)
+                    designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName, content,session.id)}`)
                     
                     let doc = new jsPDF({ orientation: "landscape", });
                     let imageSize = calculateImagePlacement(content);
                     doc.addImage(content, "JPEG", imageSize.x, imageSize.y, imageSize.width, imageSize.height);
-                    doc.save(`public/upload_designs_files/${fileName}.pdf`);
-                    zip.addLocalFile(`public/upload_designs_files/${fileName}.pdf`,undefined,`${fileName}.pdf`, "application/pdf");
-                    designImagesPdf.push(`${process.env.SHOPIFY_APP_URL}/${fileName}.pdf`)
+                    let filenamePath = assignShopDesignPath(session.id, `${fileName}.pdf`);
+                    doc.save(filenamePath);
+                    zip.addLocalFile(filenamePath,undefined,`${fileName}.pdf`, "application/pdf");
+                    designImagesPdf.push(filenamePath)
                   }
                 }
     
@@ -69,7 +72,7 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                     zip.addFile(fileName, content,"image");
                     images.push({
                       id:designImage.id,
-                      url:`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName,content)}`
+                      url:`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName,content,session.id)}`,
                     });
                   }
                 }
@@ -82,13 +85,14 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                     let fileName =`preview_${face}_${generateUniqueId()}.${designImage.format}`
                     if(content){
                       zip.addFile(fileName, content,"image");
-                      designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName, content)}`)
+                      designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName, content,session.id)}`)
                       let doc = new jsPDF({ orientation: "landscape", });
                       let imageSize = calculateImagePlacement(content);
                       doc.addImage(content, "JPEG", imageSize.x, imageSize.y, imageSize.width, imageSize.height);
-                      doc.save(`public/upload_designs_files/${fileName}.pdf`);
-                      zip.addLocalFile(`public/upload_designs_files/${fileName}.pdf`,undefined,`${fileName}.pdf`, "application/pdf");
-                      designImagesPdf.push(`${process.env.SHOPIFY_APP_URL}/${fileName}.pdf`)
+                      let filenamePath = assignShopDesignPath(session.id,`${fileName}.pdf`)
+                      doc.save(filenamePath);
+                      zip.addLocalFile(filenamePath,undefined,`${fileName}.pdf`, "application/pdf");
+                      designImagesPdf.push(filenamePath)
                     }
                   }
                 }
@@ -102,7 +106,7 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                       zip.addFile(fileName, content,"image");
                       images.push({
                         id:designImage.id,
-                        url:`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName,content)}`
+                        url:`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName,content,session.id)}`,
                       });
                     }
                   }
@@ -112,8 +116,16 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
              
             
   
-              let zipPath = `public/upload_designs_files/${ variantMetaData?.recaps?.output?.prefix}_${order.id}.zip`;
+              let zipPath = assignShopDesignPath(session.id,`${ variantMetaData?.recaps?.output?.prefix}_${order.id}.zip`);
               zip.writeZip(zipPath);
+
+              // delete  all  generated  pdf  files  after adding them to the zip
+              if(designImagesPdf.length){
+                  designImagesPdf.forEach((designImagePdf:string) => {
+                    unlink(designImagePdf, (err) => { });
+                  });
+              }
+              //end of delete
   
   
               if (variantMetaData?.recaps) {

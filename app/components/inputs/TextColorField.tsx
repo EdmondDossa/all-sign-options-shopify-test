@@ -4,7 +4,6 @@ import * as ColorConvertor from 'color-convert'
 import { useCallback, useEffect, useState } from "react";
 
 
-
 export function TextColorField({ label, color, setColor, helpText, error }: { error?:string; helpText?: string; label?: string; color?: string | undefined;  setColor?:Function}) {
     const [popoverActive, setPopoverActive] = useState(false);
     const [colorHex, setColorHex] = useState<string>(color||"#FFFFFF");

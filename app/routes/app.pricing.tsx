@@ -9,7 +9,9 @@ import {
     Divider,
     BlockStack,
     ExceptionList,
-    InlineStack
+    InlineStack,
+    Bleed,
+    Badge
   } from "@shopify/polaris";
   import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
   import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
@@ -44,7 +46,7 @@ import { useId } from "react";
       // If the shop has an active subscription, log and return the details
       const subscription = billingCheck.appSubscriptions[0];
      
-      console.log("subscription :", subscription);
+    
       
       return json({ billing, subscription: subscription,plan });
   
@@ -62,10 +64,10 @@ import { useId } from "react";
   
   let planData = [
     {
-      title: "STARTER",
-      description: "Starter plan with basic features",
-      price: "21",
-      year_price: "201",
+      title: "Basic",
+      description: "Basic  with basic features",
+      price: "39",
+      year_price: "375",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",
       name: "starter",
@@ -86,10 +88,10 @@ import { useId } from "react";
       ]
     },
     {
-      title: "PRO",
-      description: "Pro plan with advanced features",
-      price: "49",
-      year_price: "470",
+      title: "Premium",
+      description: "Premium  with advanced features",
+      price: "79",
+      year_price: "759",
       name: "pro",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",
@@ -143,12 +145,12 @@ import { useId } from "react";
           >
             { plan == PRICING_PLANS.PRO? (
               <p>
-                You're currently on pro plan. All features are unlocked.
+                You're currently on premium plan. All features are unlocked.
               </p>
           ) : plan == PRICING_PLANS.STARTER ?
             (
               <p>
-                You're currently on starter plan. Upgrade to pro to unlock more features.
+                You're currently on basic plan. Upgrade to pro to unlock more features.
               </p>
               ) : (
                 <p>
@@ -164,7 +166,11 @@ import { useId } from "react";
   
           {planData.map((plan_item, index) => (
             <Grid.Cell key={index} columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
-              <Card background={ plan_item.name == plan ? "bg-surface-success" : "bg-surface" } >
+              <Card background={plan_item.name == plan ? "bg-surface-success" : "bg-surface"} >
+                <Bleed marginBlockEnd="800">
+                  <InlineStack align="end"><Badge tone="info">+15 days free trial</Badge> </InlineStack>
+                </Bleed>
+              
                 <Box padding="400">
                   <Text as="h1" variant="headingMd" fontWeight="bold">
                     {plan_item.title} 

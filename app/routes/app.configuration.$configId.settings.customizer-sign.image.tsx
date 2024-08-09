@@ -3,8 +3,10 @@ import { BlurSvg } from "~/components/svgs/BlurSvg";
 import { SharpenSvg } from "~/components/svgs/SharpenSvg";
 import { EmbossSvg } from "~/components/svgs/EmbossSvg";
 import {
+  Bleed,
   BlockStack,
   Box,
+  Button,
   Grid,
   InlineError,
   InlineStack,
@@ -34,6 +36,10 @@ import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
 import { TextColorField } from "~/components/inputs/TextColorField";
 import { FileInput } from "~/components/inputs/FileInput";
 import { PRICING_PLANS } from "~/utils/pricing";
+import { CheckSpan } from "~/components/inputs/CheckSpan";
+import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
+import { FileUploader } from "./app.upload";
+import { DeleteIcon } from "@shopify/polaris-icons";
 
 const settingParams: [string, string] = ["customizerSign", "images"];
 const formSchema = z.object({
@@ -67,7 +73,7 @@ const formSchema = z.object({
     enableSepia:z.boolean(),
     enableSharpen:z.boolean(),
   })),
-  
+  scenes: z.any().transform(jsonTransform).pipe(z.string().array()),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -128,7 +134,8 @@ export default function ConfigSettingsGeneral() {
          "enableSepia":true,
          "enableSharpen":true
       },
-      ...((settingData?.enableDownloadImage) ? settingData : {})
+      "scenes": [],
+      ...((settingData?.scenes) ? settingData : {})
     },
   );
 
@@ -147,7 +154,8 @@ export default function ConfigSettingsGeneral() {
       colors: JSON.stringify(formData.colors),
       fileUploadScript: JSON.stringify(formData.fileUploadScript),
       enableClipart: JSON.stringify(formData.enableClipart),
-      filter: JSON.stringify(formData.filter)
+      filter: JSON.stringify(formData.filter),
+      scenes: JSON.stringify(formData.scenes)
     };
 
     submit(data, { method: "POST" });
@@ -185,6 +193,26 @@ export default function ConfigSettingsGeneral() {
       formData.colors.splice(index, 1);
       setFormData({ ...formData });
     };
+  
+  const handleSceneDelete = (scene: string) => {
+      
+     setFormData({
+      ...formData,
+       scenes: formData.scenes.filter((s: string) => s !== scene)
+     })
+  }
+
+  const handleSceneChange = (values: string[]) => {
+
+    setFormData({
+      ...formData,
+      scenes: values
+    });
+
+    console.log(formData);
+  }
+  
+  
 
 
 
@@ -447,6 +475,35 @@ export default function ConfigSettingsGeneral() {
                   </BlockStack>
               
                 </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <Text as="h6" fontWeight="bold" variant="bodyMd"> Scenes for configution preview</Text>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <Grid gap={{ lg: "30px" }}>
+                    { formData.scenes?.map((scene: string) => (
+                      
+                      <Grid.Cell columnSpan={{ xs: 3, sm: 3, md: 2, lg: 2, xl: 2 }}>
+                        <ClipartItem imgSrc={scene}  onDelete={()=>handleSceneDelete(scene)}/>
+                      </Grid.Cell>
+                    ))
+                        
+                    }
+                  
+                  </Grid>
+
+                </Grid.Cell>
+                  <Grid.Cell>
+                  <Box width="300px">
+                
+                  </Box>
+                  <FileUploader
+                    multiple={true}
+            type="image"
+            fileData={formData.scenes}
+            setFilesData={handleSceneChange}
+            title="Uplaod image file"
+          >  <BiAddBtn title="Add new Scene image"  /></FileUploader>
+                </Grid.Cell>
               </Grid>
             </Box>
           </BoxBackground>
@@ -465,5 +522,43 @@ export default function ConfigSettingsGeneral() {
     </>
   );
 }
+
+
+export const ClipartItem = ({
+  imgSrc,
+  onDelete,
+}: {
+  imgSrc: string;
+  onDelete:Function;
+}) => {
+  return (
+    <BlockStack>
+      <Bleed marginBlockEnd="1000">
+        <Box paddingInline="200">
+          <InlineStack gap="200" align="end">
+          <Button icon={DeleteIcon} tone="critical" onClick={() => onDelete()}/>
+                 
+                </InlineStack>
+        </Box>
+            </Bleed>
+    <SpacingBackground backgroundColor="#FFFFFF" border="1px  solid #E8E8E8" borderRadius="5px" height="110px" width="auto">
+      <div
+      
+        style={{  margin:"5px" }}
+      >
+        <img 
+          src={imgSrc}
+          alt={""}
+          style={{ height: "100px", width : "100%" }}
+        />
+        
+     
+          
+       
+      </div>
+    </SpacingBackground>
+    </BlockStack>
+  );
+};
 
 

@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 </head>
 <body>
+    <script>
+        var asoAdminConfig = "admin";
+
+    </script>
     <div id="app" class="aso-app" >
 
     </div>
@@ -65,11 +69,12 @@
           display: none;
         }
       
-        .aso-app .aso-advanceModel-img{
+        .aso-app .aso-advanceModel-img,.aso-app img.aso-w-auto{
           width: -webkit-fill-available;
           width: -moz-available; /* For Firefox */
           width: fill-available;
         }
+      
       
         .aso-app .aso-inputImage {
           /* aso-text-md  */   
@@ -78,6 +83,37 @@
           border-radius: 9999px !important;
           cursor: pointer !important;
         }
+
+        #aso-configurator-loader .skeleton-loader:empty {
+  
+          display: block;
+          background: linear-gradient(
+              to right,
+              rgba(255, 255, 255, 0),
+              rgba(255, 255, 255, 0.5) 50%,
+              rgba(255, 255, 255, 0) 80%
+            ),
+            lightgray;
+          background-repeat: repeat-y;
+          background-size: 50px 500px;
+          background-position: 0 0;
+          animation: shine 1s infinite;
+          
+        }
+        
+        @keyframes shine {
+          to {
+            background-position: 100% 0;
+          }
+        
+          
+        }
+        
+        
+        #aso-configurator-loader{
+          width: 100%;
+        }
+        
       
       
       
@@ -86,7 +122,6 @@
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script src="/assets-preview/shopify.js"></script>
     <script src="/assets-preview/fabric.min.js"></script>
-    <script src="/assets-preview/editor.script.js"></script>
-    <script src="/assets-preview/index.js"></script>
+    <script type="module" crossorigin  src="/assets-preview/index.js"></script>
 </body>
 </html>

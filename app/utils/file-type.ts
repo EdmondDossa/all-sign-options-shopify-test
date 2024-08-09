@@ -7,7 +7,7 @@ const fileExtensions = {
   };
  export function getFileType(filename: string) {
     let part = filename.split('.');
-    let ext = `.${part.length > 1 ? part.reverse()[0] : ""}`.toLowerCase();
+    let ext = `.${part.pop()}`.toLowerCase();
     
    
   

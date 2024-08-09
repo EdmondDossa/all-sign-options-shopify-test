@@ -74,13 +74,13 @@ import {
 
             {variantRecap.recaps.sign.border?.value?.face1 && <div style={optionDiv}>
               <Text style={bold}>{variantRecap.recaps.sign.border?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
-              <Text style={paragraph}> {variantRecap.recaps.sign.border?.value?.face1?.type}, {variantRecap.recaps.sign.border.value?.face1?.color} </Text>
+              <Text style={paragraph}> {variantRecap.recaps.sign.border?.value?.face1?.type}, {variantRecap.recaps.sign.border.value?.face1?.codeHex} </Text>
             </div>}
 
 
             {variantRecap.recaps.sign.border?.value?.face2 && <div style={optionDiv}>
               <Text style={bold}>{variantRecap.recaps.sign.border?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
-              <Text style={paragraph}> {variantRecap.recaps.sign.border?.value?.face2?.type}, {variantRecap.recaps.sign.border.value?.face2?.color} </Text>
+              <Text style={paragraph}> {variantRecap.recaps.sign.border?.value?.face2?.type}, {variantRecap.recaps.sign.border.value?.face2?.codeHex} </Text>
             </div>}
 
             { !variantRecap.recaps.sign.color.value?.face1 && <div style={optionDiv}>

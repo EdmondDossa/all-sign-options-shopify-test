@@ -31,7 +31,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { Modal, TitleBar } from "@shopify/app-bridge-react";
 import { FileIcon, TextFontIcon, PlayCircleIcon , SearchIcon} from "@shopify/polaris-icons";
 import { useFetcher } from "@remix-run/react";
-import { fileUrl } from "~/utils/fileUrl";
+import { fileUrl, getShopPath } from "~/utils/fileUrl";
 import { truncateText } from "~/utils/truncate-text";
 
 const fileExtensions = {
@@ -61,7 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
           return false;
         },
         // Store the images in the public/img folder
-        directory: "./public/uploads",
+        directory: `./public/uploads/${getShopPath(session.id)}/files`,
         // By default `unstable_createFileUploadHandler` add a number to the file
         // names if there's another with the same name, by disabling it we replace
         // the old file
@@ -81,7 +81,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   let returnFiles = files.map((file) => ({
     name: file.name,
-    url: `https://${shop}/apps/aso-proxy/uploads/${file.name}`,
+    url: `https://${shop}/apps/aso-proxy/uploads/${getShopPath(session.id)}/files/${file.name}`,
     createdAt: Date.now(),
   }));
 
@@ -115,7 +115,7 @@ export async function action({ request }: ActionFunctionArgs) {
     console.log("upload ", upload.files);
   }
 
-  console.log("file file is file ", files);
+
   return json({
     files: returnFiles,
   });

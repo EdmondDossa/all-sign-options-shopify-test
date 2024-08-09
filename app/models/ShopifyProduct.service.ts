@@ -6,6 +6,7 @@ export class ShopifyProductService {
     name: string,
     description: string,
     image: string,
+    optionName?: string
   ) {
     try {
       const response = await admin.graphql(
@@ -36,11 +37,12 @@ export class ShopifyProductService {
               title: name,
               descriptionHtml: description,
               status: "ACTIVE",
-
+              productType: "all-signs-options-product",
+              
               metafields: [
                 {
                   description: "ASO configuration  ID",
-                  key: "asoConfigurationId",
+                  key: "asoConfigurationIdItem",
                   namespace: "allSignsOptionsAsoAso",
                   type: "number_integer",
                   value: `${configurationId}`,
@@ -58,7 +60,6 @@ export class ShopifyProductService {
         },
       );
       const responseJson = await response.json();
-      console.log("responseJson", responseJson);
       return responseJson.data?.productCreate?.product;
     } catch (error) {
       console.log("error creating  product", error);
@@ -183,7 +184,7 @@ export class ShopifyProductService {
               "inventoryPolicy": "CONTINUE",
               "mediaId": mediaID,
               "options": [
-                `${name} ${Math.random().toString(36).slice(-1)}`
+                `${name}`
               ],
               "position": 1,
               "price": `${price}`,
@@ -216,6 +217,69 @@ export class ShopifyProductService {
     
     } catch (error) {
       console.log("error creating  product", error);
+      return null  ;
+    }
+   }
+  
+   static async updateVariant(admin: any, id: string, name:string, price:number,  recaps?:any   ) {
+    try {
+
+      const response = await admin.graphql(
+        `#graphql
+        mutation updateProductVariantMetafields($input: ProductVariantInput!) {
+              productVariantUpdate(input: $input) {
+                product {
+                      id
+                      legacyResourceId
+                    }
+                    productVariant {
+                      id
+                      legacyResourceId
+                    }
+                userErrors {
+                  message
+                  field
+                }
+              }
+            }`,
+            {
+              variables: {
+                input: {
+                  "inventoryPolicy": "CONTINUE",
+                  "options": [
+                    `${name}`
+                  ],
+                  "position": 1,
+                  "price": `${price}`,
+                  "requiresComponents": false,
+                  "sku": "ASOPRREFERENCE",
+                  "metafields":[
+                    {
+                      key: "asoConfigurationRecap",
+                      namespace: "allSignsOptionsAsoAso",
+                      type: "json",
+                      value: JSON.stringify(recaps),
+                    }
+                  ],
+                  "id": id
+                }
+              },
+            },
+          );
+      
+      const responseJson = await response.json();
+
+      return (responseJson?.data?.productVariantUpdate?.productVariant) ?
+      (  {
+        variantID: responseJson.data.productVariantUpdate.productVariant.id,
+        variantId: responseJson.data.productVariantUpdate.productVariant.legacyResourceId,
+        productID: responseJson.data.productVariantUpdate.product?.id,
+        productId: responseJson.data.productVariantUpdate.product?.legacyResourceId
+      })
+      : null;
+    
+    } catch (error) {
+      console.log("error on  updating  product", error);
       return null  ;
     }
   }
@@ -346,5 +410,78 @@ export class ShopifyProductService {
 
       }
       
+    }
+  
+  
+    static async publish(admin: any, id: string) {
+      try {
+
+        const publicationId = await ShopifyProductService.getPublicationID(admin);
+
+        const response = await admin.graphql(
+                    `#graphql
+                    mutation publishablePublish($id: ID!, $input: [PublicationInput!]!) {
+                      publishablePublish(id: $id, input: $input) {
+                       
+                        shop {
+                          id
+                        }
+                        userErrors {
+                          field
+                          message
+                        }
+                      }
+                    }`,
+                    {
+                      variables: {
+                        "id": id,
+                        "input": {
+                          "publicationId": publicationId
+                        }
+                      },
+                    },
+                  );
+
+        const data = await response.json();
+        // console.log("data on publish", JSON.stringify(data));
+        return data?.data?.publishablePublish?.shop ? true : false;
+      } catch (error) {
+        console.log("error  on getting variant", error);
+      }
+    }
+
+  static async getPublicationID(admin: any) {
+      try {
+     
+
+        const response = await admin.graphql(
+          `#graphql
+          query publications {
+            publications(first: 5) {
+              edges {
+                node {
+                  id
+                  name
+                  supportsFuturePublishing
+                  app {
+                    id
+                    title
+                    description
+                    developerName
+                  }
+                }
+              }
+            }
+          }`,
+        );
+        
+        const data = await response.json();
+        
+       
+        return data.data.publications.edges.find((publication: any) => publication.node.name == "Online Store" || publication.node.supportsFuturePublishing).node.id;
+      } catch (error) {
+        console.log("error  on getting variant", error);
+        return null
+      }
     }
 }
