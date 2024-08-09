@@ -3,6 +3,8 @@ on:
   push:
     branches: [ "ops/ci-pipeline", "stage"  ]
   pull_request:
+    types:
+      - closed
     branches: [ "main", "stage" ]
 jobs:
   build-images:
@@ -54,7 +56,7 @@ jobs:
           DOCKER_BUILDKIT: 1
 
       - name: Tag and push Docker image (main)
-        if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'pull_request' && github.event.pull_request.merged && github.base_ref == 'main'
         run: |
           docker tag vertimcoders/all-signs-options:${{ env.VERSION }} vertimcoders/all-signs-options:latest
           docker tag vertimcoders/all-signs-options:latest vertimcoders/all-signs-options:latest
@@ -74,7 +76,7 @@ jobs:
           if [ "${{ github.event_name }}" == "push" ]; then
             BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            BRANCH_NAME="${{ github.head_ref }}"
+            BRANCH_NAME="${{ github.base_ref }}"
           else
             echo "Unsupported event: ${{ github.event_name }}"
             exit 1
