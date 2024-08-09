@@ -34,6 +34,8 @@ import { ShopifyProductService } from "~/models/ShopifyProduct.service";
 import { SelectProducField } from "~/components/inputs/SelectProductFied";
 import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { CustomTinymce } from "~/components/inputs/CustomTinymce";
+import prisma from "~/db.server";
+
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
