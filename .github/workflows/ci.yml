@@ -22,11 +22,7 @@ jobs:
 
       - name: Get version from package.json
         id: get_version
-        run: |
-          echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
-          VERSION=$(node -p "require('./package.json').version")
-          echo "VERSION=${VERSION}"
-          echo "::set-output name=version::${VERSION}"
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
       - name: Setup docker builder
         uses: docker/setup-buildx-action@v3
@@ -85,6 +81,21 @@ jobs:
           fi
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
 
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm install
+
+      - name: Get version from package.json
+        id: get_version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
       - name: Remote connexion && Start containers
         uses: appleboy/ssh-action@v1.0.3
         env:
@@ -93,7 +104,7 @@ jobs:
           PROJECT_NAME: ${{ github.repository }}
           PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
           SUBDIR: ${{ env.BRANCH_NAME }}
-          VERSION: ${{ needs.build-images.outputs.version }}
+          VERSION: ${{ env.VERSION }}
         with: 
           host: ${{ secrets.VERTIM_HOST }}
           port: ${{ secrets.SSH_PORT }}
@@ -104,7 +115,7 @@ jobs:
           script: |
             cd $PROJECT_DIR
             cd $SUBDIR 
-            sed -i 's@ASOIMGVERS@$VERSION@' .env
+            sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" .env || echo "APP_VERSION=$VERSION" >> .env
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
             docker-compose pull
             docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
