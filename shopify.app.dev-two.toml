@@ -2,13 +2,12 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://sl-himself-logistics-vid.trycloudflare.com"
+application_url = "https://uploaded-permit-dressing-socket.trycloudflare.com"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
-dev_store_url = "quickstart-5c91f330.myshopify.com"
-include_config_on_deploy = true
+dev_store_url = "local-aso-dev-two.myshopify.com"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -16,16 +15,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://sl-himself-logistics-vid.trycloudflare.com/auth/callback",
-  "https://sl-himself-logistics-vid.trycloudflare.com/auth/shopify/callback",
-  "https://sl-himself-logistics-vid.trycloudflare.com/api/auth/callback"
+  "https://uploaded-permit-dressing-socket.trycloudflare.com/auth/callback",
+  "https://uploaded-permit-dressing-socket.trycloudflare.com/auth/shopify/callback",
+  "https://uploaded-permit-dressing-socket.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://sl-himself-logistics-vid.trycloudflare.com"
+url = "https://uploaded-permit-dressing-socket.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
