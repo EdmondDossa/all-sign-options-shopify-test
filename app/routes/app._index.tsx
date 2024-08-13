@@ -81,8 +81,8 @@ export default function Index() {
                       </Text>
 
                       <Text as="p" variant="bodyMd">
-                        Thank you for installing the ASO configurator for
-                        Woocommerce! Everything in ASO is streamlined to make
+                        Thank you for installing the ASO configurator 
+                        ! Everything in ASO is streamlined to make
                         your custom sign selling experience as simple and
                         intuitive as possible for you and your customers. We
                         hope you'll turn it into a powerful marketing asset that
