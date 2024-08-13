@@ -2,6 +2,8 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import ConfigurationService from "~/models/Configuration.service";
 import { authenticate } from "~/shopify.server";
 import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
+import prisma from "~/db.server";
+
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
@@ -12,9 +14,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
 
     if (!admin || !session) {
-         session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
+        try {
+            session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
         if (!session) {
           return json({ error: "Session not found" });
+        } 
+        }catch (error) {
+          return json({ error: "Session not found" , allerros: error });
         }
     }
 

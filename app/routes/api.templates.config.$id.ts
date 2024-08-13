@@ -8,6 +8,8 @@ import { z } from "zod";
 import { jFlashMessage } from "~/utils/message-flash";
 import { jsonTransform } from "~/utils/transfomerZod";
 import { replaceUploadsAddShopUrl } from "~/utils/fileUrl";
+import prisma from "~/db.server";
+
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {

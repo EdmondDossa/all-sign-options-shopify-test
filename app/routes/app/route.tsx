@@ -16,6 +16,7 @@ import SettingService from "~/models/Setting.service";
 import { config } from "process";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import SessionService from "~/models/Session.service";
+import { version } from "package.json";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "stylesheet", href: appStyle }];
 
@@ -189,7 +190,7 @@ const HeaderTopMenu = () => {
     
     </div>
     <div className="version-style">
-      V1.0
+      V{version}
     </div>
   </div>);
 }
