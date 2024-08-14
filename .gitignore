@@ -11,6 +11,8 @@ node_modules
 /prisma/dev.sqlite-journal
 database.sqlite
 
+shopify.app.dev-two.toml
 .env
+.env.main
 package-lock.json
 yarn.lock
