@@ -220,7 +220,7 @@ export const EditCategoryModal = ({onSubmit,category, open,onClose}:{onSubmit:Fu
                     </BlockStack>
                 </Box>
               
-                <TitleBar title={formData.id?'Update category':'Create new template'}>
+                <TitleBar title={formData.id?'Update category':'Create new category'}>
                     <button variant="primary" tone="default" onClick={() => {
                         handleSubmit()
                     }}> {formData.id?'Save':'Create'} </button>

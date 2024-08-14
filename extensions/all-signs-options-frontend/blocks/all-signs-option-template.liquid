@@ -175,9 +175,12 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
     // Remplacer le contenu de #asoTemplate par le nouveau contenu
-    templateDiv.innerHTML = newContainer.innerHTML;
-    templateUl.innerHTML = newContainerUl.innerHTML; 
+    if(newContainer.innerHTML){
+      templateDiv.innerHTML = newContainer.innerHTML;
+      templateUl.innerHTML = newContainerUl.innerHTML; 
+    }
 
+    let msssd ="";
 
 
   
