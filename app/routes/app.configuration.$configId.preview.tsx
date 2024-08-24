@@ -37,7 +37,7 @@ export default function Preview() {
         id="my-modal"
         open={true}
         variant="max"
-        onHide={() => navigate(`../..`)}
+        onHide={() => navigate(-1)}
       >
         <iframe
           name={JSON.stringify({

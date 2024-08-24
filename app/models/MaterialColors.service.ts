@@ -26,7 +26,7 @@ export default class MaterialColorService {
     materialId: number,
     color: ConfigColor,
   ): Promise<ConfigColor[] | null> {
-    color.isDefault = false;
+    color.isDefault = color?.isDefault ? true: false;
 
     try {
       let configuration: ConfigurationType =

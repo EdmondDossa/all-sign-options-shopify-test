@@ -34,6 +34,8 @@ import { SearchIcon } from "@shopify/polaris-icons";
 import { BackBtn } from "~/components/buttons/BackBtn";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import FontService from "~/models/Font.service";
+import { configFilter } from "~/utils/config-filter";
+import { PRICING_PLANS, getPlan } from "~/utils/pricing";
 
 export default function ConfigurationDemo() {
   const [includeDemoData, setIncludeDemoData] = useState(false);
@@ -103,7 +105,10 @@ const formSchema = z.object({
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session, admin, billing } = await authenticate.admin(request);
+  const plan =  await  getPlan(billing);
+
+
 
   const formData = await request.formData();
 
@@ -141,10 +146,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       id,
       session.id,
     );
+    
+    let configData = configurationDemoData[parseInt(demoId)].data;
+    
+    if(plan == PRICING_PLANS.STARTER) {
+      configData = configFilter(configurationDemoData[parseInt(demoId)])?.data;
+    }
+
     configuration.data = replaceUploadsPath(
-      configurationDemoData[parseInt(demoId)].data,
+      configData
+      ,
       `https://${session.shop}/apps/aso-proxy/aso_default_files/`,
     );
+
     await ConfigurationService.updateConfiguration(configuration, session.id);
 
     return redirect(

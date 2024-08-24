@@ -41,7 +41,7 @@ export const FileInput = ({
             type={type}
             fileData={[path]}
             setFilesData={handlePath}
-            title="Uplaod image file"
+            title={title}
           >
             <Button
               icon={uploadIcon}

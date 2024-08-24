@@ -59,7 +59,7 @@ export default function MaterialColorCreate() {
           colors: [
             {
               additionalPrice: 0,
-              isDefault: false,
+              isDefault: (!colors || colors.length === 0 ) ? true : false,
               name: "",
               textColor: {
                 active: false,
@@ -78,7 +78,7 @@ export default function MaterialColorCreate() {
         },
   );
 
-  console.log("formData color", actionData);
+
 
   const handleAddItem = () => {
     if (!formData.colors) {
@@ -117,6 +117,12 @@ export default function MaterialColorCreate() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    formData.colors = formData.colors?.map((curr, index) => {
+      if ((!colors || colors.length === 0 ) && index === 0) {
+        curr.isDefault = true;
+      }
+      return curr;
+    })
     submit({ colors: JSON.stringify(formData.colors) }, { method: "POST" });
   };
 

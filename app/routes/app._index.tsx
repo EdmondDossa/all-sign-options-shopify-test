@@ -4,11 +4,14 @@ import {
   Banner,
   BlockStack,
   Box,
+  ExceptionList,
   Grid,
   Link,
+  List,
   Page,
   Text,
 } from "@shopify/polaris";
+import { LinksConfirmBtn } from "~/components/buttons/LinksConfirmBtn";
 import ConceptSharingIcon from "~/components/icons/ConceptSharingIcon";
 import ConfigurationBlackIcon from "~/components/icons/ConfigurationBlackIcon";
 
@@ -16,6 +19,9 @@ import SupportAgentIcon from "~/components/icons/SupportAgentIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { ShopifyShopService } from "~/models/ShopifyShop.service";
 import { authenticate } from "~/shopify.server";
+import {
+  AlertCircleIcon
+} from '@shopify/polaris-icons';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -49,16 +55,70 @@ export default function Index() {
             
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
             <Banner>
-            Click{" "}
-            <Link target="_blank" url={configurationUrl}>here to install configuration screen</Link>{" "}  to your online store
+                Click    {" "} <LinksConfirmBtn
+                  url={configurationUrl}
+                  modalTitle="Configuration Design Screen Block"
+                  title={"here to install configuration screen"}>
+                      <ExceptionList
+                        
+                        items={[
+                          {
+                            icon: AlertCircleIcon,
+                           
+                            description:
+                              `Note that in the online store, the configuration design screen is still disabled
+                              if it doesn't have any product assigned to it, either by default or dynamically,
+                               such as on the product detail page.
+                              
+                              `,
+                          
+                          },
+                        ]}
+                   />
+               
+                    <Text as="h6" variant="bodyMd" fontWeight="bold">
+                      Block Embed Instructions In Theme Editor
+                    </Text>
+                      <List type="bullet">
+                        <List.Item>Select a product assigned to a configuration in the block settings. </List.Item>
+                        <List.Item>Save the theme edition</List.Item>
+                      </List>
+                </LinksConfirmBtn> {" "}
+             in your online store
           
           </Banner>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
             <Banner>
             Click{" "}
-         
-            <Link target="_blank" url={templateUrl}> here to add template screen </Link>{" "}
+
+            {" "} <LinksConfirmBtn
+                  url={templateUrl}
+                  modalTitle="Templates List Block"
+                  title={"here to add template screen"}>
+               <ExceptionList
+                        
+                        items={[
+                          {
+                            icon: AlertCircleIcon,
+                           
+                            description:
+                              `Note that in the online store, this block will show all available templates
+                              but if it doesn't have any template, it will be empty.
+                              `,
+                          
+                          },
+                        ]}
+                   />
+               
+                    <Text as="h6" variant="bodyMd" fontWeight="bold">
+                    Block Embed Instructions In Theme Editor
+                    </Text>
+                      <List type="bullet">
+                        <List.Item>Select the page that contains the design configuration screen  block on the block setting.</List.Item>
+                        <List.Item>Save the theme edition</List.Item>
+                      </List>
+                </LinksConfirmBtn> {" "}
             to your online store
           </Banner>
               </Grid.Cell>

@@ -56,23 +56,30 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       optionName += `${size?.value?.thickness?.label} ${size?.value?.thickness.value}, `
     }
 
-    optionName += `${data.option.recaps.sign.shape?.label} ${data.option.recaps.sign.shape?.value||''}, `
-    optionName += `${data.option.recaps.sign.fixingMethod?.label} ${data.option.recaps.sign.fixingMethod?.value||''}, `
+  optionName += `${data.option.recaps.sign?.shape?.label} ${data.option.recaps.sign?.shape?.value || ''}, `
+  
+  if (data.option.recaps?.sign?.fixingMethod?.label) {
+    optionName += `${data.option.recaps.sign?.fixingMethod?.label} ${data.option.recaps.sign?.fixingMethod?.value || ''}, `
+  }
   if (data.option.recaps?.faces?.face1) {
       optionName += `${data.option.recaps?.faces?.face1} `;
-      optionName += `${data.option.recaps.sign.color?.label}  ${data.option.recaps.sign.color.value?.face1?.name},`
-      optionName += `${data.option.recaps.sign.border?.label} ${data.option.recaps.sign.border?.value?.face1?.type} `
-      optionName += `${data.option.recaps.sign.border.value?.face1?.codeHex || ""}`
+      optionName += `${data.option.recaps.sign?.color?.label}  ${data.option.recaps.sign?.color.value?.face1?.name},`
+      optionName += `${data.option.recaps.sign?.border?.label} ${data.option.recaps.sign?.border?.value?.face1?.type} `
+      optionName += `${data.option.recaps.sign?.border?.value?.face1?.codeHex || ""}`
 
       optionName += `, ${data.option.recaps?.faces?.face2} `;
-      optionName += `${data.option.recaps.sign.color?.label} ${data.option.recaps.sign.color.value?.face2?.name}, `
-      optionName += `${data.option.recaps.sign.border?.label} ${data.option.recaps.sign.border?.value?.face2?.type} `
-      optionName += `${data.option.recaps.sign.border.value?.face2?.codeHex || ""}`
+      optionName += `${data.option.recaps.sign?.color?.label} ${data.option.recaps.sign?.color?.value?.face2?.name}, `
+      optionName += `${data.option.recaps.sign?.border?.label} ${data.option.recaps.sign?.border?.value?.face2?.type} `
+      optionName += `${data.option.recaps.sign?.border?.value?.face2?.codeHex || ""}`
       
     }
     if (!data.option.recaps?.faces?.face1) {
-      optionName += ` ${data.option.recaps.sign.color?.label} ${data.option.recaps.sign.color?.value.name} ${data.option.recaps.sign.color?.value.codeHex||''}, `
-      optionName += `${data.option.recaps.sign.border?.label} ${data.option.recaps.sign.border?.value?.type||''} ${data.option.recaps.sign.border.value?.codeHex}`
+      optionName += ` ${data.option.recaps.sign?.color?.label} ${data.option.recaps.sign?.color?.value.name} ${data.option.recaps.sign?.color?.value?.codeHex || ''}, `
+      
+      if (data.option.recaps.sign?.border?.value) {
+        
+        optionName += `${data.option.recaps.sign?.border?.label} ${data.option.recaps.sign?.border?.value?.type||''} ${data.option.recaps.sign?.border?.value?.codeHex}`
+      }
     }
     let designImage = "";
     if(data?.option?.recaps?.faces?.face1){
