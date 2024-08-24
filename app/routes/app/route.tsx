@@ -78,7 +78,7 @@ export default function App() {
         </div>
         <div className="sidebar-sticky" >
           <div style={{height: '100%'}} >
-          <div  style={{position: "fixed", top:0}}>
+          <div  style={{position: "fixed", top:0, height:"4000px"}}>
             <Sidebar/>
           </div>
           </div>
