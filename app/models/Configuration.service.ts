@@ -2,7 +2,7 @@ import prisma from "~/db.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
 
 const initialData = {
-  settings:  {
+  settings: {
     generals: {
       mobile: {
         showNavigatorMenu: "off",
@@ -29,16 +29,16 @@ const initialData = {
       },
     },
     themeColors: {
-      skin: "couffo",
+      skin: "default",
       colors: {
         bars: {
           help: {
             textColor: "#ffffff",
-            borderColor: "#0374e3",
+            borderColor: "#016464",
             hoverTextColor: "#ffffff",
-            backgroundColor: "#0374e3",
-            hoverBorderColor: "#025db7",
-            hoverBackgroundColor: "#025db7",
+            backgroundColor: "#016464",
+            hoverBorderColor: "#016464",
+            hoverBackgroundColor: "#016464",
           },
           price: {
             textColor: "#000000",
@@ -64,7 +64,7 @@ const initialData = {
           preview: {
             textColor: "#000000",
             borderColor: "#ffffff",
-            hoverTextColor: "#0374e3",
+            hoverTextColor: "#016464",
             backgroundColor: "#ffffff",
             hoverBorderColor: "#f4f8fa",
             hoverBackgroundColor: "#f4f8fa",
@@ -72,14 +72,14 @@ const initialData = {
           undoRedo: {
             textColor: "#000000",
             borderColor: "#ffffff",
-            hoverTextColor: "#0374e3",
+            hoverTextColor: "#016464",
             backgroundColor: "#ffffff",
             hoverBorderColor: "#f4f8fa",
             disabledTextColor: "#c3cfd6",
             hoverBackgroundColor: "#f4f8fa",
             disabledBackgroundColor: "#ffffff",
           },
-          titleColor: "#14213d",
+          titleColor: "#000000",
           backgroundColor: "#ffffff",
         },
         canvas: {
@@ -94,17 +94,17 @@ const initialData = {
           buttonEditTextColor: "#ffffff",
           optionHoverTextColor: "#000000",
           buttonFinishTextColor: "#14213d",
-          headerBackgroundColor: "#3590ea",
+          headerBackgroundColor: "#058585",
           optionHoverBorderColor: "#eef3f6",
           buttonAddToCartTextColor: "#14213d",
           buttonEditHoverTextColor: "#f4f8fa",
-          buttonEditBackgroundColor: "#0374e3",
+          buttonEditBackgroundColor: "#016464",
           buttonFinishHoverTextColor: "#313e52",
           optionHoverBackgroundColor: "#eef3f6",
           buttonFinishBackgroundColor: "#febd52",
           buttonAddToCartHoverTextColor: "#313e52",
           buttonAddToCartBackgroundColor: "#febd52",
-          buttonEditHoverBackgroundColor: "#025db7",
+          buttonEditHoverBackgroundColor: "#058585",
           buttonFinishHoverBackgroundColor: "#fcac29",
           buttonAddToCartHoverBackgroundColor: "#fcac29",
         },
@@ -141,23 +141,24 @@ const initialData = {
               option: {
                 textColor: "#000000",
                 hoverTextColor: "#000000",
-                activeTextColor: "#0374e3",
+                activeTextColor: "#016464",
                 hoverBackgroundColor: "#eef3f6",
               },
               buttons: {
                 textColor: "#ffffff",
                 hoverTextColor: "#ffffff",
-                backgroundColor: "#0374e3",
-                hoverBackgroundColor: "#3590ea",
+                backgroundColor: "#016464",
+                hoverBackgroundColor: "#028383",
               },
-              textColor: "#14213d",
+              textColor: "#000000",
               backgroundColor: "#ffffff",
               headerTextColor: "#ffffff",
-              headerBackgroundColor: "#0374e3",
+              headerBackgroundColor: "#016464",
             },
             buttons: {
               textColor: "#000000",
-              hoverTextColor: "#000000",
+              hoverTextColor: "#016464",
+              hovertextColor: "#016464",
               backgroundColor: "#ffffff",
               hoverBackgroundColor: "#ffffff",
             },
@@ -182,6 +183,42 @@ const initialData = {
             name: "White",
             codeHex: "#FFFFFF",
           },
+          {
+            name: "Blue",
+            codeHex: "#004f86",
+          },
+          {
+            name: "Red",
+            codeHex: "#c4271d",
+          },
+          {
+            name: "Pink",
+            codeHex: "#eb3f77",
+          },
+          {
+            name: "Green",
+            codeHex: "#009251",
+          },
+          {
+            name: "Yellow",
+            codeHex: "#fee900",
+          },
+          {
+            name: "Gray",
+            codeHex: "#4f575b",
+          },
+          {
+            name: "Orange",
+            codeHex: "#e15616",
+          },
+          {
+            name: "Purple",
+            codeHex: "#554585",
+          },
+          {
+            name: "Brown",
+            codeHex: "#523d2a",
+          },
         ],
         enableBold: true,
         colorsLabel: "Text  Colors",
@@ -196,7 +233,7 @@ const initialData = {
           active: true,
           defaultFontSize: 16,
           maximumFontSize: 100,
-          minimumFontSize: 12,
+          minimumFontSize: 4,
         },
         enableOverline: true,
         enableUnderline: true,
@@ -219,16 +256,18 @@ const initialData = {
         colorsPrevImg: "",
         enableClipart: {
           active: true,
-          selectClipartGroups: [],
+          selectClipartGroups: [1],
         },
         fileUploadScript: {
           uploadMaxWidth: 100,
           uploadMinWidth: 100,
           customWithGraphical: false,
-          allowedUploadsExtentions: ["png", "jpeg", "webp", "gif", "svg"],
+          allowedUploadsExtentions: ["png"],
         },
         enableCustomColor: true,
         enableUploadImage: true,
+        enableDownloadImage: true,
+        scenes:[]
       },
       signPart: {
         doublePart: {
@@ -248,9 +287,11 @@ const initialData = {
     },
     languageImages: {
       images: {
-        icon: "",
+        redoIcon: "",
+        undoIcon: "",
         resetAllIcon: "",
         cancelAnAction: "",
+        changeIconHelp: "",
         changeIconSize: "",
         changeIconText: "",
         changeIconColor: "",
@@ -261,8 +302,8 @@ const initialData = {
         changeIconImport: "",
         changeIconPreview: "",
         changeIconProduct: "",
+        changeIconDownload: "",
         changeIconMaterial: "",
-        changeIconSizeMenu: "",
         changeIconSaveProject: "",
         changeIconFixingMethod: "",
         changeIconShareSideBar: "",
@@ -311,6 +352,7 @@ const initialData = {
       uploadDesign: {
         link: "",
         activate: false,
+        helpContent: "",
         phraseSubmitCustom: "Take a customization",
       },
     },

@@ -169,7 +169,7 @@ export const FileUploader = ({
     );
     setFiles(newFiles);
 
-  }, [fileFetcher, fileType]);
+  }, [fileFetcher.state, fileType]);
 
   useEffect(() => {
     setFiles(images.length > 0 ? [...images, ...files] : files);
@@ -225,7 +225,12 @@ export const FileUploader = ({
     shopify.modal.hide(id);
   };
 
-  const handleFileType = useCallback((value: any) => setFileType(value), []);
+  const handleFileType = useCallback((value: any) =>
+  {
+    type && type=="all" && setFileType(value)
+  }
+    
+    , []);
 
   if (searchTag) {
     files = files.filter((file) => file.name.includes(searchTag));
@@ -317,15 +322,15 @@ export const FileUploader = ({
                   Bibliothèque de la boutique
                 </Text>
                 <Box>
-                  <Listbox
+                  <Listbox 
                     onSelect={handleFileType}
                     accessibilityLabel="Basic Listbox example"
                   >
-                    <Listbox.Option value="all">Tous</Listbox.Option>
-                    <Listbox.Option value="image">Image</Listbox.Option>
-                    <Listbox.Option value="video">Video</Listbox.Option>
-                    <Listbox.Option value="icon">Icon</Listbox.Option>
-                    <Listbox.Option value="font">Font</Listbox.Option>
+                    <Listbox.Option disabled={type && type != "all" } selected={type == "all"} value="all">Tous</Listbox.Option>
+                    <Listbox.Option disabled={type && type != "all" && type != "image"} selected={type == "image"}  value="image">Image</Listbox.Option>
+                    <Listbox.Option disabled={type && type != "all" && type != "video"} selected={type == "video"} value="video">Video</Listbox.Option>
+                    <Listbox.Option disabled={type && type != "all" && type != "icon"} selected={type == "icon"}  value="icon">Icon</Listbox.Option>
+                    <Listbox.Option disabled={type && type != "all" && type != "font"} selected={type == "font"} value="font">Font</Listbox.Option>
                   </Listbox>
                 </Box>
               </BlockStack>

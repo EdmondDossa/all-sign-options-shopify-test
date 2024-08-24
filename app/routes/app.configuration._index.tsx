@@ -27,7 +27,6 @@ import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { authenticate } from "~/shopify.server";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import prisma from "~/db.server";
 import ConfigurationService from "~/models/Configuration.service";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { jFlashMessage } from "~/utils/message-flash";
@@ -93,7 +92,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function Configuration() {
   const submit = useSubmit();
   let { configurations } = useLoaderData<typeof loader>();
-  let { plan } = useOutletContext<{ plan: string }>()
+  let { plan } = useOutletContext<{ plan: string }>();
   
   if (plan == PRICING_PLANS.STARTER) {
     configurations = configurations?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)||[];

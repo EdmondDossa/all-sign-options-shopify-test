@@ -59,43 +59,43 @@ import {
               <Text style={paragraph}>{variantRecap.recaps.sign?.size?.value?.thickness.value}</Text>
             </div>
             <div style={optionDiv}>
-              <Text style={bold}>{variantRecap.recaps.sign.shape?.label} :</Text>
-              <Text style={paragraph}>  {variantRecap.recaps.sign.shape?.value}</Text>
+              <Text style={bold}>{variantRecap.recaps.sign?.shape?.label} :</Text>
+              <Text style={paragraph}>  {variantRecap.recaps.sign?.shape?.value}</Text>
             </div>
             <div style={optionDiv}>
-              <Text style={bold}>{variantRecap.recaps.sign.fixingMethod?.label} :</Text>
-              <Text style={paragraph}> {variantRecap.recaps.sign.fixingMethod?.value}</Text>
+              <Text style={bold}>{variantRecap.recaps.sign?.fixingMethod?.label} :</Text>
+              <Text style={paragraph}> {variantRecap.recaps.sign?.fixingMethod?.value}</Text>
             </div>
 
-       {!variantRecap.recaps.sign.border?.value?.face1 && <div style={optionDiv}>
-              <Text style={bold}>{variantRecap.recaps.sign.border?.label} : </Text>
-              <Text style={paragraph}>  {variantRecap.recaps.sign.border?.value?.type} {variantRecap.recaps.sign.border.value?.color}: {variantRecap.recaps.sign.border.value?.codeHex} </Text>
+       {!variantRecap.recaps.sign?.border?.value?.face1 && <div style={optionDiv}>
+              <Text style={bold}>{variantRecap.recaps.sign?.border?.label} : </Text>
+              <Text style={paragraph}>  {variantRecap.recaps.sign?.border?.value?.type} {variantRecap.recaps.sign?.border?.value?.color}: {variantRecap.recaps.sign?.border?.value?.codeHex} </Text>
             </div>}
 
-            {variantRecap.recaps.sign.border?.value?.face1 && <div style={optionDiv}>
-              <Text style={bold}>{variantRecap.recaps.sign.border?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
-              <Text style={paragraph}> {variantRecap.recaps.sign.border?.value?.face1?.type}, {variantRecap.recaps.sign.border.value?.face1?.codeHex} </Text>
+            {variantRecap.recaps.sign?.border?.value?.face1 && <div style={optionDiv}>
+              <Text style={bold}>{variantRecap.recaps.sign?.border?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
+              <Text style={paragraph}> {variantRecap.recaps.sign?.border?.value?.face1?.type}, {variantRecap.recaps.sign?.border?.value?.face1?.codeHex} </Text>
             </div>}
 
 
-            {variantRecap.recaps.sign.border?.value?.face2 && <div style={optionDiv}>
-              <Text style={bold}>{variantRecap.recaps.sign.border?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
-              <Text style={paragraph}> {variantRecap.recaps.sign.border?.value?.face2?.type}, {variantRecap.recaps.sign.border.value?.face2?.codeHex} </Text>
+            {variantRecap.recaps.sign?.border?.value?.face2 && <div style={optionDiv}>
+              <Text style={bold}>{variantRecap.recaps.sign?.border?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
+              <Text style={paragraph}> {variantRecap.recaps.sign?.border?.value?.face2?.type}, {variantRecap.recaps.sign?.border?.value?.face2?.codeHex} </Text>
             </div>}
 
-            { !variantRecap.recaps.sign.color.value?.face1 && <div style={optionDiv}>
-              <Text style={bold}>{variantRecap.recaps.sign.color?.label} : </Text>
-              <Text style={paragraph}> {variantRecap.recaps.sign.color.value?.name}</Text>
+            { !variantRecap.recaps.sign?.color?.value?.face1 && <div style={optionDiv}>
+              <Text style={bold}>{variantRecap.recaps.sign?.color?.label} : </Text>
+              <Text style={paragraph}> {variantRecap.recaps.sign?.color?.value?.name}</Text>
             </div>}
 
-            { variantRecap.recaps.sign.color.value?.face1 &&  <div style={optionDiv}>
-              <Text style={bold}>{variantRecap.recaps.sign.color?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
-              <Text style={paragraph}> {variantRecap.recaps.sign.color.value?.face1?.name}</Text>
+            { variantRecap.recaps.sign?.color?.value?.face1 &&  <div style={optionDiv}>
+              <Text style={bold}>{variantRecap.recaps.sign?.color?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
+              <Text style={paragraph}> {variantRecap.recaps.sign?.color?.value?.face1?.name}</Text>
             </div>}
 
-            { variantRecap.recaps.sign.color.value?.face2 &&  <div style={optionDiv}>
-              <Text style={bold}>{variantRecap.recaps.sign.color?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
-              <Text style={paragraph}> {variantRecap.recaps.sign.color.value?.face2?.name}</Text>
+            { variantRecap.recaps.sign?.color?.value?.face2 &&  <div style={optionDiv}>
+              <Text style={bold}>{variantRecap.recaps.sign?.color?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
+              <Text style={paragraph}> {variantRecap.recaps.sign?.color?.value?.face2?.name}</Text>
             </div>}
       
            {!variantRecap.recaps?.faces?.face1 && <div style={optionDiv}>

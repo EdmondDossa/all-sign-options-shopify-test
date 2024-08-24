@@ -7,8 +7,12 @@ var asoTemplateId = urlParams.get('aso-template-id');
 
 
 
-if(!asoConfigurationId){
-  asoConfigurationId = paramAsoConfigurationId || asoConfigurationId;
+if(asoTemplateId){
+  if(asoConfigurationId==undefined){
+    var asoConfigurationId = paramAsoConfigurationId;
+  }else{
+    asoConfigurationId = paramAsoConfigurationId;
+  }
 }
 async function getAsoConfiguration(configurationId) {
     
@@ -67,7 +71,13 @@ console.log("config id and  product dfg   kihhhg ", asoConfigurationId, asoProdu
 
 async function aso_confiurator_dataFunction(){
   const managesData = await getAsoManagesData();
-  const currentConfig = await getAsoConfiguration(asoConfigurationId);
+
+  let currentConfig = null;
+  if (asoConfigurationId ) {
+     currentConfig = await getAsoConfiguration(asoConfigurationId);
+  }else{
+     currentConfig = getDefaultConfig();
+  }
 
    //  to add  font and custom css to  page
    managesData.fonts.forEach(font => {
@@ -294,9 +304,9 @@ function setScrollColor_shopify(color) {
 
 function formatPrice_shopify(price) {
   let formattedPrice = parseFloat(
-    price + parseFloat(asoRegularPrice)
+    price + parseFloat(asoRegularPrice||0)
   ).toFixed(2);
- return `${asoPriceFormat}`.replace("{{amount}}", formattedPrice);
+ return `${asoPriceFormat||'{{amount}}'}`.replace("{{amount}}", formattedPrice);
 }
 
 
@@ -324,6 +334,387 @@ function  getRouteTemplate_shopify(){
   // }    
 
   return null;
+}
+
+
+function getDefaultConfig(){
+
+  return {
+    "id": 7,
+    "name": "My new config",
+    "description": "My new config",
+    "icon": "https://local-aso-dev-two.myshopify.com/apps/aso-proxy/uploads/offline_local-aso-dev-two/files/Metallic_Silver by ambersstock on DeviantArt-1724258743356.jpeg",
+    "popupImg": "",
+    "sessionId": "offline_local-aso-dev-two.myshopify.com",
+    "data": {
+        "settings": {
+            "generals": {
+                "mobile": {
+                    "showNavigatorMenu": "off",
+                    "showNavigationMenuFirst": "yes",
+                    "mobileSelectionOptionsDisplay": "horizontally"
+                },
+                "output": {
+                    "waterMark": "",
+                    "filesFormat": "png",
+                    "zipOutputFiles": {
+                        "active": true,
+                        "zipOutFolderPrefix": "aso_"
+                    },
+                    "designComposition": true
+                },
+                "product": {
+                    "designFromScratch": true,
+                    "redirectToCheckOutPage": false,
+                    "displayRecapsOnCheckout": false,
+                    "redirectAfterAddingToCart": true,
+                    "hideDesignButtonsOnShopPage": false,
+                    "hideAddToCartButtonOnShopPage": true,
+                    "hideAddToCartButtonOnDetailPage": true
+                }
+            },
+            "themeColors": {
+                "skin": "default",
+                "colors": {
+                    "bars": {
+                        "help": {
+                            "textColor": "#ffffff",
+                            "borderColor": "#016464",
+                            "hoverTextColor": "#ffffff",
+                            "backgroundColor": "#016464",
+                            "hoverBorderColor": "#016464",
+                            "hoverBackgroundColor": "#016464"
+                        },
+                        "price": {
+                            "textColor": "#000000",
+                            "textAfterColor": "#000000",
+                            "backgroundColor": "#ffffff",
+                            "textBeforeColor": "#000000"
+                        },
+                        "reset": {
+                            "textColor": "#000000",
+                            "borderColor": "#ffffff",
+                            "hoverTextColor": "#dd3232",
+                            "modalTextColor": "#000000",
+                            "backgroundColor": "#ffffff",
+                            "hoverBorderColor": "#f4f8fa",
+                            "hoverBackgroundColor": "#f4f8fa",
+                            "modalBackgroundColor": "#000000",
+                            "modalNoButtonTextColor": "#ffffff",
+                            "modalYesButtonTextColor": "#000000",
+                            "modalContainerBackground": "#ffffff",
+                            "modalNoButtonBackgroundColor": "#dc2626",
+                            "modalYesButtonBackgroundColor": "#f4f8fa"
+                        },
+                        "preview": {
+                            "textColor": "#000000",
+                            "borderColor": "#ffffff",
+                            "hoverTextColor": "#016464",
+                            "backgroundColor": "#ffffff",
+                            "hoverBorderColor": "#f4f8fa",
+                            "hoverBackgroundColor": "#f4f8fa"
+                        },
+                        "undoRedo": {
+                            "textColor": "#000000",
+                            "borderColor": "#ffffff",
+                            "hoverTextColor": "#016464",
+                            "backgroundColor": "#ffffff",
+                            "hoverBorderColor": "#f4f8fa",
+                            "disabledTextColor": "#c3cfd6",
+                            "hoverBackgroundColor": "#f4f8fa",
+                            "disabledBackgroundColor": "#ffffff"
+                        },
+                        "titleColor": "#000000",
+                        "backgroundColor": "#ffffff"
+                    },
+                    "canvas": {
+                        "borderColor": "#c3cfd6",
+                        "backgroundColor": "#f4f8fa"
+                    },
+                    "recaps": {
+                        "backgroundColor": "#ffffff",
+                        "headerTextColor": "#ffffff",
+                        "optionTextColor": "#000000",
+                        "optionBorderColor": "#eef3f6",
+                        "buttonEditTextColor": "#ffffff",
+                        "optionHoverTextColor": "#000000",
+                        "buttonFinishTextColor": "#14213d",
+                        "headerBackgroundColor": "#058585",
+                        "optionHoverBorderColor": "#eef3f6",
+                        "buttonAddToCartTextColor": "#14213d",
+                        "buttonEditHoverTextColor": "#f4f8fa",
+                        "buttonEditBackgroundColor": "#016464",
+                        "buttonFinishHoverTextColor": "#313e52",
+                        "optionHoverBackgroundColor": "#eef3f6",
+                        "buttonFinishBackgroundColor": "#febd52",
+                        "buttonAddToCartHoverTextColor": "#313e52",
+                        "buttonAddToCartBackgroundColor": "#febd52",
+                        "buttonEditHoverBackgroundColor": "#058585",
+                        "buttonFinishHoverBackgroundColor": "#fcac29",
+                        "buttonAddToCartHoverBackgroundColor": "#fcac29"
+                    },
+                    "objectsOptions": {
+                        "edit": {
+                            "textColor": "#000000",
+                            "buttonColor": "#ffffff",
+                            "hoverTextColor": "#ffffff",
+                            "hoverButtonColor": "#787878"
+                        },
+                        "clone": {
+                            "textColor": "#000000",
+                            "buttonColor": "#ffffff",
+                            "hoverTextColor": "#ffffff",
+                            "hoverButtonColor": "#787878"
+                        },
+                        "center": {
+                            "textColor": "#000000",
+                            "buttonColor": "#ffffff",
+                            "hoverTextColor": "#ffffff",
+                            "hoverButtonColor": "#787878"
+                        },
+                        "delete": {
+                            "textColor": "#dd3232",
+                            "buttonColor": "#ffffff",
+                            "hoverTextColor": "#dd3232",
+                            "hoverButtonColor": "#787878"
+                        },
+                        "backgroundColor": "#ffffff"
+                    },
+                    "optionsSideBar": {
+                        "options": {
+                            "modals": {
+                                "option": {
+                                    "textColor": "#000000",
+                                    "hoverTextColor": "#000000",
+                                    "activeTextColor": "#016464",
+                                    "hoverBackgroundColor": "#eef3f6"
+                                },
+                                "buttons": {
+                                    "textColor": "#ffffff",
+                                    "hoverTextColor": "#ffffff",
+                                    "backgroundColor": "#016464",
+                                    "hoverBackgroundColor": "#028383"
+                                },
+                                "textColor": "#000000",
+                                "backgroundColor": "#ffffff",
+                                "headerTextColor": "#ffffff",
+                                "headerBackgroundColor": "#016464"
+                            },
+                            "buttons": {
+                                "textColor": "#000000",
+                                "hoverTextColor": "#016464",
+                                "hovertextColor": "#016464",
+                                "backgroundColor": "#ffffff",
+                                "hoverBackgroundColor": "#ffffff"
+                            }
+                        },
+                        "backgroundColor": "#eef3f6",
+                        "scrollButtonsTextColor": "#ffffff",
+                        "scrollButtonsHoverTextColor": "#ffffff",
+                        "scrollButtonsBackgroundColor": "#4a4a4a",
+                        "scrollButtonsHoverBackgroundColor": "#74848d"
+                    }
+                },
+                "customCss": ""
+            },
+            "customizerSign": {
+                "text": {
+                    "colors": [
+                        {
+                            "name": "black",
+                            "codeHex": "#000000"
+                        },
+                        {
+                            "name": "White",
+                            "codeHex": "#FFFFFF"
+                        },
+                        {
+                            "name": "Blue",
+                            "codeHex": "#004f86"
+                        },
+                        {
+                            "name": "Red",
+                            "codeHex": "#c4271d"
+                        },
+                        {
+                            "name": "Pink",
+                            "codeHex": "#eb3f77"
+                        },
+                        {
+                            "name": "Green",
+                            "codeHex": "#009251"
+                        },
+                        {
+                            "name": "Yellow",
+                            "codeHex": "#fee900"
+                        },
+                        {
+                            "name": "Gray",
+                            "codeHex": "#4f575b"
+                        },
+                        {
+                            "name": "Orange",
+                            "codeHex": "#e15616"
+                        },
+                        {
+                            "name": "Purple",
+                            "codeHex": "#554585"
+                        },
+                        {
+                            "name": "Brown",
+                            "codeHex": "#523d2a"
+                        }
+                    ],
+                    "enableBold": true,
+                    "colorsLabel": "Text  Colors",
+                    "enableBorder": true,
+                    "enableItalic": true,
+                    "enableStrike": true,
+                    "colorsPrevImg": "",
+                    "enableOpacity": true,
+                    "selectedFonts": [],
+                    "enableCurvedUp": false,
+                    "enableFontSize": {
+                        "active": true,
+                        "defaultFontSize": 16,
+                        "maximumFontSize": 100,
+                        "minimumFontSize": 4
+                    },
+                    "enableOverline": true,
+                    "enableUnderline": true,
+                    "enableCurvedDown": false,
+                    "enableCustomColor": true,
+                    "enableTextAlignment": true
+                },
+                "images": {
+                    "colors": [],
+                    "filter": {
+                        "active": true,
+                        "enableBlur": true,
+                        "enableSepia": true,
+                        "enableEmbross": true,
+                        "enableOpacity": true,
+                        "enableSharpen": true,
+                        "enableGreyscale": false
+                    },
+                    "scenes": [],
+                    "colorsLabel": "Image Colors",
+                    "colorsPrevImg": "",
+                    "enableClipart": {
+                        "active": true,
+                        "selectClipartGroups": [
+                            1
+                        ]
+                    },
+                    "fileUploadScript": {
+                        "uploadMaxWidth": 100,
+                        "uploadMinWidth": 100,
+                        "customWithGraphical": false,
+                        "allowedUploadsExtentions": [
+                            "png"
+                        ]
+                    },
+                    "enableCustomColor": true,
+                    "enableUploadImage": true,
+                    "enableDownloadImage": true
+                },
+                "signPart": {
+                    "doublePart": {
+                        "label": "Switch Face",
+                        "part1": "Face A",
+                        "part2": "Face B",
+                        "active": false,
+                        "enableCopyDesignFromSide": true
+                    }
+                },
+                "customizerOptions": {
+                    "measurementUnit": "mm",
+                    "desktopColumnOrder": "right",
+                    "showHideMeasurements": "both",
+                    "decimalFormatMeasurements": "with-decimal"
+                }
+            },
+            "languageImages": {
+                "images": {
+                    "redoIcon": "",
+                    "undoIcon": "",
+                    "resetAllIcon": "",
+                    "cancelAnAction": "",
+                    "changeIconHelp": "",
+                    "changeIconSize": "",
+                    "changeIconText": "",
+                    "changeIconColor": "",
+                    "changeIconImage": "",
+                    "changeIconShape": "",
+                    "changeIconShare": "",
+                    "changeIconBorder": "",
+                    "changeIconImport": "",
+                    "changeIconPreview": "",
+                    "changeIconProduct": "",
+                    "changeIconDownload": "",
+                    "changeIconMaterial": "",
+                    "changeIconSaveProject": "",
+                    "changeIconFixingMethod": "",
+                    "changeIconShareSideBar": ""
+                },
+                "visualizer": {
+                    "textTop": "Top",
+                    "textHelp": "Help",
+                    "textLeft": "Left",
+                    "textSave": "Save",
+                    "textSize": "Size",
+                    "textAngle": "Angle",
+                    "textColor": "Color",
+                    "textImage": "Image",
+                    "textRight": "Right",
+                    "textShape": "Shape",
+                    "textShare": "Share",
+                    "textWidth": "Width",
+                    "thickness": "Thickness",
+                    "customSize": "Custom Size",
+                    "textBorder": "Border",
+                    "textBottom": "Bottom",
+                    "textHeight": "Height",
+                    "textImport": "Import",
+                    "textPreview": "Preview",
+                    "textProduct": "Product",
+                    "titleHeader": "Test  Signs: not available to  customers",
+                    "textDownload": "Download",
+                    "textMaterial": "Material",
+                    "textPosition": "Position",
+                    "textAddToCart": "Add To Cart",
+                    "textAfterPrice": "TVA Include",
+                    "textButtonBack": "Undo",
+                    "textButtonNext": "Redo",
+                    "textCanvasEdit": "Edit",
+                    "textOptionText": "Text",
+                    "textBeforePrice": "",
+                    "textCanvasClone": "Clone",
+                    "textButtonFinish": "Finish",
+                    "textCanvasDelete": "delete",
+                    "textButtonRefresh": "Restart all",
+                    "textCanvasCenterH": "centerH",
+                    "textCanvasCenterV": "centerV",
+                    "textFixingMethods": "Fixing Methods",
+                    "customSizeButtonDone": "Done"
+                },
+                "uploadDesign": {
+                    "link": "",
+                    "activate": false,
+                    "helpContent": "",
+                    "phraseSubmitCustom": "Take a customization"
+                }
+            }
+        },
+        "materials": [],
+        "additionalOptions": []
+    },
+    "product": {
+        "id": "gid://shopify/Product/9598653759805",
+        "title": "Gift Card"
+    },
+    "templates": []
+}
 }
 
 

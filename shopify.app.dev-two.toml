@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://cambodia-climate-quad-mouse.trycloudflare.com"
+application_url = "https://his-yorkshire-parcel-lakes.trycloudflare.com"
 embedded = true
 
 [build]
@@ -15,16 +15,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://cambodia-climate-quad-mouse.trycloudflare.com/auth/callback",
-  "https://cambodia-climate-quad-mouse.trycloudflare.com/auth/shopify/callback",
-  "https://cambodia-climate-quad-mouse.trycloudflare.com/api/auth/callback"
+  "https://his-yorkshire-parcel-lakes.trycloudflare.com/auth/callback",
+  "https://his-yorkshire-parcel-lakes.trycloudflare.com/auth/shopify/callback",
+  "https://his-yorkshire-parcel-lakes.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://cambodia-climate-quad-mouse.trycloudflare.com"
+url = "https://his-yorkshire-parcel-lakes.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

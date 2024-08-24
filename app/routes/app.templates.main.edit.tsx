@@ -1,9 +1,13 @@
 import {
+  Badge,
+  Banner,
   Box,
   Button,
   Divider,
+  ExceptionList,
   Grid,
   InlineStack,
+  List,
   Text,
   TextField,
 } from "@shopify/polaris";
@@ -36,6 +40,10 @@ import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { ComboxSelect } from "~/components/inputs/ComboxSelect";
 import { booleanTransform, stringTransform } from "~/utils/transfomerZod";
 import { EditCategoryModal } from "./app.templates.categories._index";
+import { BiSaveConfirmBtn } from "~/components/buttons/BiSaveConfirmBtn";
+import {
+  AlertCircleIcon
+} from '@shopify/polaris-icons';
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
@@ -114,7 +122,7 @@ export default function TemplateEditComponent() {
           </SpacingBackground>
             <Divider borderWidth="100" />
             <SpacingBackground backgroundColor="#F8F9FB">
-              
+     
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{lg:"30px"}}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -184,8 +192,38 @@ export default function TemplateEditComponent() {
               
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-              <BackBtn isLoading={isLoading} title="Back"/>
-              <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                <BackBtn isLoading={isLoading} title="Back" />
+                
+                {
+                  template ?
+                  <BiSaveBtn isLoading={isSubmitting} title="Save" /> : 
+                    <BiSaveConfirmBtn isLoading={isSubmitting} title="Save">
+                      <Badge tone="info">Please Note:</Badge>
+
+                      <ExceptionList
+                        
+                          items={[
+                            {
+                              icon: AlertCircleIcon,
+                             
+                              description:
+                                'To make the template available to customers, you need to design the template on next page  following this instructions .',
+                            
+                            },
+                          ]}
+                     />
+                 
+                      <Text as="h6" variant="bodyMd" fontWeight="bold">
+                        Design instructions
+                      </Text>
+                      <List type="bullet">
+                          <List.Item>Custom design with  options available </List.Item>
+                          <List.Item>Click on  finish button</List.Item>
+                          <List.Item>Click on  Save,  and  the template will be available on template list bloc</List.Item>
+                        </List>
+                    </BiSaveConfirmBtn>
+                }
+            
               </InlineStack>
             </Box>
               </SpacingBackground>
@@ -240,7 +278,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       : json({ ...jFlashMessage("error on template upadating") });
   } else {
     let res =  await TemplateService.addTemplate(template, session.id)
-    return res ? redirect(`..${flashMessage("template  added is completed successfully")}`)
+    return res ? redirect(`../preview/${res.id}/${flashMessage("template  added is completed successfully. Please setup your template in preview page to make it active.")}`)
       : json({ ...jFlashMessage("error   on template adding") });
   } 
 };

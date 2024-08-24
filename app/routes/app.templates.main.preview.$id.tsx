@@ -12,6 +12,7 @@ import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import TemplateService from "~/models/Template.service";
 import { useEffect } from "react";
 import {Jwt} from "jsonwebtoken"
+import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -31,7 +32,8 @@ export default function Preview() {
   const navigate = useNavigate();
   let { template , token} = useLoaderData<typeof loader>();
 
-  const  shopify = useAppBridge();
+  const shopify = useAppBridge();
+  useHandleFlashMessage();
   
 
 
