@@ -62,8 +62,7 @@ export default function ManageFontCreate() {
   let isLoading = navigation.state == "loading";
   let isSubmitting = navigation.state == "submitting";
 
-  const handleIsGoogleFont = (value: boolean) =>
-    setFormData({ ...formData, isGoogleFont: value });
+
 
   const handleLabel = (value: string) =>
     setFormData({ ...formData, label: value });
@@ -102,9 +101,6 @@ export default function ManageFontCreate() {
                     path={formData.url}
                     handlePath={(value: string) => {
                       handleUrl(value);
-                      if (value!=="" && formData.label === "") {
-                        handleLabel(`${value.split('/').pop()?.split('.')[0]}`);
-                      }
                     }}
                   />
                 </Grid.Cell>
@@ -142,9 +138,8 @@ const formSchema = z.object({
     .min(3, "Label is too short")
     .max(100, "Label is too long"),
   url: z
-    .string({ required_error: "Url is required" })
-    .min(3, "Url is too short")
-    .max(255, "Url is too long").endsWith(".ttf,.otf", "Font file must be .ttf or .otf file type"),
+    .string({ required_error: "Font file is required, please upload and select it" })
+ .endsWith(".ttf,.otf", "Font file must be .ttf or .otf file type"),
   isGoogleFont: z
     .any()
     .transform((val) => `${val}`.toLowerCase() == "true")

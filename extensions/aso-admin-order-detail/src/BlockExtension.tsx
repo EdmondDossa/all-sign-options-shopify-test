@@ -69,7 +69,7 @@ function App() {
               
                 <Text  fontWeight="bold-300">{variantRecap.recaps.material?.label} : </Text>
                 <Text>{variantRecap.recaps.material?.value} </Text>
-                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.size.label} : </Text>
+                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.size?.label} : </Text>
                 <Text> {`
                 ${variantRecap.recaps.sign?.size?.value?.width?.label} :
                  ${variantRecap.recaps.sign?.size?.value?.width.value}, 
@@ -78,43 +78,43 @@ function App() {
                   `} </Text>
                   <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.size?.value?.thickness?.label} : </Text>
                 <Text>{variantRecap.recaps.sign?.size?.value?.thickness.value} </Text>
-                <Text  fontWeight="bold-300">{variantRecap.recaps.sign.shape?.label} : </Text>
-                <Text> {variantRecap.recaps.sign.shape?.value}</Text>
-                <Text  fontWeight="bold-300">{variantRecap.recaps.sign.fixingMethod?.label} : </Text>
-                <Text> {variantRecap.recaps.sign.fixingMethod?.value}</Text>
-                { !variantRecap.recaps.sign.border?.value?.face1 &&
+                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.shape?.label} : </Text>
+                <Text> {variantRecap.recaps.sign?.shape?.value}</Text>
+                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.fixingMethod?.label} : </Text>
+                <Text> {variantRecap.recaps.sign?.fixingMethod?.value}</Text>
+                { !variantRecap.recaps.sign?.border?.value?.face1 &&
                    <>
-                <Text  fontWeight="bold-300">{variantRecap.recaps.sign.border?.label} : </Text>
-                <Text> {variantRecap.recaps.sign.border?.value?.type}, {variantRecap.recaps.sign.border.value?.color} </Text>
+                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.border?.label} : </Text>
+                <Text> {variantRecap.recaps.sign?.border?.value?.type}, {variantRecap.recaps.sign?.border?.value?.color} </Text>
               </>
               }
-               {variantRecap.recaps.sign.border?.value?.face1 &&<>
-                <Text  fontWeight="bold-300">{variantRecap.recaps.sign.border?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
-                <Text> {variantRecap.recaps.sign.border?.value?.face1?.type}, {variantRecap.recaps.sign.border.value?.face1?.color} </Text>
+               {variantRecap.recaps.sign?.border?.value?.face1 &&<>
+                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.border?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
+                <Text> {variantRecap.recaps.sign?.border?.value?.face1?.type}, {variantRecap.recaps.sign?.border?.value?.face1?.color} </Text>
               </>
               }
-                  {variantRecap.recaps.sign.border?.value?.face2 &&
+                  {variantRecap.recaps.sign?.border?.value?.face2 &&
                 <>
-                    <Text  fontWeight="bold-300">{variantRecap.recaps.sign.border?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
-                    <Text> {variantRecap.recaps.sign.border?.value?.face2?.type}, {variantRecap.recaps.sign.border.value?.face2?.color} </Text>
+                    <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.border?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
+                    <Text> {variantRecap.recaps.sign?.border?.value?.face2?.type}, {variantRecap.recaps.sign?.border?.value?.face2?.color} </Text>
                 
                 </>
               }
-               { !variantRecap.recaps.sign.color.value?.face1 && < >
-                <Text  fontWeight="bold-300">{variantRecap.recaps.sign.color?.label} : </Text>
-                <Text>{variantRecap.recaps.sign.color.value?.name}</Text>
+               { !variantRecap.recaps.sign?.color?.value?.face1 && < >
+                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.color?.label} : </Text>
+                <Text>{variantRecap.recaps.sign?.color?.value?.name}</Text>
               </>}
-              { variantRecap.recaps.sign.color.value?.face1 && <  >
-                <Text  fontWeight="bold-300">{variantRecap.recaps.sign.color?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
-                <Text>{variantRecap.recaps.sign.color.value?.face1?.name}</Text>
+              { variantRecap.recaps.sign?.color?.value?.face1 && <  >
+                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.color?.label}-{variantRecap.recaps?.faces?.face1}: </Text>
+                <Text>{variantRecap.recaps.sign?.color?.value?.face1?.name}</Text>
               </>}
 
-              { variantRecap.recaps.sign.color.value?.face2 && <>
-                <Text  fontWeight="bold-300">{variantRecap.recaps.sign.color?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
-                <Text>{variantRecap.recaps.sign.color.value?.face2?.name}</Text>
+              { variantRecap.recaps.sign?.color?.value?.face2 && <>
+                <Text  fontWeight="bold-300">{variantRecap.recaps.sign?.color?.label}-{variantRecap.recaps?.faces?.face2}: </Text>
+                <Text>{variantRecap.recaps.sign?.color?.value?.face2?.name}</Text>
               </>}
               {!variantRecap.recaps?.faces?.face1 && <>
-              <Text fontWeight="bold-300">{variantRecap.recaps.texts.label} : </Text>
+              <Text fontWeight="bold-300">{variantRecap.recaps?.texts?.label} : </Text>
            {variantRecap.recaps.texts.value?.map((text:any)=>(<>
                 <Text >
                 {text?.textContent}
@@ -133,8 +133,8 @@ function App() {
             }
 
 {variantRecap.recaps?.faces?.face1  && <>
-              <Text fontWeight="bold-300">{variantRecap.recaps.texts.label}-{variantRecap.recaps?.faces?.face1} : </Text>
-           {variantRecap.recaps.texts.value?.face1?.map((text:any)=>(<>
+              <Text fontWeight="bold-300">{variantRecap.recaps?.texts?.label}-{variantRecap.recaps?.faces?.face1} : </Text>
+           {variantRecap.recaps?.texts?.value?.face1?.map((text:any)=>(<>
                 <Text >
                 {text?.textContent}
                 </Text>
@@ -153,8 +153,8 @@ function App() {
 
 
 {variantRecap.recaps?.faces?.face2  && <>
-              <Text fontWeight="bold-300">{variantRecap.recaps.texts.label}-{variantRecap.recaps?.faces?.face2} : </Text>
-           {variantRecap.recaps.texts.value?.face2?.map((text:any)=>(<>
+              <Text fontWeight="bold-300">{variantRecap.recaps?.texts?.label}-{variantRecap.recaps?.faces?.face2} : </Text>
+           {variantRecap.recaps.texts?.value?.face2?.map((text:any)=>(<>
                 <Text >
                 {text?.textContent}
                 </Text>
