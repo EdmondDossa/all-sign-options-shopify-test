@@ -89,6 +89,7 @@ export const ItemSidebar = ({
           color: "#FFFFFF",
           backgroundColor: "#016464",
           width: width,
+          height: '100%',
         }}
       >
         {children}
