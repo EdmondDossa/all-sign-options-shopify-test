@@ -6,7 +6,7 @@ application_url = "https://suse-inside-happens-crimes.trycloudflare.com"
 embedded = true
 
 [build]
-automatically_update_urls_on_dev = true
+automatically_update_urls_on_dev = false
 dev_store_url = "quickstart-5c91f330.myshopify.com"
 include_config_on_deploy = true
 
