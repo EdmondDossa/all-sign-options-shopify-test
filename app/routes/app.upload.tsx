@@ -146,10 +146,14 @@ export const FileUploader = ({
   setFilesData?: any;
   fileData?: string[];
   children?: React.ReactNode;
-}) => {
+  }) => {
+ 
+  if (!type) {
+    type = "image";
+  }
   const id = useId();
 
-  const [fileType, setFileType] = useState(type || "all");
+  const [fileType, setFileType] = useState(type || "image");
   const [searchTag, setSearchTag] = useState("");
   const [orderBy, setOrderBy] = useState("");
   let [files, setFiles] = useState<any[]>([]);
@@ -169,7 +173,7 @@ export const FileUploader = ({
     );
     setFiles(newFiles);
 
-  }, [fileFetcher.state, fileType]);
+  }, [fileFetcher, fileType]);
 
   useEffect(() => {
     setFiles(images.length > 0 ? [...images, ...files] : files);

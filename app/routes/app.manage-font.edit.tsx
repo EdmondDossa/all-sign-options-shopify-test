@@ -139,7 +139,7 @@ const formSchema = z.object({
     .max(100, "Label is too long"),
   url: z
     .string({ required_error: "Font file is required, please upload and select it" })
- .endsWith(".ttf,.otf", "Font file must be .ttf or .otf file type"),
+ .endsWith("tf", "Font file must be .ttf or .otf file type"),
   isGoogleFont: z
     .any()
     .transform((val) => `${val}`.toLowerCase() == "true")
