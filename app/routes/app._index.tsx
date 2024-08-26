@@ -59,6 +59,19 @@ export default function Index() {
                   url={configurationUrl}
                   modalTitle="Configuration Design Screen Block"
                   title={"here to install configuration screen"}>
+                   <ExceptionList
+                        
+                        items={[
+                          {
+                            icon: AlertCircleIcon,
+                           
+                            description:
+                              `Only  available for premium subscriptions.
+                              `,
+                          
+                          },
+                        ]}
+                   />
                       <ExceptionList
                         
                         items={[
