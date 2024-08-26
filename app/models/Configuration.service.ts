@@ -329,7 +329,7 @@ const initialData = {
         textImport: "Import",
         textPreview: "Preview",
         textProduct: "Product",
-        titleHeader: "Plastic Signs",
+        titleHeader: "Design your own sign",
         textDownload: "Download",
         textMaterial: "Material",
         textPosition: "Position",
