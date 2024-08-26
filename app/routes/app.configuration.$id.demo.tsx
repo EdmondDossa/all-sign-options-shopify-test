@@ -64,21 +64,9 @@ export default function ConfigurationDemo() {
                     </Box>
                   </BlockStack>
                   <InlineStack align="center" gap="600">
+                
                     <button
                       className="back-large-btn"
-                      type="button"
-                      onClick={() => setIncludeDemoData(true)}
-                    >
-                      <Box paddingInline="1000">
-                        <InlineStack gap="300">
-                          <span style={{ color: "black", fontWeight: "bold" }}>
-                            Include demo data
-                          </span>
-                        </InlineStack>
-                      </Box>
-                    </button>
-                    <button
-                      className="next-large-btn"
                       type="button"
                       onClick={() => navigate(`../${params.id}/materials`)}
                     >
@@ -86,6 +74,19 @@ export default function ConfigurationDemo() {
                         <InlineStack gap="300">
                           <span style={{ color: "white", fontWeight: "bold" }}>
                             No include demo data
+                          </span>
+                        </InlineStack>
+                      </Box>
+                    </button>
+                    <button
+                      className="next-large-btn"
+                      type="button"
+                      onClick={() => setIncludeDemoData(true)}
+                    >
+                      <Box paddingInline="1000">
+                        <InlineStack gap="300">
+                          <span style={{ color: "black", fontWeight: "bold" }}>
+                            Include demo data
                           </span>
                         </InlineStack>
                       </Box>
