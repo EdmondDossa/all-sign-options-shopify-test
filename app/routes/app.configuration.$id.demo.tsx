@@ -72,7 +72,7 @@ export default function ConfigurationDemo() {
                     >
                       <Box paddingInline="1000">
                         <InlineStack gap="300">
-                          <span style={{ color: "white", fontWeight: "bold" }}>
+                          <span style={{ color: "black", fontWeight: "bold" }} >
                             No include demo data
                           </span>
                         </InlineStack>
@@ -85,7 +85,7 @@ export default function ConfigurationDemo() {
                     >
                       <Box paddingInline="1000">
                         <InlineStack gap="300">
-                          <span style={{ color: "black", fontWeight: "bold" }}>
+                          <span style={{ color: "white", fontWeight: "bold" }} >
                             Include demo data
                           </span>
                         </InlineStack>
