@@ -4,12 +4,12 @@ import * as nodemailer from 'nodemailer'
 
 
 const transporter = nodemailer.createTransport({
-  host: (process.env.EMAIL_OUTGOING_SERVER || 'signsdesigner.us'),
-  port: (process.env.EMAIL_SMTP_PORT || 465),
-  secure:( process.env.EMAIL_AUTHENTICATION_REQUIRED ? process.env.EMAIL_AUTHENTICATION_REQUIRED: true),
+  host: 'signsdesigner.us',
+  port: 465,
+  secure:true,
   auth: {
-    user: (process.env.EMAIL_USERNAME || 'support@signsdesigner.us'),
-    pass:( process.env.EMAIL_PASSWORD || 'NmLHKU#yrU*i'),
+    user: 'support@signsdesigner.us',
+    pass: 'NmLHKU#yrU*i',
   },
 });
 
@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 
 export async function testMail(){
   transporter.sendMail({
-    from:  `"${ process.env.EMAIL_NAME || 'All  Signs options support'}" <${ process.env.EMAIL_USERNAME || 'support@signsdesigner.us'}>`,
+    from:  `"${ 'All  Signs options support'}" <${'support@signsdesigner.us'}>`,
     to: "toyigbemaximed@gmail.com",
     subject: 'test my email',
     text: 'test',
@@ -32,7 +32,7 @@ export async function sendRecapMail(data:any, email:string, subject:string,custo
     const emailHtml = render(<RecapMail data={data} customer={customer}/>);
 
     let options :any= {
-      from: `"${ process.env.EMAIL_NAME || 'All  Signs options support'}" <${ process.env.EMAIL_USERNAME || 'support@signsdesigner.us'}>`,
+      from: `"${'All  Signs options support'}" <${'support@signsdesigner.us'}>`,
       to: email,
       subject: subject,
       html: emailHtml
