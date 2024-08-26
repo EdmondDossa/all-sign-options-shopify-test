@@ -149,7 +149,7 @@ export default function ConfigurationEdit() {
                     error={
                       actionData?.errors?.icon ? actionData.errors.icon[0] : ""
                     }
-                    title="Upload icon"
+                    title="Upload image"
                     path={formData.icon}
                     handlePath={handleIcon}
                   />
