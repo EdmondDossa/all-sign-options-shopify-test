@@ -59,25 +59,13 @@ export default function Index() {
                   url={configurationUrl}
                   modalTitle="Configuration Design Screen Block"
                   title={"here to install configuration screen"}>
-                   <ExceptionList
-                        
-                        items={[
-                          {
-                            icon: AlertCircleIcon,
-                           
-                            description:
-                              `Only  available for premium subscriptions.
-                              `,
-                          
-                          },
-                        ]}
-                   />
+                 
                       <ExceptionList
                         
                         items={[
                           {
                             icon: AlertCircleIcon,
-                           
+                            status: "warning",
                             description:
                               `Note that in the online store, the configuration design screen is still disabled
                               if it doesn't have any product assigned to it, either by default or dynamically,
@@ -109,12 +97,25 @@ export default function Index() {
                   url={templateUrl}
                   modalTitle="Templates List Block"
                   title={"here to add template screen"}>
+                    <ExceptionList
+                        
+                        items={[
+                          {
+                            icon: AlertCircleIcon,
+                            status:"critical",
+                            description:
+                              `Only  available for premium subscriptions.
+                              `,
+                          
+                          },
+                        ]}
+                   />
                <ExceptionList
                         
                         items={[
                           {
                             icon: AlertCircleIcon,
-                           
+                            status:"warning",
                             description:
                               `Note that in the online store, this block will show all available templates
                               but if it doesn't have any template, it will be empty.
