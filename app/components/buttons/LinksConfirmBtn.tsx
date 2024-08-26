@@ -8,13 +8,6 @@ export const LinksConfirmBtn = ({ url, title, modalTitle ,children }: { url?: st
   const shopify = useAppBridge();
   const id = useId()
 
-  const  newTab =(linkUrl:string)=> {
-    let newTab = document.createElement('a');
-    newTab.href = `${linkUrl}`;
-    newTab.target = "_blank";
-    newTab.click();
-}
-
   return (<>
     
     <Link onClick={() => shopify.modal.show(id)} > {title||'Save'}</Link>
@@ -24,17 +17,16 @@ export const LinksConfirmBtn = ({ url, title, modalTitle ,children }: { url?: st
       <Box padding="400">
         <BlockStack gap="400">
           
-                    {children} 
+          {children} 
+          <Button onClick={() => shopify.modal.hide(id)} url={url} target="_blank" tone="success" variant="primary">Embed  Now</Button>
       </BlockStack>
                 </Box>
               
       <TitleBar title={modalTitle || 'Saving confirmation'}>
 
                    
-        <button type="button" variant="primary" onClick={() => {
-                      newTab(url||'');
-                      shopify.modal.hide(id);
-                    }}>Embed  Now</button>
+      
+       
                     <button type="button" onClick={() => shopify.modal.hide(id)}>cancel</button>
                 </TitleBar>
             </Modal>

@@ -199,6 +199,7 @@
 
     
   }).catch((error) =>{
+    document.querySelector('#aso-templates-loader').style.display = 'none';
     console.log(' error  on fetching template',error)
   });
   }); 
@@ -274,15 +275,13 @@
 
 <style>
   
-    {% if request.design_mode == false %}
-      #asoTemplateItemModel{
-        display: none !important;
-      }
+  #asoTemplateItemModel{
+    display: none !important;
+  }
 
-      #asoTemplateCategory{
-        display: none !important;
-      }
-    {% endif %}
+  #asoTemplateCategory{
+    display: none !important;
+  }
 
 .asoTemplateItemCustomize {
   color:  {{ block.settings.colour_text_customize }};

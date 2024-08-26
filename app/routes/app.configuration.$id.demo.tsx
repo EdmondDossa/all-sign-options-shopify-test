@@ -6,6 +6,7 @@ import {
   useActionData,
   useNavigate,
   useNavigation,
+  useParams,
   useSubmit,
 } from "@remix-run/react";
 import {
@@ -40,6 +41,8 @@ import { PRICING_PLANS, getPlan } from "~/utils/pricing";
 export default function ConfigurationDemo() {
   const [includeDemoData, setIncludeDemoData] = useState(false);
   const navigate = useNavigate();
+  const params = useParams();
+  
 
   return (
     <>
@@ -77,7 +80,7 @@ export default function ConfigurationDemo() {
                     <button
                       className="next-large-btn"
                       type="button"
-                      onClick={() => navigate("..")}
+                      onClick={() => navigate(`../${params.id}/materials`)}
                     >
                       <Box paddingInline="1000">
                         <InlineStack gap="300">
