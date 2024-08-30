@@ -221,14 +221,14 @@ const DemoList = ({ handleOnBack }: { handleOnBack: any }) => {
       value: `${index}`,
       description: item.description,
       image: item.icon,
-      hide: PRICING_PLANS.STARTER_RULES.materialTypes.includes(item.data.materials[0].type) && plan == PRICING_PLANS.STARTER ? true : false,
+      hide: !PRICING_PLANS.STARTER_RULES.materialTypes.includes(item.data.materials[0].type) && plan == PRICING_PLANS.STARTER ? true : false,
     };
   });
 
   data = data.filter((item) => {
     return !item.hide;
   });
-  
+
   data = data.filter((item) => {
     return item.label.toLowerCase().includes(searchTag.toLowerCase());
   });

@@ -311,7 +311,7 @@
 .topbar-aso{
     padding-left: 0.5rem;
     padding-right: 1.5rem;
-    z-index: 50;
+    z-index: 102;
     position: fixed;
     display: flex;
     height: 3rem;
