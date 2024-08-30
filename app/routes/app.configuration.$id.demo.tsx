@@ -1,11 +1,12 @@
 import { parseWithZod } from "@conform-to/zod";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import {
   Form,
   redirect,
   useActionData,
   useNavigate,
   useNavigation,
+  useOutletContext,
   useParams,
   useSubmit,
 } from "@remix-run/react";
@@ -38,10 +39,13 @@ import FontService from "~/models/Font.service";
 import { configFilter } from "~/utils/config-filter";
 import { PRICING_PLANS, getPlan } from "~/utils/pricing";
 
+
+
 export default function ConfigurationDemo() {
   const [includeDemoData, setIncludeDemoData] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
+ 
   
 
   return (
@@ -201,21 +205,30 @@ const DemoList = ({ handleOnBack }: { handleOnBack: any }) => {
 
   const submit = useSubmit();
   const navigation = useNavigation();
+  let { plan } = useOutletContext<{ plan: string }>();
+  
+
 
   let data: Array<{
     label: string;
     value: any;
     description: string;
     image: string;
+    hide: boolean;
   }> = configurationDemoData.map((item, index) => {
     return {
       label: item.name,
       value: `${index}`,
       description: item.description,
       image: item.icon,
+      hide: PRICING_PLANS.STARTER_RULES.materialTypes.includes(item.data.materials[0].type) && plan == PRICING_PLANS.STARTER ? true : false,
     };
   });
 
+  data = data.filter((item) => {
+    return !item.hide;
+  });
+  
   data = data.filter((item) => {
     return item.label.toLowerCase().includes(searchTag.toLowerCase());
   });
