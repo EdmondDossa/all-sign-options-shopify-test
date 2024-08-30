@@ -163,6 +163,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       `https://${session.shop}/apps/aso-proxy/aso_default_files/`,
     );
 
+
     await ConfigurationService.updateConfiguration(configuration, session.id);
 
     return redirect(
@@ -182,7 +183,7 @@ function replaceUploadsPath(data: object, newPath: string): object {
   function replaceInObject(obj: any) {
     for (const key in obj) {
       if (typeof obj[key] === "string") {
-        obj[key] = obj[key].replace(/\/aso_default_files\//g, newPath);
+        obj[key] = obj[key].replace(/^.*?\/aso_default_files\//, newPath);
       } else if (typeof obj[key] === "object") {
         replaceInObject(obj[key]);
       }

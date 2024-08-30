@@ -24,6 +24,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case "APP_UNINSTALLED":
       if (session) {
         await db.session.deleteMany({ where: { shop } });
+        await db.upload.deleteMany({ where: { shop } });
       }
       return new Response("customers data request is received", { status: 200 });
     case "CUSTOMERS_DATA_REQUEST": 
