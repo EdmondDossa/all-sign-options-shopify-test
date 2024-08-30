@@ -78,11 +78,13 @@ export default function MaterialIndex() {
             </span>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          <img
-            style={{ height: "30px" }}
-            src={fileUrl(icon)}
-            alt={"product thumbnail" + name}
-          />
+         {
+            icon && <img
+                style={{ height: "30px" }}
+                src={fileUrl(icon)}
+                alt={"product thumbnail" + name}
+              />
+          }
         </IndexTable.Cell>
 
         <IndexTable.Cell className="td-center">
