@@ -42,7 +42,7 @@ model Configuration {
   description String?
   icon        String
   popupImg    String
-  session     Session @relation(fields: [sessionId], references: [id])
+  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId   String
   data        Json?
   product     Json?
@@ -56,7 +56,7 @@ model Font {
   label         String
   url           String
   isGoogleFont  Boolean
-  session     Session @relation(fields: [sessionId], references: [id])
+  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId   String
 }
 
@@ -67,7 +67,7 @@ model ClipartsGroup{
   title         String
   description   String
   cliparts      Clipart[] 
-  session     Session @relation(fields: [sessionId], references: [id])
+  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId   String
 }
 
@@ -77,14 +77,14 @@ model Clipart{
     title             String
     url               String
     additionalPrice   Float
-    clipartsGroup     ClipartsGroup @relation(fields: [clipartsGroupId], references: [id])
+    clipartsGroup     ClipartsGroup @relation(fields: [clipartsGroupId], references: [id], onDelete: Cascade)
     clipartsGroupId   Int 
 }
 
 model Setting{
   id          Int      @id @default(autoincrement())
   data        Json?      
-  session     Session   @relation(fields: [sessionId], references: [id])
+  session     Session   @relation(fields: [sessionId], references: [id],onDelete: Cascade)
   sessionId   String @unique
 }
 
@@ -93,7 +93,7 @@ model Category{
   id            Int      @id @default(autoincrement())
   name         String
   templates      Template[] 
-  session     Session @relation(fields: [sessionId], references: [id])
+  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId   String
 }
 
@@ -104,11 +104,11 @@ model Template {
   basePrice         Float
   prevImg           String
   enabledAddToCart  Boolean  @default(false)
-  configuration     Configuration @relation(fields: [configurationId], references: [id])
+  configuration     Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
   configurationId   Int
-  category          Category? @relation(fields: [categoryId], references: [id])
+  category          Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade )
   categoryId        Int?
-  session           Session @relation(fields: [sessionId], references: [id])
+  session           Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId         String
   data            Json?
 }
