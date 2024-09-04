@@ -1,5 +1,5 @@
 
-<div>
+<div style="min-height: 200px">
     <div id="asoTemplateCategories">
       <ul class="aso-categories" id="asoTemplateUl">
         <li id="asoTemplateCategory" class="asoTemplateLi asoTemplateLiItem aso-active" data-id=""  onclick="toggleActive(this)"> {{ block.settings.text_all }} </li>
@@ -57,6 +57,12 @@
           </div>
       </div>
     </div>
+    <div class="not-found-wrapper" style="display:none;">
+        <div class="centered-message">
+          {{  block.settings.text_template_not_found }}
+      </div>
+    </div>
+    
 </div>
 
 <script>
@@ -137,7 +143,7 @@
       const categories = []; 
 
   // Pour chaque élément dans templates
-      templates.filter(template=>(aso_configuration_id=="0" || template.configurationId==aso_configuration_id ) ).forEach(template => {
+      templates?.filter(template=>(aso_configuration_id=="0" || template.configurationId==aso_configuration_id ) ).forEach(template => {
           // Cloner l'élément template
           if(!(template?.data?.templateData?.sign)){
             return false;
@@ -182,7 +188,7 @@
         newContainerUl.appendChild(templateLiItem);
       }
 
-    categories.forEach((category)=>{
+    categories?.forEach((category)=>{
         const clone = templateLiItem.cloneNode(true);
         clone.setAttribute("data-id", category.id);
         clone.setAttribute("class"," asoTemplateLi asoTemplateLiItem")
@@ -191,7 +197,10 @@
       });
 
       // Remplacer le contenu de #asoTemplate par le nouveau contenu
-      document.querySelector('#aso-templates-loader').style.display = 'none';
+      document.querySelector('#aso-templates-loader').style.display = 'none'; 
+      if(!newContainer.innerHTML){
+        document.querySelector('.not-found-wrapper').style.display = 'flex'; 
+      }
       templateDiv.innerHTML = newContainer.innerHTML;
       templateUl.innerHTML = newContainerUl.innerHTML; 
    
@@ -200,6 +209,7 @@
     
   }).catch((error) =>{
     document.querySelector('#aso-templates-loader').style.display = 'none';
+    document.querySelector('.not-found-wrapper').style.display = 'flex'; 
     console.log(' error  on fetching template',error)
   });
   }); 
@@ -483,6 +493,28 @@
   animation: pulseGradient 1.5s ease infinite;
 }
 
+.centered-message {
+  padding: 20px;
+  color: darkslategray;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 25px;
+}
+
+
+.not-found-wrapper {
+  height: 250px;
+  width: 100%;
+  margin: 20px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid lightgray;
+  border-radius: 2px;
+}
+
+
 
 
   
@@ -506,6 +538,7 @@
           "default":"/"
         },
         { "type": "text", "id": "text_all", "label": "ALl  template text", "default": "All templates" },
+        { "type": "text", "id": "text_template_not_found", "label": "Template not available Text", "default": "No design template is available" },
         { "type": "text", "id": "text_add_to_cart", "label": "Add  to cart text", "default": "Add  to cart" },
         { "type": "text", "id": "text_customize", "label": "Customize text", "default": "Customize" },
         {
