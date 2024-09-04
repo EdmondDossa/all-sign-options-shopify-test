@@ -34,12 +34,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     let plan: string = "";
     
 
-
-    if (admin) {
-        plan = await getPlanProxy(admin);
-       
-    }else{
-        plan = await getPlanProxyPublic(session.shop, session.accessToken);
+    try {
+        if (admin) {
+            plan = await getPlanProxy(admin);
+           
+        }else{
+            plan = await getPlanProxyPublic(session.shop, session.accessToken);
+        }
+    } catch (error) {
+       plan = "free"; 
     }
 
 

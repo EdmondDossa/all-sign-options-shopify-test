@@ -361,7 +361,11 @@ function  getRouteTemplate_shopify(){
     })
   }
 
-  return null;
+  return( {
+    name:"preview",
+    params: null
+  })
+
 }
 
 
