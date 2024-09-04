@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://conservation-brother-shark-reserves.trycloudflare.com"
+application_url = "https://belief-main-mid-still.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://conservation-brother-shark-reserves.trycloudflare.com/auth/callback",
-  "https://conservation-brother-shark-reserves.trycloudflare.com/auth/shopify/callback",
-  "https://conservation-brother-shark-reserves.trycloudflare.com/api/auth/callback"
+  "https://belief-main-mid-still.trycloudflare.com/auth/callback",
+  "https://belief-main-mid-still.trycloudflare.com/auth/shopify/callback",
+  "https://belief-main-mid-still.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://conservation-brother-shark-reserves.trycloudflare.com"
+url = "https://belief-main-mid-still.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

@@ -74,7 +74,10 @@ async function aso_confiurator_dataFunction(){
 
   let currentConfig = null;
   if (asoConfigurationId ) {
-     currentConfig = await getAsoConfiguration(asoConfigurationId);
+    currentConfig = await getAsoConfiguration(asoConfigurationId);
+    if (!currentConfig) {
+      currentConfig = getDefaultConfig();
+    }
   }else{
      currentConfig = getDefaultConfig();
   }

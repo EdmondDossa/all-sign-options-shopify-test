@@ -45,18 +45,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   let plan:string = "";
 
+  try {
+    if (admin) {
+        plan = await getPlanProxy(admin);
+    }else{
+        plan = await getPlanProxyPublic(session.shop, session.accessToken);
+    }
 
-  if (admin) {
-      plan = await getPlanProxy(admin);
-  }else{
-      plan = await getPlanProxyPublic(session.shop, session.accessToken);
+  } catch (error) {
+    plan = "free";
   }
 
-  if (plan =="free") {
-      return json(null);
-  }
+ 
   
-  if (plan == PRICING_PLANS.STARTER) { 
+  if (plan != PRICING_PLANS.PRO) { 
     data.borders = data.borders.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders);
     data.allBorder = data.allBorder.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders);
     data.allShapes = data.allShapes.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes);
