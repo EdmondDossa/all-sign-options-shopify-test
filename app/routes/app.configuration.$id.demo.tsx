@@ -148,6 +148,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       if (configurationDemoData[parseInt(demoId)]?.data?.settings?.customizerSign?.text) {
         configurationDemoData[parseInt(demoId)].data.settings.customizerSign.text.selectedFonts = fontIds;
       }
+    } else {
+      configurationDemoData[parseInt(demoId)].data.settings.customizerSign.text.selectedFonts = allFonts.slice(0,10).map(font => font.id);
     }
 
     const configuration = await ConfigurationService.getConfiguration(

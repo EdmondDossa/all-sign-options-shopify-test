@@ -82,8 +82,13 @@ async function aso_confiurator_dataFunction(){
      currentConfig = getDefaultConfig();
   }
 
+  if (currentConfig) {
+    managesData.fonts = managesData.fonts.filter(font => currentConfig.data.settings.customizerSign.text.selectedFonts?.includes(font.id)) ?? [];
+    managesData.cliparts = managesData.cliparts.filter(clipart => currentConfig.data.settings.customizerSign.images.selectedCliparts?.includes(clipart.id)) ?? [];
+  }
+  defaultStyle( `${window.location.origin}/${window.Shopify?.routes?.root?.replace("/",'')}apps/aso-proxy`);
    //  to add  font and custom css to  page
-   managesData.fonts.forEach(font => {
+   managesData.fonts?.forEach(font => {
     let style = document.createElement('style');
     style.textContent = `
           
@@ -107,10 +112,10 @@ async function aso_confiurator_dataFunction(){
 
 
   if (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.data?.cartData) {
-    
     asoRegularPrice = (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.basePrice) || 0;
-  
   }
+
+  
   
   return ( {
     skin: currentConfig['data']['settings']["themeColors"]["skin"],
@@ -721,12 +726,46 @@ function getDefaultConfig(){
 }
 
 
+function defaultStyle(baseUrl) {
+  if (baseUrl) {
+  const fontUrl = baseUrl;
+  }else{
+    const fontUrl = window.location.origin;
+  }
+  let defaulStyle = document.createElement('style');
+  defaulStyle.textContent = `
+            
+    @font-face {
+      font-family: "Arial";
+      font-display: swap;
+      src: url('${fontUrl}/assets/fonts/arial.ttf') format('truetype');
+    }
+        
+        `; 
+  document.body.appendChild(defaulStyle);
+}
 
 
 
-
-
-
+function defaultStyle(baseUrl) {
+  let fontUrl = "";
+  if (baseUrl) {
+    fontUrl = baseUrl;
+  } else {
+    fontUrl = window.location.origin;
+  }
+  let defaulStyle = document.createElement('style');
+  defaulStyle.textContent = `
+            
+    @font-face {
+      font-family: "Arial";
+      font-display: swap;
+      src: url('${fontUrl}/assets/fonts/arial.ttf') format('truetype');
+    }
+        
+        `; 
+  document.body.appendChild(defaulStyle);
+}
 
 
 

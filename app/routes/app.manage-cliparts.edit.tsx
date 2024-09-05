@@ -29,6 +29,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { BackBtn } from "~/components/buttons/BackBtn";
 import { stringTransform } from "~/utils/transfomerZod";
+import { BoxBackground } from "~/components/layouts/BoxBackground";
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
@@ -90,6 +91,16 @@ export default function ManageClipartCreate() {
   
   return (
     <div>
+       <BoxBackground>
+      <Box paddingInline="300" paddingBlock="400">
+          <InlineStack gap="100" align="start">
+            <Text as="h2" variant="headingMd">
+            List of clipart group
+            </Text>
+        </InlineStack>
+      </Box>
+    </BoxBackground>
+
       <SpacingBackground width="100%" height="auto" margin="16px 0px ">
           <Form onSubmit={handleSubmit} method="POST">
             <SpacingBackground backgroundColor="#F9F9F9">

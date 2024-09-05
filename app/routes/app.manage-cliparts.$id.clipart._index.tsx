@@ -5,10 +5,12 @@ import {
   Divider,
   IndexTable,
   InlineStack,
+  Link,
+  Text,
 } from "@shopify/polaris";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
+import { useLoaderData, useNavigate, useOutletContext, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
@@ -18,11 +20,14 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import ClipartService from "~/models/Clipart.service";
 import { jFlashMessage } from "~/utils/message-flash";
 import { fileUrl } from "~/utils/fileUrl";
+import NextLtrIcon from "~/components/icons/NextLtrIcon";
+import { ClipartsGroupType } from "~/types/ManagePropertyType";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const clipartsGroupId = parseInt(params.id || "0");
   const cliparts = await ClipartService.getCliparts(clipartsGroupId);
+
 
   return json({ cliparts });
 };
@@ -58,12 +63,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function MaterialFixingMethod() {
   const submit = useSubmit();
   let { cliparts } = useLoaderData<typeof loader>();
+  let { clipartsGroup } = useOutletContext<{ clipartsGroup: ClipartsGroupType }>();
   useHandleFlashMessage();
 
   const navigate = useNavigate();
   const onHandleCreate = () => {
     navigate("edit");
   };
+
+
 
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
@@ -118,41 +126,48 @@ export default function MaterialFixingMethod() {
     ),
   );
   return (
-    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-      <BoxBackground>
+    <>
+    
+      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
         <BoxBackground>
-          <Box padding="150">
-            <InlineStack gap="100" align="end">
-              <button
-                className="primary-btn"
-                type="button"
-                onClick={onHandleCreate}
-              >
-                <Box paddingInline="300">
-                  <InlineStack gap="300">
-                    <PlusIcon />
-                    <span className="primary-btn-text"> Add new clipart</span>
-                  </InlineStack>
-                </Box>
-              </button>
-            </InlineStack>
-          </Box>
-          <Divider borderWidth="050" />
+          <BoxBackground>
+            <Box padding="150">
+
+              <InlineStack gap="100" blockAlign="center" align="space-between">
+                <Text as="h2" variant="headingMd">
+                  List of cliparts
+                </Text>
+                <button
+                  className="primary-btn"
+                  type="button"
+                  onClick={onHandleCreate}
+                >
+                  <Box paddingInline="300">
+                    <InlineStack gap="300">
+                      <PlusIcon />
+                      <span className="primary-btn-text"> Add new clipart</span>
+                    </InlineStack>
+                  </Box>
+                </button>
+              </InlineStack>
+            </Box>
+            <Divider borderWidth="050" />
+          </BoxBackground>
+          <IndexTable
+            resourceName={resourceName}
+            itemCount={cliparts ? cliparts.length : 0}
+            headings={[
+              { title: "Title" },
+              { title: "Icon", alignment: "center" },
+              { title: "Additional Price", alignment: "center" },
+              { title: "Action", alignment: "center" },
+            ]}
+            selectable={false}
+          >
+            {rowMarkup}
+          </IndexTable>
         </BoxBackground>
-        <IndexTable
-          resourceName={resourceName}
-          itemCount={cliparts ? cliparts.length : 0}
-          headings={[
-            { title: "Title" },
-            { title: "Icon", alignment: "center" },
-            { title: "Additional Price", alignment: "center" },
-            { title: "Action", alignment: "center" },
-          ]}
-          selectable={false}
-        >
-          {rowMarkup}
-        </IndexTable>
-      </BoxBackground>
-    </SpacingBackground>
+      </SpacingBackground>
+    </>
   );
 }
