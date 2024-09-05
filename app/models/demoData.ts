@@ -264,7 +264,7 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [1],
+              selectClipartGroups: [],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
@@ -1220,7 +1220,7 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [1],
+              selectClipartGroups: [],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
@@ -2281,7 +2281,7 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [1],
+              selectClipartGroups: [],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
@@ -3368,7 +3368,7 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [1],
+              selectClipartGroups: [],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
@@ -5602,7 +5602,7 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [1],
+              selectClipartGroups: [],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
@@ -7095,7 +7095,7 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [1],
+              selectClipartGroups: [],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
@@ -8176,7 +8176,7 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [1],
+              selectClipartGroups: [],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
@@ -8768,7 +8768,7 @@ export const configurationDemoData: ConfigurationType[] = [
             colorsPrevImg: "",
             enableClipart: {
               active: true,
-              selectClipartGroups: [1],
+              selectClipartGroups: [],
             },
             fileUploadScript: {
               uploadMaxWidth: 100,
