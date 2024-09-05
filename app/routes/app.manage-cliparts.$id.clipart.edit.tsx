@@ -17,6 +17,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useOutletContext,
   useSubmit
 } from "@remix-run/react";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
@@ -25,7 +26,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
-import { ClipartType } from "~/types/ManagePropertyType";
+import { ClipartType, ClipartsGroupType } from "~/types/ManagePropertyType";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { FileInput } from "~/components/inputs/FileInput";
 import { getError } from "~/utils/error-getting";
@@ -58,10 +59,9 @@ export default function ClipartCreate() {
   const submit = useSubmit();
   const navigation = useNavigation()
   const actionData = useActionData<typeof action>();
+  let { clipartsGroup } = useOutletContext<{ clipartsGroup: ClipartsGroupType }>();
   useHandleFlashMessage();
-  console.log('action data :', actionData);
   let { clipart, clipartsResources, shop } =  useLoaderData<typeof loader>()
-  console.log('loader data :', clipartsResources);
   
   const [isApiUsed, setIsApiUsed] = useState(false);
   const [apiClipartGroup, setApiClipartGroup] = useState("animals");

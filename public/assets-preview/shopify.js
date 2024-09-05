@@ -96,7 +96,13 @@ async function aso_confiurator_dataFunction(){
   // Add custom CSS and fonts
 
   try {
-    managesDataCustom  =  replaceUploadsPath(managesData) ;
+    if (currentConfig) {
+      managesData.fonts = managesData.fonts.filter(font => currentConfig.data.settings.customizerSign.text.selectedFonts?.includes(font.id)) ?? [];
+      managesData.cliparts = managesData.cliparts.filter(clipart => currentConfig.data.settings.customizerSign.images.selectedCliparts?.includes(clipart.id)) ?? [];
+    }
+    managesDataCustom = replaceUploadsPath(managesData);
+    defaultStyle('');
+   
     managesDataCustom.fonts.forEach(font => {
       let style = document.createElement('style');
       style.textContent = `
@@ -368,7 +374,25 @@ function  getRouteTemplate_shopify(){
 
 }
 
-
+function defaultStyle(baseUrl) {
+  let fontUrl = "";
+  if (baseUrl) {
+    fontUrl = baseUrl;
+  } else {
+    fontUrl = window.location.origin;
+  }
+  let defaulStyle = document.createElement('style');
+  defaulStyle.textContent = `
+            
+    @font-face {
+      font-family: "Arial";
+      font-display: swap;
+      src: url('${fontUrl}/assets/fonts/arial.ttf') format('truetype');
+    }
+        
+        `; 
+  document.body.appendChild(defaulStyle);
+}
 
 
 

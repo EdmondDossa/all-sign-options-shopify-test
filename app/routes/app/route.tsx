@@ -64,6 +64,7 @@ export default function App() {
           Home
         </Link>
         <Link to="/app/configuration">List of configurations</Link>
+        <Link to="/app/templates">Templates</Link>
         <Link to="/app/manage-font">Manage fonts</Link>
         <Link to="/app/manage-cliparts">Manage cliparts</Link>
         <Link to="/app/settings"> Settings Generals</Link>

@@ -110,6 +110,17 @@ export default function ManageClipartIndex() {
     </IndexTable.Row>
   ));
   return (
+    <>
+    <BoxBackground>
+      <Box paddingInline="300" paddingBlock="600">
+          <InlineStack gap="100" align="start">
+            <Text as="h2" variant="headingMd">
+            List of clipart group
+            </Text>
+        </InlineStack>
+      </Box>
+    </BoxBackground>
+    
     <SpacingBackground width="100%" height="auto" margin="16px 0px ">
       <BoxBackground>
         <Box padding="150">
@@ -145,5 +156,6 @@ export default function ManageClipartIndex() {
         {rowMarkup}
       </IndexTable>
     </SpacingBackground>
+    </>
   );
 }
