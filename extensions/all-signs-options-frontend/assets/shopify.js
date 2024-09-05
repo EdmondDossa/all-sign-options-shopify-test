@@ -84,7 +84,7 @@ async function aso_confiurator_dataFunction(){
 
   if (currentConfig) {
     managesData.fonts = managesData.fonts.filter(font => currentConfig.data.settings.customizerSign.text.selectedFonts?.includes(font.id)) ?? [];
-    managesData.cliparts = managesData.cliparts.filter(clipart => currentConfig.data.settings.customizerSign.images.selectedCliparts?.includes(clipart.id)) ?? [];
+    managesData.cliparts = managesData.cliparts.filter(clipart => currentConfig.data.settings.customizerSign.images.enableClipart?.selectClipartGroups?.includes(clipart.id));
   }
   defaultStyle( `${window.location.origin}/${window.Shopify?.routes?.root?.replace("/",'')}apps/aso-proxy`);
    //  to add  font and custom css to  page
