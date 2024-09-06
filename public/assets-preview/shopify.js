@@ -94,12 +94,14 @@ async function aso_confiurator_dataFunction(){
   const   currentConfig = await getAsoConfiguration(asoConfigurationId);
 
   // Add custom CSS and fonts
+  try {
+    managesData.fonts = managesData.fonts.filter(font => currentConfig.data.settings.customizerSign.text.selectedFonts?.includes(font.id)) ?? [];
+    managesData.cliparts = managesData.cliparts.filter(clipart => currentConfig.data.settings.customizerSign.images.enableClipart?.selectClipartGroups?.includes(clipart.id));
+  } catch (error) {
+    console.error('Error filtering fonts and cliparts:');
+  }
 
   try {
-    if (currentConfig) {
-      managesData.fonts = managesData.fonts.filter(font => currentConfig.data.settings.customizerSign.text.selectedFonts?.includes(font.id)) ?? [];
-      managesData.cliparts = managesData.cliparts.filter(clipart => currentConfig.data.settings.customizerSign.images.enableClipart?.selectClipartGroups?.includes(clipart.id)) ?? [];
-    }
     managesDataCustom = replaceUploadsPath(managesData);
     defaultStyle('');
    
