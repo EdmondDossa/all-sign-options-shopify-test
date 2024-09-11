@@ -79,7 +79,9 @@ async function aso_confiurator_dataFunction(){
       currentConfig = getDefaultConfig();
     }
   }else{
+
      currentConfig = getDefaultConfig();
+     document.querySelector(".aso-app-not-found").style.display = "flex";
   }
 
   if (currentConfig) {
