@@ -93,7 +93,7 @@ export const proSubscriptionRequired = async (billing: any)=>{
   });
 }
 
-export const isTest = () => process.env.IS_TEST ? true : false;
+export const isTest = () => process.env.IS_TEST == "true" ? true : false;
    
 export const PRICING_PLANS = {
     FREE: "free",
