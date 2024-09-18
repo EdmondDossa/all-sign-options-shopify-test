@@ -31,6 +31,7 @@
 <script type="module" crossorigin src="{{'index.js' |asset_url }}"></script>
 
 <div class="shopify-app-wrapper">
+
     <div class="aso-app" id="app">
       <div class="bg-loader">
         <div id="aso-configurator-loader" style="height:90vh;">
@@ -102,6 +103,12 @@
         </div>
       </div>
     </div>
+    <div class='aso-app-not-found'>
+      <div class="aso-app-not-found-item">
+        No design configuration has been found.
+        Please select a product assigned to a valid design configuration for this block.
+      </div>
+    </div>
 </div> 
 
 
@@ -109,6 +116,29 @@
 
 
 <style>
+  .aso-app-not-found{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #233142;
+    align-items: center;
+    justify-content: center;
+    color: aliceblue;
+    padding: 20px;
+    font-family: "Arial", "Helvetica", sans-serif;
+    font-size: 2.5rem;
+    font-style: italic;
+    font-family: auto;
+    opacity: 0.6;
+  }
+
+  .aso-app-not-found-item{
+    max-width: 700px;
+  }
+
   .aso-app p {
     margin-top: 0px !important;
     margin-bottom: 0px !important;
@@ -154,7 +184,8 @@
     display: flex !important;
   }
   .shopify-app-wrapper{
-    margin: 2rem 0rem
+    margin: 2rem 0rem;
+    position: relative;
   }
 
   .aso-app .aso-inputColor-hide {

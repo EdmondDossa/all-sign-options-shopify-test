@@ -1,5 +1,7 @@
 
-<div style="min-height: 200px">
+{% assign aso_aso_shopify_id = "now" | date: "%N" | modulo: 1000 | plus: 0 %}
+
+<div id="aso_aso_shopify_id{{ aso_aso_shopify_id }}" class="aso_aso_shopify"  style="min-height: 200px; margin-bottom: 2rem;">
     <div id="asoTemplateCategories">
       <ul class="aso-categories" id="asoTemplateUl">
         <li id="asoTemplateCategory" class="asoTemplateLi asoTemplateLiItem aso-active" data-id=""  onclick="toggleActive(this)"> {{ block.settings.text_all }} </li>
@@ -67,6 +69,7 @@
 
 <script>
   
+  
   if(!asoConfigurationId){
   var asoConfigurationId = "";
   var asoProductId = "";
@@ -130,11 +133,11 @@
       console.log("template dtata", templates)
 
 
-      const templateDiv = document.querySelector('#asoTemplate');
-      const templateItem = templateDiv.querySelector('.asoTemplateItem');
+      const templateDiv = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #asoTemplate');
+      const templateItem = templateDiv.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .asoTemplateItem');
 
-      const templateUl = document.querySelector('#asoTemplateUl');
-      const templateLiItem = templateUl.querySelector('.asoTemplateLiItem'); 
+      const templateUl = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #asoTemplateUl');
+      const templateLiItem = templateUl.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .asoTemplateLiItem'); 
 
       // Créer un nouveau div pour contenir les éléments clonés
       const newContainer = document.createElement('div');
@@ -197,9 +200,9 @@
       });
 
       // Remplacer le contenu de #asoTemplate par le nouveau contenu
-      document.querySelector('#aso-templates-loader').style.display = 'none'; 
+      document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #aso-templates-loader').style.display = 'none'; 
       if(!newContainer.innerHTML){
-        document.querySelector('.not-found-wrapper').style.display = 'flex'; 
+        document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .not-found-wrapper').style.display = 'flex'; 
       }
       templateDiv.innerHTML = newContainer.innerHTML;
       templateUl.innerHTML = newContainerUl.innerHTML; 
@@ -208,9 +211,9 @@
 
     
   }).catch((error) =>{
-    document.querySelector('#aso-templates-loader').style.display = 'none';
-    document.querySelector('.not-found-wrapper').style.display = 'flex'; 
-    console.log(' error  on fetching template',error)
+    document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #aso-templates-loader').style.display = 'none';
+    document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .not-found-wrapper').style.display = 'flex'; 
+    console.log(' error  on fetching ')
   });
   }); 
 
@@ -222,7 +225,7 @@
       //debut de gestion du loading
       let template = asoTemplateData.find(template=>(template.id == id) )
       console.log("template start  add  to  cart",template)
-      const templateDiv = document.querySelector('#asoTemplate');
+      const templateDiv = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #asoTemplate');
       templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'none';
       templateDiv.querySelector('.addingTocart'+template.id).style.display = 'block';
     
@@ -246,13 +249,15 @@
     var isActive = element.classList.contains('aso-active');
 
     // Remove the active class from all list items
-    var items = document.querySelectorAll('.aso-categories li');
+    var items = element.closest('.aso_aso_shopify').querySelectorAll('.aso-categories li');
+
     items.forEach(function(item) {
         item.classList.remove('aso-active');
     });
 
     // Hide all content items
-    var contentItems = document.querySelectorAll('.asoTemplateItem');
+    var contentItems = element.closest('.aso_aso_shopify').querySelectorAll('.asoTemplateItem');
+   
     contentItems.forEach(function(contentItem) {
         contentItem.classList.add('hidden');
     });
@@ -362,8 +367,9 @@
 }
 
 .asoTemplateItemImg{
-      /* height: 150px; */
+      height: 100%; 
       width: 100%;
+      
     object-fit: cover;
 }
 
@@ -441,6 +447,8 @@
 
 .aso-categories {
   list-style-type: none;
+  gap: 8px;
+  flex-wrap: wrap;
   padding: 0;
   margin: 2rem;
   display: flex;
@@ -448,16 +456,16 @@
 }
 
 .aso-categories li {
-  border-bottom: 1px solid #6c757d; /* Secondary border color */
-  padding: 10px 15px;
+  border-bottom: 1px solid lightslategray; /* Secondary border color */
+  padding: 4px 15px;
   margin-right: 10px;
-  color: black;
+  color: lightslategray;
   font-weight: 600; /* Slightly bold */
   transition: background-color 0.3s ease, color 0.3s ease, border-bottom 0.3s ease;
 }
 
 .aso-categories li.aso-active {
-  background-color: #343a40; /* Darker secondary color */
+  background-color: lightslategray; /* Darker secondary color */
   color: white;
 }
 
