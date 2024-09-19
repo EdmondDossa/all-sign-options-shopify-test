@@ -47,7 +47,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   try {
     if (admin) {
-        plan = await getPlanProxy(admin);
+        plan = await getPlanProxy(admin, session.shop);
     }else{
         plan = await getPlanProxyPublic(session.shop, session.accessToken);
     }
