@@ -28,7 +28,7 @@ import { useId } from "react";
 
   export async function loader({ request }:LoaderFunctionArgs) {
     const { billing ,admin, session} = await authenticate.admin(request);
-    const plan = await getPlan(billing);
+    const plan = await getPlan(billing,session?.shop);
   
     try {
       
@@ -39,8 +39,8 @@ import { useId } from "react";
       // Check if the shop has an active subscription
       const billingCheck = await billing.require({
         plans: [MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
-        isTest:isTest(),
-        onFailure: async () => billing.request({ plan: MONTHLY_STARTER_PLAN, isTest:isTest() }),
+        isTest:isTest(session?.shop),
+        onFailure: async () => billing.request({ plan: MONTHLY_STARTER_PLAN, isTest:isTest( session?.shop) }),
       });
   
       // If the shop has an active subscription, log and return the details
@@ -270,18 +270,18 @@ import { useId } from "react";
 
 
 export const action = async ({ request }:ActionFunctionArgs) => {
-  const { billing } = await authenticate.admin(request);
+  const { billing, session } = await authenticate.admin(request);
   const billingCheck = await billing.require({
     plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN],
-    isTest:isTest(),
-    onFailure: async () => billing.request({ plan: MONTHLY_STARTER_PLAN, isTest:isTest() }),
+    isTest:isTest(session?.shop),
+    onFailure: async () => billing.request({ plan: MONTHLY_STARTER_PLAN, isTest:isTest( session?.shop) }),
   });
 
   const subscription = billingCheck.appSubscriptions[0];
 
   const cancelledSubscription = await billing.cancel({
     subscriptionId: subscription.id,
-    isTest: isTest(),
+    isTest: isTest( session?.shop),
     prorate: true,
   });
 

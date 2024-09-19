@@ -2,37 +2,37 @@ import { redirect } from "@remix-run/node";
 import { ShopifyBillingService } from "~/models/ShopifyBilling.service";
 import { MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN } from "~/shopify.server";
 
-export const getPlan = async (billing:any) => {
+export const getPlan = async (billing:any, shop?:string) => {
     const {hasActivePayment:hasProPlan } = await billing.check({
         plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
-        isTest: isTest()
+        isTest: isTest(shop)
       });
        
       const {hasActivePayment:hasStarterPlan  } = await billing.check({
         plans: [MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN],
-        isTest: isTest()
+        isTest: isTest(shop)
       });
     
     return hasProPlan?'pro':hasStarterPlan?'starter':"free"
 }
 
 
-export const getPlanDuration = async (billing:any) => {
+export const getPlanDuration = async (billing:any, shop?:string) => {
   const {hasActivePayment:hasYearPlan } = await billing.check({
       plans: [YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
-      isTest: isTest()
+      isTest: isTest(shop)
     });
   
   return hasYearPlan?'year':"month"
 }
 
 
-export const getPlanProxy = async (admin:any) => {
+export const getPlanProxy = async (admin:any, shop?:string) => {
   const plans = await ShopifyBillingService.getBilling(admin);
   
   if (plans?.length > 0) {
     for (const plan of plans) {
-      if (plan.test == isTest()) {
+      if (plan.test == isTest(shop)) {
         
         if (plan.name == MONTHLY_STARTER_PLAN || plan.name == YEARLY_STARTER_PLAN) {
           return "starter";
@@ -55,7 +55,7 @@ export const getPlanProxyPublic = async (shop:any, accessToken:any) => {
   
   if (plans?.length > 0) {
     for (const plan of plans) {
-      if (plan.test == isTest()) {
+      if (plan.test == isTest(shop)) {
         
         if (plan.name == MONTHLY_STARTER_PLAN || plan.name == YEARLY_STARTER_PLAN) {
           return "starter";
@@ -73,27 +73,39 @@ export const getPlanProxyPublic = async (shop:any, accessToken:any) => {
 
 
 
-export const subscriptionRequired = async (billing: any)=>{
+export const subscriptionRequired = async (billing: any,shop ?: string)=>{
   
   const billingCheck = await billing.require({
     plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
-    isTest:isTest(),
+    isTest:isTest(shop),
       onFailure: async () => redirect('/app/pricing')
   });
 }
 
 
 
-export const proSubscriptionRequired = async (billing: any)=>{
+export const proSubscriptionRequired = async (billing: any, shop?: string)=>{
   
   const billingCheck = await billing.require({
     plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
-    isTest:isTest(),
+    isTest:isTest(shop),
       onFailure: async () => redirect('/app/pricing')
   });
 }
 
-export const isTest = () => process.env.IS_TEST == "true" ? true : false;
+export const isTest = (shop?: string) => {
+
+    if (shop && shop.startsWith("all-signs-options.myshopify.com")) {
+      return true;
+    }
+  
+    if (process.env.DEMO_SHOPS && shop && process.env.DEMO_SHOPS.includes(shop)) {
+      return true;
+    }
+  
+
+    return process.env.IS_TEST == "true" ? true : false
+};
    
 export const PRICING_PLANS = {
     FREE: "free",

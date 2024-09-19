@@ -14,7 +14,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     let plan:string = "";
 
   if (admin) {
-    plan = await getPlanProxy(admin);
+    plan = await getPlanProxy(admin, session?.shop);
     if (plan == "free" || plan== PRICING_PLANS.STARTER) {
       return json(null);
     }
