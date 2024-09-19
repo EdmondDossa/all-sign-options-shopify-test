@@ -18,7 +18,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       session.id,
     );
   }
-  let plan = await getPlan(billing);
+  let plan = await getPlan(billing,session?.shop);
 
   return json({ configuration, plan });
 };

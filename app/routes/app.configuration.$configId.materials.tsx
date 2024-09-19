@@ -19,7 +19,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     materials = await MaterialService.getAll(session.id, configId);
   }
 
-  const  plan = await getPlan(billing);
+  const  plan = await getPlan(billing,session?.shop);
 
   return json({ materials, plan });
 };

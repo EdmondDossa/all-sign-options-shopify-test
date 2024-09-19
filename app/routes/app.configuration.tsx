@@ -6,10 +6,10 @@ import { getPlan, subscriptionRequired } from "~/utils/pricing";
 
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-    const { billing } = await authenticate.admin(request);
+    const { billing, session } = await authenticate.admin(request);
     
-    await subscriptionRequired(billing);
-    const plan =  await  getPlan(billing)
+    await subscriptionRequired(billing,session?.shop);
+    const plan =  await  getPlan(billing,session?.shop);
   
     return json({ plan });
   
