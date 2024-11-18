@@ -104,7 +104,7 @@ export const isTest = (shop?: string) => {
     }
   
 
-    return process.env.IS_TEST == "true" ? true : false
+    return process.env.IS_TEST == "true" ? true : null
 };
    
 export const PRICING_PLANS = {

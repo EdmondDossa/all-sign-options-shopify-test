@@ -55,7 +55,8 @@ export default function Index() {
             
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
             <Banner>
-                Click    {" "} <LinksConfirmBtn
+                Click
+              <LinksConfirmBtn
                   url={configurationUrl}
                   modalTitle="Configuration Design Screen Block"
                   title={"here to install configuration screen"}>
