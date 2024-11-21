@@ -21,11 +21,10 @@ import {
   ButtonGroup,
   Divider,
 } from "@shopify/polaris";
-import {  useState } from "react";
-import { CheckSpan } from "~/components/inputs/CheckSpan";
+import { useState } from "react";
+import PlusIcon from "~/components/icons/PlusIcon";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { configurationDemoData } from "~/models/demoData";
 import { SearchIcon } from "@shopify/polaris-icons";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
@@ -36,7 +35,6 @@ import {
 import { authenticate } from "~/shopify.server";
 import TemplateService from "~/models/Template.service";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
-import { number } from "zod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { fileUrl } from "~/utils/fileUrl";
 
@@ -115,6 +113,11 @@ export default function ConfigurationTemplates() {
     navigate("edit");
   };
 
+  const onHandleImport = () => {
+    navigate("import");
+  };
+
+
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
   };
@@ -137,7 +140,8 @@ export default function ConfigurationTemplates() {
             <InlineStack gap="100" align="space-between" blockAlign="center">
               <Text as="h2" variant="headingMd">
                  Templates  list
-              </Text>
+            </Text>
+            <InlineStack gap="100" align="space-between" blockAlign="center">
               <TextField
                 prefix={<Icon source={SearchIcon} />}
                 value={searchTag}
@@ -145,7 +149,36 @@ export default function ConfigurationTemplates() {
                 onChange={setSearchTag}
                 autoComplete="on"
                 labelHidden
-              />
+            />
+             <button
+                  className="primary-btn"
+                  type="button"
+                  onClick={() => { onHandleCreate() }}
+                >
+                  <Box paddingInline="100">
+                    <InlineStack gap="100">
+                      <PlusIcon />
+                      <span className="primary-btn-text">
+                        Add template 
+                      </span>
+                    </InlineStack>
+                  </Box>
+              </button>
+              <button
+                  className="primary-btn"
+                  type="button"
+                  onClick={ ()=>{ onHandleImport() } }
+                >
+                  <Box paddingInline="100">
+                    <InlineStack gap="100">
+                      <PlusIcon />
+                      <span className="primary-btn-text">
+                        Import template 
+                      </span>
+                    </InlineStack>
+                  </Box>
+                </button>
+            </InlineStack>
             </InlineStack>
           </Box>
         </BoxBackground>
@@ -154,23 +187,6 @@ export default function ConfigurationTemplates() {
         <SpacingBackground width="100%" height="auto" margin="10px 0px" backgroundColor="#F8F9FB">
           <Box paddingInline="300" paddingBlock="300">
           <Grid gap={{ lg: "20px" }}>
-          <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 3, xl: 3 }}>
-      
-            <div
-              onClick={() => {
-                onHandleCreate()
-              }}
-              
-              className={"template-add-btn"}
-            >
-              <BlockStack gap="200" align="center" inlineAlign="center">
-
-                <Icon source={PlusCircleIcon}/>
-                <Text as="p" variant="headingMd"> Add new  template</Text>
-              </BlockStack>
-            </div>
-          </Grid.Cell>
-            
               {data.map((item: any) => {
                 return (
                   <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 3, xl: 3 }}>
