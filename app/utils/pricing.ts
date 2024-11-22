@@ -127,7 +127,7 @@ export const isTest = (shop?: string) => {
     }
   
 
-    return process.env.IS_TEST == "true" ? true : null
+    return process.env.IS_TEST == "true" ? true : undefined
 };
    
 export const PRICING_PLANS = {
