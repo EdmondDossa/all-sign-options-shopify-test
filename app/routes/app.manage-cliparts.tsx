@@ -11,9 +11,9 @@ import { authenticate } from "~/shopify.server";
 import { subscriptionRequired } from "~/utils/pricing";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { billing ,session} = await authenticate.admin(request);
+  const { billing ,session, admin} = await authenticate.admin(request);
   
-  await subscriptionRequired(billing, session?.shop);
+  await subscriptionRequired(billing, session?.shop, admin);
 
   return null;
 

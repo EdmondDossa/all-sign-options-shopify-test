@@ -17,15 +17,19 @@ import { config } from "process";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import SessionService from "~/models/Session.service";
 import { version } from "package.json";
+import { ShopifyShopService } from "~/models/ShopifyShop.service";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "stylesheet", href: appStyle }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session }: any = await authenticate.admin(request);
+  const { session , admin}: any = await authenticate.admin(request);
 
   handleSession(session).then(async () => {
      console.log("session init");
-   });
+  });
+  
+
+  console.log("plan of  current shop ", await ShopifyShopService.isShopInDev(admin));
   
   
 

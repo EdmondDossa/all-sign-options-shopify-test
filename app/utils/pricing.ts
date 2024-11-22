@@ -1,8 +1,13 @@
 import { redirect } from "@remix-run/node";
 import { ShopifyBillingService } from "~/models/ShopifyBilling.service";
+import { ShopifyShopService } from "~/models/ShopifyShop.service";
 import { MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN } from "~/shopify.server";
 
-export const getPlan = async (billing:any, shop?:string) => {
+export const getPlan = async (billing: any, shop?: string, admin?: any) => {
+  const isDev = await ShopifyShopService.isShopInDev(admin);
+  if (isDev) {
+    return "pro";
+  }
     const {hasActivePayment:hasProPlan } = await billing.check({
         plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
         isTest: isTest(shop)
@@ -27,7 +32,12 @@ export const getPlanDuration = async (billing:any, shop?:string) => {
 }
 
 
-export const getPlanProxy = async (admin:any, shop?:string) => {
+export const getPlanProxy = async (admin: any, shop?: string) => {
+  const isDev = await ShopifyShopService.isShopInDev(admin);
+  if (isDev) {
+    return "pro";
+  }
+
   const plans = await ShopifyBillingService.getBilling(admin);
   
   if (plans?.length > 0) {
@@ -50,7 +60,13 @@ export const getPlanProxy = async (admin:any, shop?:string) => {
 
 
 
-export const getPlanProxyPublic = async (shop:any, accessToken:any) => {
+export const getPlanProxyPublic = async (shop: any, accessToken: any) => {
+  const isDev = await ShopifyShopService.isShopInDevPublic(shop, accessToken)
+  
+  if (isDev) {
+    return "pro";
+  }
+
   const plans = await ShopifyBillingService.getBillingRequest(shop, accessToken);
   
   if (plans?.length > 0) {
@@ -73,8 +89,11 @@ export const getPlanProxyPublic = async (shop:any, accessToken:any) => {
 
 
 
-export const subscriptionRequired = async (billing: any,shop ?: string)=>{
-  
+export const subscriptionRequired = async (billing: any,shop ?: string, admin?: any)=>{
+  const isDev = await ShopifyShopService.isShopInDev(admin);
+  if (isDev) {
+    return true;
+  }
   const billingCheck = await billing.require({
     plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
     isTest:isTest(shop),
@@ -84,8 +103,12 @@ export const subscriptionRequired = async (billing: any,shop ?: string)=>{
 
 
 
-export const proSubscriptionRequired = async (billing: any, shop?: string)=>{
-  
+export const proSubscriptionRequired = async (billing: any, shop?: string, admin?: any)=>{
+  const isDev = await ShopifyShopService.isShopInDev(admin);
+  if (isDev) {
+    return true;
+  }
+
   const billingCheck = await billing.require({
     plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
     isTest:isTest(shop),

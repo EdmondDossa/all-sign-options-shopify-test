@@ -16,9 +16,9 @@ import { proSubscriptionRequired } from "~/utils/pricing";
 
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-    const { billing , session} = await authenticate.admin(request);
+    const { billing , session, admin} = await authenticate.admin(request);
     
-    await proSubscriptionRequired(billing,session?.shop);
+    await proSubscriptionRequired(billing,session?.shop, admin);
   
     return null;
   
