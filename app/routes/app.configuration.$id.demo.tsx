@@ -114,7 +114,7 @@ const formSchema = z.object({
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin, billing } = await authenticate.admin(request);
-  const plan =  await  getPlan(billing,session?.shop);
+  const plan =  await  getPlan(billing,session?.shop, admin);
 
 
 

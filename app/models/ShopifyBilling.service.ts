@@ -65,7 +65,7 @@ export class ShopifyBillingService{
       const data = await response.json();
       const returnData = data.data.currentAppInstallation.activeSubscriptions;
       return returnData;
-    }
+  }
     
 
 }
