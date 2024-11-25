@@ -28,12 +28,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
      console.log("session init");
   });
   
-
-  console.log("plan of  current shop ", await ShopifyShopService.isShopInDev(admin));
-  
-  
-
-
   return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
 };
 
