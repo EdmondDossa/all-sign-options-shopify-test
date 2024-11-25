@@ -77,7 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
     ),
   );
 
-  let files = formData.getAll("file") as NodeOnDiskFile[];
+  const files = formData.getAll('files') as unknown as NodeOnDiskFile[];
 
   let returnFiles = files.map((file) => ({
     name: file.name,
