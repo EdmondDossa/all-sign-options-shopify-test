@@ -249,7 +249,6 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
   }
 }
 
-
 function asoGetFontFormat(url) {
   const extension = url.split('.').pop().toLowerCase();
   switch (extension) {

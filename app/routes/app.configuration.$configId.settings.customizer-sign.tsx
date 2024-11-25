@@ -26,7 +26,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const manageFonts : FontType[] | null =  await FontService.getFonts(session.id)
   const manageShapes : ShapeType[] | null =  await SettingShapesService.get(session.id)
   const manageClipartGroups : ClipartsGroupType[] | null =  await ClipartsGroupService.getClipartsGroups(session.id)
-  const plan =  await  getPlan(billing,session?.shop)
+  const plan =  await  getPlan(billing,session?.shop, admin);
 
   
   return json({ manageFonts,manageShapes, manageClipartGroups, plan});
