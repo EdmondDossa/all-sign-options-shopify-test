@@ -2,7 +2,9 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
+
 application_url = "https://interpreted-chester-rf-barry.trycloudflare.com"
+
 embedded = true
 
 [build]
@@ -26,6 +28,7 @@ api_version = "2024-01"
 
 [app_proxy]
 url = "https://interpreted-chester-rf-barry.trycloudflare.com"
+
 subpath = "aso-proxy"
 prefix = "apps"
 
