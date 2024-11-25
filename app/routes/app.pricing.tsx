@@ -40,7 +40,9 @@ import { useId } from "react";
       const billingCheck = await billing.require({
         plans: [MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
         isTest:isTest(session?.shop),
-        onFailure: async () => billing.request({ plan: MONTHLY_STARTER_PLAN, isTest:isTest( session?.shop) }),
+        onFailure: async () => {
+          throw new Error('No active plan');
+        },
       });
   
       // If the shop has an active subscription, log and return the details
@@ -54,7 +56,7 @@ import { useId } from "react";
       // If the shop does not have an active plan, return an empty plan object
       if (error.message === 'No active plan') {
        
-        return json({ billing, subscription: { name: "free" } ,plan});
+        return json({ billing, subscription: { name: "free" } ,plan:"free"});
       }
       // If there is another error, rethrow it
       throw error;
@@ -93,6 +95,30 @@ import { useId } from "react";
       price: "79",
       year_price: "759",
       name: "pro",
+      action: " Subscribe to Monthly",
+      year_action: "Subscribe to Yearly",
+      url: "/app/subscribe/monthly-pro",
+      year_url: "/app/subscribe/yearly-pro",
+      features: [
+        "unlimited configuration",
+        "unlimited templates per  configuration",
+        "unlimited  simple materials",
+        "unlimited advanced material",
+        "unlimited  additionnal  component",
+        "unlimited Sizes without custom",
+        "unlimited colors without custom",
+        "12  shapes",
+        "20 fixing methods",
+        "4 borders",
+        "mail notifications on order",
+      ]
+    },
+    {
+      title: "Free",
+      description: "Free for shop  in development",
+      price: "00",
+      year_price: "00",
+      name: "free",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",
       url: "/app/subscribe/monthly-pro",
@@ -168,7 +194,11 @@ import { useId } from "react";
             <Grid.Cell key={index} columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
               <Card background={plan_item.name == plan ? "bg-surface-success" : "bg-surface"} >
                 <Bleed marginBlockEnd="800">
-                  <InlineStack align="end"><Badge tone="info">+15 days free trial</Badge> </InlineStack>
+                  <InlineStack align="end">
+                    {
+                      plan_item.name == "free" ? <Badge tone="info"> free for  shop in development</Badge>:<Badge tone="info">+15 days free trial</Badge>
+                    }
+                  </InlineStack>
                 </Bleed>
               
                 <Box padding="400">
@@ -188,7 +218,7 @@ import { useId } from "react";
                     </InlineStack>
                     <Text as="p" tone="success" variant="bodyMd" >
                       {plan_item.year_price 
-                          === "0" ? "" : "$" + plan_item.year_price} /year and save 20% on subscription
+                          === "0" ? "" : "$" + plan_item.year_price} /year { plan_item.name == "free" ? "" : "and save 20% on subscription" }
                     </Text>
                   </Box>
   
@@ -213,7 +243,7 @@ import { useId } from "react";
                   <div style={{ margin: "0.5rem 0"}}>
                     <Divider />
                   </div>
-  
+               { plan_item.name == "free" || <>
                   { 
                     plan_item.name != plan ? (
                       <InlineStack gap="300">
@@ -240,6 +270,7 @@ import { useId } from "react";
                         
                     )
                  }
+                  </>}
                 </Box>
               </Card>
             </Grid.Cell>
