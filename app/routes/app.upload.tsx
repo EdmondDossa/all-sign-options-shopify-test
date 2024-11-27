@@ -50,22 +50,12 @@ export async function action({ request }: ActionFunctionArgs) {
     request,
     unstable_composeUploadHandlers(
       unstable_createFileUploadHandler({
-        // Limit file upload to images
-        filter({ contentType }) {
-          for (const currentType of contentTypes) {
-            if (contentType.includes(contentType)) {
-              return true;
-            }
-          }
 
-          return false;
-        },
         // Store the images in the public/img folder
         directory: `./public/uploads/${getShopPath(session.id)}/files`,
         // By default `unstable_createFileUploadHandler` add a number to the file
         // names if there's another with the same name, by disabling it we replace
         // the old file
-        avoidFileConflicts: true,
         // Use the actual filename as the final filename
         file({ filename }) {
           return filename;
@@ -74,10 +64,12 @@ export async function action({ request }: ActionFunctionArgs) {
         maxPartSize: 10 * 1024 * 1024,
       }),
       unstable_createMemoryUploadHandler(),
-    ),
+    ), 
   );
 
-  const files = formData.getAll('files') as unknown as NodeOnDiskFile[];
+  let files = formData.getAll("file") as  any[] as NodeOnDiskFile[];
+
+  
 
   let returnFiles = files.map((file) => ({
     name: file.name,
