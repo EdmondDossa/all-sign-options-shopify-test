@@ -23,6 +23,8 @@
   "dependencies": {
     "@conform-to/react": "^1.0.4",
     "@conform-to/zod": "^1.0.4",
+    "@mjackson/file-storage": "^0.3.0",
+    "@mjackson/form-data-parser": "^0.5.0",
     "@prisma/client": "^5.8.0",
     "@react-email/components": "0.0.19",
     "@react-email/render": "^0.0.15",
@@ -45,6 +47,7 @@
     "@types/color-convert": "^2.0.3",
     "@types/jsonwebtoken": "^9.0.6",
     "adm-zip": "^0.5.14",
+    "browserify-fs": "^1.0.0",
     "buffer-image-size": "^0.6.4",
     "color": "^4.2.3",
     "color-convert": "^2.0.1",
