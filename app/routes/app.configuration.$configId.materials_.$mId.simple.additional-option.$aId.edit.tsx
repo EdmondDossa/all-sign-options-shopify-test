@@ -120,7 +120,7 @@ export default function MaterialAdditionalOptionCreate() {
                     path={formData.icon} handlePath={handleIcon} />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <FileInput error={getError(actionData, "popImg")} title="Example" buttonTitle="upload example"
+              <FileInput error={getError(actionData, "popImg")} title="Upload Image" buttonTitle="upload image"
                     path={formData.popImg} handlePath={handlePopImg} />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
@@ -183,7 +183,7 @@ const formSchema = z.object({
     .max(100, "Title is too long"),
   description: z.string().nullish().transform(stringTransform),
   icon:  z.string().nullish().transform(stringTransform),
-  image:  z.string().nullish().transform(stringTransform),
+  popImg:  z.string().nullish().transform(stringTransform),
   additionalPrice: z.number({ required_error: "image file is required" }),
   excludeColors: z.any().transform(jsonTransform).pipe(z.number().array()),
   isDefault: z.any().transform(booleanTransform).pipe(z.boolean())
