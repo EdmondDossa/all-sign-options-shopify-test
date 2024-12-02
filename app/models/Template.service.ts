@@ -114,4 +114,28 @@ export default class TemplateService {
       return Promise.resolve(null);
     }
   }
+
+
+  static async addMany(
+    templates: TemplateType[],
+    sessionId: string,
+    configurationId: number,
+    categoryId?:number 
+  ): Promise<any | null> {
+    try {
+      return await prisma.template.createMany({
+        data: templates.map((template) => {
+          delete template.id;
+          return {
+            ...template, sessionId: sessionId,
+            configurationId: configurationId,
+            categoryId: categoryId
+          }
+        })
+      });
+    } catch (error) {
+      console.error("Error adding template:", error);
+      return Promise.resolve(null);
+    }
+  }
 }

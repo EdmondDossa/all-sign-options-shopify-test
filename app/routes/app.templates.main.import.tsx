@@ -34,11 +34,14 @@ import ConfigurationService from "~/models/Configuration.service";
 import { ComboxSelect } from "~/components/inputs/ComboxSelect";
 import { booleanTransform, stringTransform } from "~/utils/transfomerZod";
 import { EditCategoryModal } from "./app.templates.categories._index";
+import { fileUrl, getShopPath } from "~/utils/fileUrl";
+import { readFileSync } from "fs";
+import FontService from "~/models/Font.service";
+import { replaceUrlForImport } from "~/utils/import-file";
+import { FontType } from "~/types/ManagePropertyType";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
-  const url = new URL(request.url);
-  const id = url.searchParams.get("id");
 
   let categories = await CategoryService.getCategorys(session.id);
   let configurations = await ConfigurationService.getConfigurations(session.id);
@@ -60,7 +63,6 @@ export default function TemplateEditComponent() {
         configurationId: configurations?.length ? configurations[0].id : 0,
         templates: ""
     }
-  
   );
 
   let isLoading = navigation.state == "loading";
@@ -86,7 +88,6 @@ export default function TemplateEditComponent() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(" log is nt errors");
     submit({ ...formData }, { method: "POST" });
   };
 
@@ -107,13 +108,13 @@ export default function TemplateEditComponent() {
               <Grid gap={{ lg: "30px" }}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
                   <FileInput
-                    error={getError(actionData, "prevImg")}
+                    error={getError(actionData, "templates")}
                     title="Upload template json file"
                     buttonTitle="Upload"
                     type="other"
                     path={formData.templates}
                     handlePath={(value: string) =>
-                      handleInputChange("prevImg", value)
+                      handleInputChange("templates", value)
                     }
                   />
                 </Grid.Cell>
@@ -171,7 +172,7 @@ export default function TemplateEditComponent() {
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
                 <BackBtn isLoading={isLoading} title="Back" />
-                <BiSaveBtn  title='' />
+                <BiSaveBtn isLoading={isSubmitting|| isLoading} title='' />
 
               </InlineStack>
             </Box>
@@ -182,7 +183,6 @@ export default function TemplateEditComponent() {
         onSubmit={(value: any) => {
           setCategoriesData([...categoriesData, value]);
           handleInputChange("categoryId", value.id);
-          console.log("news categoies");
         }}
         open={enableCategoryEdit}
         onClose={() => {
@@ -194,34 +194,77 @@ export default function TemplateEditComponent() {
 }
 
 const formSchema = z.object({
-  name: z
-    .string({ required_error: "Name is required" })
-    .min(2, "Name is too short")
-    .max(220, "Name is too long"),
-  template: z.string().nullish().transform(stringTransform),
+  templates: z.string().nullish().transform(stringTransform),
   configurationId: z.number(),
-  categoryId: z.number(),
+  categoryId: z.number().nullable().nullish(),
 });
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
 
   const formData = await request.formData();
-  const url = new URL(request.url);
-  const id = url.searchParams.get("id");
 
-  const submission = parseWithZod(formData, { schema: formSchema });
+
+  const submission:any = parseWithZod(formData, { schema: formSchema });
 
   if (submission.status !== "success") {
     return json({ status: false, message: null, errors: submission.error });
   }
+  let configData: any = null;
+  try {
+    const readData = readFileSync("public"+fileUrl(submission.value.templates), 'utf8');
+    configData = JSON.parse(readData);
+    
+    configData = await replaceUrlForImport(
+      configData,
+      configData.uploadsPrefix,
+      `https://${session.shop}/apps/aso-proxy/`,
+      `public/uploads/${getShopPath(session.id)}/files`,
+      true
+    );
+    
+  } catch (error) {
+    console.log("errors on reading file", error);
+  }
 
-  let template: TemplateType = submission.value as TemplateType;
-  let res = await TemplateService.addTemplate(template, session.id);
-  return res
-    ? redirect(
-        `../preview/${res.id}/${flashMessage("template  added is completed successfully. Please setup your template in preview page to make it active.")}`,
-      )
-    : json({ ...jFlashMessage("error   on template adding") });
+  //  enregister configuration  des  fonts
+  
+  let fontIDs = [];
+  if (configData?.fonts?.length > 0) {
+    for (const font of configData.fonts) {
+      const fontData = await FontService.addFont({
+        label: font.label,
+        url: font.url,
+        isGoogleFont: font.isGoogleFont
+      }, session.id);
+
+      if (fontData) {
+        fontIDs.push(fontData.id);
+      }
+    }
+  }
+
+
+  let configuration = await ConfigurationService.getConfiguration(submission.value.configurationId, session.id);
+ 
+  // engistrement des  materiels associes au  templates  importés
+  configuration.data.materials = [...configuration.data.materials, ...configData.data.materials]
+
+  // engistrement des  font associes au  templates  importés
+
+  configuration.data.settings.customizerSign.text.selectedFonts.push(...fontIDs);
+
+
+  
+  configuration = await ConfigurationService.updateConfiguration(configuration, session.id);
+  
+  let templates = await TemplateService.addMany(configData.templates, session.id, configuration.id, submission.value.categoryId??undefined)
+  
+  return templates ? redirect(`..${flashMessage("templates  imported is completed successfully")}`)
+  : json({ ...jFlashMessage("error   on template adding") });
   
 };
+
+
+
+

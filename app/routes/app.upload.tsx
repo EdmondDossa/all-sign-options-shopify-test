@@ -336,6 +336,7 @@ export const FileUploader = ({
                     <Listbox.Option disabled={type && type != "all" && type != "video"} selected={type == "video"} value="video">Video</Listbox.Option>
                     <Listbox.Option disabled={type && type != "all" && type != "icon"} selected={type == "icon"}  value="icon">Icon</Listbox.Option>
                     <Listbox.Option disabled={type && type != "all" && type != "font"} selected={type == "font"} value="font">Font</Listbox.Option>
+                    <Listbox.Option disabled={type && type != "all" && type != "other"} selected={type == "other"} value="font">Others</Listbox.Option>
                   </Listbox>
                 </Box>
               </BlockStack>
