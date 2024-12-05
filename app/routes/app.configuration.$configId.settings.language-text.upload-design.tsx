@@ -105,7 +105,7 @@ export default function ConfigSettingsGeneral() {
 
                     <Text as="p" variant="bodySm" tone="subdued">
                       {" "}
-                      Enable this to display a link to direct customers to
+                      Enable this to display a link to redirect customers to
                       another page on your site, this will display as one of the
                       first options on desktop and mobile.
                     </Text>

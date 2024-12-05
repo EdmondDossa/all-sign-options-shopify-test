@@ -79,7 +79,7 @@ export default function ManageSizeCreate() {
                   <BlockStack gap="100">
                     <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyMd">
-                        Use ider id as zip name
+                        Use order id as zip name
                       </Text>
                       <ReactSwitchCustom
                         checked={formData.zipName}
@@ -93,7 +93,7 @@ export default function ManageSizeCreate() {
                   </BlockStack>
                 </Grid.Cell>
 
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <BlockStack gap="100">
                     <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyMd">
@@ -105,7 +105,7 @@ export default function ManageSizeCreate() {
                       />
                     </InlineStack>
                   </BlockStack>
-                </Grid.Cell>
+                </Grid.Cell> */}
               </Grid>
             </Box>
           </SpacingBackground>
