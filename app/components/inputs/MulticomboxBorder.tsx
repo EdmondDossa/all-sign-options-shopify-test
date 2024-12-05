@@ -249,8 +249,7 @@ export const SelectCombobox = ({
                   <Grid >
               <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
                     <BlockStack align="center" inlineAlign="center">
-                      
-                    <img style={{ width: "60px" , height: "auto" }} src={image} />
+                       {image && <img style={{ width: "60px", height: "auto" }} src={fileUrl(image)} />}
                   </BlockStack>
                     </Grid.Cell>
                     <Grid.Cell columnSpan={{ xs: 3, sm: 3, md: 3, lg: 9, xl: 9 }}>

@@ -66,7 +66,7 @@ export default function App() {
         <Link to="/app/templates">Templates</Link>
         <Link to="/app/manage-font">Manage fonts</Link>
         <Link to="/app/manage-cliparts">Manage cliparts</Link>
-        <Link to="/app/settings"> Settings Generals</Link>
+        <Link to="/app/settings"> global settings</Link>
         <Link to="/app/pricing"> Pricing</Link>
       </ui-nav-menu>
       <HeaderTopMenu />
