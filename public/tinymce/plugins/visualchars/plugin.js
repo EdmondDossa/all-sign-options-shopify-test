@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 7.0.1 (2024-04-10)
+ * TinyMCE version 7.5.1 (TBD)
  */
 
 (function () {
@@ -533,13 +533,15 @@
         tooltip: 'Show invisible characters',
         icon: 'visualchars',
         onAction,
-        onSetup: toggleActiveState(editor, toggleState)
+        onSetup: toggleActiveState(editor, toggleState),
+        context: 'any'
       });
       editor.ui.registry.addToggleMenuItem('visualchars', {
         text: 'Show invisible characters',
         icon: 'visualchars',
         onAction,
-        onSetup: toggleActiveState(editor, toggleState)
+        onSetup: toggleActiveState(editor, toggleState),
+        context: 'any'
       });
     };
 

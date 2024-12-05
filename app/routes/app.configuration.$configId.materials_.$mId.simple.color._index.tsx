@@ -1,5 +1,6 @@
 import {
   Badge,
+  BlockStack,
   Box,
   ButtonGroup,
   Divider,
@@ -150,7 +151,16 @@ export default function MaterialColorIndex() {
           </InlineStack>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
-          <Badge tone="critical">{textColor}</Badge>
+          
+          {textColor === "Disable" ? <Badge tone="critical">{textColor}</Badge> :
+            <BlockStack align="center" gap="100">
+              <div style={{ margin: "auto", background: textColor, width: "50px", height: "30px", borderRadius: "5px", border: "1px solid #d3d3d3" }}>
+              </div>
+              <span>
+              <Badge >{textColor.toUpperCase()}</Badge>
+              </span>
+           </BlockStack>
+          }
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">
           {patternActive ? (
@@ -160,7 +170,17 @@ export default function MaterialColorIndex() {
               alt={"color" + title}
             />
           ) : (
-            <Badge tone="info">{BackgroundColor}</Badge>
+              <BlockStack  align="center" gap="100">
+                <div style={{ margin: "auto" , background: BackgroundColor, width: "50px" , height: "30px" , borderRadius: "5px",  border: "1px solid #d3d3d3" }}>
+                </div>
+                <span>
+                  <Badge >{BackgroundColor.toUpperCase()}</Badge>
+                </span>
+
+
+
+              </BlockStack>
+              
           )}
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">

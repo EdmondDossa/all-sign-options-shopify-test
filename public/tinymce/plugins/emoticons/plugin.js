@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 7.0.1 (2024-04-10)
+ * TinyMCE version 7.5.1 (TBD)
  */
 
 (function () {
@@ -293,7 +293,7 @@
       });
       registerOption('emoticons_images_url', {
         processor: 'string',
-        default: 'https://twemoji.maxcdn.com/v/13.0.1/72x72/'
+        default: 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/15.1.0/72x72/'
       });
     };
     const getEmojiDatabase = option('emoticons_database');
