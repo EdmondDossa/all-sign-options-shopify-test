@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://tv-applicable-groups-taught.trycloudflare.com"
+application_url = "https://mud-industries-h-vienna.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://tv-applicable-groups-taught.trycloudflare.com/auth/callback",
-  "https://tv-applicable-groups-taught.trycloudflare.com/auth/shopify/callback",
-  "https://tv-applicable-groups-taught.trycloudflare.com/api/auth/callback"
+  "https://mud-industries-h-vienna.trycloudflare.com/auth/callback",
+  "https://mud-industries-h-vienna.trycloudflare.com/auth/shopify/callback",
+  "https://mud-industries-h-vienna.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://tv-applicable-groups-taught.trycloudflare.com"
+url = "https://mud-industries-h-vienna.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

@@ -23,6 +23,8 @@ import {
 } from "@shopify/polaris";
 import { useState } from "react";
 import PlusIcon from "~/components/icons/PlusIcon";
+import ImportIcon from "~/components/icons/ImportIcon";
+import ExportIcon from "~/components/icons/ExportIcon";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { SearchIcon } from "@shopify/polaris-icons";
@@ -118,6 +120,11 @@ export default function ConfigurationTemplates() {
   };
 
 
+  const onHandleExport = () => {
+    navigate("export");
+  };
+
+
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
   };
@@ -159,7 +166,7 @@ export default function ConfigurationTemplates() {
                     <InlineStack gap="100">
                       <PlusIcon />
                       <span className="primary-btn-text">
-                        Add template 
+                        Add  
                       </span>
                     </InlineStack>
                   </Box>
@@ -171,9 +178,23 @@ export default function ConfigurationTemplates() {
                 >
                   <Box paddingInline="100">
                     <InlineStack gap="100">
-                      <PlusIcon />
+                      <ImportIcon />
                       <span className="primary-btn-text">
-                        Import template 
+                        Import  
+                      </span>
+                    </InlineStack>
+                  </Box>
+              </button>
+              <button
+                  className="primary-btn"
+                  type="button"
+                  onClick={ ()=>{ onHandleExport() } }
+                >
+                  <Box paddingInline="100">
+                    <InlineStack gap="100">
+                      <ExportIcon />
+                      <span className="primary-btn-text">
+                        Export  
                       </span>
                     </InlineStack>
                   </Box>

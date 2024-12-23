@@ -240,6 +240,7 @@ const initialData = {
         enableCurvedDown: false,
         enableCustomColor: true,
         enableTextAlignment: true,
+        textType: "normal"
       },
       images: {
         colors: [],

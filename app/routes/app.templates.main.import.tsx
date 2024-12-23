@@ -172,7 +172,7 @@ export default function TemplateEditComponent() {
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
                 <BackBtn isLoading={isLoading} title="Back" />
-                <BiSaveBtn isLoading={isSubmitting|| isLoading} title='' />
+                <BiSaveBtn isLoading={isSubmitting|| isLoading} title='Import templates' />
 
               </InlineStack>
             </Box>
