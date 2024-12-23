@@ -1,7 +1,7 @@
 {
   "name": "all-signs-option",
   "private": true,
-  "version": "1.0.161",
+  "version": "1.0.24",
   "scripts": {
     "build": "tsc && remix build",
     "predev": "prisma generate && prisma migrate deploy",
@@ -23,6 +23,8 @@
   "dependencies": {
     "@conform-to/react": "^1.0.4",
     "@conform-to/zod": "^1.0.4",
+    "@mjackson/file-storage": "^0.3.0",
+    "@mjackson/form-data-parser": "^0.5.0",
     "@prisma/client": "^5.8.0",
     "@react-email/components": "0.0.19",
     "@react-email/render": "^0.0.15",
@@ -34,7 +36,6 @@
     "@shopify/app-bridge": "^3.7.10",
     "@shopify/app-bridge-react": "^4.0.0",
     "@shopify/app-bridge-utils": "^3.5.1",
-    "@shopify/cli": "3.56.1",
     "@shopify/polaris": "^12.0.0",
     "@shopify/polaris-icons": "^8.11.1",
     "@shopify/shopify-api": "^9.2.0",
@@ -45,6 +46,7 @@
     "@types/color-convert": "^2.0.3",
     "@types/jsonwebtoken": "^9.0.6",
     "adm-zip": "^0.5.14",
+    "browserify-fs": "^1.0.0",
     "buffer-image-size": "^0.6.4",
     "color": "^4.2.3",
     "color-convert": "^2.0.1",

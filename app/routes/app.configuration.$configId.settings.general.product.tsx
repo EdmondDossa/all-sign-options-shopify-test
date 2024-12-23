@@ -148,7 +148,7 @@ export default function ConfigSettingsGeneral() {
                     This option allow to display recaps on checkout
                   </ProductConfigItem>
                 </Grid.Cell> */}
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Hide add to cart button for custom on product detail page"
                     checked={formData.hideAddToCartButtonOnDetailPage}
@@ -175,7 +175,7 @@ export default function ConfigSettingsGeneral() {
                     This options allow you to show/hidethe cart button on the
                     cart button on the customization page
                   </ProductConfigItem>
-                </Grid.Cell>
+                </Grid.Cell> */}
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                   <ProductConfigItem
                     title="Hide add to cart buttons for custom product on shop"

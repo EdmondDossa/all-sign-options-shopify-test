@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 7.0.1 (2024-04-10)
+ * TinyMCE version 7.5.1 (TBD)
  */
 
 (function () {
@@ -21,13 +21,15 @@
 
     var global$4 = tinymce.util.Tools.resolve('tinymce.PluginManager');
 
+    const random = () => window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+
     let unique = 0;
     const generate = prefix => {
       const date = new Date();
       const time = date.getTime();
-      const random = Math.floor(Math.random() * 1000000000);
+      const random$1 = Math.floor(random() * 1000000000);
       unique++;
-      return prefix + '_' + random + unique + String(time);
+      return prefix + '_' + random$1 + unique + String(time);
     };
 
     const get$1 = customTabs => {
@@ -57,13 +59,15 @@
       editor.ui.registry.addButton('help', {
         icon: 'help',
         tooltip: 'Help',
-        onAction: dialogOpener
+        onAction: dialogOpener,
+        context: 'any'
       });
       editor.ui.registry.addMenuItem('help', {
         text: 'Help',
         icon: 'help',
         shortcut: 'Alt+0',
-        onAction: dialogOpener
+        onAction: dialogOpener,
+        context: 'any'
       });
     };
 
@@ -387,6 +391,10 @@
         action: 'Focus to element path'
       },
       {
+        shortcuts: ['Alt + F12'],
+        action: 'Focus to notification'
+      },
+      {
         shortcuts: ['Ctrl + F9'],
         action: 'Focus to contextual toolbar'
       },
@@ -641,6 +649,11 @@
       {
         key: 'linkchecker',
         name: 'Link Checker',
+        type: 'premium'
+      },
+      {
+        key: 'math',
+        name: 'Math',
         type: 'premium'
       },
       {

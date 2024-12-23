@@ -35,7 +35,7 @@ export default function Sidebar() {
             <ItemSidebar title={"Templates"} to="/app/templates" >
               <TemplatesIcon />
             </ItemSidebar>
-            <ItemSidebar title={"Settings general"} to="/app/settings">
+            <ItemSidebar title={"Global settings"} to="/app/settings">
               <SettingsGeneralIcon />
             </ItemSidebar>
            

@@ -19,11 +19,11 @@ import { getPlan, subscriptionRequired } from "~/utils/pricing";
 
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { billing, session } = await authenticate.admin(request);
+  const { billing, session , admin} = await authenticate.admin(request);
   
-  await subscriptionRequired(billing,session?.shop);
+  await subscriptionRequired(billing,session?.shop, admin);
 
-  let plan = await getPlan(billing,session?.shop);
+  let plan = await getPlan(billing,session?.shop, admin);
 
   return json({ plan });
 
@@ -41,7 +41,7 @@ export default function Settings() {
             <InlineStack>
               <InlineStack gap="100" align="start">
                 <Text as="h2" variant="headingMd">
-                  Generals Settings
+                  Global Settings
                 </Text>
               </InlineStack>
             </InlineStack>

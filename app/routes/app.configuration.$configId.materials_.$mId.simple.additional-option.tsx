@@ -7,7 +7,7 @@ import { proSubscriptionRequired } from "~/utils/pricing";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin, billing } = await authenticate.admin(request);
-  await proSubscriptionRequired(billing,session?.shop);
+  await proSubscriptionRequired(billing,session?.shop, admin);
   const configId = parseInt(params.configId ?? "");
   const mId = parseInt(params.mId ?? "");
   console.log("configID materialID", configId, mId);

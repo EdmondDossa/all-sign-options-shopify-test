@@ -17,19 +17,18 @@ import { config } from "process";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import SessionService from "~/models/Session.service";
 import { version } from "package.json";
+import { ShopifyShopService } from "~/models/ShopifyShop.service";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "stylesheet", href: appStyle }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session }: any = await authenticate.admin(request);
+  const { session , admin}: any = await authenticate.admin(request);
 
   handleSession(session).then(async () => {
      console.log("session init");
-   });
-  
-  
+  });
 
-
+  
   return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
 };
 
@@ -67,7 +66,7 @@ export default function App() {
         <Link to="/app/templates">Templates</Link>
         <Link to="/app/manage-font">Manage fonts</Link>
         <Link to="/app/manage-cliparts">Manage cliparts</Link>
-        <Link to="/app/settings"> Settings Generals</Link>
+        <Link to="/app/settings"> global settings</Link>
         <Link to="/app/pricing"> Pricing</Link>
       </ui-nav-menu>
       <HeaderTopMenu />
