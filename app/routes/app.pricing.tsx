@@ -15,7 +15,7 @@ import {
   } from "@shopify/polaris";
   import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
   import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
-import { authenticate, MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, PLAN_PRICES, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN } from "../shopify.server";
+import { authenticate, MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, PLAN_PRICES, PLAN_TRIAL_DAYS, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN } from "../shopify.server";
 import {
     CheckIcon,XIcon
   } from '@shopify/polaris-icons';
@@ -196,7 +196,7 @@ import { useId } from "react";
                 <Bleed marginBlockEnd="800">
                   <InlineStack align="end">
                     {
-                      plan_item.name == "free" ? <Badge tone="info"> free for  shop in development</Badge>:<Badge tone="info">+15 days free trial</Badge>
+                      plan_item.name == "free" ? <Badge tone="info"> free for  shop in development</Badge>:<Badge tone="info">{`+${PLAN_TRIAL_DAYS} days free trial`}</Badge>
                     }
                   </InlineStack>
                 </Bleed>
