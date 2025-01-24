@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://vegetation-interference-feof-chronic.trycloudflare.com"
+application_url = "https://cambodia-engine-proceeds-cheers.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://vegetation-interference-feof-chronic.trycloudflare.com/auth/callback",
-  "https://vegetation-interference-feof-chronic.trycloudflare.com/auth/shopify/callback",
-  "https://vegetation-interference-feof-chronic.trycloudflare.com/api/auth/callback"
+  "https://cambodia-engine-proceeds-cheers.trycloudflare.com/auth/callback",
+  "https://cambodia-engine-proceeds-cheers.trycloudflare.com/auth/shopify/callback",
+  "https://cambodia-engine-proceeds-cheers.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://vegetation-interference-feof-chronic.trycloudflare.com"
+url = "https://cambodia-engine-proceeds-cheers.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

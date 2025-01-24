@@ -13,6 +13,13 @@ export const MONTHLY_STARTER_PLAN = "Monthly Basic Plan";
 export const YEARLY_STARTER_PLAN = "Yearly Basic Plan";
 export const MONTHLY_PRO_PLAN = "Monthly Premium Plan";
 export const YEARLY_PRO_PLAN = "Yearly Premium plan";
+export const PLAN_PRICES = {
+  "MONTHLY_STARTER_PLAN": 29,
+  "YEARLY_STARTER_PLAN": 279,
+  "MONTHLY_PRO_PLAN": 49,
+  "YEARLY_PRO_PLAN": 471,
+};
+export const PLAN_TRIAL_DAYS = 15;
 
 
 const shopify = shopifyApp({
@@ -55,28 +62,28 @@ const shopify = shopifyApp({
   },
   billing: {
     [MONTHLY_STARTER_PLAN]: {
-      amount: 29,
+      amount: PLAN_PRICES.MONTHLY_STARTER_PLAN,
       currencyCode: 'USD',
       interval: BillingInterval.Every30Days,
-      trialDays: 15,
+      trialDays: PLAN_TRIAL_DAYS,
     },
     [YEARLY_STARTER_PLAN]: {
-      amount: 279,
+      amount: PLAN_PRICES.YEARLY_STARTER_PLAN,
       currencyCode: 'USD',
       interval: BillingInterval.Every30Days,
-      trialDays: 15,
+      trialDays: PLAN_TRIAL_DAYS,
     },
     [MONTHLY_PRO_PLAN]: {
-      amount: 49,
+      amount: PLAN_PRICES.MONTHLY_PRO_PLAN,
       currencyCode: 'USD',
       interval: BillingInterval.Every30Days,
-      trialDays: 15,
+      trialDays: PLAN_TRIAL_DAYS,
     },
     [YEARLY_PRO_PLAN]: {
-      amount: 471,
+      amount: PLAN_PRICES.YEARLY_PRO_PLAN,
       currencyCode: 'USD',
       interval: BillingInterval.Every30Days,
-      trialDays: 15,
+      trialDays: PLAN_TRIAL_DAYS,
     },
    
   },
