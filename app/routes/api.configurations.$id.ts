@@ -49,6 +49,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     let configs = await ConfigurationService.getConfigurations(sessionId, true);
 
     let config = null;
+    plan = "free";
 
     if (plan =="free" || !configs) {
         return json(null);

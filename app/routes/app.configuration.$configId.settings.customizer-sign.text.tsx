@@ -200,7 +200,7 @@ export default function ConfigSettingsGeneral() {
     },
     {
       label: "3D",
-      value: "3d",
+      value: "3D",
       image: "/assets/images/text-types/text-3d.png",
     }
   ]

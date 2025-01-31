@@ -122,11 +122,6 @@ export const isTest = (shop?: string) => {
       return true;
     }
   
-    if (process.env.DEMO_SHOPS && shop && process.env.DEMO_SHOPS.includes(shop)) {
-      return true;
-    }
-  
-
     return process.env.IS_TEST == "true" ? true : undefined
 };
    
