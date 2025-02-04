@@ -248,6 +248,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCurvedDown: false,
             enableCustomColor: true,
             enableTextAlignment: true,
+            textType: "normal"
           },
           images: {
             colors: [],
@@ -1204,6 +1205,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCurvedDown: false,
             enableCustomColor: true,
             enableTextAlignment: true,
+            textType: "normal"
           },
           images: {
             colors: [],
@@ -2265,6 +2267,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCurvedDown: false,
             enableCustomColor: true,
             enableTextAlignment: true,
+            textType: "normal"
           },
           images: {
             colors: [],
@@ -3352,6 +3355,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCurvedDown: false,
             enableCustomColor: true,
             enableTextAlignment: true,
+            textType: "normal"
           },
           images: {
             colors: [],
@@ -5586,6 +5590,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCurvedDown: false,
             enableCustomColor: true,
             enableTextAlignment: true,
+            textType: "normal"
           },
           images: {
             colors: [],
@@ -7079,6 +7084,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCurvedDown: false,
             enableCustomColor: true,
             enableTextAlignment: true,
+            textType: "normal"
           },
           images: {
             colors: [],
@@ -8160,6 +8166,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCurvedDown: false,
             enableCustomColor: true,
             enableTextAlignment: true,
+            textType: "normal"
           },
           images: {
             colors: [],
@@ -8752,6 +8759,7 @@ export const configurationDemoData: ConfigurationType[] = [
             enableCurvedDown: false,
             enableCustomColor: true,
             enableTextAlignment: true,
+            textType: "normal"
           },
           images: {
             colors: [],

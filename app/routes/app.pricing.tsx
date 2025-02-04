@@ -19,16 +19,20 @@ import { authenticate, MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, PLAN_PRICES, PLAN
 import {
     CheckIcon,XIcon
   } from '@shopify/polaris-icons';
-import { PRICING_PLANS, getPlan, isTest } from "~/utils/pricing";
+import { PRICING_PLANS, getPlan, getPlanOnly, isTest } from "~/utils/pricing";
 import { jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { useId } from "react";
+import { ShopifyShopService } from "~/models/ShopifyShop.service";
   
 
   export async function loader({ request }:LoaderFunctionArgs) {
     const { billing ,admin, session} = await authenticate.admin(request);
-    const plan = await getPlan(billing,session?.shop, admin);
+    const plan = await getPlanOnly(billing, session?.shop, admin);
+    const isDev = await ShopifyShopService.isShopInDev(admin);
+
+    
   
     try {
       
@@ -48,15 +52,14 @@ import { useId } from "react";
       // If the shop has an active subscription, log and return the details
       const subscription = billingCheck.appSubscriptions[0];
      
-    
-      
-      return json({ billing, subscription: subscription,plan });
+  
+      return json({ billing, subscription: subscription,plan , isDev});
   
     } catch (error:any) {
       // If the shop does not have an active plan, return an empty plan object
       if (error.message === 'No active plan') {
        
-        return json({ billing, subscription: { name: "free" } ,plan:"free"});
+        return json({ billing, subscription: { name: "free" } ,plan:"free", isDev});
       }
       // If there is another error, rethrow it
       throw error;
@@ -114,11 +117,11 @@ import { useId } from "react";
       ]
     },
     {
-      title: "Free",
+      title: "Dev",
       description: "Free for shop  in development",
       price: "00",
       year_price: "00",
-      name: "free",
+      name: "dev",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",
       url: "/app/subscribe/monthly-pro",
@@ -140,7 +143,7 @@ import { useId } from "react";
   ]
   
   export default function PricingPage() {
-    const { plan, subscription } = useLoaderData<typeof loader>();
+    const { plan, subscription,  isDev } = useLoaderData<typeof loader>();
     const actionData = useActionData<typeof action>();
     const shopify = useAppBridge();
     const  submit =  useSubmit()
@@ -192,7 +195,7 @@ import { useId } from "react";
   
           {planData.map((plan_item, index) => (
             <Grid.Cell key={index} columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
-              <Card background={plan_item.name == plan ? "bg-surface-success" : "bg-surface"} >
+              <Card background={plan_item.name == plan || (plan_item.name == "dev" && isDev) ? "bg-surface-success" : "bg-surface"} >
                 <Bleed marginBlockEnd="800">
                   <InlineStack align="end">
                     {
@@ -243,7 +246,7 @@ import { useId } from "react";
                   <div style={{ margin: "0.5rem 0"}}>
                     <Divider />
                   </div>
-               { plan_item.name == "free" || <>
+               { plan_item.name == "dev" || <>
                   { 
                     plan_item.name != plan ? (
                       <InlineStack gap="300">

@@ -39,9 +39,10 @@ const fileExtensions = {
   icon: [".ico", ".icns", ".svg"],
   video: [".mp4", ".mov", ".avi", ".wmv", ".mkv", ".flv", ".webm"],
   font: [".ttf", ".otf", ".woff", ".woff2"],
+  other: [".json"]
 };
 
-const contentTypes = ["image", "video", "font", "icon"];
+const contentTypes = ["image", "video", "font", "icon", "other"];
 
 export async function action({ request }: ActionFunctionArgs) {
   const { admin, session } = await authenticate.admin(request);
@@ -133,7 +134,7 @@ export const FileUploader = ({
   type,
 }: {
   title?: string;
-  type?: "image" | "video" | "font" | "icon" | "all";
+  type?: "image" | "video" | "font" | "icon" |"other" | "all";
   multiple?: boolean;
   setFilesData?: any;
   fileData?: string[];
@@ -327,6 +328,7 @@ export const FileUploader = ({
                     <Listbox.Option disabled={type && type != "all" && type != "video"} selected={type == "video"} value="video">Video</Listbox.Option>
                     <Listbox.Option disabled={type && type != "all" && type != "icon"} selected={type == "icon"}  value="icon">Icon</Listbox.Option>
                     <Listbox.Option disabled={type && type != "all" && type != "font"} selected={type == "font"} value="font">Font</Listbox.Option>
+                    <Listbox.Option disabled={type && type != "all" && type != "other"} selected={type == "other"} value="font">Others</Listbox.Option>
                   </Listbox>
                 </Box>
               </BlockStack>

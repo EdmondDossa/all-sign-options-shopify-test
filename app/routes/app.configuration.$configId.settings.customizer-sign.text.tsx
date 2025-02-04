@@ -1,11 +1,13 @@
 import {
   BlockStack,
   Box,
+  Divider,
   Grid,
   InlineError,
   InlineStack,
   Text,
   TextField,
+  Thumbnail,
 } from "@shopify/polaris";
 import { useState } from "react";
 import {
@@ -62,8 +64,9 @@ const formSchema = z.object({
         defaultFontSize: z.number(),
       }),
   ),
+  textType: z.any().transform(jsonTransform).pipe(z.string()),
   colorsLabel: z.string().nullish().transform(stringTransform),
-colorsPrevImg: z.string().nullish().transform(stringTransform),
+  colorsPrevImg: z.string().nullish().transform(stringTransform),
   colors: z
     .any()
     .transform(jsonTransform)
@@ -119,6 +122,7 @@ export default function ConfigSettingsGeneral() {
       colorsPrevImg:"",
       colors: [],
       enableCustomColor: true,
+      textType: "normal",
       enableBold: true,
       enableUnderline: true,
       enableOverline: true,
@@ -183,10 +187,50 @@ export default function ConfigSettingsGeneral() {
     setFormData({ ...formData });
   };
 
+  const textTypes = [
+    {
+      label: "NORMAL",
+      value: "normal",
+      image: "/assets/images/text-types/text-normal.png",
+    },
+    {
+      label: "NEON",
+      value: "neon",
+      image: "/assets/images/text-types/text-neon.png",
+    },
+    {
+      label: "3D",
+      value: "3D",
+      image: "/assets/images/text-types/text-3d.png",
+    }
+  ]
+
   return (
     <>
       <Form onSubmit={handleFormSubmit} method="POST">
         <SpacingBackground border="1px solid #DDDDDD">
+        <BoxBackground>
+            <Box paddingInline="300" paddingBlock="300">
+              <Grid gap={{ lg: "15px" }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <Text as="h2" variant="bodyLg" fontWeight="bold"> Sign Text Type</Text> 
+                  <Text   as="p" > hoose from three text types to create your custom sign. The selected type allows customers to personalize their sign effortlessly</Text> 
+                  
+                </Grid.Cell>
+                {textTypes.map((textType) =>
+                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                  <InlineStack blockAlign="center" gap="100" >
+                    <Thumbnail size="large" source={textType.image}  alt={textType.label}/>
+                    <InlineStack align="end" blockAlign="center" gap="200">
+                      <Text as="h3" variant="bodyMd" fontWeight="semibold">{textType.label}</Text>
+                      <ReactSwitchCustom checked={formData.textType == textType.value} setChecked={() => handleInputChange("textType", textType.value)} />
+                    </InlineStack>
+                  </InlineStack>
+                </Grid.Cell>)}
+              </Grid>
+            </Box>
+          </BoxBackground>
+          <Divider  borderColor="border-brand" borderWidth="100" />
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>

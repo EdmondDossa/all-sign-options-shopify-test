@@ -58,7 +58,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
  
   
-  if (plan != PRICING_PLANS.PRO) { 
+  if (plan == PRICING_PLANS.STARTER) {
     data.borders = data.borders.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders);
     data.allBorder = data.allBorder.slice(0, PRICING_PLANS.STARTER_RULES.materialBorders);
     data.allShapes = data.allShapes.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes);

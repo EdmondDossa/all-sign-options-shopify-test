@@ -4,10 +4,25 @@ import { ShopifyShopService } from "~/models/ShopifyShop.service";
 import { MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN } from "~/shopify.server";
 
 export const getPlan = async (billing: any, shop?: string, admin?: any) => {
-  const isDev = await ShopifyShopService.isShopInDev(admin);
-  if (isDev) {
-    return "pro";
-  }
+    const isDev = await ShopifyShopService.isShopInDev(admin);
+    if (isDev) {
+      return "pro";
+    }
+    const {hasActivePayment:hasProPlan } = await billing.check({
+        plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
+        isTest: isTest(shop)
+      });
+       
+      const {hasActivePayment:hasStarterPlan  } = await billing.check({
+        plans: [MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN],
+        isTest: isTest(shop)
+      });
+    
+    return hasProPlan?'pro':hasStarterPlan?'starter':"free"
+}
+
+
+export const getPlanOnly = async (billing: any, shop?: string, admin?: any) => {
     const {hasActivePayment:hasProPlan } = await billing.check({
         plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
         isTest: isTest(shop)
@@ -68,6 +83,8 @@ export const getPlanProxyPublic = async (shop: any, accessToken: any) => {
   }
 
   const plans = await ShopifyBillingService.getBillingRequest(shop, accessToken);
+
+  console.log("plans",JSON.stringify(plans));
   
   if (plans?.length > 0) {
     for (const plan of plans) {
@@ -122,17 +139,12 @@ export const isTest = (shop?: string) => {
       return true;
     }
   
-    if (process.env.DEMO_SHOPS && shop && process.env.DEMO_SHOPS.includes(shop)) {
-      return true;
-    }
-  
-
-    return process.env.IS_TEST == "true" ? true : undefined
+  return process.env.IS_TEST == "true" || process.env.IS_TEST ? true : undefined;
 };
    
 export const PRICING_PLANS = {
-    FREE: "free",
-    STARTER: "starter",
+  FREE: "free",
+  STARTER: "starter",
   PRO: "pro",
   STARTER_RULES: {
     configurations: 1,

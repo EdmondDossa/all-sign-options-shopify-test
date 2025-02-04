@@ -1,9 +1,8 @@
 import { AutoSelection, BlockStack, Box, Combobox, Grid, InlineError, InlineGrid, LegacyStack, Listbox, Tag, Text } from "@shopify/polaris";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SpacingBackground } from "../layouts/SpacingBackground";
 import CircleNotCheckIcon from "../icons/CircleNotCheckIcon";
 import { fileUrl } from "~/utils/fileUrl";
-import { ActionFunctionArgs } from "@remix-run/node";
 
 export const MultiCombobox = ({
   label,
@@ -22,10 +21,15 @@ export const MultiCombobox = ({
   selectedOptions: any[];
   setSelectedOptions: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
-  const deselectedOptions = useMemo(() => data, []);
+  const deselectedOptions = data;
 
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState(deselectedOptions);
+
+  useEffect(() => {
+    setOptions(data);
+    console.log('change  option value  en present');
+  }, [data]);
 
   const escapeSpecialRegExCharacters = useCallback(
     (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
@@ -313,10 +317,4 @@ export const SelectCombobox = ({
   );
 };
 
-
-
-
-export const  action  =  ({request}: ActionFunctionArgs) => {
-  
-}
 
