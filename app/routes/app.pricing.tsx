@@ -56,13 +56,7 @@ import { ShopifyShopService } from "~/models/ShopifyShop.service";
       return json({ billing, subscription: subscription,plan , isDev});
   
     } catch (error:any) {
-      // If the shop does not have an active plan, return an empty plan object
-      if (error.message === 'No active plan') {
-       
-        return json({ billing, subscription: { name: "free" } ,plan:"free", isDev});
-      }
-      // If there is another error, rethrow it
-      throw error;
+      return json({ billing, subscription: { name: "free" } ,plan:"free", isDev});
     }
   }
   
