@@ -171,7 +171,7 @@ export default function ConfigurationTemplates() {
                     </InlineStack>
                   </Box>
               </button>
-              <button
+              {/* <button
                   className="primary-btn"
                   type="button"
                   onClick={ ()=>{ onHandleImport() } }
@@ -198,7 +198,7 @@ export default function ConfigurationTemplates() {
                       </span>
                     </InlineStack>
                   </Box>
-                </button>
+                </button> */}
             </InlineStack>
             </InlineStack>
           </Box>

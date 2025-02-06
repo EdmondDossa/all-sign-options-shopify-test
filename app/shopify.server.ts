@@ -9,17 +9,12 @@ import {
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-01";
 import prisma from "./db.server";
+import { PLAN_PRICES, PLAN_TRIAL_DAYS } from "./utils/pricing";
 export const MONTHLY_STARTER_PLAN = "Monthly Basic Plan";
 export const YEARLY_STARTER_PLAN = "Yearly Basic Plan";
 export const MONTHLY_PRO_PLAN = "Monthly Premium Plan";
 export const YEARLY_PRO_PLAN = "Yearly Premium plan";
-export const PLAN_PRICES = {
-  "MONTHLY_STARTER_PLAN": 29,
-  "YEARLY_STARTER_PLAN": 279,
-  "MONTHLY_PRO_PLAN": 49,
-  "YEARLY_PRO_PLAN": 471,
-};
-export const PLAN_TRIAL_DAYS = 15;
+
 
 
 const shopify = shopifyApp({

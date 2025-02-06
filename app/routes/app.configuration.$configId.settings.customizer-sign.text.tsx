@@ -209,7 +209,7 @@ export default function ConfigSettingsGeneral() {
     <>
       <Form onSubmit={handleFormSubmit} method="POST">
         <SpacingBackground border="1px solid #DDDDDD">
-        <BoxBackground>
+        {/* <BoxBackground>
             <Box paddingInline="300" paddingBlock="300">
               <Grid gap={{ lg: "15px" }}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
@@ -230,7 +230,7 @@ export default function ConfigSettingsGeneral() {
               </Grid>
             </Box>
           </BoxBackground>
-          <Divider  borderColor="border-brand" borderWidth="100" />
+          <Divider  borderColor="border-brand" borderWidth="100" /> */}
           <BoxBackground>
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>

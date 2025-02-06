@@ -1,72 +1,87 @@
 import {
-    Page,
-    Box,
-    Button,
-    Card,
-    CalloutCard,
-    Text,
-    Grid,
-    Divider,
-    BlockStack,
-    ExceptionList,
-    InlineStack,
-    Bleed,
-    Badge
-  } from "@shopify/polaris";
-  import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-  import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
-import { authenticate, MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, PLAN_PRICES, PLAN_TRIAL_DAYS, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN } from "../shopify.server";
+  Page,
+  Box,
+  Button,
+  Card,
+  CalloutCard,
+  Text,
+  Grid,
+  Divider,
+  BlockStack,
+  ExceptionList,
+  InlineStack,
+  Bleed,
+  Badge
+} from "@shopify/polaris";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
+import { authenticate, MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN } from "../shopify.server";
 import {
-    CheckIcon,XIcon
-  } from '@shopify/polaris-icons';
-import { PRICING_PLANS, getPlan, getPlanOnly, isTest } from "~/utils/pricing";
+  CheckIcon,XIcon
+} from '@shopify/polaris-icons';
+import { PLAN_PRICES, PRICING_PLANS, getPlan, getPlanOnly, isTest } from "~/utils/pricing";
 import { jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { useId } from "react";
 import { ShopifyShopService } from "~/models/ShopifyShop.service";
-  
 
-  export async function loader({ request }:LoaderFunctionArgs) {
-    const { billing ,admin, session} = await authenticate.admin(request);
-    const plan = await getPlanOnly(billing, session?.shop, admin);
-    const isDev = await ShopifyShopService.isShopInDev(admin);
 
+export async function loader({ request }:LoaderFunctionArgs) {
+  const { billing ,admin, session} = await authenticate.admin(request);
+  const plan = await getPlanOnly(billing, session?.shop, admin);
+  const isDev = await ShopifyShopService.isShopInDev(admin);
+
+  try {
     
-  
-    try {
-      
-      if (plan === "free") {
-        throw new Error('No active plan');
-      }
-  
-      // Check if the shop has an active subscription
-      const billingCheck = await billing.require({
-        plans: [MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
-        isTest:isTest(session?.shop),
-        onFailure: async () => {
-          throw new Error('No active plan');
-        },
-      });
-  
-      // If the shop has an active subscription, log and return the details
-      const subscription = billingCheck.appSubscriptions[0];
-     
-  
-      return json({ billing, subscription: subscription,plan , isDev});
-  
-    } catch (error:any) {
-      return json({ billing, subscription: { name: "free" } ,plan:"free", isDev});
+    if (plan === "free") {
+      throw new Error('No active plan');
     }
+
+    // Check if the shop has an active subscription
+    const billingCheck = await billing.require({
+      plans: [MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
+      isTest:isTest(session?.shop),
+      onFailure: async () => {
+        throw new Error('No active plan');
+      },
+    });
+
+    // If the shop has an active subscription, log and return the details
+    const subscription = billingCheck.appSubscriptions[0];
+   
+  
+    
+    return json({ billing, subscription: subscription,plan, isDev });
+
+  } catch (error:any) {
+    // If the shop does not have an active plan, return an empty plan object
+    if (error.message === 'No active plan') {
+     
+      return json({ billing, subscription: { name: "free" } ,plan:"free", isDev });
+    }
+    // If there is another error, rethrow it
+    throw error;
   }
-  
-  
+}
+
+
+
+
+export default function PricingPage() {
+  const { plan, subscription, isDev } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const shopify = useAppBridge();
+  const  submit =  useSubmit()
+  const id = useId()
+  useHandleFlashMessage();
+
   let planData = [
     {
       title: "Basic",
       description: "Basic  with basic features",
-      price: PLAN_PRICES.MONTHLY_STARTER_PLAN,
-      year_price: PLAN_PRICES.YEARLY_STARTER_PLAN,
+      price: PLAN_PRICES["MONTHLY_STARTER_PLAN"] + "",
+      year_price: PLAN_PRICES["YEARLY_STARTER_PLAN"] + "",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",
       name: "starter",
@@ -89,8 +104,8 @@ import { ShopifyShopService } from "~/models/ShopifyShop.service";
     {
       title: "Premium",
       description: "Premium  with advanced features",
-      price: PLAN_PRICES.MONTHLY_PRO_PLAN,
-      year_price: PLAN_PRICES.YEARLY_PRO_PLAN,
+      price: PLAN_PRICES["MONTHLY_PRO_PLAN"] + "",
+      year_price: PLAN_PRICES["YEARLY_PRO_PLAN"] + "",
       name: "pro",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",
@@ -111,11 +126,11 @@ import { ShopifyShopService } from "~/models/ShopifyShop.service";
       ]
     },
     {
-      title: "Dev",
+      title: "Free",
       description: "Free for shop  in development",
       price: "00",
       year_price: "00",
-      name: "dev",
+      name: "free",
       action: " Subscribe to Monthly",
       year_action: "Subscribe to Yearly",
       url: "/app/subscribe/monthly-pro",
@@ -134,184 +149,178 @@ import { ShopifyShopService } from "~/models/ShopifyShop.service";
         "mail notifications on order",
       ]
     },
-  ]
-  
-  export default function PricingPage() {
-    const { plan, subscription,  isDev } = useLoaderData<typeof loader>();
-    const actionData = useActionData<typeof action>();
-    const shopify = useAppBridge();
-    const  submit =  useSubmit()
-    const id = useId()
-    useHandleFlashMessage();
+  ];
 
-    const handleSubmit = ()=>{
-      submit({}, { method: "POST" });
-    }
-  
-  
-    return (
-      <Page>
-        <ui-title-bar title="Pricing" />
-        <CalloutCard
-            title="Subscription to all signs options"
-            illustration="/aso_logo.png"
-            primaryAction={plan !="free"?{
-              content: 'Cancel  Current Plan',
-              onAction: ()=>{
-                shopify.modal.show(id)
-              }
-            } : {
-              content: 'Subscribe monthly starter plan',
-              url: '/app/subscribe/monthly-starter',
-              
-            }}
-          >
-            { plan == PRICING_PLANS.PRO? (
-              <p>
-                You're currently on premium plan. All features are unlocked.
-              </p>
-          ) : plan == PRICING_PLANS.STARTER ?
-            (
-              <p>
-                You're currently on basic plan. Upgrade to pro to unlock more features.
-              </p>
-              ) : (
-                <p>
-              You're currently on free plan. Subscribe  to unlock  features.
-            </p>)}
-        </CalloutCard>
-  
-        <div style={{ margin: "0.5rem 0"}}>
-          <Divider />
-        </div>
-  
-        <Grid>
-  
-          {planData.map((plan_item, index) => (
-            <Grid.Cell key={index} columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
-              <Card background={plan_item.name == plan || (plan_item.name == "dev" && isDev) ? "bg-surface-success" : "bg-surface"} >
-                <Bleed marginBlockEnd="800">
-                  <InlineStack align="end">
-                    {
-                      plan_item.name == "free" ? <Badge tone="info"> free for  shop in development</Badge>:<Badge tone="info">{`+${PLAN_TRIAL_DAYS} days free trial`}</Badge>
-                    }
-                  </InlineStack>
-                </Bleed>
-              
-                <Box padding="400">
-                  <Text as="h1" variant="headingMd" fontWeight="bold">
-                    {plan_item.title} 
-                  </Text>
-                  <Box as="div">
-                    {plan_item.description}
-                    <br />
-                    <InlineStack>
-
-                      <Text as="p" variant="headingLg" fontWeight="bold">
-                        {plan_item.price === "0" ? "" : "$" + plan_item.price} 
-                      </Text>  <Text as="p" tone="subdued" variant="bodyMd" >
-                        /month
-                      </Text>
-                    </InlineStack>
-                    <Text as="p" tone="success" variant="bodyMd" >
-                      {plan_item.year_price 
-                          === "0" ? "" : "$" + plan_item.year_price} /year { plan_item.name == "free" ? "" : "and save 20% on subscription" }
-                    </Text>
-                  </Box>
-  
-                  <div style={{ margin: "0.5rem 0"}}>
-                    <Divider />
-                  </div>
-  
-                  <BlockStack gap="100">
-                    {plan_item.features.map((feature, index) => (
-                      <ExceptionList
-                        key={index}
-                        items={[
-                          {
-                            icon: feature.startsWith("0") ? XIcon : CheckIcon,
-                            status: feature.startsWith("0") ? 'critical' : undefined,
-                            description: feature,
-                          },
-                        ]}
-                      />
-                    ))}
-                  </BlockStack>
-                  <div style={{ margin: "0.5rem 0"}}>
-                    <Divider />
-                  </div>
-               { plan_item.name == "dev" || <>
-                  { 
-                    plan_item.name != plan ? (
-                      <InlineStack gap="300">
-
-                      <Button  url={plan_item.url}>
-                        {plan_item.action}
-                      </Button>
-                        <Button variant="primary" tone="success" url={plan_item.year_url}>
-                        {plan_item.year_action}
-                      </Button>
-                      </InlineStack>
-                    ) : (
-                      <InlineStack gap="300">
-                          
-                      <Text as="p" variant="bodyMd">
-                        You're currently on this plan
-                          </Text>
-                          
-                         {subscription.name.startsWith("Monthly") ? <Button variant="primary" tone="success" url={plan_item.year_url}>
-                        {plan_item.year_action.replace("Subscribe to", "upgrade to") }
-                      </Button>: <Button variant="primary" tone="success" url={plan_item.url}>  {plan_item.action.replace("Subscribe to", "switch to") }
-                      </Button>}
-                      </InlineStack>
-                        
-                    )
-                 }
-                  </>}
-                </Box>
-              </Card>
-            </Grid.Cell>
-          ))}
-  
-        </Grid>
-
-        <Modal variant="small" id={id}>
-                <Box padding="400">
-                    <Text alignment="center" as="h3" variant="bodyMd">Are you sure you want to cancel this subscription? This action cannot be undone</Text>
-                </Box>
-              
-                <TitleBar title="Subscription Cancel ">
-                    <button variant="primary" tone="critical" onClick={() => {
-                        handleSubmit()
-                        shopify.modal.hide(id)
-                    }}>Confirm  cancelling</button>
-                    <button onClick={() => shopify.modal.hide(id)}>return back</button>
-                </TitleBar>
-            </Modal>
-  
-      </Page>
-    );
+  const handleSubmit = ()=>{
+    submit({}, { method: "POST" });
   }
+
+
+  return (
+    <Page>
+      <ui-title-bar title="Pricing" />
+      <CalloutCard
+          title="Subscription to all signs options"
+          illustration="/aso_logo.png"
+          primaryAction={plan !="free"?{
+            content: 'Cancel  Current Plan',
+            onAction: ()=>{
+              shopify.modal.show(id)
+            }
+          } : {
+            content: 'Subscribe monthly starter plan',
+            url: '/app/subscribe/monthly-starter',
+            
+          }}
+        >
+          { plan == PRICING_PLANS.PRO? (
+            <p>
+              You're currently on premium plan. All features are unlocked.
+            </p>
+        ) : plan == PRICING_PLANS.STARTER ?
+          (
+            <p>
+              You're currently on basic plan. Upgrade to pro to unlock more features.
+            </p>
+            ) : (
+              <p>
+            You're currently on free plan. Subscribe  to unlock  features.
+          </p>)}
+      </CalloutCard>
+
+      <div style={{ margin: "0.5rem 0"}}>
+        <Divider />
+      </div>
+
+      <Grid>
+
+        {planData.map((plan_item, index) => (
+          <Grid.Cell key={index} columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
+            <Card background={plan_item.name == plan ? "bg-surface-success" : "bg-surface"} >
+              <Bleed marginBlockEnd="800">
+                <InlineStack align="end">
+                  {
+                    plan_item.name == "free"  ? <Badge tone="info"> free for  shop in development</Badge>:<Badge tone="info">+15 days free trial</Badge>
+                  }
+                </InlineStack>
+              </Bleed>
+            
+              <Box padding="400">
+                <Text as="h1" variant="headingMd" fontWeight="bold">
+                  {plan_item.title} 
+                </Text>
+                <Box as="div">
+                  {plan_item.description}
+                  <br />
+                  <InlineStack>
+
+                    <Text as="p" variant="headingLg" fontWeight="bold">
+                      {plan_item.price === "0" ? "" : "$" + plan_item.price} 
+                    </Text>  <Text as="p" tone="subdued" variant="bodyMd" >
+                      /month
+                    </Text>
+                  </InlineStack>
+                  <Text as="p" tone="success" variant="bodyMd" >
+                    {plan_item.year_price 
+                        === "0" ? "" : "$" + plan_item.year_price} /year { plan_item.name == "free" ? "" : "and save 20% on subscription" }
+                  </Text>
+                </Box>
+
+                <div style={{ margin: "0.5rem 0"}}>
+                  <Divider />
+                </div>
+
+                <BlockStack gap="100">
+                  {plan_item.features.map((feature, index) => (
+                    <ExceptionList
+                      key={index}
+                      items={[
+                        {
+                          icon: feature.startsWith("0") ? XIcon : CheckIcon,
+                          status: feature.startsWith("0") ? 'critical' : undefined,
+                          description: feature,
+                        },
+                      ]}
+                    />
+                  ))}
+                </BlockStack>
+                <div style={{ margin: "0.5rem 0"}}>
+                  <Divider />
+                </div>
+             { plan_item.name == "free" || <>
+                { 
+                  plan_item.name != plan ? (
+                    <InlineStack gap="300">
+
+                    <Button  url={plan_item.url}>
+                      {plan_item.action}
+                    </Button>
+                      <Button variant="primary" tone="success" url={plan_item.year_url}>
+                      {plan_item.year_action}
+                    </Button>
+                    </InlineStack>
+                  ) : (
+                    <InlineStack gap="300">
+                        
+                    <Text as="p" variant="bodyMd">
+                      You're currently on this plan
+                        </Text>
+                        
+                       {subscription.name.startsWith("Monthly") ? <Button variant="primary" tone="success" url={plan_item.year_url}>
+                      {plan_item.year_action.replace("Subscribe to", "upgrade to") }
+                    </Button>: <Button variant="primary" tone="success" url={plan_item.url}>  {plan_item.action.replace("Subscribe to", "switch to") }
+                    </Button>}
+                    </InlineStack>
+                      
+                  )
+               }
+                </>}
+              </Box>
+            </Card>
+          </Grid.Cell>
+        ))}
+
+      </Grid>
+
+      <Modal variant="small" id={id}>
+              <Box padding="400">
+                  <Text alignment="center" as="h3" variant="bodyMd">Are you sure you want to cancel this subscription? This action cannot be undone</Text>
+              </Box>
+            
+              <TitleBar title="Subscription Cancel ">
+                  <button variant="primary" tone="critical" onClick={() => {
+                      handleSubmit()
+                      shopify.modal.hide(id)
+                  }}>Confirm  cancelling</button>
+                  <button onClick={() => shopify.modal.hide(id)}>return back</button>
+              </TitleBar>
+          </Modal>
+
+    </Page>
+  );
+}
 
 
 
 
 
 export const action = async ({ request }:ActionFunctionArgs) => {
-  const { billing, session } = await authenticate.admin(request);
-  const billingCheck = await billing.require({
-    plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN],
-    isTest:isTest(session?.shop),
-    onFailure: async () => billing.request({ plan: MONTHLY_STARTER_PLAN, isTest:isTest( session?.shop) }),
-  });
+const { billing, session } = await authenticate.admin(request);
+const billingCheck = await billing.require({
+  plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN],
+  isTest:isTest(session?.shop),
+  onFailure: async () => billing.request({ plan: MONTHLY_STARTER_PLAN, isTest:isTest( session?.shop) }),
+});
 
-  const subscription = billingCheck.appSubscriptions[0];
+const subscription = billingCheck.appSubscriptions[0];
 
-  const cancelledSubscription = await billing.cancel({
-    subscriptionId: subscription.id,
-    isTest: isTest( session?.shop),
-    prorate: true,
-  });
+const cancelledSubscription = await billing.cancel({
+  subscriptionId: subscription.id,
+  isTest: isTest( session?.shop),
+  prorate: true,
+});
 
-  return json({ ... jFlashMessage("Subscription cancelled successfully") })
+return json({ ... jFlashMessage("Subscription cancelled successfully") })
 }
+
+
