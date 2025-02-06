@@ -8,6 +8,9 @@ COPY . .
 ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV
 
+
+RUN apk update && apk add --no-cache openssl
+
 RUN npm install --omit=dev
 # Remove CLI packages since we don't need them in production by default.
 # Remove this line if you want to run CLI commands in your container.

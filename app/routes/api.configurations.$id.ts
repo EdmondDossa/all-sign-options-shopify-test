@@ -50,16 +50,17 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     let config = null;
 
-    if (plan =="free" || !configs) {
+    if (!configs) {
         return json(null);
     }
+
+    config = configs?.find((curr: any) => curr.id == params.id)
+
     
     if (plan == PRICING_PLANS.STARTER) {
         configs = configs?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)
         config = configs?.find((curr: any) => curr.id == params.id)
-    } else {
-        config = configs?.find((curr: any) => curr.id == params.id)
-    }
+    } 
 
     
 
@@ -67,9 +68,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         config = configFilter(config);
     }
 
-   
-
-    
     return json(config );
 };
   

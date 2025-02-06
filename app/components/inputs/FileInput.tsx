@@ -25,7 +25,7 @@ export const FileInput = ({
   buttonTitle,
 }: {
   title?: string;
-  type?:  "image" | "icon" | "video" | "font" | "all";
+  type?:  "image" | "icon" | "video" | "font" | "all" | "other";
   error?: string;
   helperText?: string;
   buttonTitle?: string;
@@ -77,7 +77,8 @@ export const FileInput = ({
 
 
 const  MediaThumbnail = ({ url }: { url: string }) => {
-  let fileType = getFileType(url||"");
+  let fileType = getFileType(url || "");
+  
   if (fileType=="image" || fileType == "icon") {
     return <Thumbnail size="small" source={url} alt={'file'}></Thumbnail>;
   }else if (fileType=="font") {

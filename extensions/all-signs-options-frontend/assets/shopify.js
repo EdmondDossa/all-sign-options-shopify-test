@@ -96,7 +96,6 @@ async function aso_confiurator_dataFunction(){
           
   @font-face {
     font-family: "${font.label?.replaceAll(/\s+/g, '-')}";
-    font-display: swap;
     src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
   }
       
@@ -117,7 +116,6 @@ async function aso_confiurator_dataFunction(){
     asoRegularPrice = (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.basePrice) || 0;
   }
 
-  
   
   return ( {
     skin: currentConfig['data']['settings']["themeColors"]["skin"],

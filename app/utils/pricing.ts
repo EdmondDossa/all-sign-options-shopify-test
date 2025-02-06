@@ -4,10 +4,30 @@ import { ShopifyShopService } from "~/models/ShopifyShop.service";
 import { MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN } from "~/shopify.server";
 
 export const getPlan = async (billing: any, shop?: string, admin?: any) => {
-  const isDev = await ShopifyShopService.isShopInDev(admin);
-  if (isDev) {
-    return "pro";
-  }
+    
+    const {hasActivePayment:hasProPlan } = await billing.check({
+        plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
+        isTest: isTest(shop)
+      });
+       
+      const {hasActivePayment:hasStarterPlan  } = await billing.check({
+        plans: [MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN],
+        isTest: isTest(shop)
+      });
+  
+      let  plan = hasProPlan?'pro':hasStarterPlan ? 'starter':"free"
+      
+      if (plan == "free") {
+        const isDev = await ShopifyShopService.isShopInDev(admin);
+        
+        return isDev? "pro":"free";
+      }
+    
+    return plan
+}
+
+
+export const getPlanOnly = async (billing: any, shop?: string, admin?: any) => {
     const {hasActivePayment:hasProPlan } = await billing.check({
         plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
         isTest: isTest(shop)
@@ -22,56 +42,37 @@ export const getPlan = async (billing: any, shop?: string, admin?: any) => {
 }
 
 
-export const getPlanDuration = async (billing:any, shop?:string) => {
-  const {hasActivePayment:hasYearPlan } = await billing.check({
-      plans: [YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
-      isTest: isTest(shop)
-    });
-  
-  return hasYearPlan?'year':"month"
-}
-
 
 export const getPlanProxy = async (admin: any, shop?: string) => {
-  const isDev = await ShopifyShopService.isShopInDev(admin);
-  if (isDev) {
-    return "pro";
-  }
-
   const plans = await ShopifyBillingService.getBilling(admin);
   
   if (plans?.length > 0) {
     for (const plan of plans) {
-      if (plan.test == isTest(shop)) {
+      if (plan.test == (isTest(shop)||false)) {
         
         if (plan.name == MONTHLY_STARTER_PLAN || plan.name == YEARLY_STARTER_PLAN) {
           return "starter";
         } else if(plan.name == MONTHLY_PRO_PLAN || plan.name == YEARLY_PRO_PLAN) {
           return "pro";
-          
         }
       }
       
     }
   }
 
-  return "free"
+  const isDev = await ShopifyShopService.isShopInDev(admin);
+
+  return isDev ? "pro" : "free";
 }
 
 
 
 export const getPlanProxyPublic = async (shop: any, accessToken: any) => {
-  const isDev = await ShopifyShopService.isShopInDevPublic(shop, accessToken)
-  
-  if (isDev) {
-    return "pro";
-  }
-
   const plans = await ShopifyBillingService.getBillingRequest(shop, accessToken);
-  
+
   if (plans?.length > 0) {
     for (const plan of plans) {
-      if (plan.test == isTest(shop)) {
+      if (plan.test == (isTest(shop)||false)) {
         
         if (plan.name == MONTHLY_STARTER_PLAN || plan.name == YEARLY_STARTER_PLAN) {
           return "starter";
@@ -84,55 +85,73 @@ export const getPlanProxyPublic = async (shop: any, accessToken: any) => {
     }
   }
 
-  return "free"
+  const isDev = await ShopifyShopService.isShopInDevPublic(shop, accessToken)
+  
+  return isDev ? "pro" :"free";
 }
 
 
 
 export const subscriptionRequired = async (billing: any,shop ?: string, admin?: any)=>{
-  const isDev = await ShopifyShopService.isShopInDev(admin);
-  if (isDev) {
-    return true;
+  try {
+    // Check if the shop has an active subscription
+    const billingCheck = await billing.require({
+      plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
+      isTest:isTest(shop),
+      onFailure: async () => {
+        // If the shop does not have an active plan, check if it's in development
+        const isDev = await ShopifyShopService.isShopInDev(admin);
+        if (isDev) {
+          // If it's in development, throw an error to  allow the user to try dev plan
+           throw new Error('isDev');
+        }
+        return redirect('/app/pricing');
+      } 
+    });
+  }catch (error:any) {
+    if (error.message === 'isDev') {
+      return true;
+    }else{
+        return redirect('/app/pricing');
+    }
   }
-  const billingCheck = await billing.require({
-    plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
-    isTest:isTest(shop),
-      onFailure: async () => redirect('/app/pricing')
-  });
+
+  
 }
 
 
 
 export const proSubscriptionRequired = async (billing: any, shop?: string, admin?: any)=>{
-  const isDev = await ShopifyShopService.isShopInDev(admin);
-  if (isDev) {
-    return true;
+  try {
+    // Check if the shop has an active subscription
+    const billingCheck = await billing.require({
+      plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
+      isTest:isTest(shop),
+      onFailure: async () => {
+        const isDev = await ShopifyShopService.isShopInDev(admin);
+        if (isDev) {
+           throw new Error('isDev');
+        }
+        return redirect('/app/pricing');
+      } 
+    });
+  }catch (error:any) {
+    if (error.message === 'isDev') {
+      return true;
+    }else{
+        return redirect('/app/pricing');
+    }
   }
-
-  const billingCheck = await billing.require({
-    plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
-    isTest:isTest(shop),
-      onFailure: async () => redirect('/app/pricing')
-  });
 }
 
 export const isTest = (shop?: string) => {
 
-    if (shop && shop.startsWith("all-signs-options.myshopify.com")) {
-      return true;
-    }
-  
-    if (process.env.DEMO_SHOPS && shop && process.env.DEMO_SHOPS.includes(shop)) {
-      return true;
-    }
-  
-
-    return process.env.IS_TEST == "true" ? true : undefined
+  return process.env.IS_TEST == "true"  ? true : false;
 };
    
 export const PRICING_PLANS = {
-    FREE: "free",
-    STARTER: "starter",
+  FREE: "free",
+  STARTER: "starter",
   PRO: "pro",
   STARTER_RULES: {
     configurations: 1,
@@ -153,3 +172,11 @@ export const PRICING_PLANS = {
   }
 
 }
+
+export const PLAN_PRICES = {
+  "MONTHLY_STARTER_PLAN": 29,
+  "YEARLY_STARTER_PLAN": 279,
+  "MONTHLY_PRO_PLAN": 49,
+  "YEARLY_PRO_PLAN": 471,
+};
+export const PLAN_TRIAL_DAYS = 15;
