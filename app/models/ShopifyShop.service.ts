@@ -95,7 +95,7 @@ export class ShopifyShopService{
       console.log("error on getting billing",response);
       return false;
     }
-  
+    
     const responseData = await response.json();
     const returnData = responseData?.data?.shop?.plan?.partnerDevelopment;
     return returnData? true : false;
