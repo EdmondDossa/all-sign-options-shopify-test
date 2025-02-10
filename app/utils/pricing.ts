@@ -93,54 +93,49 @@ export const getPlanProxyPublic = async (shop: any, accessToken: any) => {
 
 
 export const subscriptionRequired = async (billing: any,shop ?: string, admin?: any)=>{
-  try {
-    // Check if the shop has an active subscription
-    const billingCheck = await billing.require({
-      plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
-      isTest:isTest(shop),
-      onFailure: async () => {
-        // If the shop does not have an active plan, check if it's in development
-        const isDev = await ShopifyShopService.isShopInDev(admin);
-        if (isDev) {
-          // If it's in development, throw an error to  allow the user to try dev plan
-           throw new Error('isDev');
-        }
-        return redirect('/app/pricing');
-      } 
-    });
-  }catch (error:any) {
-    if (error.message === 'isDev') {
-      return true;
-    }else{
-        return redirect('/app/pricing');
-    }
-  }
-
   
+    // Check if the shop has an active subscription
+    const {hasActivePayment  }= await billing.check({
+      plans: [MONTHLY_STARTER_PLAN, MONTHLY_PRO_PLAN, YEARLY_STARTER_PLAN, YEARLY_PRO_PLAN],
+      isTest:isTest(shop)
+    });
+  if (!hasActivePayment) {
+    const isDev = await ShopifyShopService.isShopInDev(admin);
+    
+    if (isDev) {
+      return null
+    } else {
+      throw redirect('/app/pricing');
+    }
+     
+    }
 }
 
 
 
 export const proSubscriptionRequired = async (billing: any, shop?: string, admin?: any)=>{
-  try {
     // Check if the shop has an active subscription
-    const billingCheck = await billing.require({
+    const {hasActivePayment  }= await billing.check({
       plans: [MONTHLY_PRO_PLAN, YEARLY_PRO_PLAN],
-      isTest:isTest(shop),
-      onFailure: async () => {
-        const isDev = await ShopifyShopService.isShopInDev(admin);
-        if (isDev) {
-           throw new Error('isDev');
-        }
-        return redirect('/app/pricing');
-      } 
+      isTest:isTest(shop)
     });
-  }catch (error:any) {
-    if (error.message === 'isDev') {
-      return true;
-    }else{
-        return redirect('/app/pricing');
-    }
+  
+  
+  if (!hasActivePayment) {
+      const isDev = await ShopifyShopService.isShopInDev(admin);
+    if (isDev) {
+        const { hasActivePayment:hasStarterPlan  }= await billing.check({
+          plans: [MONTHLY_STARTER_PLAN, YEARLY_STARTER_PLAN],
+          isTest:isTest(shop)
+        });
+        if (!hasStarterPlan) {
+          return null
+        }
+    } 
+    
+
+    throw redirect('/app/pricing');
+      
   }
 }
 
