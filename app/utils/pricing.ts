@@ -141,7 +141,7 @@ export const proSubscriptionRequired = async (billing: any, shop?: string, admin
 
 export const isTest = (shop?: string) => {
 
-  return process.env.IS_TEST == "true"  || process.env.IS_TEST ? true : false;
+  return process.env.IS_TEST == "true" ? true : false;
 };
    
 export const PRICING_PLANS = {
