@@ -17,7 +17,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     if (!admin || !session) {
         try {
-            session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
+            session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } });
         if (!session) {
           return json({ error: "Session not found" });
         } 
@@ -69,8 +69,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         config = configFilter(config);
     }
 
+
     config = await replaceDomainUrl(config, admin);
 
     return json(config );
+
 };
   

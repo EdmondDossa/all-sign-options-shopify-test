@@ -27,7 +27,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     
     data  = await replaceDomainUrl(data, admin);
     
-    return json(data );
+    return !asoAccessToken  ? await replaceDomainUrl(data, admin) : json(data );
 
 };
   
