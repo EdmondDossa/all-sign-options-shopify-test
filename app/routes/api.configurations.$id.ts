@@ -4,6 +4,7 @@ import { authenticate } from "~/shopify.server";
 import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
 import prisma from "~/db.server";
 import { configFilter } from "~/utils/config-filter";
+import { replaceDomainUrl } from "~/utils/fileUrl";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -16,7 +17,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     if (!admin || !session) {
         try {
-            session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } }) ;
+            session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } });
         if (!session) {
           return json({ error: "Session not found" });
         } 
@@ -68,6 +69,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         config = configFilter(config);
     }
 
+
+    config = await replaceDomainUrl(config, admin);
+
     return json(config );
+
 };
   

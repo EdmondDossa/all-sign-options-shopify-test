@@ -3,6 +3,7 @@ import SettingShapesService from "~/models/SettingShapes.service";
 import TemplateService from "~/models/Template.service";
 import { authenticate } from "~/shopify.server";
 import prisma from "~/db.server";
+import { replaceDomainUrl } from "~/utils/fileUrl";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -22,9 +23,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
    
     
     
-    let data = await TemplateService.getTemplate(parseInt(`${params.id}`),sessionId);
+    let data = await TemplateService.getTemplate(parseInt(`${params.id}`), sessionId);
     
-    return json(data );
+    data  = await replaceDomainUrl(data, admin);
+    
+    return !asoAccessToken  ? await replaceDomainUrl(data, admin) : json(data );
 
 };
   
