@@ -4,13 +4,15 @@ export const booleanTransform = (value: any) => {
 };
   
 export const jsonTransform = (value: any) => {
+    console.log("Type of value:", typeof value); // Log the type of the value
+
     try {
-        return JSON.parse(value as string) || {}
+        return typeof value === "string" ? JSON.parse(value) : value;
     } catch (error) {
-        console.log( "errors  on json format", error, "value", value);
-        return value;
+        console.log("Error parsing JSON:", error, "Value:", value);
+        return value; // Return the original value if parsing fails
     }
-}
+};
 
 
 

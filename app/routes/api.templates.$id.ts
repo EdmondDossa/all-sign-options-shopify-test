@@ -23,7 +23,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
    
     
     
-    let data = await TemplateService.getTemplate(parseInt(`${params.id}`),sessionId);
+    let data = await TemplateService.getTemplate(parseInt(`${params.id}`), sessionId);
+    
+    data  = await replaceDomainUrl(data, admin);
     
     return !asoAccessToken  ? await replaceDomainUrl(data, admin) : json(data );
 

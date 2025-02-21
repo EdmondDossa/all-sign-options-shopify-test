@@ -14,6 +14,35 @@ export class ShopifyShopService{
           console.log("error  on getting order",error);
         }
   }  
+
+
+  static  async  getShopGraphQL(admin: any ){
+    try {
+      const query =  `#graphql
+      query {
+        shop {
+          name
+          primaryDomain{
+            id
+            host
+            url
+          }
+          myshopifyDomain
+        }
+      }`;
+      const response = await admin.graphql(
+        query
+      );
+      
+      const responseData = await response.json();
+      const returnData = responseData?.data?.shop;
+      return returnData;
+
+    } catch (error) {
+      console.log("error  on getting order",error);
+      return false;
+    }
+  }  
   
 
   static  async  getShopGraphQL(admin: any ){

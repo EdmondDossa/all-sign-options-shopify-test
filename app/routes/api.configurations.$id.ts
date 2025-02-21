@@ -69,6 +69,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         config = configFilter(config);
     }
 
-    return !asoAccessToken ?( await replaceDomainUrl(config, admin)) :configs ;
+
+    config = await replaceDomainUrl(config, admin);
+
+    return json(config );
+
 };
   

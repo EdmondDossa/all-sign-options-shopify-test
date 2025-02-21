@@ -65,6 +65,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     data.allShapes = data.allShapes.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes);
     data.allFixingMethod = data.allFixingMethod.slice(0, PRICING_PLANS.STARTER_RULES.materialFixingMethods);
   }
-    
-  return !asoAccessToken ? await replaceDomainUrl(data, admin) : data;
+
+  
+  data = await replaceDomainUrl(data, admin);
+  return json(data);
+
 };
