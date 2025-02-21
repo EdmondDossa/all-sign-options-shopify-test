@@ -8,6 +8,7 @@ import SettingShapesService from "~/models/SettingShapes.service";
 import { authenticate } from "~/shopify.server";
 import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
 import prisma from "~/db.server";
+import { replaceDomainUrl } from "~/utils/fileUrl";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
@@ -64,6 +65,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     data.allShapes = data.allShapes.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes);
     data.allFixingMethod = data.allFixingMethod.slice(0, PRICING_PLANS.STARTER_RULES.materialFixingMethods);
   }
-    
+  
+  data = await replaceDomainUrl(data, admin);
   return json(data);
 };

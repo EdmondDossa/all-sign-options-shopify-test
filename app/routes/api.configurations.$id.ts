@@ -4,6 +4,7 @@ import { authenticate } from "~/shopify.server";
 import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
 import prisma from "~/db.server";
 import { configFilter } from "~/utils/config-filter";
+import { replaceDomainUrl } from "~/utils/fileUrl";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -67,6 +68,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     if (plan == PRICING_PLANS.STARTER) {
         config = configFilter(config);
     }
+
+    config = await replaceDomainUrl(config, admin);
 
     return json(config );
 };

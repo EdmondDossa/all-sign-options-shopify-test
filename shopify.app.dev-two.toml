@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://social-million-grateful-tourism.trycloudflare.com"
+application_url = "https://cyprus-relatives-outreach-benefits.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://social-million-grateful-tourism.trycloudflare.com/auth/callback",
-  "https://social-million-grateful-tourism.trycloudflare.com/auth/shopify/callback",
-  "https://social-million-grateful-tourism.trycloudflare.com/api/auth/callback"
+  "https://cyprus-relatives-outreach-benefits.trycloudflare.com/auth/callback",
+  "https://cyprus-relatives-outreach-benefits.trycloudflare.com/auth/shopify/callback",
+  "https://cyprus-relatives-outreach-benefits.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://social-million-grateful-tourism.trycloudflare.com"
+url = "https://cyprus-relatives-outreach-benefits.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
