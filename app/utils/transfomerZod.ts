@@ -7,6 +7,7 @@ export const jsonTransform = (value: any) => {
     try {
         return JSON.parse(value as string) || {}
     } catch (error) {
+        console.log( "errors  on json format", error, "value", value);
         return value;
     }
 }

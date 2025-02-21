@@ -1,3 +1,5 @@
+import { ShopifyShopService } from "~/models/ShopifyShop.service";
+
 export const fileUrl = (url: any) => {
     
     if (url && typeof  url === "string") {
@@ -40,4 +42,16 @@ export function replaceUploadsAddShopUrl(data:any, shopUrl:string) {
 
   replaceInObject(data);
   return data;
+}
+
+
+
+export async function replaceDomainUrl(data: any, admin: any) {
+  console.log("replaceDomainUrl is called");
+  const shop = await ShopifyShopService.getShopGraphQL(admin);
+  
+  data = JSON.stringify(data).replace("https://"+shop.myshopifyDomain, shop.primaryDomain.url);
+  
+  return JSON.parse(data);
+  
 }
