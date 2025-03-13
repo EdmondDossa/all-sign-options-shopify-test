@@ -313,7 +313,7 @@ function formatPrice_shopify(price) {
   let formattedPrice = parseFloat(
     price + parseFloat(asoRegularPrice||0)
   ).toFixed(2);
- return `${asoPriceFormat||'{{amount}}'}`.replace("{{amount}}", formattedPrice);
+ return `${asoPriceFormat||'{{amount}}'}`.replace("{{amount}}", formattedPrice).replace("{{amount}}", formattedPrice);
 }
 
 

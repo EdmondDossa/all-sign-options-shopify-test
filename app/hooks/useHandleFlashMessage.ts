@@ -35,7 +35,7 @@ function useHandleFlashMessage() {
       }
       setSearchParams({ messageFlash: "" });
     }
-  }, [actionData]);
+  }, [actionData, searchParams]);
 }
 
 

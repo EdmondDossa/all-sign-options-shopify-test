@@ -143,7 +143,7 @@ export default function MaterialEdit() {
                   value={formData.type}
                 />
               </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+              {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <CustomTinymce
                   error={
                     actionData?.errors?.popImg
@@ -154,7 +154,7 @@ export default function MaterialEdit() {
                   onEditorChange={handlePopImg}
                   value={formData.popImg}
                 />
-              </Grid.Cell>
+              </Grid.Cell> */}
             </Grid>
           </Box>
         </SpacingBackground>

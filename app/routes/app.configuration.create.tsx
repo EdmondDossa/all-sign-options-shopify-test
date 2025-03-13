@@ -167,7 +167,7 @@ export default function ConfigurationEdit() {
                     selectProductId={formData.product?.id}
                   />
                 </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <CustomTinymce
                     error={
                       actionData?.errors?.popupImg
@@ -178,7 +178,7 @@ export default function ConfigurationEdit() {
                     onEditorChange={handlePopupImg}
                     value={formData.popupImg}
                   />
-                  {/* <FileInput
+                   <FileInput
                     error={
                       actionData?.errors?.popupImg
                         ? actionData.errors.popupImg[0]
@@ -187,8 +187,8 @@ export default function ConfigurationEdit() {
                     title="Upload image"
                     path={formData.popupImg}
                     handlePath={}
-                  /> */}
-                </Grid.Cell>
+                  /> 
+                </Grid.Cell> */}
               </Grid>
             </Box>
           </SpacingBackground>

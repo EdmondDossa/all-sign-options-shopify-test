@@ -74,9 +74,9 @@ export default function ConfigSettingsGeneral() {
     { label: "PNG", value: "png" },
     { label: "JPEG", value: "jpeg" },
     { label: "SVG", value: "svg" },
-    { label: "PNG + SVG", value: "png,svg" },
-    { label: "JPEG + SVG", value: "jpeg,svg" },
-    { label: "PNG+ JPEG", value: "png,jpeg" },
+    { label: "PNG + SVG", value: "png+svg" },
+    { label: "JPEG + SVG", value: "jpeg+svg" },
+    { label: "PNG+ JPEG", value: "png+jpeg" },
   ];
 
   const [formData, setFormData] = useState<any>(

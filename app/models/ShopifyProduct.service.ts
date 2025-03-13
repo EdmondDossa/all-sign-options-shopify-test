@@ -190,7 +190,6 @@ export class ShopifyProductService {
               "price": `${price}`,
               "productId": id, 
               "requiresComponents": false,
-              "sku": "ASOPRREFERENCE",
               "metafields":[
                 {
                   key: "asoConfigurationRecap",
@@ -252,7 +251,6 @@ export class ShopifyProductService {
                   "position": 1,
                   "price": `${price}`,
                   "requiresComponents": false,
-                  "sku": "ASOPRREFERENCE",
                   "metafields":[
                     {
                       key: "asoConfigurationRecap",
