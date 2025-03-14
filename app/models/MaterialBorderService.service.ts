@@ -16,7 +16,7 @@ export default class MaterialBorderService {
         await ConfigurationService.getConfiguration(configurationId, sessionId);
       let borders =
         configuration["data"]["materials"][materialId]["data"]["borders"];
-      return borders ? (borders as ConfigBorder) : borders;
+      return borders ? (borders as {allBorders: ConfigBorder[],settings :BorderSettingType}) : borders;
     } catch (error) {
       return Promise.resolve(null);
     }

@@ -13,7 +13,7 @@ export default class MaterialColorService {
         await ConfigurationService.getConfiguration(configurationId, sessionId);
       let colors =
         configuration["data"]["materials"][materialId]["data"]["colors"];
-      return colors ? (colors as ConfigColor) : colors;
+      return colors ? (colors as {allColors: ConfigColor[], customColors: ConfigCustomColor}) : colors;
     } catch (error) {
       console.error("Error retrieving font:", error);
       return Promise.resolve(null);

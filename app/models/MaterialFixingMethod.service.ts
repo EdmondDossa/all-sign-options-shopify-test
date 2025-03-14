@@ -14,7 +14,7 @@ export default class MaterialFixingMethodService {
       let fixingMethods =
         configuration["data"]["materials"][materialId]["data"]["fixingMethods"];
       return fixingMethods
-        ? (fixingMethods as ConfigFixingMethod)
+        ? (fixingMethods as ConfigFixingMethod[])
         : fixingMethods;
     } catch (error) {
       console.error("Error retrieving font:", error);
