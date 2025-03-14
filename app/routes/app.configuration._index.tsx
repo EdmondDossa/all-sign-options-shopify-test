@@ -26,10 +26,10 @@ import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { authenticate } from "~/shopify.server";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import ConfigurationService from "~/models/Configuration.service";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import { jFlashMessage } from "~/utils/message-flash";
+import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { BorderCircleText } from "~/components/feactures/BorderCircleText";
 import { ManageBtn } from "~/components/buttons/ManageBtn";
 import { truncateText } from "~/utils/truncate-text";
@@ -52,22 +52,22 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const id = formData.get("id") as string;
   const method = request.method;
-  console.log(" config deleeting :", id, method);
+ 
 
   switch (method) {
     case "DELETE": {
-      console.log("start deleting");
       await ConfigurationService.deleteConfiguration(parseInt(id), session.id);
 
-      return json({
-        ...jFlashMessage("Configution deleting is completed successfull"),
-      });
+   
+      return redirect(
+        `${flashMessage("Configution deleting is completed successfull")}`,
+      );
       break;
     }
 
     case "POST": {
       const configuration: ConfigurationType =
-        await ConfigurationService.getConfiguration(parseInt(id), session.id);
+        await ConfigurationService.getConfigurationWithoutTemplates(parseInt(id), session.id);
       delete configuration.id;
       delete configuration.product;
       configuration.name = formData.get("configTitle") as string;
@@ -75,9 +75,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         configuration,
         session.id,
       );
-      return json({
-        ...jFlashMessage("Configution duplicating is completed successfull"),
-      });
+
+      return redirect(
+        `${flashMessage("Configution duplicating is completed successfull")}`,
+      );
       break;
     }
 

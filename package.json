@@ -1,7 +1,7 @@
 {
   "name": "all-signs-option",
   "private": true,
-  "version": "1.1.2",
+  "version": "1.2.0",
   "scripts": {
     "build": "tsc && remix build",
     "predev": "prisma generate && prisma migrate deploy",
