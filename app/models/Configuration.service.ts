@@ -398,6 +398,25 @@ export default class ConfigurationService {
     }
   }
 
+
+
+  static async getConfigurationWithoutTemplates(
+    id: number,
+    sessionId: string,
+  ): Promise<any | null> {
+    try {
+      return await prisma.configuration.findUnique({
+        where: {
+          id: id,
+          sessionId: sessionId,
+        }
+      });
+    } catch (error) {
+      console.error("Error retrieving configuration:", error);
+      return Promise.reject(null);
+    }
+  }
+
   static async updateConfiguration(
     configuration: ConfigurationType,
     sessionId: string,
@@ -465,7 +484,7 @@ export default class ConfigurationService {
         },
       });
     } catch (error) {
-      console.error("Error adding configuration:", error);
+      console.error("Error duplicating configuration:", error);
       return Promise.reject(null);
     }
   }

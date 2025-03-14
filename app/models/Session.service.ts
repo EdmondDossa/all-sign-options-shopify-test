@@ -1,3 +1,5 @@
+import prisma from "~/db.server";
+
 export default class SessionService{
     
     static async get(sessionId: string): Promise<any | null> {

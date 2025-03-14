@@ -7,7 +7,7 @@ export default class MaterialAdditionalOptionService {
     try {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let additionalOptions = configuration["data"]["materials"][materialId]["data"]["additionalOptions"];
-      return additionalOptions? additionalOptions as ConfigAdditionalOption: additionalOptions;
+      return additionalOptions? additionalOptions as ConfigAdditionalOption[]: additionalOptions;
     } catch (error) {
       console.error("Error retrieving font:", error);
       return Promise.resolve(null);

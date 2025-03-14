@@ -13,7 +13,7 @@ export default class MaterialShapeService {
         await ConfigurationService.getConfiguration(configurationId, sessionId);
       let shapes =
         configuration["data"]["materials"][materialId]["data"]["shapes"];
-      return shapes ? (shapes as ConfigShape) : shapes;
+      return shapes ? (shapes as ConfigShape[]) : shapes;
     } catch (error) {
       console.error("Error retrieving font:", error);
       return Promise.resolve(null);
