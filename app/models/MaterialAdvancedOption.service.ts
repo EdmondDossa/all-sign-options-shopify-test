@@ -19,7 +19,7 @@ export default class MaterialAdvancedOptionService {
           materialComponentId
         ]["options"];
       return materialComponents
-        ? (materialComponents as MaterialAdvanceOptionType)
+        ? (materialComponents as MaterialAdvanceOptionType[])
         : materialComponents;
     } catch (error) {
       console.error("Error retrieving font:", error);
