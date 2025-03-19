@@ -310,10 +310,20 @@ function setScrollColor_shopify(color) {
 }
 
 function formatPrice_shopify(price) {
-  let formattedPrice = parseFloat(
-    price + parseFloat(asoRegularPrice||0)
-  ).toFixed(2);
- return `${asoPriceFormat||'{{amount}}'}`.replace("{{amount}}", formattedPrice).replace("{{amount}}", formattedPrice);
+  let parsedPrice = parseFloat(price) || 0;
+  let additionalPrice = parseFloat(asoRegularPrice) || 0;
+  let formattedPrice = (parsedPrice + additionalPrice).toFixed(2);
+
+  if (asoPriceFormat) {
+    if (asoPriceFormat.includes('{{amount}}')) {
+      return asoPriceFormat.replace("{{amount}}", formattedPrice);
+    }
+    if (asoPriceFormat.includes('{{amount_no_decimals}}')) {
+      return asoPriceFormat.replace("{{amount_no_decimals}}", Math.round(formattedPrice));
+    }
+  }
+  
+  return formattedPrice;
 }
 
 
