@@ -291,17 +291,9 @@ async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
 
 
  async function addTemplateToCartShopify(template){
-   console.log('template to   to ', template)
-
    if (template?.configuration?.product?.id) {
      await asoCreateVariantAndAddToCart(  template.data.cartData.custom_price,{recaps: template.data.cartData}, template?.configuration?.product?.id.split('/').pop(),template.basePrice)
    }
-
-
-
-
-
-   
  };
 
 
