@@ -8,13 +8,22 @@ export default class TemplateService {
         where: {
           sessionId: sessionId,
         },
-        include: {
+        select: {
+          id:true,
+          name:true, 
+          prevImg:true,
+          basePrice:true, 
+          categoryId:true,
+          configurationId:true,
+          enabledAddToCart:true,
           category:  true,
+          recaps:true,
           configuration: {
-          select:{
-            product: true
-          }
-        } }
+            select:{
+              product: true
+            }
+        } },
+        
       });
     } catch (error) {
       console.error("Error retrieving templates:", error);
@@ -32,6 +41,12 @@ export default class TemplateService {
           id: id,
           sessionId: sessionId,
         },
+        include:{   
+          configuration: {
+            select:{
+              product: true
+            }
+        }}
       });
     } catch (error) {
       console.error("Error retrieving template:", error);
@@ -50,7 +65,8 @@ export default class TemplateService {
           id: id,
           sessionId: sessionId,
         },
-        data: data,
+        data: data
+        
       });
     } catch (error) {
       console.error("Error updating template:", error);
@@ -65,12 +81,19 @@ export default class TemplateService {
   ): Promise<any | null> {
  
     try {
+      const size = data.cartData?.sign?.size?.value;
+      console.log(" size  of recap", size);
       return await prisma.template.update({
         where: {
           id: id,
           sessionId: sessionId,
         },
         data: {
+          recaps: data.cartData.sign ? {
+            customPrice: data.cartData.custom_price ,
+            priceType:data.templateData.price?.textAfter||"",
+            size: size? `${size.width?.value} x ${size.height?.value}` :"0mm x 0mm"
+          } : "",
           data: data
         },
       });

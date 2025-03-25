@@ -103,6 +103,7 @@ model Template {
   name              String
   basePrice         Float
   prevImg           String
+  recaps             Json?
   enabledAddToCart  Boolean  @default(false)
   configuration     Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
   configurationId   Int
