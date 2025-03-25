@@ -122,6 +122,31 @@
       }
   }
 
+
+  async function getAsoTemplate(id) {
+      
+    
+      try {
+        const response = await fetch(`${window.Shopify.routes.root}apps/aso-proxy/api/templates/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`ASO Proxy configuration fetch failed with status: ${response.status}`);
+        }
+    
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching ASO Proxy configuration:', error);
+        // Handle the error appropriately in your application (e.g., display an error message to the user)
+        return null; // Or throw an error if necemmmssuhhh ssscurrentConfig.data.settings.theme.skin
+      }
+  }
+
   var asoTemplateData = []
 
 
@@ -148,7 +173,7 @@
   // Pour chaque élément dans templates
       templates?.filter(template=>(aso_configuration_id=="0" || template.configurationId==aso_configuration_id ) ).forEach(template => {
           // Cloner l'élément template
-          if(!(template?.data?.templateData?.sign)){
+          if(!template.recaps){
             return false;
           }
           const clone = templateItem.cloneNode(true);
@@ -168,11 +193,9 @@
           clone.setAttribute("data-id", template.categoryId)
           clone.setAttribute('id',"asoTemplateItem"+template.id);
           clone.querySelector('.asoTemplateItemName').textContent = template.name;
-          clone.querySelector('.asoTemplateItemSize').textContent = (template.data?.templateData)?   
-          template.data.templateData.sign?.size?.width + ' ' +template.data.templateData.sign?.size?.unit + ' x '+
-          template.data.templateData.sign?.size?.height + ' ' +template?.data?.templateData?.sign?.size?.unit: "0mm x 0mm";
-          clone.querySelector('.asoTemplateItemPrice').textContent = asoPriceFormatTemplate.replace("{","").replace("{amount}}", (template?.data?.cartData?.custom_price ? (template.data.cartData.custom_price + template.basePrice).toFixed(2) : template.basePrice.toFixed(2)));
-          clone.querySelector('.asoTemplateItemTextAfter').textContent =(template?.data?.templateData) ? template.data.templateData?.price?.textAfter:'';
+          clone.querySelector('.asoTemplateItemSize').textContent = template.recaps.size;
+          clone.querySelector('.asoTemplateItemPrice').textContent = (template.basePrice + template.recaps.customPrice).toFixed(2);
+          clone.querySelector('.asoTemplateItemTextAfter').textContent = template.recaps.priceType;
           const asoDesignPageUrl =  clone.querySelector('.asoTemplateItemCustomize').getAttribute('href');
           clone.querySelector('.asoTemplateItemCustomize').setAttribute("href", asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId)
           clone.querySelector('.asoTemplateItemAddToCart').setAttribute('onclick',"addTemplateTocart("+template.id+")");
@@ -219,12 +242,11 @@
 
 
 
-  function addTemplateTocart(id){
+ async function addTemplateTocart(id){
     console.log("start  add to  cart");
     if (typeof addTemplateToCartShopify == "function") {
       //debut de gestion du loading
-      let template = asoTemplateData.find(template=>(template.id == id) )
-      console.log("template start  add  to  cart",template)
+      let template = await getAsoTemplate(id);
       const templateDiv = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #asoTemplate');
       templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'none';
       templateDiv.querySelector('.addingTocart'+template.id).style.display = 'block';
@@ -236,7 +258,7 @@
         templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'block';
         templateDiv.querySelector('.addingTocart'+template.id).style.display = 'none';
         //fin
-        console.log("end of  add to  cart");
+        console.log("end of  add to  cart",res);
       }).catch((err)=>{
         console.log("error on adding to cart", error);
       });
