@@ -371,8 +371,7 @@ export default class ConfigurationService {
         },
         orderBy: {
           id: "asc",
-        },
-        include: {templates: includeTempletes}
+        }
       });
     } catch (error) {
       console.error("Error retrieving configurations:", error);

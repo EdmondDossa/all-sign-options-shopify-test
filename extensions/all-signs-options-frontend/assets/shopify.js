@@ -15,8 +15,6 @@ if(asoTemplateId){
   }
 }
 async function getAsoConfiguration(configurationId) {
-    
-  
     try {
       const response = await fetch(`${shopifyProxyURL}configurations/${configurationId}`, {
         method: 'GET',
@@ -36,6 +34,29 @@ async function getAsoConfiguration(configurationId) {
       // Handle the error appropriately in your application (e.g., display an error message to the user)
       return null; // Or throw an error if necessary
     }
+}
+
+
+async function getAsoTemplateById(templateId) {
+  try {
+    const response = await fetch(`${shopifyProxyURL}templates/${templateId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`ASO Proxy template fetch failed with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching ASO Proxy template:', error);
+    // Handle the error appropriately in your application (e.g., display an error message to the user)
+    return null; // Or throw an error if necessary
+  }
 }
 
 
@@ -73,8 +94,12 @@ async function aso_confiurator_dataFunction(){
   const managesData = await getAsoManagesData();
 
   let currentConfig = null;
+  let template = null;
   if (asoConfigurationId ) {
     currentConfig = await getAsoConfiguration(asoConfigurationId);
+
+    template = asoTemplateId ? await getAsoTemplateById(asoTemplateId) : null;
+
     if (!currentConfig) {
       currentConfig = getDefaultConfig();
     }
@@ -103,17 +128,15 @@ async function aso_confiurator_dataFunction(){
     document.body.appendChild(style);
   });
   try {
-    console.log("Custom CSS", currentConfig)
     currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
-    console.log('Custom CSS added successfully');
   } catch (error) {
     console.error('Error adding custom CSS:', error);
   }
   // end to add  font and custom css to  page
 
 
-  if (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.data?.cartData) {
-    asoRegularPrice = (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.basePrice) || 0;
+  if (asoTemplateId && template) {
+    asoRegularPrice = template.basePrice || 0;
   }
 
   
@@ -137,11 +160,11 @@ async function aso_confiurator_dataFunction(){
     borders_url:
     "/apps/aso-proxy/assets/images/fixing-methodes",
     templates: {
-      designFromTemplate: currentConfig?.templates?.find(template => template.id == asoTemplateId) ? true : false,
-      template: currentConfig?.templates?.find(template => template.id == asoTemplateId)|| null
+      designFromTemplate: template ? true : false,
+      template: template ||  null
     }
   })
-}; //kk ll
+};
 
 
 
@@ -271,21 +294,7 @@ function addStylesToBody(cssRules) {
   document.body.appendChild(styleElement);
 }
 
-// //  to add  font and custom css to  page  
-// document.addEventListener('DOMContentLoaded', async function () {
-//   if(asoConfigurationId){const managesData = await getAsoManagesData();
-  
- 
-
-//   const  currentConfig = await getAsoConfiguration(asoConfigurationId);
-
-//  }
-
-// });
-
 async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
-
-    console.log("data cart ", cart_data);
     await asoCreateVariantAndAddToCart( cart_data.recaps.custom_price, cart_data,asoProductId, asoRegularPrice , redirectToCheckOut);
 };
 
@@ -335,13 +344,6 @@ async function  asoGetTemplate_shopify(template_config_id,template_id){
 
 
 function  getRouteTemplate_shopify(){
-  // if (asoTemplateId) {
-  //   return( {
-  //     name:"template-maker",
-  //     params:JSON.parse(window.name)
-  //   })
-  // }    
-
   return null;
 }
 
@@ -767,37 +769,3 @@ function defaultStyle(baseUrl) {
         `; 
   document.body.appendChild(defaulStyle);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
