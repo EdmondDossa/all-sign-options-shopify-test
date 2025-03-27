@@ -60,8 +60,6 @@ async function getAsoConfiguration(configurationId) {
     }
 }
 
-
-
 async function getAsoManagesData() {
     
   
@@ -91,7 +89,7 @@ console.log("config id and  product id  agin", asoConfigurationId, asoProductId)
 
 async function aso_confiurator_dataFunction(){
   const managesData = await getAsoManagesData();
-  const   currentConfig = await getAsoConfiguration(asoConfigurationId);
+  const currentConfig = await getAsoConfiguration(asoConfigurationId);
 
   // Add custom CSS and fonts
   try {
@@ -119,16 +117,10 @@ async function aso_confiurator_dataFunction(){
       document.body.appendChild(style);
     });
     currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
-    console.log('Custom CSS added successfully');
   } catch (error) {
     console.error('Error adding custom CSS:', error);
   }
 
-  if (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.data?.cartData) {
-    
-    asoRegularPrice = (currentConfig?.templates?.find(template => template.id == asoTemplateId)?.basePrice) || 0
-    console.log("base price from template", asoRegularPrice)
-  }
   return ( {
     skin: currentConfig['data']['settings']["themeColors"]["skin"],
     productID: asoProductId,
@@ -141,8 +133,7 @@ async function aso_confiurator_dataFunction(){
     nbDecimals: "2",
     currencySymbol: asoCurrency,
     variations: [],
-    fixing_methods_url:
-      "/assets/images/fixing-methodes",
+    fixing_methods_url:"/assets/images/fixing-methodes",
     frontend_nonce: "841fba2b18",
     product: {},
     regularPrice: "0",
@@ -248,30 +239,6 @@ function addStylesToBody(cssRules) {
   document.body.appendChild(styleElement);
 }
 
-// //  to add  font and custom css to  page  
-// document.addEventListener('DOMContentLoaded', async function () {
-//   let managesData = await getAsoManagesData();
-//   managesData =  replaceUploadsPath(managesData) ;
-//   managesData.fonts.forEach(font => {
-//     let style = document.createElement('style');
-//     style.textContent = `
-          
-//   @font-face {
-//     font-family: "${font.label?.replaceAll(/\s+/g, '-')}";
-//     font-display: swap;
-//     src: url('${font.url}') format('${asoGetFontFormat(font.url)}');
-//   }
-      
-//       `; 
-//     document.body.appendChild(style);
-//   });
-
-//   const  currentConfig = await getAsoConfiguration(asoConfigurationId);
-
-
-
-// });
-
 async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
 
     // console.log("data cart ", cart_data);
@@ -288,10 +255,32 @@ function setScrollColor_shopify(color) {
 
 }
 
+async function  asoGetTemplate_shopify(template_config_id,template_id){
+  try {
+    const response = await fetch(`${shopifyProxyURL}templates/${template_id}`, {
+      method: 'GET',
+      headers:header,
+    });
+
+    if (!response.ok) {
+      throw new Error(`ASO Proxy template fetch failed with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    asoRegularPrice = data.basePrice;
+    return replaceUploadsPath(data);
+  } catch (error) {
+    console.error('Error fetching ASO Proxy template:', error);
+    // Handle the error appropriately in your application (e.g., display an error message to the user)
+    return null; // Or throw an error if necessary
+  }
+}
+
 function formatPrice_shopify(price) {
   let formattedPrice = parseFloat(
     price + parseFloat(asoRegularPrice)
   ).toFixed(2);
+  console.log("format text ", formattedPrice);
  return `${asoPriceFormat}`.replace("{{amount}}", formattedPrice);
 }
 
@@ -334,29 +323,6 @@ async function asoUpdateTemplate_shopify(template_id,template_data) {
       success: false,
       message: 'Error posting ASO Proxy template'
     }); // Or throw an error if necessary
-  }
-}
-
-
-
-
-async function  asoGetTemplate_shopify(template_config_id,template_id){
-  try {
-    const response = await fetch(`${shopifyProxyURL}templates/${template_id}`, {
-      method: 'GET',
-      headers:header,
-    });
-
-    if (!response.ok) {
-      throw new Error(`ASO Proxy template fetch failed with status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return replaceUploadsPath(data);
-  } catch (error) {
-    console.error('Error fetching ASO Proxy template:', error);
-    // Handle the error appropriately in your application (e.g., display an error message to the user)
-    return null; // Or throw an error if necessary
   }
 }
 
