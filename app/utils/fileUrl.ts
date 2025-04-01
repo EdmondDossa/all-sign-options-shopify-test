@@ -27,6 +27,7 @@ export function getShopPath(str: string) {
 
 
 
+
 export function replaceUploadsAddShopUrl(data:any, shopUrl:string) {
   function replaceInObject(obj:any) {
     for (const key in obj) {
@@ -51,7 +52,6 @@ export async function replaceDomainUrl(data: any, admin: any) {
     return data;
   }
   
-  console.log("replaceDomainUrl is called");
   const shop = await ShopifyShopService.getShopGraphQL(admin);
   const oldDomain = "https://" + shop.myshopifyDomain;
   const newDomain = shop.primaryDomain.url;
@@ -71,4 +71,11 @@ export async function replaceDomainUrl(data: any, admin: any) {
 
   return replaceUrls(data);
 }
+
+
+export  const  getShopProxyUrlWithSlash = (shop:string)=>{
+
+  return `https://${shop}/apps/aso-proxy/`;
+}
+
 

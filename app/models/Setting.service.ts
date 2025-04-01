@@ -46,7 +46,11 @@ const data = (shop: string) => {
   return {
     output: {
       zipName: true,
-      calculateOutput: true,
+      calculateOutput: true,  
+      enableSendMailToCustom: true,
+      enableSendMailToAdmin: true,
+      ouputReceiverMails: '',
+
     },
 
     shapes: [

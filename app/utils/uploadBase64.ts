@@ -1,6 +1,8 @@
 import { writeFileSync,mkdirSync } from "fs";
 import sizeOf from 'buffer-image-size';
 import { assignShopDesignPath, getShopDesignPath } from "./fileUrl";
+import {dataUriToBuffer} from "data-uri-to-buffer";
+import mime from "mime-types"; // pour convertir mime-type en extension
 
 export function uploadBase64(ext:string, base64: string, sessionId: string) {
     const path = assignShopDesignPath(sessionId, `${generateUniqueId()}.${ext}`);
@@ -56,18 +58,17 @@ export function generateUniqueId() {
     return `${timestamp}-${randomNum}`;
 }
 
-export function  getExtensionFromBase64(baseString64:string){
-    const typeRegex = /data:.*\/([^\+^;]+)/;
-    const match = `${baseString64}`.match(typeRegex);
-
-    if (match) {
-        const dataType = match[1];
-        return dataType;
-    
-    } else {
-        return null;
+export function getExtensionFromBase64(base64String: string): string | null {
+    try {
+      const parsed = dataUriToBuffer(base64String); // parse le data URL
+      const mimeType = parsed.type; // ex: image/jpeg
+      const ext = mime.extension(mimeType); // ex: jpg
+      return ext || null;
+    } catch (error) {
+      console.error("Invalid base64 string:", error);
+      return null;
     }
-}
+  }
 
 
 
