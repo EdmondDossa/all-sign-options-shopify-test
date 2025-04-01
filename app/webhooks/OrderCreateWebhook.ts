@@ -6,15 +6,11 @@ import { calculateImagePlacement, fileBuffer, generateUniqueId, getExtensionFrom
 import { jsPDF } from "jspdf";
 import { assignShopDesignPath } from "~/utils/fileUrl";
 import { unlink } from "fs";
+import SettingOutputService from "~/models/SettingOutput.service";
 
 export async function OrderCreateWebhook(admin:any,session:any,payload:any){
   const order = payload;
 
-
-  
-
-
-  
     const variantsData:any =  []
     if (order) {
       for(const line_item of order.line_items){
@@ -34,10 +30,7 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
           try {
             const mailData = [];
             for (const variantMetaData of  variantsData) {
-            
               
-          
-             
               console.log("start");
               let zip = new AdmZip();
               let designImages = [];
@@ -56,14 +49,27 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                     
                     let doc = new jsPDF({ orientation: "landscape", });
                     let imageSize = calculateImagePlacement(content);
-                    doc.addImage(content, "JPEG", imageSize.x, imageSize.y, imageSize.width, imageSize.height);
+                    doc.addImage(content, "jpeg", imageSize.x, imageSize.y, imageSize.width, imageSize.height);
                     let filenamePath = assignShopDesignPath(session.id, `${fileName}.pdf`);
                     doc.save(filenamePath);
                     zip.addLocalFile(filenamePath,undefined,`${fileName}.pdf`, "application/pdf");
                     designImagesPdf.push(filenamePath)
                   }
                 }
+
+                //  save  printable  file
+                if(variantMetaData?.recaps?.printImage){
+                  const contentPrintable = fileBuffer(variantMetaData?.recaps?.printImage);
+                  let fileNamePrintable =`print_design_${generateUniqueId()}.svg`;
+
+                  if (contentPrintable) {
+                    zip.addFile(fileNamePrintable, contentPrintable,"image");
+                    designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileNamePrintable, contentPrintable ,session.id)}`)
+                  }
+                }
     
+
+                // save  additonal  files
                 for(const designImage of (variantMetaData?.recaps?.images?.value||[])){
                   const content = fileBuffer(designImage.url);
                   const ext  = getExtensionFromBase64(designImage.url);
@@ -71,7 +77,7 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                   if(content && ext){
                     zip.addFile(fileName, content,"image");
                     images.push({
-                      id:designImage.id,
+                      id: designImage.id,
                       url:`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName,content,session.id)}`,
                     });
                   }
@@ -94,9 +100,25 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                       zip.addLocalFile(filenamePath,undefined,`${fileName}.pdf`, "application/pdf");
                       designImagesPdf.push(filenamePath)
                     }
+
+                    
                   }
                 }
-      
+
+                //  save  printable  file
+                if(variantMetaData?.recaps?.printImage){
+                  for(const face in variantMetaData.recaps.printImage){
+                    const contentPrintable = fileBuffer(variantMetaData.recaps.printImage[face]);
+                    let fileNamePrintable =`print_design_${face}_${generateUniqueId()}.svg`;
+    
+                    if (contentPrintable) {
+                      zip.addFile(fileNamePrintable, contentPrintable,"image");
+                      // designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileNamePrintable, contentPrintable ,session.id)}`)
+                    }
+                  }
+                }
+
+                // save  additonal  files
                   for(const face in (variantMetaData?.recaps?.images?.value||{})){
                     for(const designImage of (variantMetaData?.recaps?.images?.value[face]||[])){
                     const content = fileBuffer(designImage.url);
@@ -145,18 +167,26 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
               mailData.push(variantMetaData);
 
             }
+
             const shop = await ShopifyShopService.getShop(admin,session)
             
-           
-            
-            if (shop?.email) {
+            const output = await SettingOutputService.get(session.id);         
+            if (shop?.email && output.enableSendMailToAdmin) {
               sendRecapMail(mailData, shop.email, `All signs options ${mailData[0].orderNumber}`, order.customer);
-              console.log("shop  email  ", shop.email)
             }
-            if (order?.customer?.email) {
+
+            for (const email of output.ouputReceiverMails?.split(',') || []) {
+              const trimmedEmail = email.trim();
+              if (trimmedEmail) {
+                sendRecapMail(mailData,trimmedEmail,`All signs options ${mailData[0].orderNumber}`,order.customer);
+              }
+            }
+            
+
+            if (order?.customer?.email && output.enableSendMailToCustom) {
               sendRecapMail(mailData, order.customer.email, `All signs options ${mailData[0].orderNumber}`,order.customer, false);
-              console.log("email of customer", order.customer.email)
             }
+
           } catch (error) {
             console.log("error  on creating zip",error) ;
   
