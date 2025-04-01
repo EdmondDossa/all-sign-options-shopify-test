@@ -1,3 +1,4 @@
+import { readJsonData } from "~/utils/jsonHandler";
 
 export class ShopifyProductService {
   static async create(
@@ -15,6 +16,7 @@ export class ShopifyProductService {
                     productCreate(input: $input, media: $media) {
                     product {
                         id
+                        legacyResourceId
                         title
                         handle
                         status
@@ -22,6 +24,7 @@ export class ShopifyProductService {
                         edges {
                             node {
                             id
+                            legacyResourceId
                             price
                             barcode
                             createdAt
@@ -345,10 +348,15 @@ export class ShopifyProductService {
         );
         
         const data = await response.json();
+        const recapData = JSON.parse(data.data.productVariant?.metafield?.value);
         
         
 
-        return data.data.productVariant.metafield? {title: data.data.productVariant?.title , recaps :JSON.parse( data.data.productVariant?.metafield?.value),id:data.data.productVariant?.metafield?.id}:null;
+        return data.data.productVariant.metafield ? {
+          title: data.data.productVariant?.title,
+          recaps: recapData?.recapsPath? readJsonData(recapData.recapsPath):recapData ,
+          id: data.data.productVariant?.metafield?.id
+        } : null;
 
       } catch (error) {
         console.log("error  on updating variant",error);

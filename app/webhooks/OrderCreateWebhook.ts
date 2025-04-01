@@ -7,6 +7,7 @@ import { jsPDF } from "jspdf";
 import { assignShopDesignPath } from "~/utils/fileUrl";
 import { unlink } from "fs";
 import SettingOutputService from "~/models/SettingOutput.service";
+import { updateOrCreateJsonData } from "~/utils/jsonHandler";
 
 export async function OrderCreateWebhook(admin:any,session:any,payload:any){
   const order = payload;
@@ -156,12 +157,17 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                     images: images,
                     zipUrl:`${process.env.SHOPIFY_APP_URL}/${zipPath.replace('public/','')}`
                 }
+
+                const recapsPath = assignShopDesignPath(session.id, `recaps/${variantMetaData.line_item.variant_id}.json`)
+                if (!updateOrCreateJsonData(recapsPath,  variantMetaData.recaps)) {
+                  return null;
+                }
                 
                 ShopifyProductService.updateVariantRecap(
                   admin,
                   `gid://shopify/ProductVariant/${variantMetaData.line_item.variant_id}`,
                   `${variantMetaData.id}`, 
-                  JSON.stringify(variantMetaData.recaps)
+                  JSON.stringify({recapsPath:recapsPath})
                 )
               } 
               mailData.push(variantMetaData);
