@@ -5,6 +5,8 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { parseWithZod } from '@conform-to/zod';
 import { jsonTransform } from '~/utils/transfomerZod';
 import { uploadBase64,  fileBuffer, calculateImagePlacement } from '~/utils/uploadBase64';
+import { assignShopDesignPath } from '~/utils/fileUrl';
+import { updateOrCreateJsonData } from '~/utils/jsonHandler';
 
 
 
@@ -87,6 +89,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }else{
         designImage = uploadBase64(data.option.recaps.designImages[0].format, data.option.recaps.designImages[0].url,session.id)
       }
+    
+    
       
       const product = await ShopifyProductService.create(
         data.option.recaps.configuration?.id,
@@ -99,13 +103,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       )
     
       await ShopifyProductService.publish(admin, product.id)
-  
+    
+    const recapsPath = assignShopDesignPath(session.id, `recaps/${product.variants.edges[0].node.legacyResourceId}.json`)
+    
+    if (!updateOrCreateJsonData(recapsPath, data.option.recaps)) {
+      return null;
+    }
+
       const variant = await ShopifyProductService.updateVariant(
             admin,
             product.variants.edges[0].node.id,
             optionName,
             data.price,
-            data.option.recaps
+            {recapsPath:recapsPath}
       )
       
     return json(variant);
