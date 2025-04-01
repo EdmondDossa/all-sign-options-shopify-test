@@ -32,11 +32,10 @@ import {
          {data?.map((variantRecap:any, index:number)=>( <div key={index} style={productDiv}>
             <Hr style={hr} />
             
-         {variantRecap.recaps.filesUrl?.designImages?.map( (src:string,indexImg:number)=>src && <Img key={`${index}-${indexImg}`} style={{width: "100%", height:"auto"}}
+         {variantRecap.recaps.filesUrl?.designImages?.map( (src:string,indexImg:number)=>(src && <Img key={`${index}-${indexImg}`} style={{width: "100%", height:"auto"}}
               src={src}
-              height="21"
-              alt="All  signs Customizer"
-            />)}
+              alt="ASO"
+            />))}
             <div style={optionDiv}>
               <Text style={bold}>{variantRecap.line_item?.title}</Text>
               <Text style={paragraph}>x {variantRecap.line_item?.quantity}   </Text>
