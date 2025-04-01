@@ -87,13 +87,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }else{
         designImage = uploadBase64(data.option.recaps.designImages[0].format, data.option.recaps.designImages[0].url,session.id)
       }
-  
-  
-  
-  
-  
-  
-  
       
       const product = await ShopifyProductService.create(
         data.option.recaps.configuration?.id,

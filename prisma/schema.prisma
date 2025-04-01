@@ -105,6 +105,7 @@ model Template {
   prevImg           String
   recaps             Json?
   enabledAddToCart  Boolean  @default(false)
+  enabledAutoImgUpdate  Boolean  @default(false)
   configuration     Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
   configurationId   Int
   category          Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade )

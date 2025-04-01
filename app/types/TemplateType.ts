@@ -11,9 +11,11 @@ export  interface TemplateType{
     basePrice: number|any;
     prevImg: string;
     enabledAddToCart:boolean;
+    enabledAutoImgUpdate?:boolean;
     configurationId: number;
     categoryId?:number
-    sessionId?: string
+    sessionId?: string,
+    recaps?:any;
     data?:any;
 }
 

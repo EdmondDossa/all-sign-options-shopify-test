@@ -7,8 +7,9 @@ import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import { jFlashMessage } from "~/utils/message-flash";
 import { jsonTransform } from "~/utils/transfomerZod";
-import { replaceUploadsAddShopUrl } from "~/utils/fileUrl";
+import { getShopProxyUrlWithSlash, replaceUploadsAddShopUrl } from "~/utils/fileUrl";
 import prisma from "~/db.server";
+import { uploadBase64 } from "~/utils/uploadBase64";
 
 
 
@@ -44,21 +45,33 @@ const formSchema = z.object({
 
 
 export const action = async ({ request , params}: ActionFunctionArgs) => {
-    console.log("request header", request.headers.get("Aso-Access-Token"));
     const session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } });
     if (!session) {
       return json({ error: "Session not found" });
     }
-    
-
   
-  const jsonData = await request.json();
+    const jsonData = await request.json();
+    const  designImages =  jsonData.data.cartData.designImages;
+
+    const  id =   params.id || "";
+
+    let designImage = "";
 
 
-  const  id =   params.id || "";
+    const  template =  await  TemplateService.getTemplate(parseInt(id), session.id);
 
+    //  save  template  image as  prevImg
+    if(designImages.face1?.length && template.enabledAutoImgUpdate){
+      designImage = uploadBase64(designImages.face1[0].format, designImages.face1[0].url,session.id)
+      designImage = getShopProxyUrlWithSlash(session.shop) + designImage;
 
-  let res = await TemplateService.configTemplate(parseInt(id), session.id, replaceUploadsAddShopUrl(jsonData?.data, session.shop));
+    }else if(template.enabledAutoImgUpdate) {
+      designImage = uploadBase64(designImages[0].format, designImages[0].url,session.id)
+      designImage = getShopProxyUrlWithSlash(session.shop) + designImage;
+    }
+
+    let res = await TemplateService.configTemplate(parseInt(id), session.id, replaceUploadsAddShopUrl(jsonData?.data, session.shop), designImage);
+    
     return res ? json(jFlashMessage("template  configuration is completed successfully").messageFlash)
       : json(jFlashMessage("error on template upadating").messageFlash );
  

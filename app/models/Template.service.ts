@@ -78,24 +78,32 @@ export default class TemplateService {
   static async configTemplate(id:number,
     sessionId: string,
     data: any,
+    designImg:string=""
   ): Promise<any | null> {
  
     try {
       const size = data.cartData?.sign?.size?.value;
-      console.log(" size  of recap", size);
+      
+      let  dataToSave:any =  {
+        recaps: data.cartData.sign ? {
+          customPrice: data.cartData.custom_price ,
+          priceType:data.templateData.price?.textAfter||"",
+          size: size? `${size.width?.value} x ${size.height?.value}` :"0mm x 0mm"
+        } : "",
+        data: data,
+      }
+
+    
+      if (designImg) {
+        dataToSave = {...dataToSave, prevImg: designImg}
+      }
+      
       return await prisma.template.update({
         where: {
           id: id,
           sessionId: sessionId,
         },
-        data: {
-          recaps: data.cartData.sign ? {
-            customPrice: data.cartData.custom_price ,
-            priceType:data.templateData.price?.textAfter||"",
-            size: size? `${size.width?.value} x ${size.height?.value}` :"0mm x 0mm"
-          } : "",
-          data: data
-        },
+        data: dataToSave,
       });
     } catch (error) {
       console.error("Error on template config:", error);

@@ -267,6 +267,7 @@ export class ShopifyProductService {
       
       const responseJson = await response.json();
 
+    
       return (responseJson?.data?.productVariantUpdate?.productVariant) ?
       (  {
         variantID: responseJson.data.productVariantUpdate.productVariant.id,

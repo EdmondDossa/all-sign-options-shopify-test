@@ -1,6 +1,7 @@
 import {
   Badge,
   Banner,
+  BlockStack,
   Box,
   Button,
   Divider,
@@ -73,6 +74,7 @@ export default function TemplateEditComponent() {
   const [formData, setFormData] = useState<TemplateType>(template? (template as TemplateType) : {
       name:"", 
       enabledAddToCart:true,
+      enabledAutoImgUpdate:false,
       basePrice:0,
       categoryId:categories?.length ? categories[0].id:0,
       configurationId:configurations?.length ? configurations[0].id:0,
@@ -156,10 +158,17 @@ export default function TemplateEditComponent() {
                   />
                 </Grid.Cell>
                    <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl:6 }}>
-                <InlineStack gap="300" blockAlign="center">
-                      <Text as="strong" fontWeight="bold" variant="bodyMd">Enable add  to  cart </Text>
-                      <ReactSwitchCustom checked={formData.enabledAddToCart} setChecked={(value:boolean)=>handleInputChange("enabledAddToCart", value)} />
-                    </InlineStack>
+                   <BlockStack gap="400" align="start">
+                      <InlineStack gap="300" blockAlign="center">
+                        <Text as="strong" fontWeight="bold" variant="bodyMd">Enable auto-update for the preview image </Text>
+                        <ReactSwitchCustom checked={formData.enabledAutoImgUpdate ? true:false} setChecked={(value:boolean)=>handleInputChange("enabledAutoImgUpdate", value)} />
+                      </InlineStack>
+                      <InlineStack gap="300" blockAlign="center">
+                        <Text as="strong" fontWeight="bold" variant="bodyMd">Enable add  to  cart </Text>
+                        <ReactSwitchCustom checked={formData.enabledAddToCart} setChecked={(value:boolean)=>handleInputChange("enabledAddToCart", value)} />
+                      </InlineStack>
+                  
+                    </BlockStack>
                    
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -248,6 +257,7 @@ const formSchema = z.object({
     prevImg:  z.string().nullish().transform(stringTransform),
     basePrice: z.number(),
     enabledAddToCart: z.any().transform(booleanTransform),
+    enabledAutoImgUpdate:z.any().transform(booleanTransform),
     configurationId: z.number(),
     categoryId: z.number(),
 });

@@ -64,7 +64,7 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
 
                   if (contentPrintable) {
                     zip.addFile(fileNamePrintable, contentPrintable,"image");
-                    designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileNamePrintable, contentPrintable ,session.id)}`)
+                    // designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileNamePrintable, contentPrintable ,session.id)}`)
                   }
                 }
     
