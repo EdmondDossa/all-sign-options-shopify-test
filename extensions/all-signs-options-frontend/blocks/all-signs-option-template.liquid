@@ -11,7 +11,8 @@
         <div class="asoTemplateItem" id="asoTemplateItemModel">
             <div class="aso-template-image-container">
                 <div class="aso-template-image-wrapper">
-                    <img class=" asoTemplateItemImg " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
+                  <img class=" asoTemplateItemImg " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
+                  <img class="asoTemplateItemRealImg  " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
                 </div>
             </div>
             <div class="aso-template-details-container">
@@ -189,6 +190,7 @@
           // Mettre à jour le contenu
           if (template.prevImg){
               clone.querySelector('.asoTemplateItemImg').setAttribute('src',template.prevImg)
+              clone.querySelector('.asoTemplateItemRealImg').setAttribute('src',template.realImg||template.prevImg)
           }
           clone.setAttribute("data-id", template.categoryId)
           clone.setAttribute('id',"asoTemplateItem"+template.id);
@@ -388,7 +390,7 @@
 
 }
 
-.asoTemplateItemImg{
+.asoTemplateItemImg, .asoTemplateItemRealImg{
       height: 100%; 
       width: 100%;
       
@@ -542,6 +544,36 @@
   align-items: center;
   border: 1px solid lightgray;
   border-radius: 2px;
+}
+
+
+/* CSS for the image hover effect */
+.aso-template-image-wrapper {
+  position: relative;
+  display: inline-block; /* or block, depending on your layout */
+}
+
+.asoTemplateItemImg, 
+.asoTemplateItemRealImg {
+  transition: opacity 0.6s ease;
+  display: block; /* removes extra space under images */
+  width: 100%; /* ensures both images match dimensions */
+  height: 100%;
+}
+
+.asoTemplateItemRealImg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.aso-template-image-wrapper:hover .asoTemplateItemImg {
+  opacity: 0;
+}
+
+.aso-template-image-wrapper:hover .asoTemplateItemRealImg {
+  opacity: 1;
 }
 
 

@@ -101,22 +101,30 @@ export default function MaterialSizeIndex() {
       active: false,
       values: [],
     },
-    customSize: customSize?.pricings
+    customSize: customSize?.pricings?.type &&  customSize?.pricings?.unit && customSize?.pricings?.range
       ? customSize
       : {
           active: false,
-          width: {
+          width:customSize?.width ||   {
             label: "Custom width",
             min: 0,
             max: 0,
           },
-          height: {
+          height:customSize?.height || {
             label: "Custom height",
             min: 0,
             max: 0,
           },
-          pricings: []
-        },
+          pricings: {
+            type:"unit",
+            unit:{
+              basePrice:0,
+              surface:0,
+              charPrice:0
+            },
+            range:Array.isArray(customSize?.pricings)?customSize?.pricings:[]
+          }
+      },
   });
 
 
@@ -161,9 +169,9 @@ export default function MaterialSizeIndex() {
 
   const handleAddPricing = () => {
     if (!formData.customSize?.pricings) {
-      formData.customSize.pricings = [];
+      formData.customSize.pricings.range = [];
     }
-    formData.customSize.pricings.push({
+    formData.customSize.pricings.range.push({
       basePrice: 0,
       surface: 0,
       charPrice: 0,
@@ -173,50 +181,53 @@ export default function MaterialSizeIndex() {
   };
 
   const handleDeletePricing = (index: number) => {
-    formData.customSize.pricings.splice(index, 1);
+    formData.customSize.pricings.range.splice(index, 1);
     setFormData({ ...formData });
   };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
     pricingErrors = [];
-    formData.customSize.pricings.forEach((pricing, index) => {
-      if (
-        Math.max(
-          parseFloat(`${formData.customSize.height.min}`),
-          parseFloat(`${formData.customSize.width.min}`)
-        ) > parseFloat(`${pricing.surface}`)
-      ) {
-        pricingErrors.push({
-          id: index,
-          message:
-            "The  surface  must be greater than the minimum  width   and height ",
-        });
-      } else if (
-        Math.max(
-          parseFloat(`${formData.customSize.height.max}`),
-          parseFloat(`${formData.customSize.width.max}`)
-        ) < parseFloat(`${pricing.surface}`)
-      ) {
-        pricingErrors.push({
-          id: index,
-          message: "The surface must be less than the maximum width and height",
-        });
-      } else if (
-        index > 0 &&
-        parseFloat(`${formData.customSize.pricings[index - 1].surface}`) >=
-          parseFloat(`${pricing.surface}`)
-      ) {
-        pricingErrors.push({
-          id: index,
-          message: "The surface must be greater than the surface above",
-        });
-      } else if (pricingErrors.find((curr) => curr.id == index)) {
-        pricingErrors = pricingErrors.filter((curr: any) => curr.id !== index);
-      }
-      setPricingErrors([...pricingErrors]);
-    
-    });
+    if(Array.isArray(formData.customSize.pricings.range)){
+      
+      formData.customSize.pricings.range.forEach((pricing:any, index:number) => {
+        if (
+          Math.max(
+            parseFloat(`${formData.customSize.height.min}`),
+            parseFloat(`${formData.customSize.width.min}`)
+          ) > parseFloat(`${pricing.surface}`)
+        ) {
+          pricingErrors.push({
+            id: index,
+            message:
+              "The  surface  must be greater than the minimum  width   and height ",
+          });
+        } else if (
+          Math.max(
+            parseFloat(`${formData.customSize.height.max}`),
+            parseFloat(`${formData.customSize.width.max}`)
+          ) < parseFloat(`${pricing.surface}`)
+        ) {
+          pricingErrors.push({
+            id: index,
+            message: "The surface must be less than the maximum width and height",
+          });
+        } else if (
+          index > 0 &&
+          parseFloat(`${formData.customSize.pricings.range[index - 1].surface}`) >=
+            parseFloat(`${pricing.surface}`)
+        ) {
+          pricingErrors.push({
+            id: index,
+            message: "The surface must be greater than the surface above",
+          });
+        } else if (pricingErrors.find((curr) => curr.id == index)) {
+          pricingErrors = pricingErrors.filter((curr: any) => curr.id !== index);
+        }
+        setPricingErrors([...pricingErrors]);
+      
+      });
+    }
 
     if (pricingErrors.length > 0) {
       return;
@@ -525,11 +536,45 @@ export default function MaterialSizeIndex() {
                   </Grid.Cell>
                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                     <BlockStack gap="200">
-                    <Text as="h1" variant="headingMd" fontWeight="bold">
-                      Pricings
-                    </Text>
+                      <InlineStack gap="1000">
+                        <Text as="h1" variant="headingMd" fontWeight="bold">
+                          Pricings
+                        </Text>
+
+                        <InlineStack blockAlign="center" gap="200">
+                          <Text as="strong" variant="headingMd">
+                            Price per Surface
+                          </Text>
+                          <ReactSwitchCustom
+                            checked={formData.customSize.pricings.type=="unit"}
+                            setChecked={(value: boolean) => {
+                              if(value){
+                                formData.customSize.pricings.type = "unit";
+                                handleInputChange("customSize", formData.customSize);
+                              }
+                            }}
+                          />
+                        </InlineStack>
+
+                        <InlineStack blockAlign="center" gap="200">
+                          <Text as="strong" variant="headingMd">
+                            Price per interval of surface
+                          </Text>
+                          <ReactSwitchCustom
+                            checked={formData.customSize.pricings.type=="range"}
+                            setChecked={(value: boolean) => {
+                              if(value){
+                                formData.customSize.pricings.type = "range";
+                                handleInputChange("customSize", formData.customSize);
+                              }
+                            }}
+                          />
+                        </InlineStack>
+
+
+                      </InlineStack>
                     <Grid gap={{ lg: "10px" }}>
-                      {formData.customSize.pricings?.map(
+                      { formData.customSize.pricings.type == "range" && formData.customSize.pricings?.range?.map(
                         (pricing: any, index: number) => (
                           <Grid.Cell
                             columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
@@ -558,7 +603,7 @@ export default function MaterialSizeIndex() {
                                     type="number"
                                     autoComplete="off"
                                     onChange={(value) => {
-                                      formData.customSize.pricings[
+                                      formData.customSize.pricings.range[
                                         index
                                       ].surface = value;
                                       handleInputChange(
@@ -567,10 +612,10 @@ export default function MaterialSizeIndex() {
                                       );
                                     }}
                                     onBlur={(value) => {
-                                      formData.customSize.pricings[
+                                      formData.customSize.pricings.range[
                                         index
                                       ].surface = parseFloat(
-                                        `${formData.customSize.pricings[index].surface || "0"}`,
+                                        `${formData.customSize.pricings.range[index].surface || "0"}`,
                                       );
                                       handleInputChange(
                                         "customSize",
@@ -597,7 +642,7 @@ export default function MaterialSizeIndex() {
                                     type="number"
                                     autoComplete="off"
                                     onChange={(value) => {
-                                      formData.customSize.pricings[
+                                      formData.customSize.pricings.range[
                                         index
                                       ].basePrice = value;
                                       handleInputChange(
@@ -606,10 +651,10 @@ export default function MaterialSizeIndex() {
                                       );
                                     }}
                                     onBlur={(value) => {
-                                      formData.customSize.pricings[
+                                      formData.customSize.pricings.range[
                                         index
                                       ].basePrice = parseFloat(
-                                        `${formData.customSize.pricings[index].basePrice || "0"}`,
+                                        `${formData.customSize.pricings.range[index].basePrice || "0"}`,
                                       );
                                       handleInputChange(
                                         "customSize",
@@ -633,7 +678,7 @@ export default function MaterialSizeIndex() {
                                     type="number"
                                     autoComplete="off"
                                     onChange={(value) => {
-                                      formData.customSize.pricings[
+                                      formData.customSize.pricings.range[
                                         index
                                       ].charPrice = value;
                                       handleInputChange(
@@ -642,10 +687,10 @@ export default function MaterialSizeIndex() {
                                       );
                                     }}
                                     onBlur={(value) => {
-                                      formData.customSize.pricings[
+                                      formData.customSize.pricings.range[
                                         index
                                       ].charPrice = parseFloat(
-                                        `${formData.customSize.pricings[index].charPrice || "0"}`,
+                                        `${formData.customSize.pricings.range[index].charPrice || "0"}`,
                                       );
                                       handleInputChange(
                                         "customSize",
@@ -673,8 +718,117 @@ export default function MaterialSizeIndex() {
                           </Grid.Cell>
                         ),
                       )}
+
+                         { formData.customSize.pricings.type == "unit" && <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                          >
+
+                            <Grid>
+                                <Grid.Cell
+                                  columnSpan={{
+                                    xs: 6,
+                                    sm: 6,
+                                    md: 2,
+                                    lg: 4,
+                                    xl: 4,
+                                  }}
+                                >
+                                  <TextField
+                                    label="Surface"
+                                    type="number"
+                                    autoComplete="off"
+                                    onChange={(value) => {
+                                      formData.customSize.pricings.unit.surface = value;
+                                      handleInputChange(
+                                        "customSize",
+                                        formData.customSize,
+                                      );
+                                    }}
+                                    onBlur={(value) => {
+                                      formData.customSize.pricings.unit.surface = parseFloat(
+                                        `${formData.customSize.pricings.unit.surface || "0"}`,
+                                      );
+                                      handleInputChange(
+                                        "customSize",
+                                        formData.customSize,
+                                      );
+                                    }}
+                                    value={`${formData.customSize.pricings.unit.surface}`}
+                                    suffix={<Text as="span">
+                                      {configuration.data?.settings?.customizerSign?.customizerOptions?.measurementUnit}<sup>2</sup>
+                                    </Text>}
+                                  />
+                                </Grid.Cell>
+                                <Grid.Cell
+                                  columnSpan={{
+                                    xs: 6,
+                                    sm: 6,
+                                    md: 2,
+                                    lg: 4,
+                                    xl: 4,
+                                  }}
+                                >
+                                  <TextField
+                                    label="Base price"
+                                    type="number"
+                                    autoComplete="off"
+                                    onChange={(value) => {
+                                      formData.customSize.pricings.unit.basePrice = value;
+                                      handleInputChange(
+                                        "customSize",
+                                        formData.customSize,
+                                      );
+                                    }}
+                                    onBlur={(value) => {
+                                      formData.customSize.pricings.unit.basePrice = parseFloat(
+                                        `${formData.customSize.pricings.unit.basePrice || "0"}`,
+                                      );
+                                      handleInputChange(
+                                        "customSize",
+                                        formData.customSize,
+                                      );
+                                    }}
+                                    value={`${formData.customSize.pricings.unit.basePrice}`}
+                                  />
+                                </Grid.Cell>
+                                <Grid.Cell
+                                  columnSpan={{
+                                    xs: 6,
+                                    sm: 6,
+                                    md: 2,
+                                    lg: 4,
+                                    xl: 4,
+                                  }}
+                                >
+                                  <TextField
+                                    label="Char price"
+                                    type="number"
+                                    autoComplete="off"
+                                    onChange={(value) => {
+                                      formData.customSize.pricings.unit.charPrice = value;
+                                      handleInputChange(
+                                        "customSize",
+                                        formData.customSize,
+                                      );
+                                    }}
+                                    onBlur={(value) => {
+                                      formData.customSize.pricings.unit.charPrice = parseFloat(
+                                        `${formData.customSize.pricings.unit.charPrice || "0"}`,
+                                      );
+                                      handleInputChange(
+                                        "customSize",
+                                        formData.customSize,
+                                      );
+                                    }}
+                                    value={`${formData.customSize.pricings.unit.charPrice}`}
+                                  />
+                                </Grid.Cell>
+                              </Grid>
+                          </Grid.Cell>}
+
+
                     </Grid>
-                    {!pricingErrors?.length && (
+                    {!pricingErrors?.length && formData.customSize.pricings.type == "range"  && (
                       <Box width="300px">
                         <BiAddBtn
                           title="Add pricing"
@@ -742,13 +896,7 @@ const formSchema = z.object({
             required_error: "Height max is required",
           }),
         }),
-        pricings: z
-          .object({
-            surface: z.number(),
-            basePrice: z.number(),
-            charPrice: z.number(),
-          })
-          .array(),
+        pricings: z.any().transform(jsonTransform),
       }),
     ),
 });
@@ -801,7 +949,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       let {
         customSize,
         thickness,
-      }: { customSize: ConfigCustomSize; thickness: configSizeThickness } =
+      }: { customSize: any; thickness: any } =
         submission.value;
       if (customSize) {
         let res = await MaterialSizeService.addCustomSizeAndThickness(

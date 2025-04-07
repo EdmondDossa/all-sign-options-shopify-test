@@ -47,7 +47,8 @@ export default function ConfigSettingsGeneral() {
     { label: "Centimeters", value: "cm" },
     { label: "inches", value: "in" },
     { label: "Milimetres", value: "mm" },
-    { label: "Mète", value: "m" },
+    { label: "Mètre", value: "m" },
+    { label: "Feet", value: "ft" },
   ];
 
   const showMeasurementOptions = [

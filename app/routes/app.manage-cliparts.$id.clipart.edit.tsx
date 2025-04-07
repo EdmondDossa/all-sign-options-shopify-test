@@ -1,9 +1,11 @@
 import {
   Bleed,
   Box,
+  Checkbox,
   Divider,
   Grid,
   InlineStack,
+  Scrollable,
   Select,
   Text,
   TextField,
@@ -35,10 +37,12 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { BackBtn } from "~/components/buttons/BackBtn";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
-import { jsonTransform } from "~/utils/transfomerZod";
+import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { readJsonField } from "~/utils/readJsonField";
 import { CheckSpan } from "~/components/inputs/CheckSpan";
+import { FileUploader } from "./app.upload";
+import { ComboxSelect } from "~/components/inputs/ComboxSelect";
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
@@ -67,6 +71,7 @@ export default function ClipartCreate() {
   const [apiClipartGroup, setApiClipartGroup] = useState("animals");
   const [selectCliparts, setSelectCliparts] = useState(new Set<string>([]));
   const [saveSelectedCliparts, setSaveSelectedCliparts] = useState<boolean>(false);
+  const  [selectAll, setSelectAll] = useState<boolean>(false);
   
   const apiClipartGroups = [
     {
@@ -161,6 +166,18 @@ export default function ClipartCreate() {
     setFormData({ ...formData });
   }
 
+  const  handleSelectAll = (value:boolean) =>{
+      setSelectCliparts(new Set([])); 
+      if (value) {
+        let newsItems = [];
+        for (let  item of clipartsResources[apiClipartGroup])  {
+          newsItems.push(item)
+        }
+        setSelectCliparts(new Set(newsItems)); 
+      }
+      setSelectAll(value)
+  }
+
   const handleDeleteClipart = (index: number) => {
     if (formData.cliparts.length>1) {
       formData.cliparts.splice(index, 1);
@@ -183,7 +200,7 @@ export default function ClipartCreate() {
     formData.cliparts = [];
     selectCliparts.forEach((value) => {
       formData.cliparts.push({
-        title: "",
+        title: value.split("/").pop()?.split(".")?.shift()||"",
         url: `https://${shop}/apps/aso-proxy${value}`,
         additionalPrice:0
       });
@@ -212,6 +229,26 @@ export default function ClipartCreate() {
   }
 
 
+  const handleImages = (images: string[]) => {
+    let  cliparts = formData.cliparts;
+    
+    images.map((image)=>{
+      if (formData.cliparts.find((curr)=>curr.url == image)) {
+        return ;
+      }
+      cliparts.push({
+        title: "",
+        url: image,
+        additionalPrice:0
+      });
+    })
+
+    formData.cliparts = cliparts.filter(curr=> curr.url);
+
+    setFormData({ ...formData });
+  }
+
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
     submit({cliparts:JSON.stringify(formData.cliparts) }, { method: "POST" });
@@ -222,33 +259,50 @@ export default function ClipartCreate() {
       <SpacingBackground width="100%" height="auto" margin="16px 0px ">
           <Form onSubmit={handleSubmit} method="POST">
             <SpacingBackground backgroundColor="#F9F9F9">
-            <Box paddingInline="300" paddingBlock="600">
-                  <Text as="h6" variant="bodyMd" fontWeight="bold" > {clipart?" Update clipart":'Add new clipart'}</Text>
-            </Box>
+              <Box paddingInline="300" paddingBlock="600">
+                  <InlineStack align="space-between">
+                    <Text as="h6" variant="bodyMd" fontWeight="bold" > {clipart?" Update clipart":'Add new clipart'}</Text>
+                    <InlineStack gap="300" blockAlign="center">
+
+                    {!clipart && <InlineStack gap="300" blockAlign="center">
+                      <Text as="strong" fontWeight="bold" variant="bodyLg">Use Api cliparts</Text>
+                      <ReactSwitchCustom checked={isApiUsed} setChecked={(value: boolean) => handleIsApiUsedChange(value)}/>
+                    </InlineStack>}
+                    {isApiUsed && 
+                      <InlineStack gap="300" blockAlign="center">
+                        <Checkbox checked={selectAll} label="All" onChange={handleSelectAll}/>
+                        <ComboxSelect placeholder="select groups" selectedOption={apiClipartGroup} setSelectedOption={ (value:string) =>handlesetApiClipartGroup(value)} label="Cliparts Groups " labelHidden data={apiClipartGroups} />
+                      </InlineStack>
+                    }
+                    
+                    { (!isApiUsed && !clipart) && 
+                    <FileUploader
+                      multiple
+                      type="image"
+                      fileData={[]}
+                      setFilesData={handleImages}
+                      title="select cliparts"
+                    >
+                    <BiAddBtn title="Add images" handleClick={()=>""} />
+                    </FileUploader>}
+                    </InlineStack>
+                  </InlineStack>
+              </Box>
             </SpacingBackground>
             <Divider borderWidth="100" />
              <SpacingBackground backgroundColor="#F8F9FB">
             <Box paddingInline="300" paddingBlock="1000">
-              <Grid gap={{ lg: "30px" }}>
+            <Scrollable
+              shadow
+              style={{maxHeight: '50vh', paddingBottom:"2rem"}}
+              focusable
+              scrollbarGutter="stable"
+              scrollbarWidth="thin"
+            >
+              <Grid gap={{ lg: "15px" }}>
         
-                { !clipart &&
-                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                    <InlineStack gap="300" blockAlign="center">
-                      <Text as="strong" fontWeight="bold" variant="bodyLg">Use custom cliparts</Text>
-                    <ReactSwitchCustom checked={isApiUsed} setChecked={(value: boolean) => handleIsApiUsedChange(value)}
-                    />
-                      <Text as="strong" fontWeight="bold" variant="bodyLg">Use Api cliparts</Text>
-                    </InlineStack>
-                </Grid.Cell>}
+               
                 { (!saveSelectedCliparts && isApiUsed) && <>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <Select
-                    label="Select Clipart group"
-                    options={apiClipartGroups}
-                    value={apiClipartGroup}
-                    onChange={(value) => handlesetApiClipartGroup(value)}
-                  />
-                </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <Grid gap={{ lg: "30px" }}>
                     { clipartsResources[apiClipartGroup]?.map((clipartResource: string) => (
@@ -263,11 +317,7 @@ export default function ClipartCreate() {
                   </Grid>
 
                 </Grid.Cell>
-                  <Grid.Cell>
-                  <Box width="300px">
-                  <BiAddBtn title="Add selected cliparts" handleClick={()=>handleSaveSelectedCliparts()} />
-                  </Box>
-                </Grid.Cell>
+                 
                 </>
                   
              }
@@ -322,15 +372,14 @@ export default function ClipartCreate() {
                         />
                      
                           </Box>
-                          <Box width="1%">
-                            <Bleed marginInlineStart="400">
-                              
+                          
+                          <InlineStack blockAlign="center">
                             <RemoveNowIconBtn onClick={() => handleDeleteClipart(index)} />
-                          </Bleed>
-                          </Box>
+                          </InlineStack>
+                              
                              
                           
-                        </InlineStack>
+                      </InlineStack>
                         
                 
                 </Grid.Cell>
@@ -342,6 +391,7 @@ export default function ClipartCreate() {
                   </Box>
                 </Grid.Cell>}
               </Grid>
+            </Scrollable>
          
             </Box>
             </SpacingBackground>
@@ -351,7 +401,11 @@ export default function ClipartCreate() {
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
               <BackBtn isLoading={isLoading} title="Back"/>
-              {(!isApiUsed || saveSelectedCliparts) && <BiSaveBtn isLoading={isSubmitting} title="Save" />}
+
+              { (!isApiUsed || saveSelectedCliparts) ?
+                  <BiSaveBtn isLoading={isSubmitting} title="Save" />:
+                  <BiAddBtn title="Add selected cliparts" handleClick={()=>handleSaveSelectedCliparts()} />
+              }
               </InlineStack>
             </Box>
             </SpacingBackground>
@@ -403,9 +457,7 @@ const formSchema = z.object({
   cliparts: z.any().transform(jsonTransform).pipe(
     z.object({
       title: z.any(),
-  url: z.string({ required_error: 'Url is required' })
-  .min(3, 'Url is too short')
-  .max(255, 'Url is too long'),
+  url: z.any().transform(stringTransform),
   additionalPrice: z.number()
     }).array()
   )
@@ -449,4 +501,3 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       : json({ ...jFlashMessage("error  on font adding") });
   } 
 };
-
