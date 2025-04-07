@@ -13,11 +13,21 @@ import { number } from 'zod';
       min: number|string;
       max: number|string;
     };
-   pricings: Array<{
-    basePrice: number | string;
-    surface: number | string;
-    charPrice: number | string;
-  }>
+   pricings: {
+     type: "unit"|"range";
+     range:  Array<{
+        basePrice: number | string;
+        surface: number | string;
+        charPrice: number | string;
+      }>;
+      unit:{
+        basePrice: number | string;
+        surface: number | string;
+        charPrice: number | string;
+      };
+
+   
+   }
  }
 
  export interface configSizeThickness {

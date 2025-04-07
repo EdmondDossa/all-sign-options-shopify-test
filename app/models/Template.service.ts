@@ -12,6 +12,7 @@ export default class TemplateService {
           id:true,
           name:true, 
           prevImg:true,
+          realImg:true,
           basePrice:true, 
           categoryId:true,
           configurationId:true,

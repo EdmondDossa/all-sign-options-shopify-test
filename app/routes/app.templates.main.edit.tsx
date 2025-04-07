@@ -78,7 +78,8 @@ export default function TemplateEditComponent() {
       basePrice:0,
       categoryId:categories?.length ? categories[0].id:0,
       configurationId:configurations?.length ? configurations[0].id:0,
-      prevImg:""
+      prevImg:"",
+      realImg:""
   });
 
   let isLoading = navigation.state == "loading";
@@ -137,12 +138,32 @@ export default function TemplateEditComponent() {
                   />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                <ComboxSelect
+                  label="Select configuration"
+                  placeholder="seach configuration"
+                  selectedOption={`${formData.configurationId}`}
+                  data={configurations?.map(configuration=>({label:configuration.name,value:`${configuration.id}` }))||[]}
+                  setSelectedOption={ (value:any)=>handleInputChange('configurationId',parseInt(value))}
+                  error={getError(actionData, "configurationId")}
+                  disable={template?true:false}
+                ></ComboxSelect>
+              </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
 
                 <FileInput
                   error={getError(actionData, "prevImg")}
                   title="Upload preview image"
                   path={formData.prevImg}
                   handlePath={(value:string)=>handleInputChange("prevImg",value)}
+                />
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+
+                <FileInput
+                  error={getError(actionData, "realImg")}
+                  title="Upload real image"
+                  path={formData.realImg||''}
+                  handlePath={(value:string)=>handleInputChange("realImg",value)}
                 />
               </Grid.Cell>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -182,17 +203,7 @@ export default function TemplateEditComponent() {
                   button={<Button tone="success" variant="primary"  onClick={()=>{ setEnableCategoryEdit(true)}}>Add new</Button>}
                 ></ComboxSelect>
               </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                <ComboxSelect
-                  label="Select configuration"
-                  placeholder="seach configuration"
-                  selectedOption={`${formData.configurationId}`}
-                  data={configurations?.map(configuration=>({label:configuration.name,value:`${configuration.id}` }))||[]}
-                  setSelectedOption={ (value:any)=>handleInputChange('configurationId',parseInt(value))}
-                  error={getError(actionData, "configurationId")}
-                  disable={template?true:false}
-                ></ComboxSelect>
-              </Grid.Cell>
+      
               </Grid>
             </Box>
               </SpacingBackground>
@@ -255,6 +266,7 @@ const formSchema = z.object({
   .min(2, 'Name is too short')
     .max(220, 'Name is too long'),
     prevImg:  z.string().nullish().transform(stringTransform),
+    realImg:  z.string().nullish().transform(stringTransform),
     basePrice: z.number(),
     enabledAddToCart: z.any().transform(booleanTransform),
     enabledAutoImgUpdate:z.any().transform(booleanTransform),

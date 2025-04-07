@@ -10,6 +10,7 @@ export  interface TemplateType{
     name: string;
     basePrice: number|any;
     prevImg: string;
+    realImg?: string;
     enabledAddToCart:boolean;
     enabledAutoImgUpdate?:boolean;
     configurationId: number;
