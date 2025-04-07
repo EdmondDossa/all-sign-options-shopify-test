@@ -597,7 +597,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 50,
                   label: "Height",
                 },
-                pricings: [],
+                pricings: {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -2643,7 +2651,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -3715,7 +3731,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -4374,7 +4398,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -4960,7 +4992,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -5851,7 +5891,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 10,
                   label: "Height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -6422,7 +6470,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 10,
                   label: "Height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -7246,7 +7302,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 0,
                   label: "Custom height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -7605,7 +7669,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 0,
                   label: "Custom height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -9108,7 +9180,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {
@@ -9582,7 +9662,15 @@ export const configurationDemoData: ConfigurationType[] = [
                   min: 30,
                   label: "Height",
                 },
-                pricings: [],
+                pricings:  {
+                  type:"unit",
+                  unit:{
+                    basePrice:0,
+                    surface:0,
+                    charPrice:0
+                  },
+                  range:[]
+                },
               },
             },
             colors: {

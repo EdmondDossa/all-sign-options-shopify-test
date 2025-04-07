@@ -103,6 +103,7 @@ model Template {
   name              String
   basePrice         Float
   prevImg           String
+  realImg           String?
   recaps             Json?
   enabledAddToCart  Boolean  @default(false)
   enabledAutoImgUpdate  Boolean  @default(false)
