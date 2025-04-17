@@ -45,6 +45,8 @@ import { useSortable } from "~/hooks/useSortable";
 import {SaveIcon,
   DragHandleIcon
 } from '@shopify/polaris-icons';
+import LoadingGray from "~/components/icons/LoadingGray";
+import BiSaveIcon from "~/components/icons/BiSaveIcon";
 
 
 export default function MaterialColorIndex() {
@@ -252,11 +254,8 @@ export default function MaterialColorIndex() {
           <Box padding="150">
             <InlineStack gap="100" align="end">
               <button  onClick={()=>handeleSort()} className="primary-btn primary-btn-text primary-btn-flex" type="button" >
-              <Icon
-                source={SaveIcon}
-                tone="inherit"
-              />
-
+              
+                {isSubmitting  ?<LoadingGray/> : <BiSaveIcon />}
                 Save  sort
               </button>
 { (plan == PRICING_PLANS.STARTER && colors?.length>=PRICING_PLANS.STARTER_RULES.materialColors )||      <button
