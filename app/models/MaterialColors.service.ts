@@ -135,6 +135,33 @@ export default class MaterialColorService {
     }
   }
 
+
+
+  static async bulkUpdate(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,
+    colors: ConfigColor[],
+  ): Promise<ConfigColor[] | null> {
+    try {
+      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
+     
+      if (Array.isArray(colors)) {
+        configuration["data"]["materials"][materialId]["data"]["colors"]["allColors"] = colors
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
+
+        return Promise.resolve(colors);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error bulk colors:", error);
+      return Promise.resolve(null);
+    }
+  }
+
   static async delete(
     configurationId: number,
     sessionId: string,

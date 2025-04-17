@@ -113,6 +113,28 @@ export default class MaterialSizeService {
   };
 
 
+  static async  bulkUpdate(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,
+    sizes: ConfigSize[],
+  ): Promise<ConfigSize[] | null> {
+    try {
+      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
+      if (Array.isArray(sizes)) {
+        configuration["data"]["materials"][materialId]["data"]["sizes"]["allSizes"] = sizes;
+        configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
+        return Promise.resolve(sizes);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error on  bulk updating size:", error);
+      return Promise.resolve(null);
+    }
+  };
+
+
+
   static async  delete(
     configurationId: number,
     sessionId: string,

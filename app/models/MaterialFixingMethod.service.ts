@@ -104,6 +104,29 @@ export default class MaterialFixingMethodService {
     }
   }
 
+  static async bulkUpdate(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,
+    fixingMethods: ConfigFixingMethod[],
+  ): Promise<ConfigFixingMethod[] | null> {
+    try {
+      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
+      if (Array.isArray(fixingMethods)) {
+        configuration["data"]["materials"][materialId]["data"]["fixingMethods"]= fixingMethods;
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
+        return Promise.resolve(fixingMethods);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error bulk updating fixingMethods:", error);
+      return Promise.resolve(null);
+    }
+  }
+
   static async delete(
     configurationId: number,
     sessionId: string,
