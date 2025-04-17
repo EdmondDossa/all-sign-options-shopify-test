@@ -5,12 +5,13 @@ import {
   ButtonGroup,
   Divider,
   Grid,
+  Icon,
   IndexTable,
   InlineStack,
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
 import {
@@ -26,33 +27,37 @@ import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { ConfigColor, ConfigCustomColor } from "~/types/ConfigDataType";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import MaterialColorService from "~/models/MaterialColors.service";
-import { jFlashMessage } from "~/utils/message-flash";
+import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { getError } from "~/utils/error-getting";
 import { FileInput } from "~/components/inputs/FileInput";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
-import { z } from "zod";
-import { booleanTransform, stringTransform } from "~/utils/transfomerZod";
+import { any, z } from "zod";
+import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { parseWithZod } from "@conform-to/zod";
 import { fileUrl } from "~/utils/fileUrl";
 import { PRICING_PLANS } from "~/utils/pricing";
+import Sortable from 'sortablejs';
+import { useSortable } from "~/hooks/useSortable";
+import {SaveIcon,
+  DragHandleIcon
+} from '@shopify/polaris-icons';
+
 
 export default function MaterialColorIndex() {
   const submit = useSubmit();
   const navigate = useNavigate();
-
-  const actionData = useActionData<typeof action>();
-
-  
-
-  let {  colors, customColors, plan } = useOutletContext<{
+  let { customColors, plan ,...outletData} = useOutletContext<{
     colors: ConfigColor[];
     customColors: ConfigCustomColor;
     plan: string;
   }>();
+
+  let   [colors , setColors ] =  useState<ConfigColor[]>(outletData.colors);
+  const actionData = useActionData<typeof action>();
 
   const [formData, setFormData] = useState<any>(
     customColors || {
@@ -71,9 +76,7 @@ export default function MaterialColorIndex() {
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
     const data = { ...formData };
-
     submit(data, { method: "POST" });
   };
 
@@ -84,20 +87,36 @@ export default function MaterialColorIndex() {
   let isSubmitting = navigation.state == "submitting";
 
   const handeleDelete = (id: number) => {
-    submit({ id: id }, { method: "DELETE" });
+    colors = colors.filter((curr, index) => index !== id);
+    submitUpdate(colors, 'delete');
+    setColors([...colors])
+
   };
 
   const handeleDefault = (id: number) => {
-    colors = colors.map((curr, index) => {
-      if (index === id) {
-        curr.isDefault = true;
-      } else {
-        curr.isDefault = false;
-      }
-      return curr;
-    });
+    colors = colors.map((curr,index)=>({...curr, isDefault: id == index }));
+    submitUpdate(colors,'default');
+    setColors([...colors])
 
-    submit({ id: id }, { method: "PUT" });
+  };
+
+  const handeleSort = () => {
+      const matchingTbody = document.querySelector('tbody');
+      if(matchingTbody){
+        const rows = Array.from(matchingTbody.querySelectorAll('tr'));
+        const newOrder:any = rows.map((row) => {
+          const id = row.getAttribute("id")
+          return colors.find((color, index) => index+'' == id);
+        });
+
+        submitUpdate(newOrder,'sort');
+      }
+  };
+
+  useSortable('tbody', colors)
+
+  const submitUpdate = (items:any,  type:any)=>{
+    submit({ items:  JSON.stringify(items), type:type}, { method: "PUT" });
   };
 
   const handleUpdate = (id: number) => {
@@ -108,28 +127,33 @@ export default function MaterialColorIndex() {
     navigate("edit");
   };
 
-  const colorsTab = colors
-    ? colors.map((color, index) => {
-        return {
-          id: `${index}`,
-          title: `${color?.name}`,
-          textColor: color?.textColor?.active
-            ? `${color?.textColor?.codeHex}`
-            : "Disable",
-          patternActive: color?.pattern?.active,
-          BackgroundColor: color?.pattern?.active
-            ? `${color?.pattern?.url}`
-            : `${color?.pattern?.codeHex}`,
-          price: `${color?.additionalPrice}`,
-          isDefault: color.isDefault,
-        };
-      })
-    : [];
+  const colorsTab = (colors || []).map((color, index) => {
+    const {
+      name,
+      textColor,
+      pattern,
+      additionalPrice,
+      isDefault
+    } = color || {};
+  
+    return {
+      id: String(index),
+      title: name || '',
+      textColor: textColor?.active ? textColor.codeHex : 'Disable',
+      patternActive: !!pattern?.active,
+      BackgroundColor: pattern?.active ? pattern.url : pattern?.codeHex,
+      price: String(additionalPrice ?? ''),
+      isDefault: !!isDefault
+    };
+  });
+  
 
   const resourceName = {
     singular: "Color",
     plural: "Colors",
   };
+
+
 
   const rowMarkup = colorsTab.map(
     (
@@ -144,9 +168,18 @@ export default function MaterialColorIndex() {
       },
       index,
     ) => (
-      <IndexTable.Row id={id} key={id} position={index}>
-        <IndexTable.Cell>
+      <IndexTable.Row id={`${id}`} key={id} position={index}>
+        <IndexTable.Cell className="dragable-ref">
           <InlineStack blockAlign="start" gap="300">
+          <Icon
+            source={DragHandleIcon}
+            tone="base"
+          />
+          </InlineStack>
+        </IndexTable.Cell>
+        <IndexTable.Cell className="dragable-ref">
+          <InlineStack blockAlign="start" gap="300">
+         
             {title}
           </InlineStack>
         </IndexTable.Cell>
@@ -218,6 +251,14 @@ export default function MaterialColorIndex() {
         <BoxBackground>
           <Box padding="150">
             <InlineStack gap="100" align="end">
+              <button  onClick={()=>handeleSort()} className="primary-btn primary-btn-text primary-btn-flex" type="button" >
+              <Icon
+                source={SaveIcon}
+                tone="inherit"
+              />
+
+                Save  sort
+              </button>
 { (plan == PRICING_PLANS.STARTER && colors?.length>=PRICING_PLANS.STARTER_RULES.materialColors )||      <button
                 className="primary-btn"
                 type="button"
@@ -240,6 +281,7 @@ export default function MaterialColorIndex() {
           resourceName={resourceName}
           itemCount={colorsTab.length}
           headings={[
+            {title:""},
             { title: "Title" },
             { title: "Text color", alignment: "center" },
             { title: "Background color", alignment: "center" },
@@ -314,6 +356,11 @@ const formSchema = z.object({
   active: z.any().transform(booleanTransform).pipe(z.boolean()),
 });
 
+const formSchemaItems = z.object({
+  items: any().transform(jsonTransform),
+  type:any().transform(stringTransform)
+});
+
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
 
@@ -324,31 +371,29 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
   switch (method) {
-    case "DELETE": {
-      const id = formData.get("id") as string;
-      console.log("start deleting");
-      await MaterialColorService.delete(
-        configId,
-        session.id,
-        mId,
-        parseInt(id || ""),
-      );
-      return json({
-        ...jFlashMessage("Material  color deleting is completed successfull"),
-      });
-      break;
-    }
     case "PUT": {
-      const id = formData.get("id") as string;
-      await MaterialColorService.setDefault(
+
+      const submission = parseWithZod(formData, { schema: formSchemaItems });
+
+      if (submission.status !== "success") {
+        return jFlashMessage("An error occurred during the update. Please try again later.");
+      }
+
+      await MaterialColorService.bulkUpdate(
         configId,
         session.id,
         mId,
-        parseInt(id || ""),
+        submission.value.items
       );
-      return json({
-        ...jFlashMessage("Default color is defined successfull"),
-      });
+
+      if (submission.value.type=="delete") {
+        return  redirect(flashMessage("Configuration  updated is completed successfully"));
+      }else  if (submission.value.type=="default") {
+        return redirect(flashMessage("Default color is defined successfull")); 
+      }else  {
+        return redirect(flashMessage("Colors is updated successfull"));  
+      }
+     
       break;
     }
 
@@ -382,6 +427,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }
       break;
     }
+
     default:
       break;
   }

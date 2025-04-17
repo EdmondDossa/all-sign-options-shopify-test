@@ -555,7 +555,35 @@ img.aso-logo{
 }
 
 
+  tr.sortable-chosen {
+    display: table-row;
+    vertical-align: inherit;
+    cursor: grab !important;
+    justify-content: space-between;
+    width: -webkit-fill-available;
+    width: -moz-available;
 
+  }
+
+
+  tr.sortable-ghost {
+    display: table-row;
+    vertical-align: inherit;
+    justify-content: space-between;
+    cursor: grabbing !important;
+    width: -webkit-fill-available;
+    width: -moz-available;
+  }
+
+  .primary-btn-flex{
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
+  }
+  
+ 
+  
 
 
 

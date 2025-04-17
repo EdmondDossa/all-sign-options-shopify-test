@@ -136,6 +136,30 @@ export default class MaterialBorderService {
     }
   }
 
+  static async bulkUpdate(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,
+    borders: ConfigBorder[],
+  ): Promise<ConfigBorder[] | null> {
+    try {
+      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
+     
+      if ( Array.isArray(borders)) {
+        configuration["data"]["materials"][materialId]["data"]["borders"]["allBorders"] = borders;
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
+        return Promise.resolve(borders);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error bulk updating borders:", error);
+      return Promise.resolve(null);
+    }
+  }
+
   static async delete(
     configurationId: number,
     sessionId: string,

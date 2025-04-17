@@ -269,7 +269,7 @@ export default function MaterialSizeIndex() {
             {title}
           </InlineStack>
         </IndexTable.Cell>
-        <IndexTable.Cell className="td-center">
+        <IndexTable.Cell className="td-center dragable-ref">
           <Badge tone="success">{width}</Badge>
         </IndexTable.Cell>
         <IndexTable.Cell className="td-center">

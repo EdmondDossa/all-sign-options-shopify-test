@@ -94,6 +94,31 @@ export default class MaterialShapeService {
     }
   }
 
+  static async bulkUpdate(
+    configurationId: number,
+    sessionId: string,
+    materialId: number,
+    shapes: ConfigShape[],
+    
+  ): Promise<ConfigShape[] | null> {
+    try {
+      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
+     
+      if (Array.isArray(shapes)) {
+        configuration["data"]["materials"][materialId]["data"]["shapes"] = shapes;
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
+        return Promise.resolve(shapes);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error updating shapes:", error);
+      return Promise.resolve(null);
+    }
+  }
+
   static async delete(
     configurationId: number,
     sessionId: string,
