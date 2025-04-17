@@ -5,7 +5,7 @@ export const useSortable = (selector: string, data?: any) => {
   useEffect(() => {
     const element = document.querySelector(selector);
 
-    let sortable: Sortable | null = null;
+    let sortable: any = null;
 
     if (element) {
       sortable = new Sortable(element as HTMLElement, {
@@ -16,19 +16,19 @@ export const useSortable = (selector: string, data?: any) => {
         fallbackOnBody: true,
         fallbackTolerance: 2,
 
-        setData: function (dataTransfer, dragEl: any) {
+        setData: function (dataTransfer:any, dragEl: any) {
           dataTransfer.setData('Text', dragEl.textContent || '');
           dragEl.classList.add('dragging-row');
           document.body.style.cursor = 'grabbing';
         },
 
-        onStart: function (evt) {
+        onStart: function (evt:any) {
           const rect = evt.item.getBoundingClientRect();
           evt.item.style.width = `${rect.width}px`;
           evt.item.style.height = `${rect.height}px`;
         },
 
-        onEnd: function (evt) {
+        onEnd: function (evt:any) {
           evt.item.classList.remove('dragging-row');
           document.body.style.cursor = '';
         },
