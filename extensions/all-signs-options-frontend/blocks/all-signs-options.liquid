@@ -25,11 +25,6 @@
   {% endif %}
 </script>
 
-<link rel="stylesheet"  href="{{'index.css' |asset_url }}">
-<script src="{{'shopify.js'|asset_url}}"></script>
-<script src="{{'fabric.min.js'|asset_url}}"></script>
-<script  type="module"  src="{{'index.js' |asset_url }}"></script>
-
 <div class="shopify-app-wrapper">
 
     <div class="aso-app" id="app">
@@ -110,6 +105,59 @@
       </div>
     </div>
 </div> 
+
+{% if block.settings.useIframe == false  %}
+
+<link rel="stylesheet"  href="{{'index.css' |asset_url }}">
+<script src="{{'shopify.js'|asset_url}}"></script>
+<script src="{{'fabric.min.js'|asset_url}}"></script>
+<script  type="module"  src="{{'index.js' |asset_url }}"></script>
+
+{%   else %} 
+
+  <script>
+    const iframeBaseUrl = '/apps/aso-proxy/assets-preview/aso-iframe.html'; // à remplacer par ton URL
+    const iframeUrl = `${iframeBaseUrl}?asoProductId=${encodeURIComponent(asoProductId)}&asoCurrency=${encodeURIComponent(asoCurrency)}&asoPriceFormat=${encodeURIComponent(asoPriceFormat)}&asoRegularPrice=${encodeURIComponent(asoRegularPrice)}&asoCurrency_pos=${encodeURIComponent(asoCurrency_pos)}&asoThousandSep=${encodeURIComponent(asoThousandSep)}&asoDecimalSep=${encodeURIComponent(asoDecimalSep)}&asoConfigurationId=${encodeURIComponent(asoConfigurationId)}`;
+
+    // Création et insertion de l'iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = iframeUrl;
+    iframe.width = '100%';
+    iframe.height = '100%';
+    iframe.style.border = 'none';
+    iframe.setAttribute('name', 'ASOIframe');
+
+    const targetDiv = document.querySelector('.aso-app');
+    if (targetDiv) {
+      targetDiv.innerHTML = ''; // Vide le contenu
+      targetDiv.appendChild(iframe); // Injecte l’iframe
+    }
+
+    window.addEventListener('message', function(event) {
+      // Vérifie l’origine si nécessaire :
+      // if (event.origin !== 'https://ton-iframe-domain.com') return;
+
+      if (event.data && event.data.type === 'ADD_TO_CART') {
+        const formData = event.data.payload;
+        console.log("payload data", formData);
+        document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
+      }
+
+      if (event.data && event.data.type === 'ADD_TO_CART_CHECKOUT') {
+        const formData = event.data.payload;
+        console.log("payload data", formData);
+        document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
+      }
+
+      
+    });
+        
+  </script>
+
+{% endif %}
+
+
+
 
 
 
@@ -260,11 +308,20 @@
 }
 
 </style>
+
+
 {% schema %}
 {
   "name": "All  signs options ",
   "target": "section",
   "settings": [
+    {
+      "id": "useIframe",
+      "type": "checkbox",
+      "label": "Use iframe to show configuration",
+      "default": false,
+      "info": "Enable this if you experience template compatibility issues."
+    },
     { "type": "product", "id": "product", "label": "Product with configuration", "autofill": true, "info":"Select a product that has been assigned to a configuration, but on the product details page, the configuration of the current product is displayed only if  available" }
   ]
 }
