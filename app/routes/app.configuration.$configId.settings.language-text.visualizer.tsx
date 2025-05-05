@@ -55,13 +55,14 @@ const formSchema = z.object({
   textBorder: z.string().nullish().transform(stringTransform),
   textProduct: z.string().nullish().transform(stringTransform),
   textImage: z.string().nullish().transform(stringTransform),
+  textAdditonnalOptionsHeader: z.string().nullish().transform(stringTransform),
+  textButtonAdditonnalOptions: z.string().nullish().transform(stringTransform),
   customSize: z.string().nullish().transform(stringTransform),
   customSizeButtonDone: z.string().nullish().transform(stringTransform),
   thickness: z.string().nullish().transform(stringTransform),
   textBeforePrice: z.string().nullish().transform(stringTransform),
   textAfterPrice: z.string().nullish().transform(stringTransform),
   textAddToCart: z.string().nullish().transform(stringTransform),
-      
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -82,10 +83,10 @@ export default function ConfigSettingsGeneral() {
   const [formData, setFormData] = useState<any>(
     {
       textCanvasCenterH:"centerH",
-    textCanvasCenterV:"centerV",
-    textCanvasDelete:"delete",
-    textCanvasEdit:"Edit",
-    textCanvasClone:"Clone",
+      textCanvasCenterV:"centerV",
+      textCanvasDelete:"delete",
+      textCanvasEdit:"Edit",
+      textCanvasClone:"Clone",
       textPosition: "Position",
       textAngle: "Angle",
       textWidth: "Width",
@@ -120,8 +121,8 @@ export default function ConfigSettingsGeneral() {
       customSize: "Custom Size",
       customSizeButtonDone: "Done",
       thickness: "Thickness",
-
-      
+      textAdditonnalOptionsHeader: 'Additionnals Options',
+      textButtonAdditonnalOptions: 'Add Option',
       ...settingData || {}
     },
   );
@@ -665,6 +666,26 @@ export default function ConfigSettingsGeneral() {
                     value={formData.textImage}
                     onChange={(value) => handleInputChange("textImage", value)}
                     error={getError(actionData, "textImage")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text Additonnal Options "
+                    value={formData.textButtonAdditonnalOptions}
+                    onChange={(value) => handleInputChange("textButtonAdditonnalOptions", value)}
+                    error={getError(actionData, "textButtonAdditonnalOptions")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Text  Additonnal  Options Header"
+                    value={formData.textAdditonnalOptionsHeader}
+                    onChange={(value) => handleInputChange("textAdditonnalOptionsHeader", value)}
+                    error={getError(actionData, "textAdditonnalOptionsHeader")}
                     autoComplete="on"
                   />
                 </Grid.Cell>
