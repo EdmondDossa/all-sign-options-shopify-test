@@ -340,6 +340,8 @@ const initialData = {
         textButtonNext: "Redo",
         textCanvasEdit: "Edit",
         textOptionText: "Text",
+        textAdditonnalOptionsHeader: 'Additionnals Options',
+        textButtonAdditonnalOptions: 'Add Option',
         textBeforePrice: "",
         textCanvasClone: "Clone",
         textButtonFinish: "Finish",

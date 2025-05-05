@@ -137,13 +137,13 @@
       // Vérifie l’origine si nécessaire :
       // if (event.origin !== 'https://ton-iframe-domain.com') return;
 
-      if (event.data && event.data.type === 'ADD_TO_CART') {
+      if (event.data && event.data.type === 'ADD_TO_CART_CHECKOUT') {
         const formData = event.data.payload;
         console.log("payload data", formData);
         document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
       }
 
-      if (event.data && event.data.type === 'ADD_TO_CART_CHECKOUT') {
+      if (event.data && event.data.type === 'ADD_TO_CART') {
         const formData = event.data.payload;
         console.log("payload data", formData);
         document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;

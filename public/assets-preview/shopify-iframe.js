@@ -323,6 +323,23 @@ function formatPrice_shopify(price) {
   return formattedPrice;
 }
 
+function globalFormatPrice_shopify(price) {
+  let parsedPrice = parseFloat(price) || 0;
+  let formattedPrice = (parsedPrice).toFixed(2);
+
+  if (asoPriceFormat) {
+    if (asoPriceFormat.includes('{{amount}}')) {
+      return asoPriceFormat.replace("{{amount}}", formattedPrice);
+    }
+    if (asoPriceFormat.includes('{{amount_no_decimals}}')) {
+      return asoPriceFormat.replace("{{amount_no_decimals}}", Math.round(formattedPrice));
+    }
+  }
+  
+  return formattedPrice;
+}
+
+
 
  function getAsoUrl_shopify(){
     return "/apps/aso-proxy";
