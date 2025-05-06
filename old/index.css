@@ -3,6 +3,7 @@
   text-align: center;
   transition: transform 0.8s;
   transform-style: preserve-3d;
+  
 }
 .flipper-switch[data-v-e3662e7b] {
   transform: rotateY(180deg);
