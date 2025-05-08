@@ -73,6 +73,8 @@ export interface ConfigSize {
     shapeId: number;
    additionalPrice: number|string;
    isDefault?: boolean;
+   enablePricingBySurface?:boolean,
+   surface?:number|string;
   }
   
  export interface ConfigTextImages {
