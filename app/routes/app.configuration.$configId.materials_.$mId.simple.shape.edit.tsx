@@ -1,10 +1,12 @@
 import {
   Bleed,
+  BlockStack,
   Box,
   Divider,
   Grid,
   InlineStack,
   Select,
+  Text,
   TextField,
 } from "@shopify/polaris";
 import { useState } from "react";
@@ -34,6 +36,7 @@ import MaterialShapeService from "~/models/MaterialShape.service";
 import { RemoveNowIconBtn } from "~/components/buttons/RemoveNowIconBtn";
 import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { jsonTransform } from "~/utils/transfomerZod";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 
 export default function MaterialFixingMethod() {
   const submit = useSubmit();
@@ -71,6 +74,8 @@ export default function MaterialFixingMethod() {
               shapeId: parseInt(options[0]?.value),
               additionalPrice: 0,
               isDefault: false,
+              enablePricingBySurface:false,
+              surface:0
             },
           ],
         },
@@ -92,6 +97,8 @@ export default function MaterialFixingMethod() {
         ),
         additionalPrice: 0,
         isDefault: false,
+        enablePricingBySurface: false,
+        surface:0
       });
     }
 
@@ -133,7 +140,7 @@ export default function MaterialFixingMethod() {
                     columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
                   >
                     <InlineStack wrap={false} as="div" gap="400">
-                      <Box width="52%">
+                      <Box width={currConfigShape.enablePricingBySurface?"25%" : "40%" }>
                         <Select
                           label="Select shapes"
                           options={options}
@@ -149,7 +156,7 @@ export default function MaterialFixingMethod() {
                           )}
                         />
                       </Box>
-                      <Box width="52%">
+                      <Box width={currConfigShape.enablePricingBySurface?"25%" : "40%" }>
                         <TextField
                           label="Additional price"
                           type="number"
@@ -171,6 +178,48 @@ export default function MaterialFixingMethod() {
                             `configShapes.${index}.additionalPrice`,
                           )}
                         />
+                      </Box>
+                    { currConfigShape.enablePricingBySurface && <Box width={currConfigShape.enablePricingBySurface?"25%" : "40%" }>
+                        <TextField
+                          label="Surface for  this price"
+                          type="number"
+                          value={`${currConfigShape.surface}`}
+                          onChange={(value) => {
+                            currConfigShape.surface = value;
+                            formData.configShapes[index] = currConfigShape;
+                            setFormData({ ...formData });
+                          }}
+
+                          onBlur={(value) => {
+                            currConfigShape.surface = parseFloat(`${currConfigShape.surface}`);
+                            formData.configShapes[index] = currConfigShape;
+                            setFormData({ ...formData });
+                          }}
+                          autoComplete="off"
+                          error={getError(
+                            actionData,
+                            `configShapes.${index}.surface`,
+                          )}
+                        />
+                      </Box>}
+                      <Box width="18%">
+                        <BlockStack gap="200">
+                          <Text as="span">
+                            Enable Pricing By Surface
+                          </Text>
+                          <InlineStack wrap={false} gap="100" blockAlign="center">
+                            <Text as="span"> No</Text>
+                            <ReactSwitchCustom
+                              checked={currConfigShape.enablePricingBySurface?true:false}
+                              setChecked={(value:any) => {
+                                currConfigShape.enablePricingBySurface = value;
+                                formData.configShapes[index] = currConfigShape;
+                                setFormData({ ...formData });
+                              }}
+                            />
+                            <Text as="span"> Yes</Text>
+                          </InlineStack>
+                        </BlockStack>
                       </Box>
                       <Box width="1%">
                         <Bleed marginInlineStart="400">
@@ -237,6 +286,10 @@ const formSchema = z.object({
             required_error: "Material shape price is required",
           }),
           isDefault: z.boolean().optional(),
+          enablePricingBySurface: z.boolean().optional(),
+          surface: z.number({
+            required_error: "Material shape price is required",
+          }).optional(),
         })
         .array(),
     ),
