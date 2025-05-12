@@ -119,11 +119,12 @@ export interface ConfigColor {
   title: string;
   description: string;
   icon: string;
-   image: string;
    popImg: string;
    excludeColors: number[];
    additionalPrice: number|string;
    isDefault?: boolean;
+   enablePricingBySurface?: boolean,
+   surface?:number|string;
 }
   
  export interface MaterialSimple {

@@ -2,6 +2,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { Form, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSearchParams, useSubmit } from "@remix-run/react";
 import {
+  BlockStack,
   Box,
   Divider,
   Grid,
@@ -15,6 +16,7 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
 import { FileInput } from "~/components/inputs/FileInput";
 import { MultiCombobox } from "~/components/inputs/MultiCombobox";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
@@ -45,11 +47,12 @@ export default function MaterialAdditionalOptionCreate() {
         title: "",
         description: "",
         icon: "",
-        image: "",
         popImg:"",
         additionalPrice: 0,
         excludeColors: [],
-        isDefault: false
+        isDefault: false,
+        enablePricingBySurface: false,
+        surface:0
       }
   );
 
@@ -64,12 +67,15 @@ export default function MaterialAdditionalOptionCreate() {
     setFormData({ ...formData, description: value });
   const handleIcon = (value: string) =>
     setFormData({ ...formData, icon: value });
-    const handleImage = (value: string) =>
-      setFormData({ ...formData, image: value });
-      const handlePopImg = (value: string) =>
+
+    const handlePopImg = (value: string) =>
       setFormData({ ...formData, popImg: value });
   const handleAdditionalPrice= (value: string, onBlur = false) =>
     setFormData({ ...formData, additionalPrice: onBlur ?  parseFloat(`${formData.additionalPrice}`):value });
+  const handleSurface= (value: string, onBlur = false) =>
+    setFormData({ ...formData, surface: onBlur ?  parseFloat(`${formData.surface}`):value });
+  const handleEnablePricingBySurface= (value: string) =>
+    setFormData({ ...formData, enablePricingBySurface: value? true : false });
 
 
   const handleSubmit = (e: any) => {
@@ -147,7 +153,37 @@ export default function MaterialAdditionalOptionCreate() {
               error={getError(actionData, "additionalPrice")}
               />
               </Grid.Cell>
-              
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                <TextField
+                    label="Surface for  this price"
+                    type="number"
+                    value={`${formData.surface}`}
+                    autoComplete="off"
+                    onChange={value=>handleSurface(value)}
+                    onBlur={value=>handleSurface(value+"", true)}
+                    error={getError(actionData, "surface")}
+                />
+              </Grid.Cell>
+              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+               <BlockStack gap="200">
+                  <Text as="span">
+                    Enable Pricing By Surface
+                  </Text>
+                  <InlineStack wrap={false} gap="100" blockAlign="center">
+                    <Text as="span"> No</Text>
+                    <ReactSwitchCustom
+                      checked={formData.enablePricingBySurface? true : false}
+                      setChecked={(value:any) => {
+                        formData.enablePricingBySurface = value;
+                        setFormData({ ...formData });
+                      }}
+                    />
+                    <Text as="span"> Yes</Text>
+                  </InlineStack>
+                </BlockStack>
+              </Grid.Cell>
+
+
               </Grid>
             </Box>
         
@@ -185,8 +221,10 @@ const formSchema = z.object({
   icon:  z.string().nullish().transform(stringTransform),
   popImg:  z.string().nullish().transform(stringTransform),
   additionalPrice: z.number({ required_error: "image file is required" }),
+  surface: z.number({ required_error: "image file is required" }).optional().nullable(),
   excludeColors: z.any().transform(jsonTransform).pipe(z.number().array()),
-  isDefault: z.any().transform(booleanTransform).pipe(z.boolean())
+  isDefault: z.any().transform(booleanTransform).pipe(z.boolean()),
+  enablePricingBySurface: z.any().transform(booleanTransform).pipe(z.boolean())
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

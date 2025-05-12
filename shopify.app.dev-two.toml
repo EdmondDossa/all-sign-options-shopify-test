@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://markets-brochures-thorough-mainly.trycloudflare.com"
+application_url = "https://light-continuously-photo-fruit.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://markets-brochures-thorough-mainly.trycloudflare.com/auth/callback",
-  "https://markets-brochures-thorough-mainly.trycloudflare.com/auth/shopify/callback",
-  "https://markets-brochures-thorough-mainly.trycloudflare.com/api/auth/callback"
+  "https://light-continuously-photo-fruit.trycloudflare.com/auth/callback",
+  "https://light-continuously-photo-fruit.trycloudflare.com/auth/shopify/callback",
+  "https://light-continuously-photo-fruit.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-07"
 
 [app_proxy]
-url = "https://markets-brochures-thorough-mainly.trycloudflare.com"
+url = "https://light-continuously-photo-fruit.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
