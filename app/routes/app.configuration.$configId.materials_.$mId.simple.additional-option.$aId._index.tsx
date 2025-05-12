@@ -72,7 +72,7 @@ export default function MaterialAdditionalOptionIndex() {
 
   const rowMarkup = additionalOptionItems?.map(
     (
-      { title, description, icon, image, additionalPrice, isDefault },
+      { title, description, icon, additionalPrice, isDefault },
       index,
     ) => (
       <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
