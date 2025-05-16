@@ -4,23 +4,35 @@ import * as nodemailer from 'nodemailer'
 
 
 const transporter = nodemailer.createTransport({
-  host: 'signsdesigner.us',
+  host: "smtp.mailjet.com",
   port: 465,
   secure:true,
   auth: {
-    user: 'support@signsdesigner.us',
-    pass: 'NmLHKU#yrU*i',
+    user: "86a452afef128455f240c1468e406594",
+    pass: "136766915d393595d8afabc4bb6a5cf8",
   },
 });
 
 
 
+// const transporter = nodemailer.createTransport({
+//   host: "smtp-view.alwaysdata.net",
+//   port: 465,
+//   secure:true,
+//   auth: {
+//     user: "view@alwaysdata.net",
+//     pass: "view_password",
+//   },
+// });
+
+
+
 export async function testMail(){
-  transporter.sendMail({
+ await transporter.sendMail({
     from:  `"${ 'All  Signs options support'}" <${'support@signsdesigner.us'}>`,
     to: "toyigbemaximed@gmail.com",
-    subject: 'test my email',
-    text: 'test',
+    subject: 'Commande de  produit  depuis signs designer',
+    text: `Commande test `,
   });
 }
 
