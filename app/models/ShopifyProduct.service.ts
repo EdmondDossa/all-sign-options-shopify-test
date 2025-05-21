@@ -12,31 +12,31 @@ export class ShopifyProductService {
     try {
       const response = await admin.graphql(
         `#graphql
-                mutation populateProduct($input: ProductInput!, $media: [CreateMediaInput!]) {
-                    productCreate(input: $input, media: $media) {
-                    product {
-                        id
-                        legacyResourceId
-                        title
-                        handle
-                        status
-                        variants(first: 10) {
-                        edges {
-                            node {
-                            id
-                            legacyResourceId
-                            price
-                            barcode
-                            createdAt
-                            }
-                        }
-                        }
-                    }
+                mutation populateProduct($product: ProductCreateInput!, $media: [CreateMediaInput!]) {
+                    productCreate(product: $product, media: $media) {
+                      product {
+                          id
+                          legacyResourceId
+                          title
+                          handle
+                          status
+                          variants(first: 10) {
+                          edges {
+                              node {
+                              id
+                              legacyResourceId
+                              price
+                              barcode
+                              createdAt
+                              }
+                          }
+                          }
+                      }
                     }
                 }`,
         {
           variables: {
-            input: {
+            product: {
               title: name,
               descriptionHtml: description,
               status: "ACTIVE",
@@ -74,8 +74,8 @@ export class ShopifyProductService {
     try {
       const response = await admin.graphql(
         `#graphql
-                mutation productUpdate($input: ProductInput!) {
-                  productUpdate(input: $input) {
+                mutation productUpdate($product: ProductUpdateInput!) {
+                  productUpdate(product: $product) {
                     product {
                         id
                         title
@@ -96,7 +96,7 @@ export class ShopifyProductService {
                 }`,
         {
           variables: {
-            input: {
+            product: {
               id: id,
               metafields: [
                 metafieldID?
@@ -157,132 +157,176 @@ export class ShopifyProductService {
 
    
 
-   static async createVariant(admin: any, id: string, name:string, price:number, image:string, recaps?:any   ) {
+  /**
+   * Creates a new product variant with options, price, image and optional metafields 
+   * using the new productVariantsBulkUpdate approach
+   * @param admin - Shopify admin API client
+   * @param productID - The Shopify product ID
+   * @param variantID - The variant ID (not used in creation but kept for method signature consistency)
+   * @param name - The variant option name
+   * @param price - The variant price
+   * @param image - The image URL or path to associate with the variant
+   * @param recaps - Optional configuration recap data to store in metafields
+   * @returns Promise<object|null> - Returns variant and product IDs or null if creation failed
+   */
+  static async createVariant(admin: any, productID: string, variantID: string, name: string, price: number, image: string, recaps?: any) {
     try {
-
-    
-    
-      const mediaID = await  this.CreateMediaProdutInput(admin, id, image)
+      // First create the media for the variant
+      const mediaID = await this.CreateMediaProdutInput(admin, productID, image);
+      
+      // Prepare metafields array
+      const metafields = [];
+      
+      // Add recaps metafield if provided
+      if (recaps) {
+        metafields.push({
+          key: "asoConfigurationRecap",
+          namespace: "allSignsOptionsAsoAso",
+          type: "json",
+          value: JSON.stringify(recaps)
+        });
+      }
+      
+      // Use the new productVariantsBulkUpdate approach with the create operation for new variants
       const response = await admin.graphql(
         `#graphql
-                mutation productVariantCreate($input: ProductVariantInput!) {
-                  productVariantCreate(input: $input) {
-                    product {
-                      id
-                      legacyResourceId
-                    }
-                    productVariant {
-                      id
-                      legacyResourceId
-                    }
-                    userErrors {
-                      field
-                      message
-                    }
-                  }
-                }`,
-        {
-          variables: {
-            input: {
-              "inventoryPolicy": "CONTINUE",
-              "mediaId": mediaID,
-              "options": [
-                `${name}`
-              ],
-              "position": 1,
-              "price": `${price}`,
-              "productId": id, 
-              "requiresComponents": false,
-              "metafields":[
-                {
-                  key: "asoConfigurationRecap",
-                  namespace: "allSignsOptionsAsoAso",
-                  type: "json",
-                  value: JSON.stringify(recaps),
-                }
-              ]
+        mutation productVariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+          productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+            product {
+              id
+              legacyResourceId
+            }
+            productVariants {
+              id
+              legacyResourceId
+            }
+            userErrors {
+              field
+              message
             }
           }
+        }`,
+        {
+          variables: {
+            "productId": productID,
+            "variants": [
+              {
+                // No ID provided for creation
+                "options": [name],
+                "price": `${price}`,
+                "inventoryPolicy": "CONTINUE",
+                "position": 1,
+                "requiresComponents": false,
+                "mediaId": mediaID,
+                "metafields": metafields
+              }
+            ]
+          },
         },
       );
-
+      
       const responseJson = await response.json();
-
-      return (responseJson?.data?.productVariantCreate?.productVariant) ?
-      (  {
-        variantID: responseJson.data.productVariantCreate.productVariant.id,
-        variantId: responseJson.data.productVariantCreate.productVariant.legacyResourceId,
-        productID: responseJson.data.productVariantCreate.product?.id,
-        productId: responseJson.data.productVariantCreate.product?.legacyResourceId
-      })
-      : null;
-    
+      
+      // Check if creation was successful and return the IDs
+      if (responseJson?.data?.productVariantsBulkUpdate?.productVariants?.length > 0) {
+        const createdVariant = responseJson.data.productVariantsBulkUpdate.productVariants[0];
+        const updatedProduct = responseJson.data.productVariantsBulkUpdate.product;
+        
+        return {
+          variantID: createdVariant.id,
+          variantId: createdVariant.legacyResourceId,
+          productID: updatedProduct?.id,
+          productId: updatedProduct?.legacyResourceId
+        };
+      }
+      
+      return null;
     } catch (error) {
-      console.log("error creating  product", error);
-      return null  ;
+      console.log("Error creating product variant:", error);
+      return null;
     }
-   }
+  }
   
-   static async updateVariant(admin: any, id: string, name:string, price:number,  recaps?:any   ) {
+  /**
+   * Updates a product variant with new options, price and optional metafields using the new productVariantsBulkUpdate approach
+   * @param admin - Shopify admin API client
+   * @param productID - The Shopify product ID
+   * @param variantID - The variant ID to update
+   * @param name - The variant option name
+   * @param price - The variant price
+   * @param recaps - Optional configuration recap data to store in metafields
+   * @returns Promise<object|null> - Returns variant and product IDs or null if update failed
+   */
+  static async updateVariant(admin: any, productID: string, variantID: string, name: string, price: number, recaps?: any) {
     try {
+      // Prepare metafields array
+      const metafields = [];
+      
+      // Add recaps metafield if provided
+      if (recaps) {
+        metafields.push({
+          key: "asoConfigurationRecap",
+          namespace: "allSignsOptionsAsoAso",
+          type: "json",
+          value: JSON.stringify(recaps)
+        });
+      }
 
       const response = await admin.graphql(
         `#graphql
-        mutation updateProductVariantMetafields($input: ProductVariantInput!) {
-              productVariantUpdate(input: $input) {
-                product {
-                      id
-                      legacyResourceId
-                    }
-                    productVariant {
-                      id
-                      legacyResourceId
-                    }
-                userErrors {
-                  message
-                  field
-                }
+        mutation productVariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+          productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+            product {
+              id
+              legacyResourceId
+            }
+            productVariants {
+              id
+              legacyResourceId
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }`,
+        {
+          variables: {
+            "productId": productID,
+            "variants": [
+              {
+                "id": variantID,
+                "options": [name],
+                "price": `${price}`,
+                "inventoryPolicy": "CONTINUE",
+                "position": 1,
+                "requiresComponents": false,
+                "metafields": metafields
               }
-            }`,
-            {
-              variables: {
-                input: {
-                  "inventoryPolicy": "CONTINUE",
-                  "options": [
-                    `${name}`
-                  ],
-                  "position": 1,
-                  "price": `${price}`,
-                  "requiresComponents": false,
-                  "metafields":[
-                    {
-                      key: "asoConfigurationRecap",
-                      namespace: "allSignsOptionsAsoAso",
-                      type: "json",
-                      value: JSON.stringify(recaps),
-                    }
-                  ],
-                  "id": id
-                }
-              },
-            },
-          );
+            ]
+          },
+        },
+      );
       
       const responseJson = await response.json();
-
-    
-      return (responseJson?.data?.productVariantUpdate?.productVariant) ?
-      (  {
-        variantID: responseJson.data.productVariantUpdate.productVariant.id,
-        variantId: responseJson.data.productVariantUpdate.productVariant.legacyResourceId,
-        productID: responseJson.data.productVariantUpdate.product?.id,
-        productId: responseJson.data.productVariantUpdate.product?.legacyResourceId
-      })
-      : null;
-    
+      
+      // Check if update was successful and return the IDs
+      if (responseJson?.data?.productVariantsBulkUpdate?.productVariants?.length > 0) {
+        const updatedVariant = responseJson.data.productVariantsBulkUpdate.productVariants[0];
+        const updatedProduct = responseJson.data.productVariantsBulkUpdate.product;
+        
+        return {
+          variantID: updatedVariant.id,
+          variantId: updatedVariant.legacyResourceId,
+          productID: updatedProduct?.id,
+          productId: updatedProduct?.legacyResourceId
+        };
+      }
+      
+      return null;
     } catch (error) {
-      console.log("error on  updating  product", error);
-      return null  ;
+      console.log("Error updating product variant:", error);
+      return null;
     }
   }
 
@@ -365,13 +409,28 @@ export class ShopifyProductService {
       
     }
 
-    static  async  updateVariantRecap(admin: any, variantId: string, metaId:string, metaValue : string){
+ 
+
+
+    /**
+     * Updates a single product variant metafield using the new productVariantsBulkUpdate approach
+     * @param admin - Shopify admin API client
+     * @param productID - The Shopify product ID
+     * @param variantId - The variant ID to update
+     * @param metaId - The metafield ID to update
+     * @param metaValue - The new value for the metafield
+     * @returns Promise<boolean> - Returns true if update was successful
+     */
+    static async updateVariantRecap(admin: any, productID: string, variantId: string, metaId: string, metaValue: string) {
       try {
         const response = await admin.graphql(
           `#graphql
-          mutation updateProductVariantMetafields($input: ProductVariantInput!) {
-            productVariantUpdate(input: $input) {
-              productVariant {
+          mutation productVariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+            productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+              product {
+                id
+              }
+              productVariants {
                 id
                 metafields(first: 3) {
                   edges {
@@ -385,39 +444,45 @@ export class ShopifyProductService {
                 }
               }
               userErrors {
-                message
                 field
+                message
               }
             }
           }`,
           {
             variables: {
-              "input": {
-                "metafields": [
-                  {
-                    "id": metaId,
-                    "value":  metaValue
-                  }
-                ],
-                "id": variantId
-              }
+              "productId": productID,
+              "variants": [
+                {
+                  "id": variantId,
+                  "metafields": [
+                    {
+                      "id": metaId,
+                      "value": metaValue
+                    }
+                  ]
+                }
+              ]
             },
           },
         );
         
-        
         const data = await response.json();
         
+        // Check for successful update by verifying we have productVariants in the response
+        // and no userErrors
+        if (data.data.productVariantsBulkUpdate.productVariants?.length > 0 && 
+            data.data.productVariantsBulkUpdate.userErrors.length === 0) {
+          return true;
+        }
         
-
-        return data.data.productVariantUpdate.productVariant?  true :false;
-
+        return false;
       } catch (error) {
-        console.log("error  on getting variant",error);
-
+        console.log("Error updating variant metafield:", error);
+        return false;
       }
-      
     }
+  
   
   
     static async publish(admin: any, id: string) {

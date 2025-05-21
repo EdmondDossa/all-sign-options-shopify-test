@@ -165,6 +165,7 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                 
                 ShopifyProductService.updateVariantRecap(
                   admin,
+                  `gid://shopify/Product/${variantMetaData.line_item.product_id}`,
                   `gid://shopify/ProductVariant/${variantMetaData.line_item.variant_id}`,
                   `${variantMetaData.id}`, 
                   JSON.stringify({recapsPath:recapsPath})

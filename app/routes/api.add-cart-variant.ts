@@ -112,6 +112,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
       const variant = await ShopifyProductService.updateVariant(
             admin,
+            product.id,
             product.variants.edges[0].node.id,
             optionName,
             data.price,
