@@ -1,14 +1,17 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "adf4506adb0b3a2e093f1a910b28e181"
-name = "All Signs Options"
-application_url = "https://suse-inside-happens-crimes.trycloudflare.com"
+client_id = "a61b030b2857ab64af1ab238b1e46ed4"
+name = "all-signs-option"
+handle = "all-signs-option-3"
+application_url = "https://sunset-angry-beef-annotated.trycloudflare.com"
 embedded = true
 
 [build]
-automatically_update_urls_on_dev = false
-dev_store_url = "quickstart-5c91f330.myshopify.com"
-include_config_on_deploy = false
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true
+
+[webhooks]
+api_version = "2025-04"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -16,18 +19,10 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://suse-inside-happens-crimes.trycloudflare.com/auth/callback",
-  "https://suse-inside-happens-crimes.trycloudflare.com/auth/shopify/callback",
-  "https://suse-inside-happens-crimes.trycloudflare.com/api/auth/callback"
+  "https://sunset-angry-beef-annotated.trycloudflare.com/auth/callback",
+  "https://sunset-angry-beef-annotated.trycloudflare.com/auth/shopify/callback",
+  "https://sunset-angry-beef-annotated.trycloudflare.com/api/auth/callback"
 ]
-
-[webhooks]
-api_version = "2024-07"
-
-[app_proxy]
-url = "https://suse-inside-happens-crimes.trycloudflare.com"
-subpath = "aso-proxy"
-prefix = "apps"
 
 [pos]
 embedded = false

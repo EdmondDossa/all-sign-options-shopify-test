@@ -2665,6 +2665,7 @@
                 return "SuspenseList";
               case TracingMarkerComponent:
                 return "TracingMarker";
+              // The display name for this tags come from the user-provided type:
               case ClassComponent:
               case FunctionComponent:
               case IncompleteClassComponent:
@@ -4851,8 +4852,7 @@
                 }
                 case SuspenseComponent: {
                   var suspenseState = returnFiber.memoizedState;
-                  if (suspenseState.dehydrated !== null)
-                    didNotHydrateInstanceWithinSuspenseInstance(suspenseState.dehydrated, instance);
+                  if (suspenseState.dehydrated !== null) didNotHydrateInstanceWithinSuspenseInstance(suspenseState.dehydrated, instance);
                   break;
                 }
               }
@@ -4938,21 +4938,20 @@
                 case SuspenseComponent: {
                   var suspenseState = returnFiber.memoizedState;
                   var _parentInstance = suspenseState.dehydrated;
-                  if (_parentInstance !== null)
-                    switch (fiber.tag) {
-                      case HostComponent:
-                        var _type2 = fiber.type;
-                        var _props2 = fiber.pendingProps;
-                        didNotFindHydratableInstanceWithinSuspenseInstance(_parentInstance, _type2, _props2);
-                        break;
-                      case HostText:
-                        var _text2 = fiber.pendingProps;
-                        didNotFindHydratableTextInstanceWithinSuspenseInstance(_parentInstance, _text2);
-                        break;
-                      case SuspenseComponent:
-                        didNotFindHydratableSuspenseInstanceWithinSuspenseInstance(_parentInstance);
-                        break;
-                    }
+                  if (_parentInstance !== null) switch (fiber.tag) {
+                    case HostComponent:
+                      var _type2 = fiber.type;
+                      var _props2 = fiber.pendingProps;
+                      didNotFindHydratableInstanceWithinSuspenseInstance(_parentInstance, _type2, _props2);
+                      break;
+                    case HostText:
+                      var _text2 = fiber.pendingProps;
+                      didNotFindHydratableTextInstanceWithinSuspenseInstance(_parentInstance, _text2);
+                      break;
+                    case SuspenseComponent:
+                      didNotFindHydratableSuspenseInstanceWithinSuspenseInstance(_parentInstance);
+                      break;
+                  }
                   break;
                 }
                 default:
@@ -6413,8 +6412,7 @@
                       var update = createUpdate(NoTimestamp, lane);
                       update.tag = ForceUpdate;
                       var updateQueue = fiber.updateQueue;
-                      if (updateQueue === null)
-                        ;
+                      if (updateQueue === null) ;
                       else {
                         var sharedQueue = updateQueue.shared;
                         var pending = sharedQueue.pending;
@@ -6500,8 +6498,7 @@
               }
             }
             var value = isPrimaryRenderer ? context._currentValue : context._currentValue2;
-            if (lastFullyObservedContext === context)
-              ;
+            if (lastFullyObservedContext === context) ;
             else {
               var contextItem = {
                 context,
@@ -6798,6 +6795,7 @@
               case CaptureUpdate: {
                 workInProgress2.flags = workInProgress2.flags & ~ShouldCapture | DidCapture;
               }
+              // Intentional fallthrough
               case UpdateState: {
                 var _payload = update.payload;
                 var partialState;
@@ -11754,8 +11752,7 @@
               while (node !== null) {
                 if (node.tag === HostComponent || node.tag === HostText) {
                   appendInitialChild(parent, node.stateNode);
-                } else if (node.tag === HostPortal)
-                  ;
+                } else if (node.tag === HostPortal) ;
                 else if (node.child !== null) {
                   node.child.return = node;
                   node = node.child;
@@ -11813,8 +11810,7 @@
                     _instance = cloneHiddenTextInstance(_instance, text, node);
                   }
                   appendInitialChild(parent, _instance);
-                } else if (node.tag === HostPortal)
-                  ;
+                } else if (node.tag === HostPortal) ;
                 else if (node.tag === OffscreenComponent && node.memoizedState !== null) {
                   var child = node.child;
                   if (child !== null) {
@@ -11858,8 +11854,7 @@
                     _instance2 = cloneHiddenTextInstance(_instance2, text, node);
                   }
                   appendChildToContainerChildSet(containerChildSet, _instance2);
-                } else if (node.tag === HostPortal)
-                  ;
+                } else if (node.tag === HostPortal) ;
                 else if (node.tag === OffscreenComponent && node.memoizedState !== null) {
                   var child = node.child;
                   if (child !== null) {
@@ -11888,8 +11883,7 @@
             updateHostContainer = function(current2, workInProgress2) {
               var portalOrRoot = workInProgress2.stateNode;
               var childrenUnchanged = hadNoMutationsEffects(current2, workInProgress2);
-              if (childrenUnchanged)
-                ;
+              if (childrenUnchanged) ;
               else {
                 var container = portalOrRoot.containerInfo;
                 var newChildSet = createContainerChildSet(container);
@@ -12963,20 +12957,19 @@
                       onPostCommit(id, phase, passiveEffectDuration, commitTime2);
                     }
                     var parentFiber = finishedWork.return;
-                    outer:
-                      while (parentFiber !== null) {
-                        switch (parentFiber.tag) {
-                          case HostRoot:
-                            var root = parentFiber.stateNode;
-                            root.passiveEffectDuration += passiveEffectDuration;
-                            break outer;
-                          case Profiler:
-                            var parentStateNode = parentFiber.stateNode;
-                            parentStateNode.passiveEffectDuration += passiveEffectDuration;
-                            break outer;
-                        }
-                        parentFiber = parentFiber.return;
+                    outer: while (parentFiber !== null) {
+                      switch (parentFiber.tag) {
+                        case HostRoot:
+                          var root = parentFiber.stateNode;
+                          root.passiveEffectDuration += passiveEffectDuration;
+                          break outer;
+                        case Profiler:
+                          var parentStateNode = parentFiber.stateNode;
+                          parentStateNode.passiveEffectDuration += passiveEffectDuration;
+                          break outer;
                       }
+                      parentFiber = parentFiber.return;
+                    }
                     break;
                   }
                 }
@@ -13123,20 +13116,19 @@
                       }
                       enqueuePendingPassiveProfilerEffect(finishedWork);
                       var parentFiber = finishedWork.return;
-                      outer:
-                        while (parentFiber !== null) {
-                          switch (parentFiber.tag) {
-                            case HostRoot:
-                              var root = parentFiber.stateNode;
-                              root.effectDuration += effectDuration;
-                              break outer;
-                            case Profiler:
-                              var parentStateNode = parentFiber.stateNode;
-                              parentStateNode.effectDuration += effectDuration;
-                              break outer;
-                          }
-                          parentFiber = parentFiber.return;
+                      outer: while (parentFiber !== null) {
+                        switch (parentFiber.tag) {
+                          case HostRoot:
+                            var root = parentFiber.stateNode;
+                            root.effectDuration += effectDuration;
+                            break outer;
+                          case Profiler:
+                            var parentStateNode = parentFiber.stateNode;
+                            parentStateNode.effectDuration += effectDuration;
+                            break outer;
                         }
+                        parentFiber = parentFiber.return;
+                      }
                     }
                   }
                   break;
@@ -13228,8 +13220,7 @@
                       captureCommitPhaseError(finishedWork, finishedWork.return, error2);
                     }
                   }
-                } else if ((node.tag === OffscreenComponent || node.tag === LegacyHiddenComponent) && node.memoizedState !== null && node !== finishedWork)
-                  ;
+                } else if ((node.tag === OffscreenComponent || node.tag === LegacyHiddenComponent) && node.memoizedState !== null && node !== finishedWork) ;
                 else if (node.child !== null) {
                   node.child.return = node;
                   node = node.child;
@@ -13356,31 +13347,30 @@
           }
           function getHostSibling(fiber) {
             var node = fiber;
-            siblings:
-              while (true) {
-                while (node.sibling === null) {
-                  if (node.return === null || isHostParent(node.return)) {
-                    return null;
-                  }
-                  node = node.return;
+            siblings: while (true) {
+              while (node.sibling === null) {
+                if (node.return === null || isHostParent(node.return)) {
+                  return null;
                 }
-                node.sibling.return = node.return;
-                node = node.sibling;
-                while (node.tag !== HostComponent && node.tag !== HostText && node.tag !== DehydratedFragment) {
-                  if (node.flags & Placement) {
-                    continue siblings;
-                  }
-                  if (node.child === null || node.tag === HostPortal) {
-                    continue siblings;
-                  } else {
-                    node.child.return = node;
-                    node = node.child;
-                  }
+                node = node.return;
+              }
+              node.sibling.return = node.return;
+              node = node.sibling;
+              while (node.tag !== HostComponent && node.tag !== HostText && node.tag !== DehydratedFragment) {
+                if (node.flags & Placement) {
+                  continue siblings;
                 }
-                if (!(node.flags & Placement)) {
-                  return node.stateNode;
+                if (node.child === null || node.tag === HostPortal) {
+                  continue siblings;
+                } else {
+                  node.child.return = node;
+                  node = node.child;
                 }
               }
+              if (!(node.flags & Placement)) {
+                return node.stateNode;
+              }
+            }
           }
           function commitPlacement(finishedWork) {
             if (!supportsMutation) {
@@ -13405,6 +13395,7 @@
                 insertOrAppendPlacementNodeIntoContainer(finishedWork, _before, _parent);
                 break;
               }
+              // eslint-disable-next-line-no-fallthrough
               default:
                 throw new Error("Invalid host parent fiber. This error is likely caused by a bug in React. Please file an issue.");
             }
@@ -13419,8 +13410,7 @@
               } else {
                 appendChildToContainer(parent, stateNode);
               }
-            } else if (tag === HostPortal)
-              ;
+            } else if (tag === HostPortal) ;
             else {
               var child = node.child;
               if (child !== null) {
@@ -13443,8 +13433,7 @@
               } else {
                 appendChild2(parent, stateNode);
               }
-            } else if (tag === HostPortal)
-              ;
+            } else if (tag === HostPortal) ;
             else {
               var child = node.child;
               if (child !== null) {
@@ -13462,27 +13451,26 @@
           function commitDeletionEffects(root, returnFiber, deletedFiber) {
             if (supportsMutation) {
               var parent = returnFiber;
-              findParent:
-                while (parent !== null) {
-                  switch (parent.tag) {
-                    case HostComponent: {
-                      hostParent = parent.stateNode;
-                      hostParentIsContainer = false;
-                      break findParent;
-                    }
-                    case HostRoot: {
-                      hostParent = parent.stateNode.containerInfo;
-                      hostParentIsContainer = true;
-                      break findParent;
-                    }
-                    case HostPortal: {
-                      hostParent = parent.stateNode.containerInfo;
-                      hostParentIsContainer = true;
-                      break findParent;
-                    }
+              findParent: while (parent !== null) {
+                switch (parent.tag) {
+                  case HostComponent: {
+                    hostParent = parent.stateNode;
+                    hostParentIsContainer = false;
+                    break findParent;
                   }
-                  parent = parent.return;
+                  case HostRoot: {
+                    hostParent = parent.stateNode.containerInfo;
+                    hostParentIsContainer = true;
+                    break findParent;
+                  }
+                  case HostPortal: {
+                    hostParent = parent.stateNode.containerInfo;
+                    hostParentIsContainer = true;
+                    break findParent;
+                  }
                 }
+                parent = parent.return;
+              }
               if (hostParent === null) {
                 throw new Error("Expected to find a host parent. This error is likely caused by a bug in React. Please file an issue.");
               }
@@ -13509,6 +13497,7 @@
                   safelyDetachRef(deletedFiber, nearestMountedAncestor);
                 }
               }
+              // eslint-disable-next-line-no-fallthrough
               case HostText: {
                 if (supportsMutation) {
                   var prevHostParent = hostParent;
@@ -15129,6 +15118,9 @@
               case RootFatalErrored: {
                 throw new Error("Root did not complete. This is a bug in React.");
               }
+              // Flow knows about invariant, so it complains if I add a break
+              // statement, but eslint doesn't know about invariant, so it complains
+              // if I do. eslint-disable-next-line no-fallthrough
               case RootErrored: {
                 commitRoot(root, workInProgressRootRecoverableErrors, workInProgressTransitions);
                 break;
@@ -16786,67 +16778,71 @@
             } else if (typeof type === "string") {
               fiberTag = HostComponent;
             } else {
-              getTag:
-                switch (type) {
-                  case REACT_FRAGMENT_TYPE:
-                    return createFiberFromFragment(pendingProps.children, mode, lanes, key);
-                  case REACT_STRICT_MODE_TYPE:
-                    fiberTag = Mode;
-                    mode |= StrictLegacyMode;
-                    if ((mode & ConcurrentMode) !== NoMode) {
-                      mode |= StrictEffectsMode;
-                    }
-                    break;
-                  case REACT_PROFILER_TYPE:
-                    return createFiberFromProfiler(pendingProps, mode, lanes, key);
-                  case REACT_SUSPENSE_TYPE:
-                    return createFiberFromSuspense(pendingProps, mode, lanes, key);
-                  case REACT_SUSPENSE_LIST_TYPE:
-                    return createFiberFromSuspenseList(pendingProps, mode, lanes, key);
-                  case REACT_OFFSCREEN_TYPE:
-                    return createFiberFromOffscreen(pendingProps, mode, lanes, key);
-                  case REACT_LEGACY_HIDDEN_TYPE:
-                  case REACT_SCOPE_TYPE:
-                  case REACT_CACHE_TYPE:
-                  case REACT_TRACING_MARKER_TYPE:
-                  case REACT_DEBUG_TRACING_MODE_TYPE:
-                  default: {
-                    if (typeof type === "object" && type !== null) {
-                      switch (type.$$typeof) {
-                        case REACT_PROVIDER_TYPE:
-                          fiberTag = ContextProvider;
-                          break getTag;
-                        case REACT_CONTEXT_TYPE:
-                          fiberTag = ContextConsumer;
-                          break getTag;
-                        case REACT_FORWARD_REF_TYPE:
-                          fiberTag = ForwardRef;
-                          {
-                            resolvedType = resolveForwardRefForHotReloading(resolvedType);
-                          }
-                          break getTag;
-                        case REACT_MEMO_TYPE:
-                          fiberTag = MemoComponent;
-                          break getTag;
-                        case REACT_LAZY_TYPE:
-                          fiberTag = LazyComponent;
-                          resolvedType = null;
-                          break getTag;
-                      }
-                    }
-                    var info = "";
-                    {
-                      if (type === void 0 || typeof type === "object" && type !== null && Object.keys(type).length === 0) {
-                        info += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.";
-                      }
-                      var ownerName = owner ? getComponentNameFromFiber(owner) : null;
-                      if (ownerName) {
-                        info += "\n\nCheck the render method of `" + ownerName + "`.";
-                      }
-                    }
-                    throw new Error("Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) " + ("but got: " + (type == null ? type : typeof type) + "." + info));
+              getTag: switch (type) {
+                case REACT_FRAGMENT_TYPE:
+                  return createFiberFromFragment(pendingProps.children, mode, lanes, key);
+                case REACT_STRICT_MODE_TYPE:
+                  fiberTag = Mode;
+                  mode |= StrictLegacyMode;
+                  if ((mode & ConcurrentMode) !== NoMode) {
+                    mode |= StrictEffectsMode;
                   }
+                  break;
+                case REACT_PROFILER_TYPE:
+                  return createFiberFromProfiler(pendingProps, mode, lanes, key);
+                case REACT_SUSPENSE_TYPE:
+                  return createFiberFromSuspense(pendingProps, mode, lanes, key);
+                case REACT_SUSPENSE_LIST_TYPE:
+                  return createFiberFromSuspenseList(pendingProps, mode, lanes, key);
+                case REACT_OFFSCREEN_TYPE:
+                  return createFiberFromOffscreen(pendingProps, mode, lanes, key);
+                case REACT_LEGACY_HIDDEN_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                case REACT_SCOPE_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                case REACT_CACHE_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                case REACT_TRACING_MARKER_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                case REACT_DEBUG_TRACING_MODE_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                default: {
+                  if (typeof type === "object" && type !== null) {
+                    switch (type.$$typeof) {
+                      case REACT_PROVIDER_TYPE:
+                        fiberTag = ContextProvider;
+                        break getTag;
+                      case REACT_CONTEXT_TYPE:
+                        fiberTag = ContextConsumer;
+                        break getTag;
+                      case REACT_FORWARD_REF_TYPE:
+                        fiberTag = ForwardRef;
+                        {
+                          resolvedType = resolveForwardRefForHotReloading(resolvedType);
+                        }
+                        break getTag;
+                      case REACT_MEMO_TYPE:
+                        fiberTag = MemoComponent;
+                        break getTag;
+                      case REACT_LAZY_TYPE:
+                        fiberTag = LazyComponent;
+                        resolvedType = null;
+                        break getTag;
+                    }
+                  }
+                  var info = "";
+                  {
+                    if (type === void 0 || typeof type === "object" && type !== null && Object.keys(type).length === 0) {
+                      info += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.";
+                    }
+                    var ownerName = owner ? getComponentNameFromFiber(owner) : null;
+                    if (ownerName) {
+                      info += "\n\nCheck the render method of `" + ownerName + "`.";
+                    }
+                  }
+                  throw new Error("Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) " + ("but got: " + (type == null ? type : typeof type) + "." + info));
                 }
+              }
             }
             var fiber = createFiber(fiberTag, pendingProps, key, mode);
             fiber.elementType = type;
@@ -18473,8 +18469,7 @@
 
   // node_modules/@remote-ui/rpc/build/esm/memory.mjs
   function isBasicObject(value) {
-    if (value == null || typeof value !== "object")
-      return false;
+    if (value == null || typeof value !== "object") return false;
     const prototype = Object.getPrototypeOf(value);
     return prototype == null || prototype === Object.prototype;
   }
@@ -18520,8 +18515,7 @@
       components: /* @__PURE__ */ new WeakMap(),
       fragments: /* @__PURE__ */ new WeakMap()
     };
-    if (strict)
-      Object.freeze(components);
+    if (strict) Object.freeze(components);
     const remoteRoot = {
       kind: KIND_ROOT,
       options: strict ? Object.freeze({
@@ -18544,8 +18538,7 @@
         const normalizedInternalProps = {};
         if (initialProps) {
           for (const key of Object.keys(initialProps)) {
-            if (key === "children")
-              continue;
+            if (key === "children") continue;
             normalizedInternalProps[key] = makeValueHotSwappable(serializeProp(initialProps[key]));
           }
         }
@@ -18649,8 +18642,7 @@
       insertBefore: (child, before) => insertBefore(remoteRoot, normalizeChild(child, remoteRoot), before, rootInternals, rootInternals),
       insertChildBefore: (child, before) => insertBefore(remoteRoot, normalizeChild(child, remoteRoot), before, rootInternals, rootInternals),
       mount() {
-        if (rootInternals.mounted)
-          return Promise.resolve();
+        if (rootInternals.mounted) return Promise.resolve();
         rootInternals.mounted = true;
         return Promise.resolve(channel(ACTION_MOUNT, rootInternals.children.map(serializeChild)));
       }
@@ -18708,8 +18700,7 @@
     const hotSwapFunctions = [];
     let hasRemoteChange = false;
     for (const key of Object.keys(newProps)) {
-      if (key === "children")
-        continue;
+      if (key === "children") continue;
       const currentExternalValue = currentExternalProps[key];
       const newExternalValue = newProps[key];
       const currentValue = currentProps[key];
@@ -18721,8 +18712,7 @@
       if (hotSwaps) {
         hotSwapFunctions.push(...hotSwaps);
       }
-      if (value === IGNORE)
-        continue;
+      if (value === IGNORE) continue;
       hasRemoteChange = true;
       normalizedNewProps[key] = value;
       if (isRemoteFragment(currentExternalValue)) {
@@ -18752,16 +18742,18 @@
     if (seen.has(currentValue)) {
       return [IGNORE];
     }
-    seen.add(currentValue);
     if (typeof currentValue === "function" && FUNCTION_CURRENT_IMPLEMENTATION_KEY in currentValue) {
+      seen.add(currentValue);
       const result2 = [typeof newValue === "function" ? IGNORE : makeValueHotSwappable(newValue), [[currentValue, newValue]]];
       return result2;
     }
     if (Array.isArray(currentValue)) {
+      seen.add(currentValue);
       const result2 = tryHotSwappingArrayValues(currentValue, newValue, seen);
       return result2;
     }
     if (isBasicObject(currentValue) && !isRemoteFragment(currentValue)) {
+      seen.add(currentValue);
       const result2 = tryHotSwappingObjectValues(currentValue, newValue, seen);
       return result2;
     }
@@ -18770,8 +18762,7 @@
   }
   function makeValueHotSwappable(value, seen = /* @__PURE__ */ new Map()) {
     const seenValue = seen.get(value);
-    if (seenValue)
-      return seenValue;
+    if (seenValue) return seenValue;
     if (isRemoteFragment(value)) {
       seen.set(value, value);
       return value;
@@ -18805,12 +18796,10 @@
       seen.set(value, wrappedFunction);
       return wrappedFunction;
     }
-    seen.set(value, value);
     return value;
   }
   function collectNestedHotSwappableValues(value, seen = /* @__PURE__ */ new Set()) {
-    if (seen.has(value))
-      return void 0;
+    if (seen.has(value)) return void 0;
     seen.add(value);
     if (Array.isArray(value)) {
       return value.reduce((all, element) => {
@@ -18884,8 +18873,12 @@
     const {
       strict
     } = rootInternals;
+    const childIndex = container.children.indexOf(child);
+    if (childIndex === -1) {
+      return void 0;
+    }
     return perform(container, rootInternals, {
-      remote: (channel) => channel(ACTION_REMOVE_CHILD, container.id, container.children.indexOf(child)),
+      remote: (channel) => channel(ACTION_REMOVE_CHILD, container.id, childIndex),
       local: () => {
         removeNodeFromContainer(child, rootInternals);
         const newChildren = [...internals.children];
@@ -18953,14 +18946,11 @@
     });
   }
   function moveFragmentToContainer(node, rootInternals) {
-    if (node.kind !== KIND_COMPONENT)
-      return;
+    if (node.kind !== KIND_COMPONENT) return;
     const props = node.props;
-    if (!props)
-      return;
+    if (!props) return;
     Object.values(props).forEach((prop) => {
-      if (!isRemoteFragment(prop))
-        return;
+      if (!isRemoteFragment(prop)) return;
       moveNodeToContainer(node, prop, rootInternals);
     });
   }
@@ -18978,13 +18968,11 @@
     removeFragmentFromContainer(node, rootInternals);
   }
   function removeFragmentFromContainer(node, rootInternals) {
-    if (node.kind !== KIND_COMPONENT)
-      return;
+    if (node.kind !== KIND_COMPONENT) return;
     const props = node.remoteProps;
     for (const key of Object.keys(props !== null && props !== void 0 ? props : {})) {
       const prop = props[key];
-      if (!isRemoteFragment(prop))
-        continue;
+      if (!isRemoteFragment(prop)) continue;
       removeNodeFromContainer(prop, rootInternals);
     }
   }
@@ -19088,8 +19076,7 @@
       }
     }
     for (const key in newValue) {
-      if (key in normalizedNewValue)
-        continue;
+      if (key in normalizedNewValue) continue;
       hasChanged = true;
       normalizedNewValue[key] = makeValueHotSwappable(newValue[key]);
     }
@@ -19116,8 +19103,7 @@
           continue;
         }
         const [updatedValue, elementHotSwaps] = tryHotSwappingValues(currentArrayValue, newArrayValue, seen);
-        if (elementHotSwaps)
-          hotSwaps.push(...elementHotSwaps);
+        if (elementHotSwaps) hotSwaps.push(...elementHotSwaps);
         if (updatedValue === IGNORE) {
           normalizedNewValue[i] = currentArrayValue;
           continue;

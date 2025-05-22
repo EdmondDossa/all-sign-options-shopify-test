@@ -199,3 +199,10 @@ export interface MaterialType{
 }
   
   export type Material = MaterialSimple | MaterialAdvance;
+
+export interface ConfigDiscount {
+  lots: Array<{
+    quantity: string;
+    discountPercentage: string;
+  }>;
+}
