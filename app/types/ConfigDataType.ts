@@ -80,6 +80,7 @@ export interface ConfigSize {
  export interface ConfigTextImages {
     enableText: boolean;
     enableImage: boolean;
+    enableQrCode: boolean;
   }
   
  export interface ConfigFixingMethod {
