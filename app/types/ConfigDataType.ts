@@ -75,6 +75,11 @@ export interface ConfigSize {
    isDefault?: boolean;
    enablePricingBySurface?:boolean,
    surface?:number|string;
+   shapeSize?: {
+     small: number;
+     medium: number;
+     large: number;
+   };
   }
   
  export interface ConfigTextImages {
