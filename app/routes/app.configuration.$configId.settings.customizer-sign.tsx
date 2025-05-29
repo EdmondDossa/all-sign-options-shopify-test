@@ -12,7 +12,7 @@ import { ClipartsGroupType, ColorType, FontType } from "~/types/ManagePropertyTy
 import { ShapeType } from "~/types/SettingsType";
 import SettingShapesService from "~/models/SettingShapes.service";
 import ClipartsGroupService from "~/models/ClipartsGroup.service";
-import { getPlan } from "~/utils/pricing";
+import { getPlan } from "~/utils/pricing-server.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin, billing } = await authenticate.admin(request);

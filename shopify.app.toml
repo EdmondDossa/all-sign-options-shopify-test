@@ -22,7 +22,7 @@ redirect_urls = [
 ]
 
 [webhooks]
-api_version = "2024-07"
+api_version = "2025-04"
 
 [app_proxy]
 url = "https://suse-inside-happens-crimes.trycloudflare.com"

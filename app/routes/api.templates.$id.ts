@@ -3,7 +3,7 @@ import SettingShapesService from "~/models/SettingShapes.service";
 import TemplateService from "~/models/Template.service";
 import { authenticate } from "~/shopify.server";
 import prisma from "~/db.server";
-import { replaceDomainUrl } from "~/utils/fileUrl";
+import { replaceDomainUrl } from "~/utils/fileUrlServer.server";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {

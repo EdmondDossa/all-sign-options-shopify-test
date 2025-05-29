@@ -1,9 +1,6 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-import SettingShapesService from "~/models/SettingShapes.service";
 import TemplateService from "~/models/Template.service";
 import { authenticate } from "~/shopify.server";
-
-import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import { jFlashMessage } from "~/utils/message-flash";
 import { jsonTransform } from "~/utils/transfomerZod";

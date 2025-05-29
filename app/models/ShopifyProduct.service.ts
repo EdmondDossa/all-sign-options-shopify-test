@@ -41,6 +41,15 @@ export class ShopifyProductService {
               descriptionHtml: description,
               status: "ACTIVE",
               productType: "all-signs-options-product",
+              productOptions: [
+                {
+                  name: "Custom Design",
+                  values: [
+                    { name: optionName }
+                  ]
+                  
+                }
+              ],
               
               metafields: [
                 {
@@ -169,7 +178,7 @@ export class ShopifyProductService {
    * @param recaps - Optional configuration recap data to store in metafields
    * @returns Promise<object|null> - Returns variant and product IDs or null if creation failed
    */
-  static async createVariant(admin: any, productID: string, variantID: string, name: string, price: number, image: string, recaps?: any) {
+  static async createVariant(admin: any, productID: string,  name: string, price: number, image: string, recaps?: any) {
     try {
       // First create the media for the variant
       const mediaID = await this.CreateMediaProdutInput(admin, productID, image);
@@ -212,10 +221,14 @@ export class ShopifyProductService {
             "variants": [
               {
                 // No ID provided for creation
-                "options": [name],
+                "optionValues": [
+                    {
+                      "name": name,
+                      "optionName": "Custom Design"
+                    }
+                ],
                 "price": `${price}`,
                 "inventoryPolicy": "CONTINUE",
-                "position": 1,
                 "requiresComponents": false,
                 "mediaId": mediaID,
                 "metafields": metafields
@@ -296,10 +309,14 @@ export class ShopifyProductService {
             "variants": [
               {
                 "id": variantID,
-                "options": [name],
+                "optionValues": [
+                    {
+                      "name": name,
+                      "optionName": "Custom Design"
+                    }
+                ],
                 "price": `${price}`,
                 "inventoryPolicy": "CONTINUE",
-                "position": 1,
                 "requiresComponents": false,
                 "metafields": metafields
               }
@@ -309,6 +326,7 @@ export class ShopifyProductService {
       );
       
       const responseJson = await response.json();
+
       
       // Check if update was successful and return the IDs
       if (responseJson?.data?.productVariantsBulkUpdate?.productVariants?.length > 0) {

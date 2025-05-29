@@ -37,7 +37,8 @@ import { BackBtn } from "~/components/buttons/BackBtn";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import FontService from "~/models/Font.service";
 import { configFilter } from "~/utils/config-filter";
-import { PRICING_PLANS, getPlan } from "~/utils/pricing";
+import { PRICING_PLANS } from "~/utils/pricing";
+import { getPlan } from "~/utils/pricing-server.server";
 
 
 

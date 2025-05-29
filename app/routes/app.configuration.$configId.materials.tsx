@@ -8,7 +8,8 @@ import { Material } from "~/types/ConfigDataType";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
-import { PRICING_PLANS, getPlan } from "~/utils/pricing";
+import { PRICING_PLANS } from "~/utils/pricing";
+import {  getPlan } from "~/utils/pricing-server.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin, billing } = await authenticate.admin(request);

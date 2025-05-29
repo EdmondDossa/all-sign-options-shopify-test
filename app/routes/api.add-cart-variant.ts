@@ -103,7 +103,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       )
     
       await ShopifyProductService.publish(admin, product.id)
-    
     const recapsPath = assignShopDesignPath(session.id, `recaps/${product.variants.edges[0].node.legacyResourceId}.json`)
     
     if (!updateOrCreateJsonData(recapsPath, data.option.recaps)) {
@@ -128,7 +127,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 
 export const  loader = async ({ request }: LoaderFunctionArgs) => {
-  return json({ error: "error  on getting add cart" });
+  return json({ error: "error  on getting add cart load" });
 };
 
   

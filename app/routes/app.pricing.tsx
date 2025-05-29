@@ -19,12 +19,13 @@ import { authenticate, MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_PRO_PLAN, 
 import {
   CheckIcon,XIcon
 } from '@shopify/polaris-icons';
-import { PLAN_PRICES, PRICING_PLANS, getPlan, getPlanOnly, isTest } from "~/utils/pricing";
+import { PLAN_PRICES, PRICING_PLANS } from "~/utils/pricing";
+import { getPlan, getPlanOnly, isTest } from "~/utils/pricing-server.server";
 import { jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { useId } from "react";
-import { ShopifyShopService } from "~/models/ShopifyShop.service";
+import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
 
 
 export async function loader({ request }:LoaderFunctionArgs) {
