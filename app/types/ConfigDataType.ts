@@ -75,11 +75,17 @@ export interface ConfigSize {
    isDefault?: boolean;
    enablePricingBySurface?:boolean,
    surface?:number|string;
+   shapeSize?: {
+     small: number;
+     medium: number;
+     large: number;
+   };
   }
   
  export interface ConfigTextImages {
     enableText: boolean;
     enableImage: boolean;
+    enableQrCode: boolean;
   }
   
  export interface ConfigFixingMethod {
@@ -199,3 +205,10 @@ export interface MaterialType{
 }
   
   export type Material = MaterialSimple | MaterialAdvance;
+
+export interface ConfigDiscount {
+  lots: Array<{
+    quantity: string;
+    discountPercentage: string;
+  }>;
+}

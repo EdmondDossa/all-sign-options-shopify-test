@@ -7,6 +7,7 @@ import { FixingMethodSvg } from "~/components/svgs/FixingMethodSvg";
 import { ShapeSvg } from "~/components/svgs/ShapeSvg";
 import { TextImageSvg } from "~/components/svgs/TextImageSvg";
 import { AdditinalOptionSvg } from "../svgs/AdditinalOptionSvg";
+import { DiscountProductSvg } from "~/components/svgs/DiscountProductSvg";
 
 export const Tabheader = () => {
     
@@ -38,6 +39,9 @@ export const Tabheader = () => {
             <TabItems to="text-image">
             
               <TextImageSvg /> Text/Image
+            </TabItems>
+            <TabItems to="discount-product">
+              <DiscountProductSvg /> Discount Product
             </TabItems>
             <TabItems to="additional-option">
               <AdditinalOptionSvg /> Additional components
