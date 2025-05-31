@@ -491,6 +491,7 @@ export default function ConfigSettingsGeneral() {
                               });
                             }}
                             autoComplete="off"
+                            suffix="px"
                           />
                         </Grid.Cell>
                         <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
@@ -545,6 +546,7 @@ export default function ConfigSettingsGeneral() {
                               });
                             }}
                             autoComplete="off"
+                            suffix="px"
                           />
                         </Grid.Cell>
                         <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
@@ -587,6 +589,7 @@ export default function ConfigSettingsGeneral() {
                               });
                             }}
                             autoComplete="off"
+                            suffix="px"
                           />
                         </Grid.Cell>
                         <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>

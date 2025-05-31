@@ -13,6 +13,7 @@ import {
   Form,
   redirect,
   useActionData,
+  useLoaderData,
   useNavigate,
   useNavigation,
   useOutletContext,
@@ -34,6 +35,15 @@ import MaterialDiscountService from "../models/MaterialDiscount.service";
 import { ConfigDiscount } from "~/types/ConfigDataType";
 import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+interface LotFormData {
+  quantity: number;
+  discountPercentage: number;
+}
+
+interface FormData {
+  lots: LotFormData[];
+}
 
 const formSchema = z.object({
   lots: z.any().transform(jsonTransform).pipe(z.array(z.object({
@@ -51,7 +61,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     session.id,
     mId
   );
-  return json({ discounts });
+
+  return { discounts };
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -66,99 +77,149 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   const lots = submission.value.lots;
+
   const res = await MaterialDiscountService.update(
     configId,
     session.id,
     mId,
-    { lots }
+    lots
   );
 
   return res
     ? redirect(
-        `..${flashMessage("Material discount settings updated successfully")}`
+        `${flashMessage("Material discount settings updated successfully")}`
       )
     : redirect(
-        `..${flashMessage("Failed to update material discount settings", "error")}`
+        `${flashMessage("Failed to update material discount settings", "error")}`
       );
 };
 
 export default function MaterialDiscount() {
   const submit = useSubmit();
-  const { discounts } = useOutletContext<{
-    discounts: ConfigDiscount[];
-  }>();
+  const { discounts } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
-  let isSubmitting = navigation.state == "submitting";
-  const [formData, setFormData] = useState<{ lots: Array<{ quantity: string; discountPercentage: string }> }>(
-    discounts?.[0]?.lots 
-      ? { lots: discounts[0].lots }
-      : { lots: [{ quantity: "", discountPercentage: "" }] }
-  );
+  const navigate = useNavigate();
+  
+  const isSubmitting = navigation.state === "submitting";
+
+  // Initialisation de React Hook Form
+  const { control, handleSubmit, getValues,formState: { errors } } = useForm<FormData>({
+    defaultValues: {
+      lots:discounts?.length? discounts :[{ quantity: 0, discountPercentage: 0 }]
+    }
+  });
+
+  // Gestion du tableau dynamique avec useFieldArray
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "lots"
+  });
 
   const handleAddItem = () => {
-    if (!formData.lots) {
-      formData.lots = [];
-    }
-    formData.lots.push({ quantity: "", discountPercentage: "" });
-    setFormData({ ...formData });
+    // Récupérer les valeurs actuelles du formulaire
+    const currentValues = getValues();
+    
+    // Prendre la dernière quantité et ajouter +1
+    const lastQuantity = currentValues.lots.length > 0 
+      ? currentValues.lots[currentValues.lots.length - 1].quantity || 0 
+      : 0;
+    
+    append({ 
+      quantity: (parseInt(lastQuantity+'') + 1) ,
+      discountPercentage:0 
+    });
   };
+
+
 
   const handleDeleteItem = (index: number) => {
-    if (formData.lots.length > 1) {
-      formData.lots.splice(index, 1);
-      setFormData({ ...formData });
+    if (fields.length > 1) {
+      remove(index);
     }
   };
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    submit({ lots: JSON.stringify(formData.lots) }, { method: "POST" });
+  const onSubmit = (data: FormData) => {
+    submit({ lots: JSON.stringify(data.lots) }, { method: "POST" });
   };
 
-  const navigate = useNavigate();
   const onBack = () => {
     navigate("..");
   };
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+      <SpacingBackground width="100%" height="auto" margin="16px 0px">
         <BoxBackground>
-          <Form onSubmit={handleSubmit} method="POST">
+          <Form onSubmit={handleSubmit(onSubmit)} method="POST">
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
-                {formData.lots.map((lot, index) => (
-                  <Grid.Cell key={index} columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                    <InlineStack wrap={false} as="div" gap="400" blockAlign="center">
+                {fields.map((field, index) => (
+                  <Grid.Cell key={field.id} columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <InlineStack wrap={false} as="div" gap="400" >
                       <Box width="45%">
-                        <TextField
-                          label="Quantity"
-                          value={lot.quantity}
-                          onChange={(value) => {
-                            lot.quantity = value;
-                            formData.lots[index] = lot;
-                            setFormData({ ...formData });
+                        <Controller
+                          name={`lots.${index}.quantity`}
+                          control={control}
+                          rules={{
+                            required: "La quantité est requise",
+                            pattern: {
+                              value: /^\d+$/,
+                              message: "La quantité doit être un nombre entier"
+                            }
                           }}
-                          autoComplete="off"
-                          error={getError(actionData, `lots.${index}.quantity`)}
+                          render={({ field }) => (
+                            <TextField
+                              label="Quantity"
+                              value={field.value +''}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              type="number"
+                              autoComplete="off"
+                              error={
+                                errors.lots?.[index]?.quantity?.message ||
+                                getError(actionData, `lots.${index}.quantity`)
+                              }
+                            />
+                          )}
                         />
                       </Box>
                       <Box width="45%">
-                        <TextField
-                          label="Discount Percentage"
-                          value={lot.discountPercentage}
-                          onChange={(value) => {
-                            lot.discountPercentage = value;
-                            formData.lots[index] = lot;
-                            setFormData({ ...formData });
+                        <Controller
+                          name={`lots.${index}.discountPercentage`}
+                          control={control}
+                          rules={{
+                            required: "Le pourcentage de remise est requis",
+                            pattern: {
+                              value: /^\d+(\.\d+)?$/,
+                              message: "Le pourcentage doit être un nombre valide"
+                            },
+                            min: {
+                              value: 0,
+                              message: "Le pourcentage ne peut pas être négatif"
+                            },
+                            max: {
+                              value: 100,
+                              message: "Le pourcentage ne peut pas dépasser 100%"
+                            }
                           }}
-                          autoComplete="off"
-                          error={getError(actionData, `lots.${index}.discountPercentage`)}
-                          suffix="%"
+                          render={({ field }) => (
+                            <TextField
+                              label="Discount Percentage"
+                              value={field.value + ''}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              autoComplete="off"
+                              error={
+                                errors.lots?.[index]?.discountPercentage?.message ||
+                                getError(actionData, `lots.${index}.discountPercentage`)
+                              }
+                              suffix="%"
+                            />
+                          )}
                         />
                       </Box>
-                      <Box width="5%">
+                      <Box paddingBlockStart="800" width="5%">
                         <RemoveNowIconBtn onClick={() => handleDeleteItem(index)} />
                       </Box>
                     </InlineStack>
@@ -182,4 +243,4 @@ export default function MaterialDiscount() {
       </SpacingBackground>
     </div>
   );
-} 
+}

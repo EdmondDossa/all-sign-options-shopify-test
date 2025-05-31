@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://american-bathrooms-surveillance-renewal.trycloudflare.com"
+application_url = "https://ignored-hitting-infectious-climate.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://american-bathrooms-surveillance-renewal.trycloudflare.com/auth/callback",
-  "https://american-bathrooms-surveillance-renewal.trycloudflare.com/auth/shopify/callback",
-  "https://american-bathrooms-surveillance-renewal.trycloudflare.com/api/auth/callback"
+  "https://ignored-hitting-infectious-climate.trycloudflare.com/auth/callback",
+  "https://ignored-hitting-infectious-climate.trycloudflare.com/auth/shopify/callback",
+  "https://ignored-hitting-infectious-climate.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://american-bathrooms-surveillance-renewal.trycloudflare.com"
+url = "https://ignored-hitting-infectious-climate.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

@@ -26,7 +26,7 @@ export default class MaterialDiscountService {
     configId: number,
     sessionId: string,
     materialId: number,
-    discount: any
+    discounts: any
   ): Promise<any | null> {
     try {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(
@@ -37,18 +37,18 @@ export default class MaterialDiscountService {
         return null;
       }
 
-      if (!configuration.data.materials[materialId].discounts) {
+      if (!configuration.data?.materials[materialId]) {
         configuration.data.materials[materialId].discounts = [];
       }
-
-      configuration.data.materials[materialId].discounts = [discount];
+      configuration.data.materials[materialId].discounts = discounts;
 
       configuration = await ConfigurationService.updateConfiguration(
         configuration,
         sessionId
       );
 
-      return configuration.data.materials[materialId].discounts[0];
+      return configuration.data.materials[materialId].discounts;
+
     } catch (error) {
       console.error("Error updating material discount:", error);
       return null;
