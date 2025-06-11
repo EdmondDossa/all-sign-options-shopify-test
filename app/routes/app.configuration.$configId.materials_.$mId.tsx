@@ -2,7 +2,7 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet, json, useLoaderData } from "@remix-run/react";
 import ConfigurationService from "~/models/Configuration.service";
 import { authenticate } from "~/shopify.server";
-import { getPlan } from "~/utils/pricing";
+import { getPlan } from "~/utils/pricing-server.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const {billing, session, admin } = await authenticate.admin(request);

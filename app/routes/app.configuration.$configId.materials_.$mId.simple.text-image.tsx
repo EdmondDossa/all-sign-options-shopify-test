@@ -27,7 +27,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
   const mId = parseInt(params.mId ?? "");
-  console.log("configID materialID", configId, mId);
 
   let textImages: ConfigTextImages | null = null;
 
@@ -55,6 +54,7 @@ export default function MaterialTextImage() {
       : {
           enableText: true,
           enableImage: false,
+          enableQrCode:false,
         },
   );
 
@@ -62,6 +62,8 @@ export default function MaterialTextImage() {
     setFormData({ ...formData, enableText: value });
   const handleEnableImages = (value: boolean) =>
     setFormData({ ...formData, enableImage: value });
+  const handleEnableQrCode = (value: boolean) =>
+    setFormData({ ...formData, enableQrCode: value });
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -98,6 +100,17 @@ export default function MaterialTextImage() {
                     />
                   </InlineStack>
                 </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 4, xl: 4 }}>
+                  <InlineStack blockAlign="center" gap="200">
+                    <Text as="strong" variant="headingMd">
+                      Enable QR Code
+                    </Text>
+                    <ReactSwitchCustom
+                      checked={formData.enableQrCode}
+                      setChecked={handleEnableQrCode}
+                    />
+                  </InlineStack>
+                </Grid.Cell>
               </Grid>
             </Box>
             <Divider borderWidth="050" />
@@ -116,6 +129,7 @@ export default function MaterialTextImage() {
 const formSchema = z.object({
   enableText: z.any().transform(booleanTransform),
   enableImage: z.any().transform(booleanTransform),
+  enableQrCode: z.any().transform(booleanTransform),
 });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

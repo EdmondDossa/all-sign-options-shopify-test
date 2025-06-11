@@ -606,7 +606,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -960,6 +961,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/im_acrylic_sign.webp",
           name: "Acrylic",
+          discounts:[],
           type: "simple",
           popImg: "",
           description: "",
@@ -2024,6 +2026,7 @@ export const configurationDemoData: ConfigurationType[] = [
           ],
           icon: "/aso_default_files/im_brass_sign.webp",
           name: "Brass",
+          discounts:[],
           type: "advance",
           popImg: "",
           description: "",
@@ -2664,7 +2667,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -3122,6 +3126,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/im_acrylic_sign.webp",
           name: "Aluminium",
+          discounts:[],
           type: "simple",
           popImg: "",
           description: "",
@@ -3746,7 +3751,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -4182,6 +4188,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/aluminium.png",
           name: "Aluminium",
+          discounts:[],
           type: "simple",
           popImg: "",
           description:
@@ -4413,7 +4420,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -4788,6 +4796,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/aluminium.png",
           name: "Plastic",
+          discounts:[],
           type: "simple",
           popImg: "",
           description: "Foam PVC Forex). Light, flexible material.",
@@ -5007,7 +5016,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -5382,6 +5392,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/aluminium.png",
           name: "Eco board",
+          discounts:[],
           type: "simple",
           popImg: "",
           description:
@@ -5908,7 +5919,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -6333,6 +6345,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/engraving.svg",
           name: "Engraving",
+          discounts:[],
           type: "simple",
           popImg: "",
           description:
@@ -6487,7 +6500,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -6895,6 +6909,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/form_pvc.svg",
           name: "Foam PVC",
+          discounts:[],
           type: "simple",
           popImg: "",
           description: "Text and image are manufatured with a UV-printer",
@@ -7321,7 +7336,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -7633,6 +7649,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/standard.svg",
           name: "Standard",
+          discounts:[],
           type: "simple",
           popImg: "",
           description:
@@ -7688,7 +7705,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -7994,6 +8012,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/eco.svg",
           name: "ECO",
+          discounts:[],
           type: "simple",
           popImg: "",
           description:
@@ -8590,6 +8609,7 @@ export const configurationDemoData: ConfigurationType[] = [
           ],
           icon: "/aso_default_files/im_stainlessSteel_sign.webp",
           name: "Stainless steel",
+          discounts:[],
           type: "advance",
           popImg: "",
           description: "",
@@ -9203,7 +9223,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -9444,6 +9465,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/wood_birch (1).png",
           name: "Birch",
+          discounts:[],
           type: "simple",
           popImg: "",
           description: "Birch",
@@ -9685,7 +9707,8 @@ export const configurationDemoData: ConfigurationType[] = [
                     surface:0,
                     charPrice:0
                   },
-                  range:[]
+                  range:[],
+                  rangePricingPerUnit:false
                 },
               },
             },
@@ -9926,6 +9949,7 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           icon: "/aso_default_files/wood_birch (1).png",
           name: "Oak",
+          discounts:[],
           type: "simple",
           popImg: "",
           description: "Oak",

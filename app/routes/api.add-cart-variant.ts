@@ -50,7 +50,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           option: any;
       };
   
-      let optionName =  `${data.option.recaps.material?.label} ${data.option.recaps.material?.value}, `
+      let optionName =  `Quantity: ${data.option.recaps.quantity} | ${data.option.recaps.material?.label} ${data.option.recaps.material?.value}, `
       let size = data.option.recaps.sign?.size
       optionName += `${size?.value?.width?.label} ${size?.value?.width.value}, `
       optionName += `${size?.value?.height?.label} ${size?.value?.height.value}, `
@@ -103,7 +103,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       )
     
       await ShopifyProductService.publish(admin, product.id)
-    
     const recapsPath = assignShopDesignPath(session.id, `recaps/${product.variants.edges[0].node.legacyResourceId}.json`)
     
     if (!updateOrCreateJsonData(recapsPath, data.option.recaps)) {
@@ -112,6 +111,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
       const variant = await ShopifyProductService.updateVariant(
             admin,
+            product.id,
             product.variants.edges[0].node.id,
             optionName,
             data.price,
@@ -127,7 +127,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 
 export const  loader = async ({ request }: LoaderFunctionArgs) => {
-  return json({ error: "error  on getting add cart" });
+  return json({ error: "error  on getting add cart load" });
 };
 
   

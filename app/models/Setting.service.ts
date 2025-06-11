@@ -114,6 +114,11 @@ const data = (shop: string) => {
         icon:url + "/assets/images/shapes/ic_shape_rounded_sides.svg",
         value: "rounded-sides",
       },
+      {
+        name: "Cut To Shape",
+        icon:url + "/assets/images/shapes/ic_shape_cut_to_shape.svg",
+        value: "cut-to-shape",
+      },
     ],
 
     fixingMethods: [

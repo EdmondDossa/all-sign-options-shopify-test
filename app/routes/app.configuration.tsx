@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, authenticate } from "~/shopify.server";
-import { getPlan, subscriptionRequired } from "~/utils/pricing";
+import { getPlan, subscriptionRequired } from "~/utils/pricing-server.server";
 
 
 

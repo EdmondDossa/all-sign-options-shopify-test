@@ -61,7 +61,7 @@ function App() {
          { variantRecaps?.map((variantRecap:any) => <Box paddingBlockEnd="base">
            <InlineStack inlineAlignment="start" blockAlignment="center" gap="base" >
                 <Heading size={5} > {variantRecap.line_item?.title}   </Heading>
-                <Heading  size={3} > x {variantRecap.line_item?.quantity}   </Heading>
+                <Heading  size={3} > x {variantRecap.recaps.quantity}   </Heading>
               </InlineStack>
             <Box >
    

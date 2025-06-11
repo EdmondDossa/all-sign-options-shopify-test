@@ -1,7 +1,7 @@
 import AdmZip from "adm-zip";
 import { sendRecapMail } from "~/email";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
-import { ShopifyShopService } from "~/models/ShopifyShop.service";
+import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
 import { calculateImagePlacement, fileBuffer, generateUniqueId, getExtensionFromBase64, uploadBufferWithName } from "~/utils/uploadBase64";
 import { jsPDF } from "jspdf";
 import { assignShopDesignPath } from "~/utils/fileUrl";
@@ -165,6 +165,7 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                 
                 ShopifyProductService.updateVariantRecap(
                   admin,
+                  `gid://shopify/Product/${variantMetaData.line_item.product_id}`,
                   `gid://shopify/ProductVariant/${variantMetaData.line_item.variant_id}`,
                   `${variantMetaData.id}`, 
                   JSON.stringify({recapsPath:recapsPath})
@@ -174,7 +175,7 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
 
             }
 
-            const shop = await ShopifyShopService.getShop(admin,session)
+            const shop = await ShopifyShopService.getShop(admin)
             
             const output = await SettingOutputService.get(session.id);         
             if (shop?.email && output.enableSendMailToAdmin) {

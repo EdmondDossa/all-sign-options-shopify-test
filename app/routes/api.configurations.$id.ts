@@ -1,10 +1,11 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import ConfigurationService from "~/models/Configuration.service";
 import { authenticate } from "~/shopify.server";
-import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
+import { PRICING_PLANS } from "~/utils/pricing";
+import {  getPlanProxy, getPlanProxyPublic } from "~/utils/pricing-server.server";
 import prisma from "~/db.server";
 import { configFilter } from "~/utils/config-filter";
-import { replaceDomainUrl } from "~/utils/fileUrl";
+import { replaceDomainUrl } from "~/utils/fileUrlServer.server";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {

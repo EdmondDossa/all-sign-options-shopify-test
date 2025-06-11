@@ -8,6 +8,7 @@ import {
   Select,
   Text,
   TextField,
+  InlineError,
 } from "@shopify/polaris";
 import { useState } from "react";
 import {
@@ -38,6 +39,11 @@ import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { jsonTransform } from "~/utils/transfomerZod";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 
+interface FormDataType {
+  configShapes: ConfigShape[];
+  error?: string;
+}
+
 export default function MaterialFixingMethod() {
   const submit = useSubmit();
   const navigation = useNavigation();
@@ -63,7 +69,7 @@ export default function MaterialFixingMethod() {
         )
     : [];
 
-  const [formData, setFormData] = useState<{ configShapes: ConfigShape[] }>(
+  const [formData, setFormData] = useState<FormDataType>(
     configShape
       ? {
           configShapes: [configShape as ConfigShape],
@@ -74,8 +80,13 @@ export default function MaterialFixingMethod() {
               shapeId: parseInt(options[0]?.value),
               additionalPrice: 0,
               isDefault: false,
-              enablePricingBySurface:false,
-              surface:0
+              enablePricingBySurface: false,
+              surface: 0,
+              shapeSize: {
+                small: 0,
+                medium: 0,
+                large: 0
+              }
             },
           ],
         },
@@ -98,7 +109,12 @@ export default function MaterialFixingMethod() {
         additionalPrice: 0,
         isDefault: false,
         enablePricingBySurface: false,
-        surface:0
+        surface: 0,
+        shapeSize: {
+          small: 20,
+          medium: 40,
+          large: 60
+        }
       });
     }
 
@@ -114,6 +130,25 @@ export default function MaterialFixingMethod() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    
+    // Validate shape sizes before submitting
+    const hasInvalidSizes = formData.configShapes.some(shape => {
+      if (shape.shapeSize) {
+        return !(shape.shapeSize.small < shape.shapeSize.medium && shape.shapeSize.medium < shape.shapeSize.large);
+      }
+      return false;
+    });
+
+    if (hasInvalidSizes) {
+      // Show error message
+      const errorMessage = "Error: Small < Medium < Large is not found";
+      setFormData(prev => ({
+        ...prev,
+        error: errorMessage
+      }));
+      return;
+    }
+
     submit(
       { configShapes: JSON.stringify(formData.configShapes) },
       { method: "POST" },
@@ -140,7 +175,7 @@ export default function MaterialFixingMethod() {
                     columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
                   >
                     <InlineStack wrap={false} as="div" gap="400">
-                      <Box width={currConfigShape.enablePricingBySurface?"25%" : "40%" }>
+                      <Box width={currConfigShape.enablePricingBySurface ? "25%" : "40%"}>
                         <Select
                           label="Select shapes"
                           options={options}
@@ -156,7 +191,7 @@ export default function MaterialFixingMethod() {
                           )}
                         />
                       </Box>
-                      <Box width={currConfigShape.enablePricingBySurface?"25%" : "40%" }>
+                      <Box width={currConfigShape.enablePricingBySurface ? "25%" : "40%"}>
                         <TextField
                           label="Additional price"
                           type="number"
@@ -166,7 +201,6 @@ export default function MaterialFixingMethod() {
                             formData.configShapes[index] = currConfigShape;
                             setFormData({ ...formData });
                           }}
-
                           onBlur={(value) => {
                             currConfigShape.additionalPrice = parseFloat(`${currConfigShape.additionalPrice}`);
                             formData.configShapes[index] = currConfigShape;
@@ -179,29 +213,30 @@ export default function MaterialFixingMethod() {
                           )}
                         />
                       </Box>
-                    { currConfigShape.enablePricingBySurface && <Box width={currConfigShape.enablePricingBySurface?"25%" : "40%" }>
-                        <TextField
-                          label="Surface for  this price"
-                          type="number"
-                          value={`${currConfigShape.surface}`}
-                          onChange={(value) => {
-                            currConfigShape.surface = value;
-                            formData.configShapes[index] = currConfigShape;
-                            setFormData({ ...formData });
-                          }}
-
-                          onBlur={(value) => {
-                            currConfigShape.surface = parseFloat(`${currConfigShape.surface}`);
-                            formData.configShapes[index] = currConfigShape;
-                            setFormData({ ...formData });
-                          }}
-                          autoComplete="off"
-                          error={getError(
-                            actionData,
-                            `configShapes.${index}.surface`,
-                          )}
-                        />
-                      </Box>}
+                      {currConfigShape.enablePricingBySurface && (
+                        <Box width={currConfigShape.enablePricingBySurface ? "25%" : "40%"}>
+                          <TextField
+                            label="Surface for  this price"
+                            type="number"
+                            value={`${currConfigShape.surface}`}
+                            onChange={(value) => {
+                              currConfigShape.surface = value;
+                              formData.configShapes[index] = currConfigShape;
+                              setFormData({ ...formData });
+                            }}
+                            onBlur={(value) => {
+                              currConfigShape.surface = parseFloat(`${currConfigShape.surface}`);
+                              formData.configShapes[index] = currConfigShape;
+                              setFormData({ ...formData });
+                            }}
+                            autoComplete="off"
+                            error={getError(
+                              actionData,
+                              `configShapes.${index}.surface`,
+                            )}
+                          />
+                        </Box>
+                      )}
                       <Box width="18%">
                         <BlockStack gap="200">
                           <Text as="span">
@@ -229,6 +264,68 @@ export default function MaterialFixingMethod() {
                         </Bleed>
                       </Box>
                     </InlineStack>
+                    {/* Add shapeSize fields when Cut to Shape is selected */}
+                    {manageShapes[currConfigShape.shapeId]?.value === "cut-to-shape" && (
+                      <Box paddingBlockStart="400">
+                        <BlockStack gap="400">
+                          <Grid gap={{ lg: "20px" }}>
+                            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                              <TextField
+                                label="Shape Size Small (px)"
+                                type="number"
+                                value={`${currConfigShape.shapeSize?.small || 0}`}
+                                onChange={(value) => {
+                                  if (!currConfigShape.shapeSize) {
+                                    currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
+                                  }
+                                  currConfigShape.shapeSize.small = parseFloat(value);
+                                  formData.configShapes[index] = currConfigShape;
+                                  setFormData({ ...formData });
+                                }}
+                                autoComplete="off"
+                              />
+                            </Grid.Cell>
+                            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                              <TextField
+                                label="Shape Size Medium (px)"
+                                type="number"
+                                value={`${currConfigShape.shapeSize?.medium || 0}`}
+                                onChange={(value) => {
+                                  if (!currConfigShape.shapeSize) {
+                                    currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
+                                  }
+                                  currConfigShape.shapeSize.medium = parseFloat(value);
+                                  formData.configShapes[index] = currConfigShape;
+                                  setFormData({ ...formData });
+                                }}
+                                autoComplete="off"
+                              />
+                            </Grid.Cell>
+                            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                              <TextField
+                                label="Shape Size Large (px)"
+                                type="number"
+                                value={`${currConfigShape.shapeSize?.large || 0}`}
+                                onChange={(value) => {
+                                  if (!currConfigShape.shapeSize) {
+                                    currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
+                                  }
+                                  currConfigShape.shapeSize.large = parseFloat(value);
+                                  formData.configShapes[index] = currConfigShape;
+                                  setFormData({ ...formData });
+                                }}
+                                autoComplete="off"
+                              />
+                            </Grid.Cell>
+                          </Grid>
+                          {formData.error && (
+                            <Box paddingBlockStart="200">
+                              <InlineError message={formData.error} fieldID="shapeSizeError" />
+                            </Box>
+                          )}
+                        </BlockStack>
+                      </Box>
+                    )}
                   </Grid.Cell>
                 ))}
                 {Number.isNaN(id) &&
@@ -290,6 +387,17 @@ const formSchema = z.object({
           surface: z.number({
             required_error: "Material shape price is required",
           }).optional(),
+          shapeSize: z.object({
+            small: z.number(),
+            medium: z.number(),
+            large: z.number()
+          }).refine(
+            (data) => data.small < data.medium && data.medium < data.large,
+            {
+              message: "Error: Small < Medium < Large is not found",
+              path: ["shapeSize"]
+            }
+          ).optional()
         })
         .array(),
     ),

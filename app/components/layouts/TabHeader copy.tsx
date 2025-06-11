@@ -11,8 +11,8 @@ import { AdditinalOptionSvg } from "../svgs/AdditinalOptionSvg";
 export const Tabheader = () => {
     
     return (
-        <Box paddingInline="300" background="bg-surface">
-          <InlineStack gap="100" align="center">
+        <Box paddingInline="050" background="bg-surface">
+          <InlineStack gap="050" align="center">
             <TabItems to="/app/configuration/materiels/size">
               {" "}
               <SizeSvg /> Size
@@ -60,7 +60,7 @@ export const TabItems = ({
         to={to}
       >
         <BlockStack align="center">
-          <InlineStack align="center" gap="200">
+          <InlineStack align="center" gap="050">
             {children}
           </InlineStack>
         </BlockStack>

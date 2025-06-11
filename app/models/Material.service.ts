@@ -85,6 +85,7 @@ export default class MaterialService {
   ): Promise<Material[] | null> {
     if (material.type == "simple") {
       material.data = initialDataSimple;
+      material.discounts = [];
     }
 
     try {
@@ -131,6 +132,9 @@ export default class MaterialService {
         Array.isArray(materials) &&
         materials[id]["type"] == material["type"]
       ) {
+        if (!material.discounts) {
+          material.discounts = [];
+        }
         material["data"] = materials[id]["data"];
         materials[id] = material;
         configuration["data"]["materials"] = materials;
