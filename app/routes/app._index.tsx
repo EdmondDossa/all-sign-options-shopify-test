@@ -17,21 +17,21 @@ import ConfigurationBlackIcon from "~/components/icons/ConfigurationBlackIcon";
 
 import SupportAgentIcon from "~/components/icons/SupportAgentIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { ShopifyShopService } from "~/models/ShopifyShop.service";
+import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
 import { authenticate } from "~/shopify.server";
 import {
   AlertCircleIcon
 } from '@shopify/polaris-icons';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { admin } = await authenticate.admin(request);
   let templateUrl = "";
   let configurationUrl = "";
   try {
-    const shop = await ShopifyShopService.getShop(admin, session);
+    const shop = await ShopifyShopService.getShop(admin);
     
-    templateUrl = `https://${shop.myshopify_domain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-option-template"}&target=newAppsSection`;
-      configurationUrl = `https://${shop.myshopify_domain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-options"}&target=newAppsSection`;
+    templateUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-option-template"}&target=newAppsSection`;
+      configurationUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-options"}&target=newAppsSection`;
   } catch (error) {
     console.log('error getting shop  domain', error )
   }

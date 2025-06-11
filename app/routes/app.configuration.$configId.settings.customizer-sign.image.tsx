@@ -10,6 +10,7 @@ import {
   Grid,
   InlineError,
   InlineStack,
+  Select,
   Text,
   TextField,
 } from "@shopify/polaris";
@@ -60,6 +61,19 @@ const formSchema = z.object({
     uploadMaxWidth:z.number(),
     allowedUploadsExtentions:z.string().array()
   })),
+  selectedCutline:z.string(), 
+  cutlines: z.any().transform(jsonTransform).pipe(z.object({
+    first: z.object({
+      borderSize: z.number(),
+      color: z.string()
+    }),
+    second: z.object({
+      color: z.string(),
+      size: z.number(),
+      borderColor: z.string(),
+      borderSize: z.number()
+    })
+  })),
   enableClipart:z.any().transform(jsonTransform).pipe(z.object({
     active:z.boolean(),
     selectClipartGroups:z.number().array(),
@@ -72,6 +86,10 @@ const formSchema = z.object({
     enableBlur:z.boolean(),
     enableSepia:z.boolean(),
     enableSharpen:z.boolean(),
+    enableGreenify:z.boolean(),
+    enablePinkify:z.boolean(),
+    enableOrangeify:z.boolean(),
+    enableBlueify:z.boolean(),
   })),
   scenes: z.any().transform(jsonTransform).pipe(z.string().array()),
 });
@@ -103,7 +121,6 @@ export default function ConfigSettingsGeneral() {
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
 
-  console.log("setting data :", settingData);
 
   const [formData, setFormData] = useState<any>(
     {
@@ -119,6 +136,19 @@ export default function ConfigSettingsGeneral() {
          "uploadMaxWidth":100,
          "allowedUploadsExtentions":["png"]
       },
+      selectedCutline:'none',
+      "cutlines": {
+        first: {
+          borderSize: 4,
+          color: '#FFF10E'
+        },
+        second: {
+          color: '#5EEC92',
+          size: 10,
+          borderColor: '#4A65F9',
+          borderSize: 4
+        }
+      },
       "enableClipart":{
          "active":true,
          "selectClipartGroups":[
@@ -132,10 +162,14 @@ export default function ConfigSettingsGeneral() {
          "enableEmbross":true,
          "enableBlur":true,
          "enableSepia":true,
-         "enableSharpen":true
+         "enableSharpen":true,
+         "enableGreenify":false,
+         "enablePinkify":false,
+         "enableOrangeify":false,
+         "enableBlueify":false
       },
       "scenes": [],
-      ...((settingData?.scenes) ? settingData : {})
+      ...((settingData?.cutlines) ? settingData : {})
     },
   );
 
@@ -146,6 +180,8 @@ export default function ConfigSettingsGeneral() {
     }));
   };
 
+  const cutlines = ['none', '1x', '2x'];
+
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -153,6 +189,7 @@ export default function ConfigSettingsGeneral() {
       ...formData,
       colors: JSON.stringify(formData.colors),
       fileUploadScript: JSON.stringify(formData.fileUploadScript),
+      cutlines: JSON.stringify(formData.cutlines),
       enableClipart: JSON.stringify(formData.enableClipart),
       filter: JSON.stringify(formData.filter),
       scenes: JSON.stringify(formData.scenes)
@@ -284,7 +321,7 @@ export default function ConfigSettingsGeneral() {
                             >
                               <TextColorField
                                 color={color.codeHex}
-                                setColor={(value: any) => {
+                                setColor={(value: string) => {
                                   color.codeHex = value;
                                   formData.colors[index] = color;
                                   setFormData({ ...formData });
@@ -431,6 +468,129 @@ export default function ConfigSettingsGeneral() {
               
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <Text as="h3" variant="bodyMd" fontWeight="bold">
+                      Cutlines Settings
+                    </Text>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <Select
+                        label="Cutline Type"
+                        options={cutlines}
+                        onChange={(value) =>
+                          handleInputChange("selectedCutline", value)
+                        }
+                        value={formData.selectedCutline}
+                        error={getError(actionData, "selectedCutline")}
+                          />
+                  </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                <BlockStack gap="300">
+                    <BlockStack gap="400">
+                      <Text as="h5" variant="bodyMd" fontWeight="bold">
+                        First Cutline
+                      </Text>
+                      <Grid gap={{ lg: "30px" }}>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                          <TextField
+                            label="Border Size (for print ready file)"
+                            type="number"
+                            value={formData.cutlines.first.borderSize.toString()}
+                            onChange={(value) => {
+                              formData.cutlines.first.borderSize = value;
+                              handleInputChange("cutlines", formData.cutlines );
+                            }}
+                            autoComplete="off"
+                            suffix="px"
+                          />
+                        </Grid.Cell>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                          <BlockStack gap="100">
+                            <Text as="strong" variant="bodyMd">
+                              Color
+                            </Text>
+                            <TextColorField
+                              color={formData.cutlines.first.color}
+                              setColor={(value: string) => {
+                                
+                                formData.cutlines.first.color  = value;
+                                handleInputChange("cutlines", formData.cutlines )
+                                
+                              }}
+                            />
+                          </BlockStack>
+                        </Grid.Cell>
+                      </Grid>
+                    </BlockStack>
+                  </BlockStack>
+                </Grid.Cell>
+
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <BlockStack gap="300">
+                    <BlockStack gap="400">
+                      <Text as="h5" variant="bodyMd" fontWeight="bold">
+                        Second Cutline
+                      </Text>
+                      <Grid gap={{ lg: "30px" }}>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                          <TextField
+                            label="Size between Two Cutlines border"
+                            type="number"
+                            value={formData.cutlines.second.size.toString()}
+                            onChange={(value) => {
+                              formData.cutlines.second.size  = value;
+                              handleInputChange("cutlines", formData.cutlines )
+                            }}
+                            autoComplete="off"
+                            suffix="px"
+                          />
+                        </Grid.Cell>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                          <BlockStack gap="100">
+                            <Text as="strong" variant="bodyMd">
+                              Color
+                            </Text>
+                            <TextColorField
+                              color={formData.cutlines.second.color}
+                              setColor={(value: string) => {
+                                formData.cutlines.second.color = value;
+                                handleInputChange("cutlines", formData.cutlines )
+                              }}
+                            />
+                          </BlockStack>
+                        </Grid.Cell>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                          <TextField
+                            label="Border Size (for print ready file)"
+                            type="number"
+                            value={formData.cutlines.second.borderSize.toString()}
+                            onChange={(value) => {
+                              formData.cutlines.second.borderSize = value;
+                              handleInputChange("cutlines", formData.cutlines )
+                            }}
+                            autoComplete="off"
+                            suffix="px"
+                          />
+                        </Grid.Cell>
+                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                          <BlockStack gap="100">
+                            <Text as="strong" variant="bodyMd">
+                              Border Color
+                            </Text>
+                            <TextColorField
+                              color={formData.cutlines.second.borderColor}
+                              setColor={(value: string) => {
+                                formData.cutlines.second.borderColor = value;
+                                handleInputChange("cutlines", formData.cutlines )
+                              }}
+                            />
+                          </BlockStack>
+                        </Grid.Cell>
+                      </Grid>
+                    </BlockStack>
+                  </BlockStack>
+                </Grid.Cell>
+
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <BlockStack gap="400">
                 <InlineStack gap="300" blockAlign="center">
                       <Text as="strong" fontWeight="bold" variant="bodyMd">Filter</Text>
@@ -444,6 +604,26 @@ export default function ConfigSettingsGeneral() {
                       status={formData.filter.enableGreyscale}
                       toggleStatus={(value) => {
                         formData.filter.enableGreyscale = value
+                      handleInputChange("filter", formData.filter )
+                      }}><WaterOpacitySvg />  </ActivatabaleItem>
+                      <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Greenify" status={formData.filter.enableGreenify}
+                      toggleStatus={(value) => {
+                        formData.filter.enableGreenify = value
+                      handleInputChange("filter", formData.filter )
+                      }}><WaterOpacitySvg />  </ActivatabaleItem>
+                    <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Pinkify" status={formData.filter.enablePinkify}
+                      toggleStatus={(value) => {
+                        formData.filter.enablePinkify = value
+                      handleInputChange("filter", formData.filter )
+                      }}><WaterOpacitySvg />  </ActivatabaleItem>
+                    <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Orangeify" status={formData.filter.enableOrangeify}
+                      toggleStatus={(value) => {
+                        formData.filter.enableOrangeify = value
+                      handleInputChange("filter", formData.filter )
+                      }}><WaterOpacitySvg />  </ActivatabaleItem>
+                    <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Blueify" status={formData.filter.enableBlueify}
+                      toggleStatus={(value) => {
+                        formData.filter.enableBlueify = value
                       handleInputChange("filter", formData.filter )
                       }}><WaterOpacitySvg />  </ActivatabaleItem>
                     <ActivatabaleItem fillIcon={true}  noTrokeIcon={true} title="Opacity" status={formData.filter.enableOpacity}

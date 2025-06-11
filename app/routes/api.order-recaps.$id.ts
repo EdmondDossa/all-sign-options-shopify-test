@@ -8,7 +8,7 @@ export const loader = async ({ request, params }:LoaderFunctionArgs) => {
     const { admin, session, cors } = await authenticate.admin(request);
    
   
-    const  order =  await ShopifyOrderService.getOrder(admin, session, parseInt( params.id||"0") );
+    const  order =  await ShopifyOrderService.getOrder(admin, parseInt( params.id||"0") );
   
     const variantsData:any =  []
     if (order) {

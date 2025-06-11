@@ -8,7 +8,7 @@ import {
 } from "@shopify/polaris";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { authenticate } from "~/shopify.server";
-import { subscriptionRequired } from "~/utils/pricing";
+import { subscriptionRequired } from "~/utils/pricing-server.server";
 
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

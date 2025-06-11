@@ -4,7 +4,6 @@ export const booleanTransform = (value: any) => {
 };
   
 export const jsonTransform = (value: any) => {
-    console.log("Type of value:", typeof value); // Log the type of the value
 
     try {
         return typeof value === "string" ? JSON.parse(value) : value;

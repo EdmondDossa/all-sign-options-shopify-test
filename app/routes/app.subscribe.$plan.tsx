@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { MONTHLY_PRO_PLAN, MONTHLY_STARTER_PLAN, YEARLY_PRO_PLAN, YEARLY_STARTER_PLAN, authenticate } from "~/shopify.server";
-import { isTest } from "~/utils/pricing";
+import { isTest } from "~/utils/pricing-server.server";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {

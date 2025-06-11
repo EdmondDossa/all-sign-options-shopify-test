@@ -2,7 +2,8 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import SettingShapesService from "~/models/SettingShapes.service";
 import TemplateService from "~/models/Template.service";
 import { authenticate } from "~/shopify.server";
-import { PRICING_PLANS, getPlanProxy } from "~/utils/pricing";
+import { PRICING_PLANS } from "~/utils/pricing";
+import {  getPlanProxy } from "~/utils/pricing-server.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const { admin, session } = await authenticate.public.appProxy(request);

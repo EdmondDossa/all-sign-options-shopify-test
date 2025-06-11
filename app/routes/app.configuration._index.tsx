@@ -37,11 +37,13 @@ import { fileUrl } from "~/utils/fileUrl";
 import { DuplicateIconBtn } from "~/components/buttons/DuplicateIconBtn";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { PRICING_PLANS } from "~/utils/pricing";
+// import {LATEST_API_VERSION} from "@shopify/shopify-app-remix/server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
 
   const configurations = await ConfigurationService.getConfigurations(session.id);
+  // console.log("log log", LATEST_API_VERSION);
 
   return json({ configurations });
 };

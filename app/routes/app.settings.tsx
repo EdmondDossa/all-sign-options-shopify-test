@@ -15,7 +15,7 @@ import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { OutputSvg } from "~/components/svgs/OutputSvg";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import { getPlan, subscriptionRequired } from "~/utils/pricing";
+import { getPlan, subscriptionRequired } from "~/utils/pricing-server.server";
 
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

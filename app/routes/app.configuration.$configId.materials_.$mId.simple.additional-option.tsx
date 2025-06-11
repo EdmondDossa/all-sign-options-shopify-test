@@ -3,7 +3,7 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
 import { authenticate } from "~/shopify.server";
 import { ConfigAdditionalOption } from "~/types/ConfigDataType";
-import { proSubscriptionRequired } from "~/utils/pricing";
+import { proSubscriptionRequired } from "~/utils/pricing-server.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin, billing } = await authenticate.admin(request);

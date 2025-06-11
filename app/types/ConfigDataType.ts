@@ -15,6 +15,7 @@ import { number } from 'zod';
     };
    pricings: {
      type: "unit"|"range";
+     rangePricingPerUnit?:boolean;
      range:  Array<{
         basePrice: number | string;
         surface: number | string;
@@ -75,11 +76,17 @@ export interface ConfigSize {
    isDefault?: boolean;
    enablePricingBySurface?:boolean,
    surface?:number|string;
+   shapeSize?: {
+     small: number;
+     medium: number;
+     large: number;
+   };
   }
   
  export interface ConfigTextImages {
     enableText: boolean;
     enableImage: boolean;
+    enableQrCode: boolean;
   }
   
  export interface ConfigFixingMethod {
@@ -132,6 +139,10 @@ export interface ConfigColor {
     description: string;
     icon: string;
     popImg: string;
+    discounts?:any|Array<{
+      quantity: any ,
+      discountPercentage:any
+    }>;
     type: 'advance'|"simple";
     data?: {
       sizes: {
@@ -187,6 +198,10 @@ export interface MaterialAdvanceComponentType{
     icon: string;
     popImg: string;
     type: 'advance'|"simple";
+    discounts?:any|Array<{
+      quantity: any ,
+      discountPercentage:any
+    }>;
     data?: MaterialAdvanceComponentType[] | any;
  }
   
@@ -195,7 +210,18 @@ export interface MaterialType{
   description: string;
   icon: string;
   popImg: string;
+  discounts?:any|Array<{
+    quantity: any ,
+    discountPercentage:any
+  }>;
   type: 'advance'|"simple";
 }
   
   export type Material = MaterialSimple | MaterialAdvance;
+
+export interface ConfigDiscount {
+  lots: Array<{
+    quantity: string;
+    discountPercentage: string;
+  }>;
+}

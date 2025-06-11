@@ -11,7 +11,7 @@ import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { SubTabItem } from "~/components/layouts/SubTabItem";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import { proSubscriptionRequired } from "~/utils/pricing";
+import { proSubscriptionRequired } from "~/utils/pricing-server.server";
 
 
 

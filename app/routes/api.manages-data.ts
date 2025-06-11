@@ -6,9 +6,10 @@ import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
 import SettingOutputService from "~/models/SettingOutput.service";
 import SettingShapesService from "~/models/SettingShapes.service";
 import { authenticate } from "~/shopify.server";
-import { PRICING_PLANS, getPlanProxy, getPlanProxyPublic } from "~/utils/pricing";
+import { PRICING_PLANS } from "~/utils/pricing";
+import {getPlanProxy, getPlanProxyPublic} from "~/utils/pricing-server.server";
 import prisma from "~/db.server";
-import { replaceDomainUrl } from "~/utils/fileUrl";
+import { replaceDomainUrl } from "~/utils/fileUrlServer.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;

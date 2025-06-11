@@ -1,50 +1,32 @@
 import type { HeadersFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useMatches, useNavigate, useRouteError } from "@remix-run/react";
-import polarisStyles from "@shopify/polaris/build/esm/styles.css";
+import '@shopify/polaris/build/esm/styles.css';
 import { boundary } from "@shopify/shopify-app-remix/server";
 import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { authenticate } from "../../shopify.server";
-import shopify from "../../shopify.server"
-import prisma from "~/db.server";
 import Sidebar from "~/components/layouts/Sidebar";
-import appStyle from './app.css';
+import './app.css';
 import { useGlobalPendingState } from "remix-utils/use-global-navigation-state";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useEffect, useState } from "react";
-import SettingService from "~/models/Setting.service";
-import { config } from "process";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
-import SessionService from "~/models/Session.service";
 import { version } from "package.json";
-import { ShopifyShopService } from "~/models/ShopifyShop.service";
+import { handleSession } from "~/utils/handle-session.server";
 
-export const links = () => [{ rel: "stylesheet", href: polarisStyles }, { rel: "stylesheet", href: appStyle }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session , admin}: any = await authenticate.admin(request);
 
-  handleSession(session).then(async () => {
-     console.log("session init");
-  });
+  handleSession(session).then().catch();
+
 
   
-  return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
+  return json({ apiKey: process.env.SHOPIFY_API_KEY || "" , });
 };
 
 
-async function handleSession(session:any) {
-  try {
-    await shopify.registerWebhooks({ session });
-    const sessionObject = await SessionService.get(session.id);
-    if (!sessionObject?.isInitialized) {
-      await SettingService.addSetting(session.id, session.shop);
-      await SessionService.init(session.id);
-    }
-  } catch (error) {
-    console.error('Error handling session:', error);
-  }
-}
+
 
 export default function App() {
   const { apiKey } = useLoaderData<typeof loader>();

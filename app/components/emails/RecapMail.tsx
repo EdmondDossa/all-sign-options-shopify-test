@@ -38,7 +38,7 @@ import {
             />))}
             <div style={optionDiv}>
               <Text style={bold}>{variantRecap.line_item?.title}</Text>
-              <Text style={paragraph}>x {variantRecap.line_item?.quantity}   </Text>
+              <Text style={paragraph}>x {variantRecap.recaps.quantity}   </Text>
             </div>
             <div style={optionDiv}>
               <Text style={bold}>{variantRecap.recaps.material?.label} : </Text>

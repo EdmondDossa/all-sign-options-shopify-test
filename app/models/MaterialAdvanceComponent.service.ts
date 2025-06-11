@@ -27,6 +27,7 @@ export default class MaterialAdvanceComponentService {
     try {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let materialComponents = configuration["data"]["materials"][materialId]["data"];
+      materialComponent.options = [];
       if (Array.isArray(materialComponents)) {
           configuration["data"]["materials"][materialId]["data"]=[...materialComponents, materialComponent]
               
