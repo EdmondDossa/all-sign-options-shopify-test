@@ -19571,7 +19571,7 @@
           "  "
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(BlockStack2, { children: variantRecaps == null ? void 0 : variantRecaps.map((variantRecap) => {
-          var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za, __a, _$a, _ab, _bb, _cb, _db, _eb, _fb, _gb, _hb, _ib, _jb, _kb, _lb, _mb, _nb, _ob, _pb, _qb, _rb, _sb, _tb, _ub, _vb, _wb, _xb;
+          var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za, __a, _$a, _ab, _bb, _cb, _db, _eb, _fb, _gb, _hb, _ib, _jb, _kb, _lb, _mb, _nb, _ob, _pb, _qb, _rb, _sb, _tb, _ub, _vb, _wb;
           return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Box2, { paddingBlockEnd: "base", children: [
             /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(InlineStack2, { inlineAlignment: "start", blockAlignment: "center", gap: "base", children: [
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Heading2, { size: 5, children: [
@@ -19581,132 +19581,132 @@
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Heading2, { size: 3, children: [
                 " x ",
-                (_b = variantRecap.line_item) == null ? void 0 : _b.quantity,
+                variantRecap.recaps.quantity,
                 "   "
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Box2, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Divider2, {}),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                (_c = variantRecap.recaps.material) == null ? void 0 : _c.label,
+                (_b = variantRecap.recaps.material) == null ? void 0 : _b.label,
                 " : "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
-                (_d = variantRecap.recaps.material) == null ? void 0 : _d.value,
+                (_c = variantRecap.recaps.material) == null ? void 0 : _c.value,
                 " "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                (_f = (_e = variantRecap.recaps.sign) == null ? void 0 : _e.size) == null ? void 0 : _f.label,
+                (_e = (_d = variantRecap.recaps.sign) == null ? void 0 : _d.size) == null ? void 0 : _e.label,
                 " : "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
                 " ",
                 `
-                ${(_j = (_i = (_h = (_g = variantRecap.recaps.sign) == null ? void 0 : _g.size) == null ? void 0 : _h.value) == null ? void 0 : _i.width) == null ? void 0 : _j.label} :
-                 ${(_m = (_l = (_k = variantRecap.recaps.sign) == null ? void 0 : _k.size) == null ? void 0 : _l.value) == null ? void 0 : _m.width.value}, 
-                 ${(_q = (_p = (_o = (_n = variantRecap.recaps.sign) == null ? void 0 : _n.size) == null ? void 0 : _o.value) == null ? void 0 : _p.height) == null ? void 0 : _q.label}:
-                  ${(_t = (_s = (_r = variantRecap.recaps.sign) == null ? void 0 : _r.size) == null ? void 0 : _s.value) == null ? void 0 : _t.height.value}
+                ${(_i = (_h = (_g = (_f = variantRecap.recaps.sign) == null ? void 0 : _f.size) == null ? void 0 : _g.value) == null ? void 0 : _h.width) == null ? void 0 : _i.label} :
+                 ${(_l = (_k = (_j = variantRecap.recaps.sign) == null ? void 0 : _j.size) == null ? void 0 : _k.value) == null ? void 0 : _l.width.value}, 
+                 ${(_p = (_o = (_n = (_m = variantRecap.recaps.sign) == null ? void 0 : _m.size) == null ? void 0 : _n.value) == null ? void 0 : _o.height) == null ? void 0 : _p.label}:
+                  ${(_s = (_r = (_q = variantRecap.recaps.sign) == null ? void 0 : _q.size) == null ? void 0 : _r.value) == null ? void 0 : _s.height.value}
                   `,
                 " "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                (_x = (_w = (_v = (_u = variantRecap.recaps.sign) == null ? void 0 : _u.size) == null ? void 0 : _v.value) == null ? void 0 : _w.thickness) == null ? void 0 : _x.label,
+                (_w = (_v = (_u = (_t = variantRecap.recaps.sign) == null ? void 0 : _t.size) == null ? void 0 : _u.value) == null ? void 0 : _v.thickness) == null ? void 0 : _w.label,
                 " : "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
-                (_A = (_z = (_y = variantRecap.recaps.sign) == null ? void 0 : _y.size) == null ? void 0 : _z.value) == null ? void 0 : _A.thickness.value,
+                (_z = (_y = (_x = variantRecap.recaps.sign) == null ? void 0 : _x.size) == null ? void 0 : _y.value) == null ? void 0 : _z.thickness.value,
                 " "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                (_C = (_B = variantRecap.recaps.sign) == null ? void 0 : _B.shape) == null ? void 0 : _C.label,
+                (_B = (_A = variantRecap.recaps.sign) == null ? void 0 : _A.shape) == null ? void 0 : _B.label,
                 " : "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
                 " ",
-                (_E = (_D = variantRecap.recaps.sign) == null ? void 0 : _D.shape) == null ? void 0 : _E.value
+                (_D = (_C = variantRecap.recaps.sign) == null ? void 0 : _C.shape) == null ? void 0 : _D.value
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                (_G = (_F = variantRecap.recaps.sign) == null ? void 0 : _F.fixingMethod) == null ? void 0 : _G.label,
+                (_F = (_E = variantRecap.recaps.sign) == null ? void 0 : _E.fixingMethod) == null ? void 0 : _F.label,
                 " : "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
                 " ",
-                (_I = (_H = variantRecap.recaps.sign) == null ? void 0 : _H.fixingMethod) == null ? void 0 : _I.value
+                (_H = (_G = variantRecap.recaps.sign) == null ? void 0 : _G.fixingMethod) == null ? void 0 : _H.value
               ] }),
-              !((_L = (_K = (_J = variantRecap.recaps.sign) == null ? void 0 : _J.border) == null ? void 0 : _K.value) == null ? void 0 : _L.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              !((_K = (_J = (_I = variantRecap.recaps.sign) == null ? void 0 : _I.border) == null ? void 0 : _J.value) == null ? void 0 : _K.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_N = (_M = variantRecap.recaps.sign) == null ? void 0 : _M.border) == null ? void 0 : _N.label,
+                  (_M = (_L = variantRecap.recaps.sign) == null ? void 0 : _L.border) == null ? void 0 : _M.label,
                   " : "
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
                   " ",
-                  (_Q = (_P = (_O = variantRecap.recaps.sign) == null ? void 0 : _O.border) == null ? void 0 : _P.value) == null ? void 0 : _Q.type,
+                  (_P = (_O = (_N = variantRecap.recaps.sign) == null ? void 0 : _N.border) == null ? void 0 : _O.value) == null ? void 0 : _P.type,
                   ", ",
-                  (_T = (_S = (_R = variantRecap.recaps.sign) == null ? void 0 : _R.border) == null ? void 0 : _S.value) == null ? void 0 : _T.color,
+                  (_S = (_R = (_Q = variantRecap.recaps.sign) == null ? void 0 : _Q.border) == null ? void 0 : _R.value) == null ? void 0 : _S.color,
                   " "
                 ] })
               ] }),
-              ((_W = (_V = (_U = variantRecap.recaps.sign) == null ? void 0 : _U.border) == null ? void 0 : _V.value) == null ? void 0 : _W.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              ((_V = (_U = (_T = variantRecap.recaps.sign) == null ? void 0 : _T.border) == null ? void 0 : _U.value) == null ? void 0 : _V.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_Y = (_X = variantRecap.recaps.sign) == null ? void 0 : _X.border) == null ? void 0 : _Y.label,
+                  (_X = (_W = variantRecap.recaps.sign) == null ? void 0 : _W.border) == null ? void 0 : _X.label,
                   "-",
-                  (__ = (_Z = variantRecap.recaps) == null ? void 0 : _Z.faces) == null ? void 0 : __.face1,
+                  (_Z = (_Y = variantRecap.recaps) == null ? void 0 : _Y.faces) == null ? void 0 : _Z.face1,
                   ": "
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
                   " ",
-                  (_ca = (_ba = (_aa = (_$ = variantRecap.recaps.sign) == null ? void 0 : _$.border) == null ? void 0 : _aa.value) == null ? void 0 : _ba.face1) == null ? void 0 : _ca.type,
+                  (_ba = (_aa = (_$ = (__ = variantRecap.recaps.sign) == null ? void 0 : __.border) == null ? void 0 : _$.value) == null ? void 0 : _aa.face1) == null ? void 0 : _ba.type,
                   ", ",
-                  (_ga = (_fa = (_ea = (_da = variantRecap.recaps.sign) == null ? void 0 : _da.border) == null ? void 0 : _ea.value) == null ? void 0 : _fa.face1) == null ? void 0 : _ga.color,
+                  (_fa = (_ea = (_da = (_ca = variantRecap.recaps.sign) == null ? void 0 : _ca.border) == null ? void 0 : _da.value) == null ? void 0 : _ea.face1) == null ? void 0 : _fa.color,
                   " "
                 ] })
               ] }),
-              ((_ja = (_ia = (_ha = variantRecap.recaps.sign) == null ? void 0 : _ha.border) == null ? void 0 : _ia.value) == null ? void 0 : _ja.face2) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              ((_ia = (_ha = (_ga = variantRecap.recaps.sign) == null ? void 0 : _ga.border) == null ? void 0 : _ha.value) == null ? void 0 : _ia.face2) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_la = (_ka = variantRecap.recaps.sign) == null ? void 0 : _ka.border) == null ? void 0 : _la.label,
+                  (_ka = (_ja = variantRecap.recaps.sign) == null ? void 0 : _ja.border) == null ? void 0 : _ka.label,
                   "-",
-                  (_na = (_ma = variantRecap.recaps) == null ? void 0 : _ma.faces) == null ? void 0 : _na.face2,
+                  (_ma = (_la = variantRecap.recaps) == null ? void 0 : _la.faces) == null ? void 0 : _ma.face2,
                   ": "
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
                   " ",
-                  (_ra = (_qa = (_pa = (_oa = variantRecap.recaps.sign) == null ? void 0 : _oa.border) == null ? void 0 : _pa.value) == null ? void 0 : _qa.face2) == null ? void 0 : _ra.type,
+                  (_qa = (_pa = (_oa = (_na = variantRecap.recaps.sign) == null ? void 0 : _na.border) == null ? void 0 : _oa.value) == null ? void 0 : _pa.face2) == null ? void 0 : _qa.type,
                   ", ",
-                  (_va = (_ua = (_ta = (_sa = variantRecap.recaps.sign) == null ? void 0 : _sa.border) == null ? void 0 : _ta.value) == null ? void 0 : _ua.face2) == null ? void 0 : _va.color,
+                  (_ua = (_ta = (_sa = (_ra = variantRecap.recaps.sign) == null ? void 0 : _ra.border) == null ? void 0 : _sa.value) == null ? void 0 : _ta.face2) == null ? void 0 : _ua.color,
                   " "
                 ] })
               ] }),
-              !((_ya = (_xa = (_wa = variantRecap.recaps.sign) == null ? void 0 : _wa.color) == null ? void 0 : _xa.value) == null ? void 0 : _ya.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              !((_xa = (_wa = (_va = variantRecap.recaps.sign) == null ? void 0 : _va.color) == null ? void 0 : _wa.value) == null ? void 0 : _xa.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_Aa = (_za = variantRecap.recaps.sign) == null ? void 0 : _za.color) == null ? void 0 : _Aa.label,
+                  (_za = (_ya = variantRecap.recaps.sign) == null ? void 0 : _ya.color) == null ? void 0 : _za.label,
                   " : "
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: (_Da = (_Ca = (_Ba = variantRecap.recaps.sign) == null ? void 0 : _Ba.color) == null ? void 0 : _Ca.value) == null ? void 0 : _Da.name })
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: (_Ca = (_Ba = (_Aa = variantRecap.recaps.sign) == null ? void 0 : _Aa.color) == null ? void 0 : _Ba.value) == null ? void 0 : _Ca.name })
               ] }),
-              ((_Ga = (_Fa = (_Ea = variantRecap.recaps.sign) == null ? void 0 : _Ea.color) == null ? void 0 : _Fa.value) == null ? void 0 : _Ga.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              ((_Fa = (_Ea = (_Da = variantRecap.recaps.sign) == null ? void 0 : _Da.color) == null ? void 0 : _Ea.value) == null ? void 0 : _Fa.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_Ia = (_Ha = variantRecap.recaps.sign) == null ? void 0 : _Ha.color) == null ? void 0 : _Ia.label,
+                  (_Ha = (_Ga = variantRecap.recaps.sign) == null ? void 0 : _Ga.color) == null ? void 0 : _Ha.label,
                   "-",
-                  (_Ka = (_Ja = variantRecap.recaps) == null ? void 0 : _Ja.faces) == null ? void 0 : _Ka.face1,
+                  (_Ja = (_Ia = variantRecap.recaps) == null ? void 0 : _Ia.faces) == null ? void 0 : _Ja.face1,
                   ": "
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: (_Oa = (_Na = (_Ma = (_La = variantRecap.recaps.sign) == null ? void 0 : _La.color) == null ? void 0 : _Ma.value) == null ? void 0 : _Na.face1) == null ? void 0 : _Oa.name })
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: (_Na = (_Ma = (_La = (_Ka = variantRecap.recaps.sign) == null ? void 0 : _Ka.color) == null ? void 0 : _La.value) == null ? void 0 : _Ma.face1) == null ? void 0 : _Na.name })
               ] }),
-              ((_Ra = (_Qa = (_Pa = variantRecap.recaps.sign) == null ? void 0 : _Pa.color) == null ? void 0 : _Qa.value) == null ? void 0 : _Ra.face2) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              ((_Qa = (_Pa = (_Oa = variantRecap.recaps.sign) == null ? void 0 : _Oa.color) == null ? void 0 : _Pa.value) == null ? void 0 : _Qa.face2) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_Ta = (_Sa = variantRecap.recaps.sign) == null ? void 0 : _Sa.color) == null ? void 0 : _Ta.label,
+                  (_Sa = (_Ra = variantRecap.recaps.sign) == null ? void 0 : _Ra.color) == null ? void 0 : _Sa.label,
                   "-",
-                  (_Va = (_Ua = variantRecap.recaps) == null ? void 0 : _Ua.faces) == null ? void 0 : _Va.face2,
+                  (_Ua = (_Ta = variantRecap.recaps) == null ? void 0 : _Ta.faces) == null ? void 0 : _Ua.face2,
                   ": "
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: (_Za = (_Ya = (_Xa = (_Wa = variantRecap.recaps.sign) == null ? void 0 : _Wa.color) == null ? void 0 : _Xa.value) == null ? void 0 : _Ya.face2) == null ? void 0 : _Za.name })
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: (_Ya = (_Xa = (_Wa = (_Va = variantRecap.recaps.sign) == null ? void 0 : _Va.color) == null ? void 0 : _Wa.value) == null ? void 0 : _Xa.face2) == null ? void 0 : _Ya.name })
               ] }),
-              !((_$a = (__a = variantRecap.recaps) == null ? void 0 : __a.faces) == null ? void 0 : _$a.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              !((__a = (_Za = variantRecap.recaps) == null ? void 0 : _Za.faces) == null ? void 0 : __a.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_bb = (_ab = variantRecap.recaps) == null ? void 0 : _ab.texts) == null ? void 0 : _bb.label,
+                  (_ab = (_$a = variantRecap.recaps) == null ? void 0 : _$a.texts) == null ? void 0 : _ab.label,
                   " : "
                 ] }),
-                (_cb = variantRecap.recaps.texts.value) == null ? void 0 : _cb.map((text) => {
+                (_bb = variantRecap.recaps.texts.value) == null ? void 0 : _bb.map((text) => {
                   var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
                   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: text == null ? void 0 : text.textContent }),
@@ -19760,14 +19760,14 @@
                   ] });
                 })
               ] }),
-              ((_eb = (_db = variantRecap.recaps) == null ? void 0 : _db.faces) == null ? void 0 : _eb.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              ((_db = (_cb = variantRecap.recaps) == null ? void 0 : _cb.faces) == null ? void 0 : _db.face1) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_gb = (_fb = variantRecap.recaps) == null ? void 0 : _fb.texts) == null ? void 0 : _gb.label,
+                  (_fb = (_eb = variantRecap.recaps) == null ? void 0 : _eb.texts) == null ? void 0 : _fb.label,
                   "-",
-                  (_ib = (_hb = variantRecap.recaps) == null ? void 0 : _hb.faces) == null ? void 0 : _ib.face1,
+                  (_hb = (_gb = variantRecap.recaps) == null ? void 0 : _gb.faces) == null ? void 0 : _hb.face1,
                   " : "
                 ] }),
-                (_mb = (_lb = (_kb = (_jb = variantRecap.recaps) == null ? void 0 : _jb.texts) == null ? void 0 : _kb.value) == null ? void 0 : _lb.face1) == null ? void 0 : _mb.map((text) => {
+                (_lb = (_kb = (_jb = (_ib = variantRecap.recaps) == null ? void 0 : _ib.texts) == null ? void 0 : _jb.value) == null ? void 0 : _kb.face1) == null ? void 0 : _lb.map((text) => {
                   var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
                   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: text == null ? void 0 : text.textContent }),
@@ -19821,14 +19821,14 @@
                   ] });
                 })
               ] }),
-              ((_ob = (_nb = variantRecap.recaps) == null ? void 0 : _nb.faces) == null ? void 0 : _ob.face2) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+              ((_nb = (_mb = variantRecap.recaps) == null ? void 0 : _mb.faces) == null ? void 0 : _nb.face2) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                  (_qb = (_pb = variantRecap.recaps) == null ? void 0 : _pb.texts) == null ? void 0 : _qb.label,
+                  (_pb = (_ob = variantRecap.recaps) == null ? void 0 : _ob.texts) == null ? void 0 : _pb.label,
                   "-",
-                  (_sb = (_rb = variantRecap.recaps) == null ? void 0 : _rb.faces) == null ? void 0 : _sb.face2,
+                  (_rb = (_qb = variantRecap.recaps) == null ? void 0 : _qb.faces) == null ? void 0 : _rb.face2,
                   " : "
                 ] }),
-                (_vb = (_ub = (_tb = variantRecap.recaps.texts) == null ? void 0 : _tb.value) == null ? void 0 : _ub.face2) == null ? void 0 : _vb.map((text) => {
+                (_ub = (_tb = (_sb = variantRecap.recaps.texts) == null ? void 0 : _sb.value) == null ? void 0 : _tb.face2) == null ? void 0 : _ub.map((text) => {
                   var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
                   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: text == null ? void 0 : text.textContent }),
@@ -19885,7 +19885,7 @@
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(InlineStack2, { inlineAlignment: "space-between", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
                 Link2,
                 {
-                  href: (_xb = (_wb = variantRecap.recaps) == null ? void 0 : _wb.filesUrl) == null ? void 0 : _xb.zipUrl,
+                  href: (_wb = (_vb = variantRecap.recaps) == null ? void 0 : _vb.filesUrl) == null ? void 0 : _wb.zipUrl,
                   children: i18n.translate("bownloadBtn")
                 }
               ) })

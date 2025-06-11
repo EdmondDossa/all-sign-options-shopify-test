@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://brunei-formation-cream-scenic.trycloudflare.com"
+application_url = "https://tune-cell-path-diseases.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://brunei-formation-cream-scenic.trycloudflare.com/auth/callback",
-  "https://brunei-formation-cream-scenic.trycloudflare.com/auth/shopify/callback",
-  "https://brunei-formation-cream-scenic.trycloudflare.com/api/auth/callback"
+  "https://tune-cell-path-diseases.trycloudflare.com/auth/callback",
+  "https://tune-cell-path-diseases.trycloudflare.com/auth/shopify/callback",
+  "https://tune-cell-path-diseases.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://brunei-formation-cream-scenic.trycloudflare.com"
+url = "https://tune-cell-path-diseases.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
