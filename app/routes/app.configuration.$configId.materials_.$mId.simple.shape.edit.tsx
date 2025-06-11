@@ -111,9 +111,9 @@ export default function MaterialFixingMethod() {
         enablePricingBySurface: false,
         surface: 0,
         shapeSize: {
-          small: 0,
-          medium: 0,
-          large: 0
+          small: 20,
+          medium: 40,
+          large: 60
         }
       });
     }
