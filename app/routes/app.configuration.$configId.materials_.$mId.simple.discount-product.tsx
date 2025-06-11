@@ -162,19 +162,20 @@ export default function MaterialDiscount() {
                           name={`lots.${index}.quantity`}
                           control={control}
                           rules={{
-                            required: "La quantité est requise",
+                            required: "Quantity is required",
                             pattern: {
                               value: /^\d+$/,
-                              message: "La quantité doit être un nombre entier"
+                              message: "Quantity must be a whole number"
                             }
                           }}
                           render={({ field }) => (
                             <TextField
-                              label="Quantity"
+                              label="Quantity min required"
                               value={field.value +''}
                               onChange={field.onChange}
                               onBlur={field.onBlur}
                               type="number"
+                              min={0}
                               autoComplete="off"
                               error={
                                 errors.lots?.[index]?.quantity?.message ||
@@ -189,18 +190,18 @@ export default function MaterialDiscount() {
                           name={`lots.${index}.discountPercentage`}
                           control={control}
                           rules={{
-                            required: "Le pourcentage de remise est requis",
+                            required: "Discount percentage is required",
                             pattern: {
                               value: /^\d+(\.\d+)?$/,
-                              message: "Le pourcentage doit être un nombre valide"
+                              message: "Percentage must be a valid number"
                             },
                             min: {
                               value: 0,
-                              message: "Le pourcentage ne peut pas être négatif"
+                              message: "Percentage cannot be negative"
                             },
                             max: {
                               value: 100,
-                              message: "Le pourcentage ne peut pas dépasser 100%"
+                              message: "Percentage cannot exceed 100%"
                             }
                           }}
                           render={({ field }) => (

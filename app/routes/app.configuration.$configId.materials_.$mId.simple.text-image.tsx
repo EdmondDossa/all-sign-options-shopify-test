@@ -27,7 +27,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
   const mId = parseInt(params.mId ?? "");
-  console.log("configID materialID", configId, mId);
 
   let textImages: ConfigTextImages | null = null;
 
@@ -55,7 +54,7 @@ export default function MaterialTextImage() {
       : {
           enableText: true,
           enableImage: false,
-          enableQrCode:true,
+          enableQrCode:false,
         },
   );
 

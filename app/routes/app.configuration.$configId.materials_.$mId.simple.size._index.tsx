@@ -122,7 +122,8 @@ export default function MaterialSizeIndex() {
               surface:0,
               charPrice:0
             },
-            range:Array.isArray(customSize?.pricings)?customSize?.pricings:[]
+            range:Array.isArray(customSize?.pricings)?customSize?.pricings:[],
+            rangePricingPerUnit: false
           }
       },
   });
@@ -171,9 +172,13 @@ export default function MaterialSizeIndex() {
     if (!formData.customSize?.pricings) {
       formData.customSize.pricings.range = [];
     }
+    let lastSurface = formData.customSize.pricings.range.length > 0 
+    ? formData.customSize.pricings.range[formData.customSize.pricings.range.length - 1].surface 
+    : 0;
+
     formData.customSize.pricings.range.push({
       basePrice: 0,
-      surface: 0,
+      surface: parseFloat(lastSurface+'') + 1 ,
       charPrice: 0,
     });
 
@@ -191,28 +196,7 @@ export default function MaterialSizeIndex() {
     if(Array.isArray(formData.customSize.pricings.range)){
       
       formData.customSize.pricings.range.forEach((pricing:any, index:number) => {
-        if (
-          Math.max(
-            parseFloat(`${formData.customSize.height.min}`),
-            parseFloat(`${formData.customSize.width.min}`)
-          ) > parseFloat(`${pricing.surface}`)
-        ) {
-          pricingErrors.push({
-            id: index,
-            message:
-              "The  surface  must be greater than the minimum  width   and height ",
-          });
-        } else if (
-          Math.max(
-            parseFloat(`${formData.customSize.height.max}`),
-            parseFloat(`${formData.customSize.width.max}`)
-          ) < parseFloat(`${pricing.surface}`)
-        ) {
-          pricingErrors.push({
-            id: index,
-            message: "The surface must be less than the maximum width and height",
-          });
-        } else if (
+       if (
           index > 0 &&
           parseFloat(`${formData.customSize.pricings.range[index - 1].surface}`) >=
             parseFloat(`${pricing.surface}`)
@@ -555,7 +539,6 @@ export default function MaterialSizeIndex() {
                             }}
                           />
                         </InlineStack>
-
                         <InlineStack blockAlign="center" gap="200">
                           <Text as="strong" variant="headingMd">
                             Price per interval of surface
@@ -570,10 +553,55 @@ export default function MaterialSizeIndex() {
                             }}
                           />
                         </InlineStack>
-
-
                       </InlineStack>
                     <Grid gap={{ lg: "10px" }}>
+                    { formData.customSize.pricings.type == "range" && <Grid.Cell
+                            columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                          >
+                            <Box paddingBlock="600">
+
+                              <InlineStack blockAlign="center" gap="1000">
+                                  <Text as="strong" variant="headingMd">
+                                    Interval  pricing type :
+                                  </Text>
+                                  <InlineStack wrap={false} gap="200">
+                                  
+                                    <Text as="span" variant="headingSm">
+                                      Additional price
+                                    </Text>
+                                    <ReactSwitchCustom
+                                      checked={formData.customSize.pricings.rangePricingPerUnit ? false : true }
+                                      setChecked={(value: boolean) => {
+                                        if(value){
+                                          formData.customSize.pricings.rangePricingPerUnit = !formData.customSize.pricings.rangePricingPerUnit;
+                                          handleInputChange("customSize", formData.customSize);
+                                        }
+                                      }}
+                                    />
+                                  
+                                    
+                                  </InlineStack>
+                                  <InlineStack wrap={false} gap="200">
+                                  
+                                  <Text as="span" variant="headingSm">
+                                  Price per unit of surface
+                                  </Text>
+                                  <ReactSwitchCustom
+                                    checked={formData.customSize.pricings.rangePricingPerUnit ? true : false }
+                                    setChecked={(value: boolean) => {
+                                      if(value){
+                                        formData.customSize.pricings.rangePricingPerUnit = !formData.customSize.pricings.rangePricingPerUnit;
+                                        handleInputChange("customSize", formData.customSize);
+                                      }
+                                    }}
+                                  />
+                                
+                                  
+                                </InlineStack>
+                                </InlineStack>
+                            </Box>
+                            
+                        </Grid.Cell>}
                       { formData.customSize.pricings.type == "range" && formData.customSize.pricings?.range?.map(
                         (pricing: any, index: number) => (
                           <Grid.Cell
@@ -599,9 +627,10 @@ export default function MaterialSizeIndex() {
                                   }}
                                 >
                                   <TextField
-                                    label="Surface"
+                                    label="Surface maximum"
                                     type="number"
                                     autoComplete="off"
+                                    min={0}
                                     onChange={(value) => {
                                       formData.customSize.pricings.range[
                                         index
@@ -638,8 +667,13 @@ export default function MaterialSizeIndex() {
                                   }}
                                 >
                                   <TextField
-                                    label="Base price"
+                                    label={
+                                      formData.customSize.pricings.rangePricingPerUnit?
+                                      "Price  per  unit of surface":
+                                      "Additional Price"                          
+                                    }
                                     type="number"
+                                    min={0}
                                     autoComplete="off"
                                     onChange={(value) => {
                                       formData.customSize.pricings.range[
@@ -677,6 +711,7 @@ export default function MaterialSizeIndex() {
                                     label="Char price"
                                     type="number"
                                     autoComplete="off"
+                                    min={0}
                                     onChange={(value) => {
                                       formData.customSize.pricings.range[
                                         index

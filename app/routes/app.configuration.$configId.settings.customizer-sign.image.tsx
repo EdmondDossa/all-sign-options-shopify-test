@@ -10,6 +10,7 @@ import {
   Grid,
   InlineError,
   InlineStack,
+  Select,
   Text,
   TextField,
 } from "@shopify/polaris";
@@ -60,6 +61,7 @@ const formSchema = z.object({
     uploadMaxWidth:z.number(),
     allowedUploadsExtentions:z.string().array()
   })),
+  selectedCutline:z.string(), 
   cutlines: z.any().transform(jsonTransform).pipe(z.object({
     first: z.object({
       borderSize: z.number(),
@@ -119,7 +121,6 @@ export default function ConfigSettingsGeneral() {
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
 
-  console.log("setting data :", settingData);
 
   const [formData, setFormData] = useState<any>(
     {
@@ -135,16 +136,17 @@ export default function ConfigSettingsGeneral() {
          "uploadMaxWidth":100,
          "allowedUploadsExtentions":["png"]
       },
+      selectedCutline:'none',
       "cutlines": {
         first: {
-          borderSize: 0,
-          color: '#FFFFFF'
+          borderSize: 4,
+          color: '#FFF10E'
         },
         second: {
-          color: '#FFFFFF',
-          size: 0,
-          borderColor: '#FFFFFF',
-          borderSize: 0
+          color: '#5EEC92',
+          size: 10,
+          borderColor: '#4A65F9',
+          borderSize: 4
         }
       },
       "enableClipart":{
@@ -167,7 +169,7 @@ export default function ConfigSettingsGeneral() {
          "enableBlueify":false
       },
       "scenes": [],
-      ...((settingData?.scenes) ? settingData : {})
+      ...((settingData?.cutlines) ? settingData : {})
     },
   );
 
@@ -177,6 +179,8 @@ export default function ConfigSettingsGeneral() {
       [inputName]: value,
     }));
   };
+
+  const cutlines = ['none', '1x', '2x'];
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -464,10 +468,23 @@ export default function ConfigSettingsGeneral() {
               
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                <BlockStack gap="300">
                     <Text as="h3" variant="bodyMd" fontWeight="bold">
                       Cutlines Settings
                     </Text>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <Select
+                        label="Cutline Type"
+                        options={cutlines}
+                        onChange={(value) =>
+                          handleInputChange("selectedCutline", value)
+                        }
+                        value={formData.selectedCutline}
+                        error={getError(actionData, "selectedCutline")}
+                          />
+                  </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                <BlockStack gap="300">
                     <BlockStack gap="400">
                       <Text as="h5" variant="bodyMd" fontWeight="bold">
                         First Cutline
@@ -479,16 +496,8 @@ export default function ConfigSettingsGeneral() {
                             type="number"
                             value={formData.cutlines.first.borderSize.toString()}
                             onChange={(value) => {
-                              setFormData({
-                                ...formData,
-                                cutlines: {
-                                  ...formData.cutlines,
-                                  first: {
-                                    ...formData.cutlines.first,
-                                    borderSize: parseInt(value) || 0
-                                  }
-                                }
-                              });
+                              formData.cutlines.first.borderSize = value;
+                              handleInputChange("cutlines", formData.cutlines );
                             }}
                             autoComplete="off"
                             suffix="px"
@@ -502,16 +511,10 @@ export default function ConfigSettingsGeneral() {
                             <TextColorField
                               color={formData.cutlines.first.color}
                               setColor={(value: string) => {
-                                setFormData({
-                                  ...formData,
-                                  cutlines: {
-                                    ...formData.cutlines,
-                                    first: {
-                                      ...formData.cutlines.first,
-                                      color: value
-                                    }
-                                  }
-                                });
+                                
+                                formData.cutlines.first.color  = value;
+                                handleInputChange("cutlines", formData.cutlines )
+                                
                               }}
                             />
                           </BlockStack>
@@ -530,20 +533,12 @@ export default function ConfigSettingsGeneral() {
                       <Grid gap={{ lg: "30px" }}>
                         <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                           <TextField
-                            label="Size"
+                            label="Size between Two Cutlines border"
                             type="number"
                             value={formData.cutlines.second.size.toString()}
                             onChange={(value) => {
-                              setFormData({
-                                ...formData,
-                                cutlines: {
-                                  ...formData.cutlines,
-                                  second: {
-                                    ...formData.cutlines.second,
-                                    size: parseInt(value) || 0
-                                  }
-                                }
-                              });
+                              formData.cutlines.second.size  = value;
+                              handleInputChange("cutlines", formData.cutlines )
                             }}
                             autoComplete="off"
                             suffix="px"
@@ -557,16 +552,8 @@ export default function ConfigSettingsGeneral() {
                             <TextColorField
                               color={formData.cutlines.second.color}
                               setColor={(value: string) => {
-                                setFormData({
-                                  ...formData,
-                                  cutlines: {
-                                    ...formData.cutlines,
-                                    second: {
-                                      ...formData.cutlines.second,
-                                      color: value
-                                    }
-                                  }
-                                });
+                                formData.cutlines.second.color = value;
+                                handleInputChange("cutlines", formData.cutlines )
                               }}
                             />
                           </BlockStack>
@@ -577,16 +564,8 @@ export default function ConfigSettingsGeneral() {
                             type="number"
                             value={formData.cutlines.second.borderSize.toString()}
                             onChange={(value) => {
-                              setFormData({
-                                ...formData,
-                                cutlines: {
-                                  ...formData.cutlines,
-                                  second: {
-                                    ...formData.cutlines.second,
-                                    borderSize: parseInt(value) || 0
-                                  }
-                                }
-                              });
+                              formData.cutlines.second.borderSize = value;
+                              handleInputChange("cutlines", formData.cutlines )
                             }}
                             autoComplete="off"
                             suffix="px"
@@ -600,16 +579,8 @@ export default function ConfigSettingsGeneral() {
                             <TextColorField
                               color={formData.cutlines.second.borderColor}
                               setColor={(value: string) => {
-                                setFormData({
-                                  ...formData,
-                                  cutlines: {
-                                    ...formData.cutlines,
-                                    second: {
-                                      ...formData.cutlines.second,
-                                      borderColor: value
-                                    }
-                                  }
-                                });
+                                formData.cutlines.second.borderColor = value;
+                                handleInputChange("cutlines", formData.cutlines )
                               }}
                             />
                           </BlockStack>

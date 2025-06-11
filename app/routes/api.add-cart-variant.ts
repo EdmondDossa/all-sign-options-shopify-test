@@ -50,7 +50,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           option: any;
       };
   
-      let optionName =  `${data.option.recaps.material?.label} ${data.option.recaps.material?.value}, `
+      let optionName =  `Quantity: ${data.option.recaps.quantity} | ${data.option.recaps.material?.label} ${data.option.recaps.material?.value}, `
       let size = data.option.recaps.sign?.size
       optionName += `${size?.value?.width?.label} ${size?.value?.width.value}, `
       optionName += `${size?.value?.height?.label} ${size?.value?.height.value}, `
