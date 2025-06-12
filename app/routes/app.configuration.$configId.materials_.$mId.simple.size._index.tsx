@@ -361,7 +361,7 @@ export default function MaterialSizeIndex() {
                           >
                             <TextField
                               labelHidden
-                              type="number"
+                              pattern="[0-9]+([,.][0-9]+)?" 
                               autoComplete="off"
                               onChange={(value) => {
                                 formData.thickness.values[index] = value;
@@ -432,7 +432,7 @@ export default function MaterialSizeIndex() {
                       <TextField
                         size="medium"
                         label="Min width"
-                        type="number"
+                        pattern="[0-9]+([,.][0-9]+)?" 
                         value={`${formData.customSize.width.min}`}
                         onChange={(value) => {
                           formData.customSize.width.min = value;
@@ -450,7 +450,7 @@ export default function MaterialSizeIndex() {
                       <TextField
                         size="medium"
                         label="Max width"
-                        type="number"
+                        pattern="[0-9]+([,.][0-9]+)?" 
                         value={`${formData.customSize.width.max}`}
                         onChange={(value) => {
                           formData.customSize.width.max = value;
@@ -483,7 +483,7 @@ export default function MaterialSizeIndex() {
                       <TextField
                         size="medium"
                         label="Min height"
-                        type="number"
+                        pattern="[0-9]+([,.][0-9]+)?" 
                         value={`${formData.customSize.height.min}`}
                         onChange={(value) => {
                           formData.customSize.height.min = value;
@@ -501,7 +501,7 @@ export default function MaterialSizeIndex() {
                       <TextField
                         size="medium"
                         label="Max height"
-                        type="number"
+                        pattern="[0-9]+([,.][0-9]+)?" 
                         value={`${formData.customSize.height.max}`}
                         onChange={(value) => {
                           formData.customSize.height.max = value;
@@ -628,7 +628,7 @@ export default function MaterialSizeIndex() {
                                 >
                                   <TextField
                                     label="Surface maximum"
-                                    type="number"
+                                    pattern="[0-9]+([,.][0-9]+)?" 
                                     autoComplete="off"
                                     min={0}
                                     onChange={(value) => {
@@ -672,8 +672,7 @@ export default function MaterialSizeIndex() {
                                       "Price  per  unit of surface":
                                       "Additional Price"                          
                                     }
-                                    type="number"
-                                    min={0}
+                                    pattern="[0-9]+([,.][0-9]+)?" 
                                     autoComplete="off"
                                     onChange={(value) => {
                                       formData.customSize.pricings.range[
@@ -709,9 +708,8 @@ export default function MaterialSizeIndex() {
                                 >
                                   <TextField
                                     label="Char price"
-                                    type="number"
                                     autoComplete="off"
-                                    min={0}
+                                    pattern="[0-9]+([,.][0-9]+)?" 
                                     onChange={(value) => {
                                       formData.customSize.pricings.range[
                                         index
@@ -770,7 +768,7 @@ export default function MaterialSizeIndex() {
                                 >
                                   <TextField
                                     label="Surface"
-                                    type="number"
+                                    pattern="[0-9]+([,.][0-9]+)?" 
                                     autoComplete="off"
                                     onChange={(value) => {
                                       formData.customSize.pricings.unit.surface = value;
@@ -805,7 +803,7 @@ export default function MaterialSizeIndex() {
                                 >
                                   <TextField
                                     label="Base price"
-                                    type="number"
+                                    pattern="[0-9]+([,.][0-9]+)?" 
                                     autoComplete="off"
                                     onChange={(value) => {
                                       formData.customSize.pricings.unit.basePrice = value;
@@ -837,7 +835,7 @@ export default function MaterialSizeIndex() {
                                 >
                                   <TextField
                                     label="Char price"
-                                    type="number"
+                                    pattern="[0-9]+([,.][0-9]+)?" 
                                     autoComplete="off"
                                     onChange={(value) => {
                                       formData.customSize.pricings.unit.charPrice = value;
