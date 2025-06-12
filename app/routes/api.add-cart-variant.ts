@@ -14,7 +14,7 @@ import { updateOrCreateJsonData } from '~/utils/jsonHandler';
 const formSchema = z.object({
     productId: z.string({ required_error: 'Size is required' }),
     price: z.number({ required_error: 'Text number is required' }),
-    option: z.string({ required_error: 'Max Text char is required' }).transform(jsonTransform), 
+    option: z.any().transform(jsonTransform), 
   });
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -49,7 +49,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           price: number;
           option: any;
       };
-  
+        
       let optionName =  `Quantity: ${data.option.recaps.quantity} | ${data.option.recaps.material?.label} ${data.option.recaps.material?.value}, `
       let size = data.option.recaps.sign?.size
       optionName += `${size?.value?.width?.label} ${size?.value?.width.value}, `
