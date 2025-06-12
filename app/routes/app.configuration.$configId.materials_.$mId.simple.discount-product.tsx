@@ -207,7 +207,7 @@ export default function MaterialDiscount() {
                           render={({ field }) => (
                             <TextField
                               label="Discount Percentage"
-                              value={field.value + ''}
+                              value={`${field.value}`}
                               onChange={field.onChange}
                               onBlur={field.onBlur}
                               autoComplete="off"

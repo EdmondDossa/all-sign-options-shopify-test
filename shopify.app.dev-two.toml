@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://pool-florida-tue-athletics.trycloudflare.com"
+application_url = "https://human-klein-additional-merchants.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://pool-florida-tue-athletics.trycloudflare.com/auth/callback",
-  "https://pool-florida-tue-athletics.trycloudflare.com/auth/shopify/callback",
-  "https://pool-florida-tue-athletics.trycloudflare.com/api/auth/callback"
+  "https://human-klein-additional-merchants.trycloudflare.com/auth/callback",
+  "https://human-klein-additional-merchants.trycloudflare.com/auth/shopify/callback",
+  "https://human-klein-additional-merchants.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://pool-florida-tue-athletics.trycloudflare.com"
+url = "https://human-klein-additional-merchants.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
