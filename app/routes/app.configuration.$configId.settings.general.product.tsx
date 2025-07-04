@@ -44,6 +44,19 @@ const formSchema = z.object({
     .any()
     .transform(booleanTransform)
     .pipe(z.boolean()),
+  hidePricing: z
+    .any()
+    .transform(booleanTransform)
+    .pipe(z.boolean()),
+  showRecapAfterFinish: z
+  .any()
+  .transform(booleanTransform)
+  .pipe(z.boolean()),
+  uploadFileOnFinish: z
+  .any()
+  .transform(booleanTransform)
+  .pipe(z.boolean())
+
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -73,6 +86,9 @@ export default function ConfigSettingsGeneral() {
       hideAddToCartButtonOnShopPage: false,
       redirectToCheckOutPage: false,
       displayRecapsOnCheckout: false,
+      hidePricing:false,
+      showRecapAfterFinish:true,
+      uploadFileOnFinish:false
     },
   );
 
@@ -184,8 +200,42 @@ export default function ConfigSettingsGeneral() {
                       handleInputChange("hideAddToCartButtonOnShopPage", value)
                     }
                   >
-                    This options allow you to show/hidethe cart button on the
+                    This options allow you to show/hide the cart button on the
                     cart button on the customization page
+                  </ProductConfigItem>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                  <ProductConfigItem
+                    title="Hide sign  pricing on design screen "
+                    checked={formData.hidePricing}
+                    setChecked={(value) =>
+                      handleInputChange("hidePricing", value)
+                    }
+                  >
+                    This options allow you to show/hide the  sign  pricing on design screen
+                  </ProductConfigItem>
+                </Grid.Cell> 
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                  <ProductConfigItem
+                    title="Show Recap after finish "
+                    checked={formData.showRecapAfterFinish}
+                    setChecked={(value) =>
+                      handleInputChange("showRecapAfterFinish", value)
+                    }
+                  >
+                    This option allow you to show recap  before  add product  to  cart
+                  </ProductConfigItem>
+                </Grid.Cell>
+
+
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                  <ProductConfigItem
+                    title="Upload File on Finish"
+                    checked={formData.uploadFileOnFinish}
+                    setChecked={(value) => handleInputChange("uploadFileOnFinish", value)}
+                  >
+                    This option allows you to upload the design file upon completion.  
+                    It will be associated with the product, and the user can manually add the product to the cart.
                   </ProductConfigItem>
                 </Grid.Cell>
               

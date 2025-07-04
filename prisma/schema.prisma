@@ -27,6 +27,7 @@ model Session {
   templates      Template[] 
   categories      Category[] 
   setting    Setting?
+  Design    Design[]
 }
 
 model Upload{
@@ -114,5 +115,19 @@ model Template {
   session           Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId         String
   data            Json?
+}
+
+
+model Design {
+  id          Int      @id @default(autoincrement())
+  customerIp  String?
+  productId   String?
+  configId    Int?
+  variantId   String?
+  orderId     String?
+  session           Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId         String
+  files       Json?
+  zipFile  String?
 }
 

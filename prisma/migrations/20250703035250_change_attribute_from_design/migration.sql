@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Design" ALTER COLUMN "productId" SET DATA TYPE TEXT,
+ALTER COLUMN "variantId" SET DATA TYPE TEXT;

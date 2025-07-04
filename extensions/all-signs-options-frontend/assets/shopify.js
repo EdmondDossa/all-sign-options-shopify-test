@@ -237,10 +237,46 @@ async function  asoReidirectToCheckout() {
   }
 }
 
+
+async function asoUploadsOnfinish(option){
+  let  files  =  []
+
+  if (Array.isArray(option.recaps.printImage)) {
+    for(const face in option.recaps.printImage){
+        files.push(option.recaps.printImage[face]);
+    }
+
+    for(const face in option.recaps.designImages){
+      for(const designImage of option.recaps.designImages[face]){
+        files.push(designImage.url);           
+      }
+    }
+
+  }else{
+    files.push(option.recaps.printImage);
+    for(const designImage of option.recaps.designImages){
+      files.push(designImage.url);
+    }
+  }
+
+
+
+  window.postMessage({
+    type:  'UPLOAD_ON_FINISH',
+    payload: JSON.stringify(files)
+  }, '*'); 
+
+}
+
 async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProductId, regularPrice=asoRegularPrice, redirectToCheckOut=false) {
-  console.log("price and option", price, option, asoProductID);
 
   try {
+
+    if (option.uploadFileOnFinish) {
+      asoUploadsOnfinish(option);
+      return null;
+    }
+
     const data = {
       productId: `gid://shopify/Product/${asoProductID}`,
       price: parseFloat(`${price}` )+parseFloat(`${regularPrice}`),
@@ -394,6 +430,8 @@ function getDefaultConfig(){
                     "designFromScratch": true,
                     "redirectToCheckOutPage": false,
                     "displayRecapsOnCheckout": false,
+                    "hidePricing":false,
+                    "showRecapAfterFinish":true,
                     "redirectAfterAddingToCart": true,
                     "hideDesignButtonsOnShopPage": false,
                     "hideAddToCartButtonOnShopPage": true,

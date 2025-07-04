@@ -19550,33 +19550,75 @@
       return res.json();
     });
   }
+  function getOrdersUploads(id) {
+    return __async(this, null, function* () {
+      const res = yield fetch(`/api/order-uploads/${id}`);
+      return res.json();
+    });
+  }
   function App() {
+    var _a, _b;
     let [variantRecaps, setVariantRecaps] = (0, import_react16.useState)();
+    let [uploads, setUploads] = (0, import_react16.useState)();
     const { i18n, data } = useApi(TARGET);
     const [isDownloading, setIsDownloading] = (0, import_react16.useState)(false);
     (0, import_react16.useEffect)(() => {
-      var _a, _b;
-      console.log("start  getting data");
-      getVariantRecaps(`${(_b = (_a = data.selected) == null ? void 0 : _a[0]) == null ? void 0 : _b.id}`.replace("gid://shopify/Order/", "")).then((res) => {
+      var _a2, _b2, _c, _d;
+      console.log("start  getting data", data);
+      getVariantRecaps(`${(_b2 = (_a2 = data.selected) == null ? void 0 : _a2[0]) == null ? void 0 : _b2.id}`.replace("gid://shopify/Order/", "")).then((res) => {
         setVariantRecaps(res);
         console.log("order data", res);
       }).catch((err) => console.log("errors getting data", err));
+      getOrdersUploads(`${(_d = (_c = data.selected) == null ? void 0 : _c[0]) == null ? void 0 : _d.id}`.replace("gid://shopify/Order/", "")).then((res) => {
+        setUploads(res);
+        console.log("upload  files");
+      }).catch((err) => console.log("errors getting data", err));
     }, []);
+    const getDesignsForLineItem = (productId) => {
+      var _a2;
+      return (_a2 = uploads == null ? void 0 : uploads.designs) == null ? void 0 : _a2.filter((d) => d.productId === productId);
+    };
     return (
       // The AdminBlock component provides an API for setting the title of the Block extension wrapper.
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(AdminBlock2, { title: "ALL SIGNS OPTIONS", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(BlockStack2, { gap: "small small", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(AdminBlock2, { title: "ALL SIGNS OPTIONS 2", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(BlockStack2, { gap: "small small", children: [
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(InlineStack2, { blockAlignment: "end", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Heading2, { size: 4, children: [
           " ",
           i18n.translate("recapTitle"),
           "  "
         ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(BlockStack2, { children: (_b = (_a = uploads == null ? void 0 : uploads.order) == null ? void 0 : _a.line_items) == null ? void 0 : _b.map((item) => {
+          const matchedDesigns = getDesignsForLineItem(item.product_id);
+          if (matchedDesigns.length === 0)
+            return null;
+          return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Box2, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(InlineStack2, { inlineAlignment: "start", blockAlignment: "center", gap: "base", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Heading2, { size: 5, children: [
+              " - ",
+              item.title,
+              "   "
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Heading2, { size: 3, children: [
+              " x ",
+              item.quantity,
+              " : "
+            ] }),
+            matchedDesigns.map((design) => design.zipFile ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+              Link2,
+              {
+                href: design.zipFile,
+                target: "_blank",
+                children: "Download uploads ZIP"
+              },
+              design.zipFile
+            ) : null)
+          ] }) }, item.id);
+        }) }),
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(BlockStack2, { children: variantRecaps == null ? void 0 : variantRecaps.map((variantRecap) => {
-          var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za, __a, _$a, _ab, _bb, _cb, _db, _eb, _fb, _gb, _hb, _ib, _jb, _kb, _lb, _mb, _nb, _ob, _pb, _qb, _rb, _sb, _tb, _ub, _vb, _wb;
+          var _a2, _b2, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za, __a, _$a, _ab, _bb, _cb, _db, _eb, _fb, _gb, _hb, _ib, _jb, _kb, _lb, _mb, _nb, _ob, _pb, _qb, _rb, _sb, _tb, _ub, _vb, _wb;
           return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Box2, { paddingBlockEnd: "base", children: [
             /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(InlineStack2, { inlineAlignment: "start", blockAlignment: "center", gap: "base", children: [
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Heading2, { size: 5, children: [
                 " ",
-                (_a = variantRecap.line_item) == null ? void 0 : _a.title,
+                (_a2 = variantRecap.line_item) == null ? void 0 : _a2.title,
                 "   "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Heading2, { size: 3, children: [
@@ -19588,7 +19630,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Box2, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Divider2, {}),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontWeight: "bold-300", children: [
-                (_b = variantRecap.recaps.material) == null ? void 0 : _b.label,
+                (_b2 = variantRecap.recaps.material) == null ? void 0 : _b2.label,
                 " : "
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { children: [
@@ -19707,7 +19749,7 @@
                   " : "
                 ] }),
                 (_bb = variantRecap.recaps.texts.value) == null ? void 0 : _bb.map((text) => {
-                  var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
+                  var _a3, _b3, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
                   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: text == null ? void 0 : text.textContent }),
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontStyle: "italic", fontWeight: "bold-200", children: [
@@ -19717,7 +19759,7 @@
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontStyle: "italic", fontWeight: "bold-200", children: [
                       "  ",
-                      (_b2 = (_a2 = text == null ? void 0 : text.values) == null ? void 0 : _a2.width) == null ? void 0 : _b2.label,
+                      (_b3 = (_a3 = text == null ? void 0 : text.values) == null ? void 0 : _a3.width) == null ? void 0 : _b3.label,
                       ": ",
                       (_d2 = (_c2 = text == null ? void 0 : text.values) == null ? void 0 : _c2.width) == null ? void 0 : _d2.value,
                       "  "
@@ -19768,7 +19810,7 @@
                   " : "
                 ] }),
                 (_lb = (_kb = (_jb = (_ib = variantRecap.recaps) == null ? void 0 : _ib.texts) == null ? void 0 : _jb.value) == null ? void 0 : _kb.face1) == null ? void 0 : _lb.map((text) => {
-                  var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
+                  var _a3, _b3, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
                   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: text == null ? void 0 : text.textContent }),
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontStyle: "italic", fontWeight: "bold-200", children: [
@@ -19778,7 +19820,7 @@
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontStyle: "italic", fontWeight: "bold-200", children: [
                       "  ",
-                      (_b2 = (_a2 = text == null ? void 0 : text.values) == null ? void 0 : _a2.width) == null ? void 0 : _b2.label,
+                      (_b3 = (_a3 = text == null ? void 0 : text.values) == null ? void 0 : _a3.width) == null ? void 0 : _b3.label,
                       ": ",
                       (_d2 = (_c2 = text == null ? void 0 : text.values) == null ? void 0 : _c2.width) == null ? void 0 : _d2.value,
                       "  "
@@ -19829,7 +19871,7 @@
                   " : "
                 ] }),
                 (_ub = (_tb = (_sb = variantRecap.recaps.texts) == null ? void 0 : _sb.value) == null ? void 0 : _tb.face2) == null ? void 0 : _ub.map((text) => {
-                  var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
+                  var _a3, _b3, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m2, _n2, _o2, _p2, _q2, _r2, _s2, _t2, _u2, _v2, _w2, _x2;
                   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { children: text == null ? void 0 : text.textContent }),
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontStyle: "italic", fontWeight: "bold-200", children: [
@@ -19839,7 +19881,7 @@
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Text2, { fontStyle: "italic", fontWeight: "bold-200", children: [
                       "  ",
-                      (_b2 = (_a2 = text == null ? void 0 : text.values) == null ? void 0 : _a2.width) == null ? void 0 : _b2.label,
+                      (_b3 = (_a3 = text == null ? void 0 : text.values) == null ? void 0 : _a3.width) == null ? void 0 : _b3.label,
                       ": ",
                       (_d2 = (_c2 = text == null ? void 0 : text.values) == null ? void 0 : _c2.width) == null ? void 0 : _d2.value,
                       "  "
