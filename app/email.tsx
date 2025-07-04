@@ -1,6 +1,7 @@
 import { render } from '@react-email/render';
 import { RecapMail } from './components/emails/RecapMail';
 import * as nodemailer from 'nodemailer'
+import DesignUploadMail from './components/emails/DesignUploadMail';
 
 
 const transporter = nodemailer.createTransport({
@@ -65,4 +66,41 @@ export async function sendRecapMail(data:any, email:string, subject:string,custo
   await transporter.sendMail(options);
   console.log("email sent");
 
+}
+
+
+export async function sendUploadMail(
+  order: any,
+  email: string,
+  subject: string,
+  customer: any,
+  designs: any[]
+) {
+  const emailHtml = render(
+    <DesignUploadMail order={order} customer={customer} designs={designs} />
+  );
+
+  const options: any = {
+    from: `"All Signs Options Support" <support@signsdesigner.us>`,
+    to: email,
+    subject,
+    html: emailHtml,
+  };
+
+  if (designs?.length > 0) {
+    options.attachments = designs
+      .filter((design) => design.zipUrl)
+      .map((design) => ({
+        filename: design.zipUrl.split("/").pop(),
+        path: design.zipUrl,
+      }));
+  }
+
+  try {
+    await transporter.sendMail(options);
+    console.log("✅ Email sent successfully to", email);
+  } catch (error) {
+    console.error("❌ Error sending email:", error);
+    throw error;
+  }
 }

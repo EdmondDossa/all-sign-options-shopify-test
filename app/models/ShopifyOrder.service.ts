@@ -9,6 +9,7 @@ export class ShopifyOrderService{
                     order(id: $id) {
                         id
                         name
+                        clientIp
                         totalPriceSet {
                             presentmentMoney {
                                 amount
@@ -61,6 +62,7 @@ export class ShopifyOrderService{
             return {
                 id: order.id,
                 name: order.name,
+                order_number:order.name.replace('#', ''),
                 total_price: order.totalPriceSet.presentmentMoney.amount,
                 line_items: order.lineItems.nodes.map((item:any) => ({
                     id: item.id,
@@ -71,7 +73,8 @@ export class ShopifyOrderService{
                     variant_id:  item.variant.legacyResourceId,
                     product_id:  item.product.legacyResourceId
                 })),
-                customer: order.customer
+                customer: order.customer,
+                clientIp:order.clientIp
             };
         } catch (error) {
             console.log("error on getting order", error);

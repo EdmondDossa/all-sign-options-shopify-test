@@ -37,6 +37,17 @@ export interface ClipartsGroupType{
     title: string;
     description: string;
   }
+
+  export interface DesignType  {
+    id?: number;
+    customerIp?: string;
+    orderId?: string;
+    productId?: string;
+    configId?: number;
+    variantId?: string;
+    files?: any;
+    zipFile?:string;
+  };
   
 
 

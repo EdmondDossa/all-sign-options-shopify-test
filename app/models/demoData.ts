@@ -12,6 +12,15 @@ export const configurationDemoData: ConfigurationType[] = [
     data: {
       settings: {
         generals: {
+          upload:{
+      allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+      maxUploadSize: 5000,
+      maxUploadNumber: 5,
+      zipFiles: {
+        active: false,
+        zipOutFolderPrefix: "aso_",
+      }
+    },
           mobile: {
             showNavigatorMenu: "off",
             showNavigationMenuFirst: "yes",
@@ -30,6 +39,8 @@ export const configurationDemoData: ConfigurationType[] = [
             designFromScratch: true,
             redirectToCheckOutPage: false,
             displayRecapsOnCheckout: false,
+            hidePricing:false,
+            showRecapAfterFinish:true,
             redirectAfterAddingToCart: true,
             hideDesignButtonsOnShopPage: false,
             hideAddToCartButtonOnShopPage: true,
@@ -981,6 +992,15 @@ export const configurationDemoData: ConfigurationType[] = [
     data: {
       settings: {
         generals: {
+          upload:{
+      allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+      maxUploadSize: 5000,
+      maxUploadNumber: 5,
+      zipFiles: {
+        active: false,
+        zipOutFolderPrefix: "aso_",
+      }
+    },
           mobile: {
             showNavigatorMenu: "off",
             showNavigationMenuFirst: "yes",
@@ -999,6 +1019,8 @@ export const configurationDemoData: ConfigurationType[] = [
             designFromScratch: true,
             redirectToCheckOutPage: false,
             displayRecapsOnCheckout: false,
+            hidePricing:false,
+            showRecapAfterFinish:true,
             redirectAfterAddingToCart: true,
             hideDesignButtonsOnShopPage: false,
             hideAddToCartButtonOnShopPage: true,
@@ -2046,6 +2068,15 @@ export const configurationDemoData: ConfigurationType[] = [
     data: {
       settings: {
         generals: {
+          upload:{
+      allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+      maxUploadSize: 5000,
+      maxUploadNumber: 5,
+      zipFiles: {
+        active: false,
+        zipOutFolderPrefix: "aso_",
+      }
+    },
           mobile: {
             showNavigatorMenu: "off",
             showNavigationMenuFirst: "yes",
@@ -2064,6 +2095,8 @@ export const configurationDemoData: ConfigurationType[] = [
             designFromScratch: true,
             redirectToCheckOutPage: false,
             displayRecapsOnCheckout: false,
+            hidePricing:false,
+            showRecapAfterFinish:true,
             redirectAfterAddingToCart: true,
             hideDesignButtonsOnShopPage: false,
             hideAddToCartButtonOnShopPage: true,
@@ -3146,6 +3179,15 @@ export const configurationDemoData: ConfigurationType[] = [
     data: {
       settings: {
         generals: {
+          upload:{
+      allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+      maxUploadSize: 5000,
+      maxUploadNumber: 5,
+      zipFiles: {
+        active: false,
+        zipOutFolderPrefix: "aso_",
+      }
+    },
           mobile: {
             showNavigatorMenu: "off",
             showNavigationMenuFirst: "yes",
@@ -3164,6 +3206,8 @@ export const configurationDemoData: ConfigurationType[] = [
             designFromScratch: true,
             redirectToCheckOutPage: false,
             displayRecapsOnCheckout: false,
+            hidePricing:false,
+            showRecapAfterFinish:true,
             redirectAfterAddingToCart: true,
             hideDesignButtonsOnShopPage: false,
             hideAddToCartButtonOnShopPage: true,
@@ -5413,6 +5457,15 @@ export const configurationDemoData: ConfigurationType[] = [
     data: {
       settings: {
         generals: {
+          upload:{
+      allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+      maxUploadSize: 5000,
+      maxUploadNumber: 5,
+      zipFiles: {
+        active: false,
+        zipOutFolderPrefix: "aso_",
+      }
+    },
           mobile: {
             showNavigatorMenu: "off",
             showNavigationMenuFirst: "yes",
@@ -5431,6 +5484,8 @@ export const configurationDemoData: ConfigurationType[] = [
             designFromScratch: true,
             redirectToCheckOutPage: false,
             displayRecapsOnCheckout: false,
+            hidePricing:false,
+            showRecapAfterFinish:true,
             redirectAfterAddingToCart: true,
             hideDesignButtonsOnShopPage: false,
             hideAddToCartButtonOnShopPage: true,
@@ -6929,6 +6984,15 @@ export const configurationDemoData: ConfigurationType[] = [
     data: {
       settings: {
         generals: {
+          upload:{
+      allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+      maxUploadSize: 5000,
+      maxUploadNumber: 5,
+      zipFiles: {
+        active: false,
+        zipOutFolderPrefix: "aso_",
+      }
+    },
           mobile: {
             showNavigatorMenu: "off",
             showNavigationMenuFirst: "yes",
@@ -6947,6 +7011,8 @@ export const configurationDemoData: ConfigurationType[] = [
             designFromScratch: true,
             redirectToCheckOutPage: false,
             displayRecapsOnCheckout: false,
+            hidePricing:false,
+            showRecapAfterFinish:true,
             redirectAfterAddingToCart: true,
             hideDesignButtonsOnShopPage: false,
             hideAddToCartButtonOnShopPage: true,
@@ -8033,6 +8099,15 @@ export const configurationDemoData: ConfigurationType[] = [
     data: {
       settings: {
         generals: {
+          upload:{
+      allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+      maxUploadSize: 5000,
+      maxUploadNumber: 5,
+      zipFiles: {
+        active: false,
+        zipOutFolderPrefix: "aso_",
+      }
+    },
           mobile: {
             showNavigatorMenu: "off",
             showNavigationMenuFirst: "yes",
@@ -8051,6 +8126,8 @@ export const configurationDemoData: ConfigurationType[] = [
             designFromScratch: true,
             redirectToCheckOutPage: false,
             displayRecapsOnCheckout: false,
+            hidePricing:false,
+            showRecapAfterFinish:true,
             redirectAfterAddingToCart: true,
             hideDesignButtonsOnShopPage: false,
             hideAddToCartButtonOnShopPage: true,
@@ -8629,6 +8706,15 @@ export const configurationDemoData: ConfigurationType[] = [
     data: {
       settings: {
         generals: {
+          upload:{
+      allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+      maxUploadSize: 5000,
+      maxUploadNumber: 5,
+      zipFiles: {
+        active: false,
+        zipOutFolderPrefix: "aso_",
+      }
+    },
           mobile: {
             showNavigatorMenu: "off",
             showNavigationMenuFirst: "yes",
@@ -8647,6 +8733,8 @@ export const configurationDemoData: ConfigurationType[] = [
             designFromScratch: true,
             redirectToCheckOutPage: false,
             displayRecapsOnCheckout: false,
+            hidePricing:false,
+            showRecapAfterFinish:true,
             redirectAfterAddingToCart: true,
             hideDesignButtonsOnShopPage: false,
             hideAddToCartButtonOnShopPage: true,

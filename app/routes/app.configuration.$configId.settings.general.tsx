@@ -26,6 +26,9 @@ export default function ConfigSettingsGeneral() {
             <SubTabItem to="mobile-option">
               Mobile Option
             </SubTabItem>
+            <SubTabItem to="upload">
+              Upload Design
+            </SubTabItem>
           </InlineStack>
         </Box>
       </SpacingBackground>
