@@ -1,5 +1,5 @@
 import AdmZip from "adm-zip";
-import { sendRecapMail } from "~/email";
+import { sendRecapMail, sendUploadMail } from "~/email";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
 import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
 import { calculateImagePlacement, fileBuffer, generateUniqueId, getExtensionFromBase64, uploadBufferWithName } from "~/utils/uploadBase64";
@@ -8,12 +8,90 @@ import { assignShopDesignPath } from "~/utils/fileUrl";
 import { unlink } from "fs";
 import SettingOutputService from "~/models/SettingOutput.service";
 import { updateOrCreateJsonData } from "~/utils/jsonHandler";
+import { ShopifyOrderService } from "~/models/ShopifyOrder.service";
+import DesignService from "~/models/Design.service";
+
+export async function sendUploadfile(admin: any, sessionId: string, orderId: any) {
+  try {
+      const order = await ShopifyOrderService.getOrder(admin, orderId);
+      
+      if (!order) {
+          console.error(`Order ${orderId} not found`);
+          return;
+      }
+
+      let designs = await DesignService.getDesignByIp(order?.clientIp, sessionId);
+
+      if (designs && designs.length > 0) {
+          let validDesigns = [];
+          
+          for (let design of designs) {
+              let line_item = order?.line_items.find((line: any) => line.product_id == design.productId);
+              
+              if (!line_item) {
+                  continue;
+              }
+
+              let zip = new AdmZip();
+              
+              // Vérifier si design.files existe et est itérable
+              if (design.files && typeof design.files === 'object') {
+                  for (let file of design.files) {
+                      try {
+                          // Vérifier si le fichier existe avant de l'ajouter
+                          const filePath = "public/" + file;
+                          const fileName = line_item.title + 
+                          zip.addLocalFile(filePath);
+                      } catch (error) {
+                          console.error(`Error adding file ${file} to zip:`, error);
+                      }
+                  }
+              }
+
+              let zip_name =  line_item.title.replace(/\s+/g, "-").slice(0, 40);
+
+              let zipPath = assignShopDesignPath(sessionId, `${orderId}_${zip_name}.zip`);
+              zip.writeZip(zipPath);
+              zipPath = `${process.env.SHOPIFY_APP_URL}/${zipPath.replace('public/', '')}`;
+
+              design.zipFile = zipPath;
+              design.orderId = orderId+"";
+              validDesigns.push(design);
+              
+              await DesignService.updateDesign(design, sessionId);
+          }
+
+          if (validDesigns.length > 0) {
+              const shop = await ShopifyShopService.getShop(admin);
+              const output = await SettingOutputService.get(sessionId);
+
+              if (shop?.email && output?.enableSendMailToAdmin) {
+                  await sendUploadMail(order, shop.email, `All signs options ${order.order_number}`, order.customer, validDesigns);
+              }
+
+              // Gérer les emails de sortie
+              const outputEmails = output?.ouputReceiverMails?.split(',') || [];
+              for (const email of outputEmails) {
+                  const trimmedEmail = email.trim();
+                  if (trimmedEmail) {
+                      await sendUploadMail(order, trimmedEmail, `All signs options ${order.order_number}`, order.customer, validDesigns);
+                  }
+              }
+          }
+      }
+  } catch (error) {
+      console.error('Error in sendUploadfile:', error);
+      throw error;
+  }
+}
 
 export async function OrderCreateWebhook(admin:any,session:any,payload:any){
   const order = payload;
 
     const variantsData:any =  []
     if (order) {
+        await sendUploadfile(admin, session.id, parseInt( order.id||"0") );
+
       for(const line_item of order.line_items){
         let variantMetaData :any = await ShopifyProductService.getVariantRecap(admin,`gid://shopify/ProductVariant/${line_item.variant_id}`)
         if (variantMetaData) {
@@ -203,3 +281,5 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
       }
     }
 }
+
+

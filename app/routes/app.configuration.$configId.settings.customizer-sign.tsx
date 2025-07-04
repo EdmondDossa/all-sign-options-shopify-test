@@ -43,8 +43,9 @@ export default function ConfigSettingsGeneral() {
         height="auto"
         border="1px solid #DDDDDD"
       >
-        <Box paddingBlock="300">
+        <Box paddingBlock="300" >
           <InlineStack gap="400" align="center">
+            <SubTabItem to="config-options"> Design  options</SubTabItem>
             <SubTabItem to="customizer-options"> Customizer options</SubTabItem>
             <SubTabItem to="sign-part"> Sign part</SubTabItem>
             <SubTabItem to="text">

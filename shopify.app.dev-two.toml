@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://stickers-magazines-everyone-reader.trycloudflare.com"
+application_url = "https://curriculum-feat-counties-fever.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://stickers-magazines-everyone-reader.trycloudflare.com/auth/callback",
-  "https://stickers-magazines-everyone-reader.trycloudflare.com/auth/shopify/callback",
-  "https://stickers-magazines-everyone-reader.trycloudflare.com/api/auth/callback"
+  "https://curriculum-feat-counties-fever.trycloudflare.com/auth/callback",
+  "https://curriculum-feat-counties-fever.trycloudflare.com/auth/shopify/callback",
+  "https://curriculum-feat-counties-fever.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://stickers-magazines-everyone-reader.trycloudflare.com"
+url = "https://curriculum-feat-counties-fever.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

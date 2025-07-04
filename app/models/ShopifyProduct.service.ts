@@ -410,9 +410,11 @@ export class ShopifyProductService {
         );
         
         const data = await response.json();
-        const recapData = JSON.parse(data.data.productVariant?.metafield?.value);
+        const recapData  = data.data.productVariant?.metafield?.value ? JSON.parse(data.data.productVariant?.metafield?.value) : null;
         
-        
+        if (!recapData) {
+          return null;
+        }
 
         return data.data.productVariant.metafield ? {
           title: data.data.productVariant?.title,

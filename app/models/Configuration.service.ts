@@ -4,6 +4,15 @@ import { ConfigurationType } from "~/types/ConfigurationType";
 const initialData = {
   settings: {
     generals: {
+      upload:{
+        allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+        maxUploadSize: 5000,
+        maxUploadNumber: 5,
+        zipFiles: {
+          active: false,
+          zipOutFolderPrefix: "aso_",
+        }
+      },
       mobile: {
         showNavigatorMenu: "off",
         showNavigationMenuFirst: "yes",
@@ -22,6 +31,8 @@ const initialData = {
         designFromScratch: true,
         redirectToCheckOutPage: false,
         displayRecapsOnCheckout: false,
+        hidePricing:false,
+        showRecapAfterFinish:true,
         redirectAfterAddingToCart: true,
         hideDesignButtonsOnShopPage: false,
         hideAddToCartButtonOnShopPage: true,

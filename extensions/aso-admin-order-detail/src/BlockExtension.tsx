@@ -24,10 +24,17 @@ async function getVariantRecaps(id:any) {
   return res.json();
 }
 
+async function getOrdersUploads(id:any) {
+  const res = await fetch(`/api/order-uploads/${id}`);
+  return res.json();
+}
+
 function App() {
 
   // The useApi hook provides access to several useful APIs like i18n and data.
   let  [variantRecaps, setVariantRecaps] = useState<any>()
+  let  [uploads, setUploads] = useState<any>()
+
   const {i18n, data} = useApi(TARGET);
 
 
@@ -35,19 +42,31 @@ function App() {
 
  
   useEffect( ()=> {
-    console.log("start  getting data");
+    console.log("start  getting data", data);
     getVariantRecaps( `${data.selected?.[0]?.id}`.replace('gid://shopify/Order/','')).then((res) => {
      
       setVariantRecaps(res)
       console.log('order data', res);
     
     }).catch((err) => console.log('errors getting data', err))
+
+    getOrdersUploads( `${data.selected?.[0]?.id}`.replace('gid://shopify/Order/','')).then((res) => {
+     
+      setUploads(res)
+
+
+      console.log('upload  files');
+      
+    
+    }).catch((err) => console.log('errors getting data', err))
   },[])
 
+  const getDesignsForLineItem = (productId: string) =>
+    uploads?.designs?.filter((d) => d.productId === productId);
 
   return (
     // The AdminBlock component provides an API for setting the title of the Block extension wrapper.
-    <AdminBlock title="ALL SIGNS OPTIONS">
+    <AdminBlock title="ALL SIGNS OPTIONS 2">
       <BlockStack gap="small small">
         <InlineStack blockAlignment="end">
 
@@ -56,8 +75,36 @@ function App() {
         {/* <Link to="app:configuration">Configuration</Link> */}
      
         </InlineStack>
-        <BlockStack >
+        <BlockStack>
+        {  uploads?.order?.line_items?.map((item: any) => {
+            const matchedDesigns = getDesignsForLineItem(item.product_id);
+            if (matchedDesigns.length === 0) return null;
 
+            return (
+              <Box key={item.id} >
+              <InlineStack inlineAlignment="start" blockAlignment="center" gap="base" >
+                <Heading size={5} > - {item.title}   </Heading>
+                <Heading  size={3} > x {item.quantity} : </Heading>
+                {matchedDesigns.map((design) => (
+                  design.zipFile ? (
+                    <Link
+                      href={design.zipFile}
+                      target="_blank"
+                      key={design.zipFile}
+                    >
+                      Download uploads ZIP
+                    </Link>
+                  ) : null
+                ))}
+              </InlineStack>
+
+               
+              </Box>
+            );
+          })}
+
+        </BlockStack>
+        <BlockStack >
          { variantRecaps?.map((variantRecap:any) => <Box paddingBlockEnd="base">
            <InlineStack inlineAlignment="start" blockAlignment="center" gap="base" >
                 <Heading size={5} > {variantRecap.line_item?.title}   </Heading>

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Design" ALTER COLUMN "productId" SET DATA TYPE BIGINT;
