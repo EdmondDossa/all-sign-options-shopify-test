@@ -12,22 +12,29 @@ datasource db {
 
 
 model Session {
-  id          String    @id
-  shop        String
-  state       String
-  isOnline    Boolean   @default(false)
-  scope       String?
-  expires     DateTime?
-  accessToken String
-  userId      BigInt?
-  isInitialized    Boolean   @default(false)
+  id              String    @id
+  shop            String
+  state           String
+  isOnline        Boolean   @default(false)
+  scope           String?
+  expires         DateTime?
+  accessToken     String
+  userId          BigInt?
+  isInitialized   Boolean   @default(false)
+  firstName       String?
+  lastName        String?
+  email           String?
+  accountOwner    Boolean   @default(false)
+  locale          String?
+  collaborator    Boolean?  @default(false)
+  emailVerified   Boolean?  @default(false)
   configurations  Configuration[]
-  fonts       Font[]
+  fonts           Font[]
   clipartsGroup   ClipartsGroup[]
-  templates      Template[] 
+  templates       Template[] 
   categories      Category[] 
-  setting    Setting?
-  Design    Design[]
+  setting         Setting?
+  Design          Design[]
 }
 
 model Upload{
