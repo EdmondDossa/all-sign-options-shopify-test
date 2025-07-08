@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://curriculum-feat-counties-fever.trycloudflare.com"
+application_url = "https://monthly-sectors-downloads-mixing.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://curriculum-feat-counties-fever.trycloudflare.com/auth/callback",
-  "https://curriculum-feat-counties-fever.trycloudflare.com/auth/shopify/callback",
-  "https://curriculum-feat-counties-fever.trycloudflare.com/api/auth/callback"
+  "https://monthly-sectors-downloads-mixing.trycloudflare.com/auth/callback",
+  "https://monthly-sectors-downloads-mixing.trycloudflare.com/auth/shopify/callback",
+  "https://monthly-sectors-downloads-mixing.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://curriculum-feat-counties-fever.trycloudflare.com"
+url = "https://monthly-sectors-downloads-mixing.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
