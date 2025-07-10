@@ -241,7 +241,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
       return json({
         ...jFlashMessage(
-          "Material advance component  deleting is completed successfull",
+          "Material advance component deleted successfully",
         ),
       });
       break;
@@ -257,7 +257,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
       return json({
         ...jFlashMessage(
-          "Material advance component  deleting is completed successfull",
+          "Default material advance component set successfully",
         ),
       });
       break;

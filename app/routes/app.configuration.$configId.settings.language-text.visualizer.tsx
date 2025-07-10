@@ -82,9 +82,9 @@ export default function ConfigSettingsGeneral() {
   let isSubmitting = navigation.state == "submitting";
   const [formData, setFormData] = useState<any>(
     {
-      textCanvasCenterH:"centerH",
-      textCanvasCenterV:"centerV",
-      textCanvasDelete:"delete",
+      textCanvasCenterH:"Center H",
+      textCanvasCenterV:"Center V",
+      textCanvasDelete:"Delete",
       textCanvasEdit:"Edit",
       textCanvasClone:"Clone",
       textPosition: "Position",
@@ -100,7 +100,7 @@ export default function ConfigSettingsGeneral() {
       textButtonBack: "Undo",
       textButtonNext: "Redo",
       textBeforePrice: "",
-      textAfterPrice: "TVA Include",
+      textAfterPrice: "VAT Included",
       textButtonFinish: "Finish",
       textAddToCart: "Add To Cart",
       textPreview: "Preview",
@@ -121,7 +121,7 @@ export default function ConfigSettingsGeneral() {
       customSize: "Custom Size",
       customSizeButtonDone: "Done",
       thickness: "Thickness",
-      textAdditonnalOptionsHeader: 'Additionnals Options',
+      textAdditonnalOptionsHeader: 'Additional Options',
       textButtonAdditonnalOptions: 'Add Option',
       ...settingData || {}
     },

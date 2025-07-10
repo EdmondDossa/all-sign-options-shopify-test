@@ -159,7 +159,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
       return json({
         ...jFlashMessage(
-          "Material additional option deleting is completed successfull",
+          "Material additional option deleted successfully",
         ),
       });
       break;

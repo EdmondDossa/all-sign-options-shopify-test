@@ -158,12 +158,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return res
       ? json({
           ...jFlashMessage(
-            "Matrrial  text and image  updated is completed successfully",
+            "Material text and image updated successfully",
           ),
         })
       : json({
           ...jFlashMessage(
-            "Errors on Matrrial  text and image   upadating",
+            "Errors on material text and image updating",
             "error",
           ),
         });

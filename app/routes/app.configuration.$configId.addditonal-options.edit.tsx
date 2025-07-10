@@ -204,10 +204,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Additional option  updated is completed successfully")}`,
+          `..${flashMessage("Additional option updated successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Additional option  updated is  fail", "error")}`,
+          `..${flashMessage("Failed to update additional option", "error")}`,
         );
   } else {
     let res = await ConfigAddionalOptionService.add(
@@ -217,10 +217,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Additional option  added is completed successfully")}`,
+          `..${flashMessage("Additional option added successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Additional option  added is  fail", "error")}`,
+          `..${flashMessage("Failed to add additional option", "error")}`,
         );
   }
 };
@@ -288,7 +288,7 @@ function YesOrNoInput({
       {isError && (
         <FlashToast
           messageFlash={{
-            msg: "Your entries contain errors. kindly rectify them",
+            msg: "Your entries contain errors. Kindly rectify them",
             status: "error",
           }}
         />
@@ -593,7 +593,7 @@ function NoteTypeInput({
       {isError && (
         <FlashToast
           messageFlash={{
-            msg: "Your entries contain errors. kindly rectify them",
+            msg: "Your entries contain errors. Kindly rectify them",
             status: "error",
           }}
         />
@@ -770,7 +770,7 @@ function TypeImageInput({
       {isError && (
         <FlashToast
           messageFlash={{
-            msg: "Your entries contain errors. kindly rectify them",
+            msg: "Your entries contain errors. Kindly rectify them",
             status: "error",
           }}
         />
@@ -1234,7 +1234,7 @@ function DropdownTypeInput({
       {isError && (
         <FlashToast
           messageFlash={{
-            msg: "Your entries contain errors. kindly rectify them",
+            msg: "Your entries contain errors. Kindly rectify them",
             status: "error",
           }}
         />
@@ -1601,7 +1601,7 @@ function IncludedOptionInput({
       {isError && (
         <FlashToast
           messageFlash={{
-            msg: "Your entries contain errors. kindly rectify them",
+            msg: "Your entries contain errors. Kindly rectify them",
             status: "error",
           }}
         />

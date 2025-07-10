@@ -212,7 +212,7 @@ export default function ConfigSettingsGeneral() {
                       handleInputChange("hidePricing", value)
                     }
                   >
-                    This options allow you to show/hide the  sign  pricing on design screen
+                    This options allow you to show/hide the sign pricing on design screen
                   </ProductConfigItem>
                 </Grid.Cell> 
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
@@ -223,7 +223,7 @@ export default function ConfigSettingsGeneral() {
                       handleInputChange("showRecapAfterFinish", value)
                     }
                   >
-                    This option allow you to show recap  before  add product  to  cart
+                                        This option allows you to show recap before adding the product to the cart
                   </ProductConfigItem>
                 </Grid.Cell>
 

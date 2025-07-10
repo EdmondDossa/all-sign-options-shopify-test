@@ -85,7 +85,6 @@ export default function ManageClipartCreate() {
    
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(" log is nt errors");
     submit({ ...formData }, { method: "POST" });
   };
   
@@ -168,7 +167,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 
   const formData = await request.formData();
-  console.log(" form  dta",formData.get("thickness"));
   
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
@@ -180,17 +178,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   let size: ClipartsGroupType = submission.value as ClipartsGroupType;
-  console.log(" data to  save", size)
   if (id) {
     size.id = parseInt(id);
     let res = await ClipartsGroupService.updateClipartsGroup(size, session.id)
     return res ? 
-      redirect(`..${flashMessage("Cliparts group  updated is completed successfully")}`)
-      : json({ ...jFlashMessage("error on Cliparts group upadating") });
+      redirect(`..${flashMessage("Clipart group updated successfully")}`)
+      : json({ ...jFlashMessage("Error on clipart group updating") });
   } else {
     let res =  await ClipartsGroupService.addClipartsGroup(size, session.id)
-    return res ? redirect(`..${flashMessage("Cliparts group  added is completed successfully")}`)
-      : json({ ...jFlashMessage("Clipart group   on Size adding") });
+    return res ? redirect(`..${flashMessage("Clipart group added successfully")}`)
+      : json({ ...jFlashMessage("Clipart group on Size adding") });
   } 
 };
 

@@ -20,7 +20,7 @@ export const action = async ({ request , params}: ActionFunctionArgs) => {
   const  id =   params.id || "";
   const submission = parseWithZod(formData, {schema:formSchema});
   if (submission.status !== 'success') {
-    return json(jFlashMessage("error   on template adding") )
+    return json(jFlashMessage("Error on template adding") )
   }
 
   let template:any = submission.value;
@@ -28,8 +28,8 @@ export const action = async ({ request , params}: ActionFunctionArgs) => {
   
     template.id = parseInt(id);
     let res = await TemplateService.configTemplate(parseInt(id), session.id, template.data) 
-    return res ? json(jFlashMessage("template  configuration is completed successfully"))
-      : json(jFlashMessage("error on template upadating") );
+    return res ? json(jFlashMessage("Template configuration completed successfully"))
+      : json(jFlashMessage("Error on template updating") );
  
 };
 

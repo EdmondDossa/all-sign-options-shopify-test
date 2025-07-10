@@ -167,7 +167,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       console.log("start deleting");
       await MaterialService.delete(configId, session.id, parseInt(id));
       return json({
-        ...jFlashMessage("Configution deleting is completed successfull"),
+        ...jFlashMessage("Configuration deleting is completed successfully"),
       });
       break;
     }

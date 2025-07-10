@@ -378,10 +378,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material fixing method  updated is completed successfully")}`,
+          `..${flashMessage("Material fixing method updated successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material fixing method  updated is  fail", "error")}`,
+          `..${flashMessage("Failed to update material fixing method", "error")}`,
         );
   } else {
     let resTab: any = [];
@@ -399,10 +399,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     return resTab?.length > 0
       ? redirect(
-          `..${flashMessage("Material fixing method  added is completed successfully")}`,
+          `..${flashMessage("Material fixing method added successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material fixing method  added is  fail", "error")}`,
+          `..${flashMessage("Failed to add material fixing method", "error")}`,
         );
   }
 };

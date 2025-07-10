@@ -49,7 +49,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         session.id,
       );
       return json({
-        ...jFlashMessage("Cliparts group deleting is completed successfull"),
+        ...jFlashMessage("Clipart group deleted successfully"),
       });
     }
 

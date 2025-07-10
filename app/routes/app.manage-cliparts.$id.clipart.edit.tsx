@@ -490,14 +490,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     clipart.id = parseInt(id);
     let res = await ClipartService.updateClipart(clipart, clipartsGroupId) 
     return res ?
-      redirect(`..${flashMessage("clipart  updated is completed successfully")}`)
-      : json({ ...jFlashMessage("error on clipart upadating") });
+      redirect(`..${flashMessage("Clipart updated successfully")}`)
+      : json({ ...jFlashMessage("Error on clipart updating") });
   } else {
     let res: any = null;
     for(const clipart of cliparts){
       res =  await ClipartService.addClipart(clipart,clipartsGroupId)
     }
-    return res ? redirect(`..${flashMessage("clipart  added is completed successfully")}`)
-      : json({ ...jFlashMessage("error  on font adding") });
+    return res ? redirect(`..${flashMessage("Clipart added successfully")}`)
+      : json({ ...jFlashMessage("Error on font adding") });
   } 
 };

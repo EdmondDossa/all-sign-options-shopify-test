@@ -225,10 +225,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material advance component  updated is completed successfully")}`,
+          `..${flashMessage("Material advance component updated successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material  advance component  updated is  fail", "error")}`,
+          `..${flashMessage("Failed to update material advance component", "error")}`,
         );
   } else {
     let res = await MaterialAdvanceComponentService.add(
@@ -239,10 +239,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material  advance component  added is completed successfully")}`,
+          `..${flashMessage("Material advance component added successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material  advance component   added is  fail", "error")}`,
+          `..${flashMessage("Failed to add material advance component", "error")}`,
         );
   }
 };

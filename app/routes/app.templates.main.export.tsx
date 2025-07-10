@@ -225,5 +225,5 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   configuration.uploadsPrefix = uploadsPrefix
 
-  return configuration ? json({ ...jFlashMessage("Your file is ready  to  be  downloaded"), configuration: configuration }) : json({ ...jFlashMessage("error   on template adding") });
+  return configuration ? json({ ...jFlashMessage("Your file is ready to be downloaded"), configuration: configuration }) : json({ ...jFlashMessage("Error on template adding") });
 };

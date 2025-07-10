@@ -83,9 +83,9 @@ export default function MaterialFixingMethod() {
               enablePricingBySurface: false,
               surface: 0,
               shapeSize: {
-                small: 0,
-                medium: 0,
-                large: 0
+                small: 20,
+                medium: 40,
+                large: 60
               }
             },
           ],
@@ -130,10 +130,12 @@ export default function MaterialFixingMethod() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+
+    console.log("before  hello  world");
     
     // Validate shape sizes before submitting
     const hasInvalidSizes = formData.configShapes.some(shape => {
-      if (shape.shapeSize) {
+      if (shape.shapeSize && manageShapes[shape.shapeId]?.value === "cut-to-shape" ) {
         return !(shape.shapeSize.small < shape.shapeSize.medium && shape.shapeSize.medium < shape.shapeSize.large);
       }
       return false;
@@ -382,22 +384,16 @@ const formSchema = z.object({
           additionalPrice: z.number({
             required_error: "Material shape price is required",
           }),
-          isDefault: z.boolean().optional(),
-          enablePricingBySurface: z.boolean().optional(),
+          isDefault: z.boolean().optional().nullable(),
+          enablePricingBySurface: z.boolean().optional().nullable(),
           surface: z.number({
             required_error: "Material shape price is required",
-          }).optional(),
+          }).optional().nullable(),
           shapeSize: z.object({
             small: z.number(),
             medium: z.number(),
             large: z.number()
-          }).refine(
-            (data) => data.small < data.medium && data.medium < data.large,
-            {
-              message: "Error: Small < Medium < Large is not found",
-              path: ["shapeSize"]
-            }
-          ).optional()
+          }).optional().nullable()
         })
         .array(),
     ),
@@ -435,10 +431,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material shape  updated is completed successfully")}`,
+          `..${flashMessage("Material shape updated successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material shape updated is  fail", "error")}`,
+          `..${flashMessage("Failed to update material shape", "error")}`,
         );
   } else {
     let resTab: any = [];
@@ -455,8 +451,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
     return resTab?.length > 0
       ? redirect(
-          `..${flashMessage("Material shape added is completed successfully")}`,
+          `..${flashMessage("Material shape added successfully")}`,
         )
-      : redirect(`..${flashMessage("Material shape added is  fail", "error")}`);
+      : redirect(`..${flashMessage("Failed to add material shape", "error")}`);
   }
 };

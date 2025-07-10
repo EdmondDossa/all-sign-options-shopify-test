@@ -186,7 +186,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Material option deleting is completed successfull"),
+        ...jFlashMessage("Material option deleted successfully"),
       });
       break;
     }
@@ -202,7 +202,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Default Material option  is defined successfull"),
+        ...jFlashMessage("Default material option set successfully"),
       });
       break;
     }

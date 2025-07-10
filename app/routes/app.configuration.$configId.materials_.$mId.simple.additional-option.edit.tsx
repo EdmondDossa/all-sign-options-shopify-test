@@ -170,10 +170,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     ); 
     return res
       ? redirect(
-          `..${flashMessage("Material additional option  updated is completed successfully")}`,
+          `..${flashMessage("Material additional option updated successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material additional option  updated is  fail", "error")}`,
+          `..${flashMessage("Failed to update material additional option", "error")}`,
         );
   } else {
     let res = await MaterialAdditionalOptionService.add(
@@ -184,9 +184,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material additional option  added is completed successfully")}`,
+          `..${flashMessage("Material additional option added successfully")}`,
         )
-      : redirect(`..${flashMessage("Material additional option  added is  fail", "error")}`);
+      : redirect(`..${flashMessage("Failed to add material additional option", "error")}`);
   }
 
 };

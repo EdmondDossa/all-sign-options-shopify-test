@@ -211,15 +211,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material  updated is completed successfully")}`,
+          `..${flashMessage("Material updated successfully")}`,
         )
-      : redirect(`..${flashMessage("Material  updated is  fail", "error")}`);
+      : redirect(`..${flashMessage("Failed to update material", "error")}`);
   } else {
     let res = await ServiceMaterial.add(configId, session.id, material);
     return res
       ? redirect(
-          `..${flashMessage("Material  added is completed successfully")}`,
+          `..${flashMessage("Material added successfully")}`,
         )
-      : redirect(`..${flashMessage("Material  added is  fail", "error")}`);
+      : redirect(`..${flashMessage("Failed to add material", "error")}`);
   }
 };
