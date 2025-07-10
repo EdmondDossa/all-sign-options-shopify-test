@@ -418,7 +418,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   switch (method) {
     case "DELETE": {
       const id = formData.get("id") as string;
-      console.log("start deleting");
       await MaterialBorderService.delete(
         configId,
         session.id,
