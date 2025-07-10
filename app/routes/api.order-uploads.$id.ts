@@ -9,7 +9,7 @@ export const loader = async ({ request, params }:LoaderFunctionArgs) => {
    
     if (!params.id) {
       return cors(json({
-        message: "id  de  la  commandes  est invalide",
+        message: "Order ID is invalid",
         statut:"error"
       }))
     }

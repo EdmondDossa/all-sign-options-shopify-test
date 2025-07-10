@@ -64,7 +64,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       console.log("start deleting");
       await TemplateService.deleteTemplate(parseInt(id), session.id);
       return json({
-        ...jFlashMessage("Template deleting is completed successfull"),
+        ...jFlashMessage("Template deleted successfully"),
       });
     }
 

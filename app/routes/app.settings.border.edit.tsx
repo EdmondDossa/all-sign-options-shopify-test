@@ -152,8 +152,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     
     let res = await SettingBorderService.update(border, session.id) 
     return res ?
-      redirect(`..${flashMessage("Border  updated is completed successfully")}`)
-      : json({ ...jFlashMessage("error on Border upadating") });
+      redirect(`..${flashMessage("Border updated successfully")}`)
+      : json({ ...jFlashMessage("Error on border updating") });
   } 
 
   return null;

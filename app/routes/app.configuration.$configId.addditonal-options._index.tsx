@@ -134,7 +134,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id),
       );
       return json({
-        ...jFlashMessage("Configution deleting is completed successfull"),
+        ...jFlashMessage("Configuration deleting is completed successfully"),
       });
       break;
     }

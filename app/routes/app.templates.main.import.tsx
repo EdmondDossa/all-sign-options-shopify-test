@@ -260,8 +260,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   
   let templates = await TemplateService.addMany(configData.templates, session.id, configuration.id, submission.value.categoryId??undefined)
   
-  return templates ? redirect(`..${flashMessage("templates  imported is completed successfully")}`)
-  : json({ ...jFlashMessage("error   on template adding") });
+  return templates ? redirect(`..${flashMessage("Templates imported successfully")}`)
+  : json({ ...jFlashMessage("Error on template adding") });
   
 };
 

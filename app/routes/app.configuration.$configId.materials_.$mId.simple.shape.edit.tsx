@@ -431,10 +431,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material shape  updated is completed successfully")}`,
+          `..${flashMessage("Material shape updated successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material shape updated is  fail", "error")}`,
+          `..${flashMessage("Failed to update material shape", "error")}`,
         );
   } else {
     let resTab: any = [];
@@ -451,8 +451,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
     return resTab?.length > 0
       ? redirect(
-          `..${flashMessage("Material shape added is completed successfully")}`,
+          `..${flashMessage("Material shape added successfully")}`,
         )
-      : redirect(`..${flashMessage("Material shape added is  fail", "error")}`);
+      : redirect(`..${flashMessage("Failed to add material shape", "error")}`);
   }
 };

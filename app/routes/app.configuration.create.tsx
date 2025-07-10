@@ -313,7 +313,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       }
     }
     return redirect(
-      `..${flashMessage("Configuration  updated is completed successfully")}`,
+      `..${flashMessage("Configuration updated successfully")}`,
     );
   } else {
     const app_url = process.env.APP_URL;

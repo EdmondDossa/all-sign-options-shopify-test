@@ -164,8 +164,8 @@ export default function PricingPage() {
           title="Subscription to all signs options"
           illustration="/aso_logo.png"
           primaryAction={plan !="free"?{
-            content: 'Cancel  Current Plan',
-            onAction: ()=>{
+            content: 'Cancel Current Plan',
+            onAction: () =>{
               shopify.modal.show(id)
             }
           } : {
