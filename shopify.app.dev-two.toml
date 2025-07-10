@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://candy-mood-dayton-lap.trycloudflare.com"
+application_url = "https://concluded-budapest-exciting-sail.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://candy-mood-dayton-lap.trycloudflare.com/auth/callback",
-  "https://candy-mood-dayton-lap.trycloudflare.com/auth/shopify/callback",
-  "https://candy-mood-dayton-lap.trycloudflare.com/api/auth/callback"
+  "https://concluded-budapest-exciting-sail.trycloudflare.com/auth/callback",
+  "https://concluded-budapest-exciting-sail.trycloudflare.com/auth/shopify/callback",
+  "https://concluded-budapest-exciting-sail.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://candy-mood-dayton-lap.trycloudflare.com"
+url = "https://concluded-budapest-exciting-sail.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

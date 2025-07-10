@@ -269,12 +269,31 @@
 let fileCounter = 0;
 
 // Gestion de l'upload de fichier
-document.addEventListener('DOMContentLoaded', function() {
+
+async function fetchConfigurationUploads(asoConfigurationId) {
+  try {
+    const response = await fetch(`/apps/aso-proxy/api/configuration-upload/${asoConfigurationId}`);
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+
+    const settingsUploads = await response.json();
+    return settingsUploads;
+  } catch (error) {
+    console.error("Erreur lors du chargement de la configuration :", error);
+    return null; 
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
   const uploadArea = document.getElementById('uploadArea');
   const fileInput = document.getElementById('fileInput');
   const filesList = document.getElementById('filesList');
   const filesContainer = document.getElementById('filesContainer');
   const filesCount = document.getElementById('filesCount');
+
+  const settingsUploads =  await  fetchConfigurationUploads(asoConfigurationId);
 
   if (uploadArea && fileInput) {
     // Drag and drop
@@ -318,20 +337,27 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function validateFile(file) {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'application/pdf'];
-    const maxSize = 10 * 1024 * 1024; // 10MB
-
-    if (!allowedTypes.includes(file.type) && !file.name.toLowerCase().match(/\.(ai|eps)$/)) {
-      notyf.error(`The file type of "${file.name}" is not supported.`);
-      return false;
-    }
-
-    if (file.size > maxSize) {
-      notyf.error(`The file "${file.name}" is too large (max 10MB).`);
-      return false;
-    }
-
-    return true;
+      // Conversion des extensions autorisées en tableau et nettoyage
+      const allowedExtensions = settingsUploads.allowFormat.split(',').map(ext => ext.trim().toLowerCase());
+      const maxSize = settingsUploads.maxUploadSize * 1024 * 1024; // Conversion en bytes (MB -> bytes)
+      
+      // Récupération de l'extension du fichier
+      const fileExtension = file.name.toLowerCase().split('.').pop();
+      
+      // Vérification du type de fichier
+      if (!allowedExtensions.includes(fileExtension)) {
+          notyf.error(`The file type of "${file.name}" is not supported. Allowed types: ${allowedExtensions.join(', ')}`);
+          return false;
+      }
+      
+      // Vérification de la taille du fichier
+      if (file.size > maxSize) {
+          const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+          notyf.error(`The file "${file.name}" is too large (${fileSizeMB}MB). Maximum size allowed: ${settingsUploads.maxUploadSize}MB`);
+          return false;
+      }
+      
+      return true;
   }
 
   function addFileToList(file) {
@@ -581,7 +607,7 @@ window.addEventListener('message', async function(event) {
           closeDesignModal();
           
           // Message de succès
-          notyf.success(`Design uploaded successfull!`);
+          notyf.success(`Design uploaded successful!`);
 
          
           

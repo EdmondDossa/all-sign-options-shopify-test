@@ -71,7 +71,7 @@ export default function ConfigSettingsGeneral() {
   const [formData, setFormData] = useState<any>(
     settingData || {
       allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
-      maxUploadSize: 5000,
+      maxUploadSize: 100,
       maxUploadNumber: 5,
       zipFiles: {
         active: false,
@@ -119,14 +119,14 @@ export default function ConfigSettingsGeneral() {
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                     <TextField
                       error={getError(actionData, "maxUploadSize")}
-                      label="Maximum  upload size (kb)"
+                      label="Maximum  upload size (MB)"
                       value={formData.maxUploadSize}
                       onChange={(value: any) =>
                         handleInputChange("maxUploadSize", value)
                       }
                       autoComplete=""
                       min={0}
-                      max={80000}
+                      max={5000}
                     />
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
