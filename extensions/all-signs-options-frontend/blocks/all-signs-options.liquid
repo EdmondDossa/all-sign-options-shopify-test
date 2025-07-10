@@ -322,12 +322,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxSize = 10 * 1024 * 1024; // 10MB
 
     if (!allowedTypes.includes(file.type) && !file.name.toLowerCase().match(/\.(ai|eps)$/)) {
-      notyf.error(`Le type de fichier "${file.name}" n'est pas supporté.`);
+      notyf.error(`The file type of "${file.name}" is not supported.`);
       return false;
     }
 
     if (file.size > maxSize) {
-      notyf.error(`Le fichier "${file.name}" est trop volumineux (max 10MB).`);
+      notyf.error(`The file "${file.name}" is too large (max 10MB).`);
       return false;
     }
 
@@ -432,7 +432,7 @@ function convertFileToBase64(file) {
 
 async function handleFileUpload() {
   if (selectedFiles.size === 0) {
-    notyf.success('Veuillez sélectionner au moins un fichier');
+    notyf.success('Please select at least one file');
     return;
   }
 
@@ -496,19 +496,19 @@ async function handleFileUpload() {
       clearAllFiles();
       
       // Message de succès
-      notyf.success(`${filesArray.length} fichier(s) téléversé(s) avec succès !`);
+      notyf.success(`${filesArray.length} file(s) have been uploaded successfully.`);
       
       return result;
     } else {
       const errorData = await response.json();
       console.error('Upload error:', errorData);
-      notyf.error('Erreur lors du téléversement des fichiers');
+      notyf.error('Error while uploading files');
       throw new Error(`HTTP Error: ${response.status}`);
     }
     
   } catch (error) {
     console.error('Upload error:', error);
-    notyf.error('Erreur lors du téléversement des fichiers');
+    notyf.error('Error while uploading files');
     throw error;
   } finally {
     // Réactiver le bouton
