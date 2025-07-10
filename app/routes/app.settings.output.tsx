@@ -199,8 +199,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     let res = await SettingOutputService.update(output, session.id);
     return res
       ? json({
-          ...jFlashMessage("Output config  updaping  is completed successful"),
+          ...jFlashMessage("Output config updating is completed successfully"),
         })
-      : json({ ...jFlashMessage("Output   updaping   failed", "error") });
+      : json({ ...jFlashMessage("Output updating failed", "error") });
   }
 };

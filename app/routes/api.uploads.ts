@@ -38,7 +38,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const submission = parseWithZod(formData, {schema:formSchema});
   
     if (submission.status !== 'success') {
-      return  {message: "Data  is  not  valide",statut: "error", error: submission.error}
+      return  {message: "Data is not valid",statut: "error", error: submission.error}
     }
   
     const data = submission.value as {

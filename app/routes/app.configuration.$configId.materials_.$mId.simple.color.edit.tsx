@@ -509,10 +509,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     flashMessage;
     return res
       ? redirect(
-          `..${flashMessage("Material color  updated is completed successfully")}`,
+          `..${flashMessage("Material color updated successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material color updated is  fail", "error")}`,
+          `..${flashMessage("Failed to update material color", "error")}`,
         );
   } else {
     let resTab: any = [];
@@ -530,8 +530,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     return resTab?.length > 0
       ? redirect(
-          `..${flashMessage("Material color added is completed successfully")}`,
+          `..${flashMessage("Material color added successfully")}`,
         )
-      : redirect(`..${flashMessage("Material color added is  fail", "error")}`);
+      : redirect(`..${flashMessage("Failed to add material color", "error")}`);
   }
 };

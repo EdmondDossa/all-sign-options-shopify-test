@@ -418,7 +418,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   switch (method) {
     case "DELETE": {
       const id = formData.get("id") as string;
-      console.log("start deleting");
       await MaterialBorderService.delete(
         configId,
         session.id,
@@ -426,7 +425,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Border deleting is completed successfull"),
+        ...jFlashMessage("Border deleted successfully"),
       });
       break;
     }
@@ -439,7 +438,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Default border is defined successfull"),
+        ...jFlashMessage("Default border set successfully"),
       });
       break;
     }
@@ -462,7 +461,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         return res
           ? json({
               ...jFlashMessage(
-                "Border setting  updated is completed successfully",
+                "Border setting updated successfully",
               ),
             })
           : json({

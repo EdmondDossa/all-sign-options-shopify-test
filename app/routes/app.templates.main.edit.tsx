@@ -296,12 +296,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     template.id = parseInt(id);
     let res = await TemplateService.updateTemplate(template, session.id)
     return res ? 
-      redirect(`..${flashMessage("template  updated is completed successfully")}`)
-      : json({ ...jFlashMessage("error on template upadating") });
+      redirect(`..${flashMessage("Template updated successfully")}`)
+      : json({ ...jFlashMessage("Error on template updating") });
   } else {
     let res =  await TemplateService.addTemplate(template, session.id)
-    return res ? redirect(`../preview/${res.id}/${flashMessage("template  added is completed successfully. Please setup your template in preview page to make it active.")}`)
-      : json({ ...jFlashMessage("error   on template adding") });
+    return res ? redirect(`../preview/${res.id}/${flashMessage("Template added successfully. Please set up your template in the preview page by following these instructions.")}`)
+      : json({ ...jFlashMessage("Error on template adding") });
   } 
 };
 

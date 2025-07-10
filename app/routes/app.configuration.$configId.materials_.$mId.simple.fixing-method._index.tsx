@@ -200,7 +200,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
       return json({
         ...jFlashMessage(
-          "Material  fixing method  deleting is completed successfull",
+          "Material fixing method deleted successfully",
         ),
       });
       break;
@@ -214,7 +214,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Default fixing method is defined successfull"),
+        ...jFlashMessage("Default fixing method set successfully"),
       });
       break;
     }

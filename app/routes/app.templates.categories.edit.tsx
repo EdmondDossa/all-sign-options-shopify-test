@@ -157,12 +157,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (id) {
     category.id = parseInt(id);
     let res = await CategoryService.updateCategory(category, session.id)
-    return res ?  json({...jFlashMessage("Category updated is completed successfully"), category:res })
-      : json({ ...jFlashMessage("Error on category upadating") });
+    return res ?  json({...jFlashMessage("Category updated successfully"), category:res })
+      : json({ ...jFlashMessage("Error on category updating") });
   } else {
     let res =  await CategoryService.addCategory(category, session.id)
-    return res ? json({...jFlashMessage("category  added is completed successfully"), category:res })
-      : json({ ...jFlashMessage("Error   on category adding") });
+    return res ? json({...jFlashMessage("Category added successfully"), category:res })
+      : json({ ...jFlashMessage("Error on category adding") });
   } 
 };
 

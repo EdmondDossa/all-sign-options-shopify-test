@@ -386,11 +386,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
 
       if (submission.value.type=="delete") {
-        return  redirect(flashMessage("Configuration  updated is completed successfully"));
+        return  redirect(flashMessage("Configuration updated successfully"));
       }else  if (submission.value.type=="default") {
-        return redirect(flashMessage("Default color is defined successfull")); 
+        return redirect(flashMessage("Default color set successfully")); 
       }else  {
-        return redirect(flashMessage("Colors is updated successfull"));  
+        return redirect(flashMessage("Colors updated successfully"));  
       }
      
       break;

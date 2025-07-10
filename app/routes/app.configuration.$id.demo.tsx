@@ -174,7 +174,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     await ConfigurationService.updateConfiguration(configuration, session.id);
 
     return redirect(
-      `../${configuration.id}/materials${flashMessage("Configuration  data  included is completed successfully")}`,
+      `../${configuration.id}/materials${flashMessage("Configuration data included successfully")}`,
     );
   }
 

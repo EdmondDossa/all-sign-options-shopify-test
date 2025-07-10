@@ -953,7 +953,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Size deleting is completed successfull"),
+        ...jFlashMessage("Size deleted successfully"),
       });
       break;
     }
@@ -967,7 +967,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         parseInt(id || ""),
       );
       return json({
-        ...jFlashMessage("Default Size is defined successfull"),
+        ...jFlashMessage("Default size set successfully"),
       });
       break;
     }
@@ -995,12 +995,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         return res
           ? json({
               ...jFlashMessage(
-                "Custom Size and thickness  updated is completed successfully",
+                "Custom Size and thickness updated successfully",
               ),
             })
           : json({
               ...jFlashMessage(
-                "Errors on Custom Size and thickness  upadating",
+                "Errors on Custom Size and thickness updating",
                 "error",
               ),
             });

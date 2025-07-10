@@ -148,9 +148,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     let res = await SettingShapesService.update(shape, session.id);
     return res
       ? redirect(
-          `..${flashMessage("Shape  updated is completed successfully")}`,
+          `..${flashMessage("Shape updated successfully")}`,
         )
-      : json({ ...jFlashMessage("error on Shape upadating") });
+      : json({ ...jFlashMessage("Error on shape updating") });
   }
 
   return null;

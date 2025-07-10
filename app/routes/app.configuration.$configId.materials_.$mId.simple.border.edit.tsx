@@ -265,10 +265,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material Border  updated is completed successfully")}`,
+          `..${flashMessage("Material Border updated successfully")}`,
         )
       : redirect(
-          `..${flashMessage("Material Border updated is  fail", "error")}`,
+          `..${flashMessage("Failed to update material border", "error")}`,
         );
   } else {
     let res = await MaterialBorderService.add(
@@ -279,8 +279,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
     return res
       ? redirect(
-          `..${flashMessage("Material  added is completed successfully")}`,
+          `..${flashMessage("Material added successfully")}`,
         )
-      : redirect(`..${flashMessage("Material  added is  fail", "error")}`);
+      : redirect(`..${flashMessage("Failed to add material", "error")}`);
   }
 };

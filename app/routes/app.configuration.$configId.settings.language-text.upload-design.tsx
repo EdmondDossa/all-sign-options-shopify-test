@@ -106,7 +106,7 @@ export default function ConfigSettingsGeneral() {
                     <Text as="p" variant="bodySm" tone="subdued">
                       {" "}
                       Enable this to display a link to redirect customers to
-                      another page on your site, this will display as one of the
+                      another page on your site; this will display as one of the
                       first options on desktop and mobile.
                     </Text>
                   </BlockStack>
@@ -119,7 +119,7 @@ export default function ConfigSettingsGeneral() {
                       <TextField
                         size="medium"
                         label="Custom Design Link"
-                        helpText="URL to redirect customers on your store that will allow for more complex graphic design quote submissions."
+                        helpText="                    URL to redirect customers on your store that will allow for more complex graphic design quote submissions."
                         value={formData.link}
                         onChange={(value) => handleInputChange("link", value)}
                         error={getError(actionData, "link")}

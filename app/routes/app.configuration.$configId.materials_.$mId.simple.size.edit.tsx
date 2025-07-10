@@ -251,8 +251,8 @@ export const action = async ({ request,params}: ActionFunctionArgs) => {
       id
     ); 
     return res
-      ? redirect(`..${flashMessage("Material Size  updated is completed successfully")}`)
-      : redirect(`..${flashMessage("Material Size updated is  fail","error")}`);
+      ? redirect(`..${flashMessage("Material Size updated successfully")}`)
+      : redirect(`..${flashMessage("Failed to update material size","error")}`);
   } else {
     let res = await MaterialSizeService.addSize(
       configId,
@@ -261,8 +261,8 @@ export const action = async ({ request,params}: ActionFunctionArgs) => {
       configSize
     ); 
     return res
-      ? redirect(`..${flashMessage("Material  added is completed successfully")}`)
-      : redirect(`..${flashMessage("Material  added is  fail","error")}`);
+      ? redirect(`..${flashMessage("Material added successfully")}`)
+      : redirect(`..${flashMessage("Failed to add material","error")}`);
   }
  
 };

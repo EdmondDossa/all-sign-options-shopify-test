@@ -167,12 +167,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     font.id = parseInt(id);
     let res = await FontService.updateFont(font, session.id);
     return res
-      ? redirect(`..${flashMessage("Font  updated is completed successfully")}`)
-      : json({ ...jFlashMessage("Font on Size upadating") });
+      ? redirect(`..${flashMessage("Font updated successfully")}`)
+      : json({ ...jFlashMessage("Error on font updating") });
   } else {
     let res = await FontService.addFont(font, session.id);
     return res
-      ? redirect(`..${flashMessage("Font  added is completed successfully")}`)
-      : json({ ...jFlashMessage("error  on font adding") });
+      ? redirect(`..${flashMessage("Font added successfully")}`)
+      : json({ ...jFlashMessage("Error on font adding") });
   }
 };

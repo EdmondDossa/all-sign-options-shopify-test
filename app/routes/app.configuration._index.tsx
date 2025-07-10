@@ -62,7 +62,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
    
       return redirect(
-        `${flashMessage("Configution deleting is completed successfull")}`,
+        `${flashMessage("Configuration deleted successfully")}`,
       );
       break;
     }
@@ -79,7 +79,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       );
 
       return redirect(
-        `${flashMessage("Configution duplicating is completed successfull")}`,
+        `${flashMessage("Configuration duplicated successfully")}`,
       );
       break;
     }

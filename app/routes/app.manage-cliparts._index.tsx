@@ -41,7 +41,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       console.log("start deleting");
       await ClipartsGroupService.deleteClipartsGroup(parseInt(id), session.id);
       return json({
-        ...jFlashMessage("Cliparts group deleting is completed successfull"),
+        ...jFlashMessage("Clipart group deleted successfully"),
       });
     }
 

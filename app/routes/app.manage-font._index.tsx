@@ -40,7 +40,7 @@ export const action = async ({ request }:ActionFunctionArgs) => {
     case "DELETE": {
       console.log("start deleting") 
       await FontService.deleteFont(parseInt(id), session.id)
-      return json({...jFlashMessage("Font deleting is completed successfull")})
+      return json({...jFlashMessage("Font deleted successfully")})
     }
   
     default:

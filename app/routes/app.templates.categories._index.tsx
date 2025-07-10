@@ -47,7 +47,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       console.log("start deleting");
       await CategoryService.deleteCategory(parseInt(id), session.id);
       return json({
-        ...jFlashMessage("Category deleting is completed successfull"),
+        ...jFlashMessage("Category deleted successfully"),
       });
     }
 
