@@ -37,15 +37,19 @@
 {% if block.settings.useModal %}
   <!-- Boutons pour ouvrir les modals -->
   <div class="aso-modal-buttons-container">
-    <button class="aso-modal-button aso-design-button" onclick="openDesignModal()" 
-            style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
-      {{ block.settings.design_button_text | default: "Design your own Sign" }}
-    </button>
+    {% if block.settings.design_button_enabled and asoConfigurationId %}
+      <button class="aso-modal-button aso-design-button" onclick="openDesignModal()" 
+              style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
+        {{ block.settings.design_button_text | default: "Design your own Sign" }}
+      </button>
+    {% endif %}
+    {% if  block.settings.upload_button_enabled %}
+      <button class="aso-modal-button aso-upload-button" onclick="openUploadModal()" 
+              style="background-color: {{ block.settings.upload_button_color }}; color: {{ block.settings.upload_button_text_color }};">
+        {{ block.settings.upload_button_text | default: "Upload your Sign" }}
+      </button>
+    {% endif %}
     
-    <button class="aso-modal-button aso-upload-button" onclick="openUploadModal()" 
-            style="background-color: {{ block.settings.upload_button_color }}; color: {{ block.settings.upload_button_text_color }};">
-      {{ block.settings.upload_button_text | default: "Upload your Sign" }}
-    </button>
   </div>
 
   <!-- Modal pour le configurateur -->
@@ -1124,6 +1128,13 @@ window.addEventListener('message', async function(event) {
       "content": "Design Button Settings"
     },
     {
+      "id": "design_button_enabled",
+      "type": "checkbox",
+      "label": "Enable  Design Button",
+      "default": true,
+      "info": "This  option  allow to show the design button"
+    },
+    {
       "id": "design_button_text",
       "type": "text",
       "label": "Design Button Text",
@@ -1144,6 +1155,13 @@ window.addEventListener('message', async function(event) {
     {
       "type": "header",
       "content": "Upload Button Settings"
+    },
+    {
+      "id": "upload_button_enabled",
+      "type": "checkbox",
+      "label": "Enable  Upload Button",
+      "default": true,
+      "info": "This  option  allow to show the upload button"
     },
     {
       "id": "upload_button_text",
