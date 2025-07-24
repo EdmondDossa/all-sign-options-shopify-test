@@ -85,14 +85,17 @@ function App() {
               <InlineStack inlineAlignment="start" blockAlignment="center" gap="base" >
                 <Heading size={5} > - {item.title}   </Heading>
                 <Heading  size={3} > x {item.quantity} : </Heading>
-                {matchedDesigns.map((design) => (
-                  design.zipFile ? (
+                {matchedDesigns.filter((design, index, self) => design.storage!='local' ||
+                    (design.zipFile &&
+                    index === self.findIndex((d) => d.zipFile === design.zipFile))
+                  ).map((design, index) => (
+                  design.zipFile || design.fileUrl ? (
                     <Link
-                      href={design.zipFile}
-                      target="_blank"
+                        href={design.storage=='local'? design.zipFile: design.fileUrl }
+
                       key={design.zipFile}
                     >
-                      Download uploads ZIP
+                      {design.storage=='local'?'Download ZIP': 'Download file' + index }
                     </Link>
                   ) : null
                 ))}

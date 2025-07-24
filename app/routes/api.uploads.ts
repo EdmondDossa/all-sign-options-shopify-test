@@ -7,6 +7,7 @@ import { jsonTransform } from '~/utils/transfomerZod';
 import { uploadBase64,  fileBuffer, calculateImagePlacement, getExtensionFromBase64 } from '~/utils/uploadBase64';
 
 import DesignService from '~/models/Design.service';
+import { DesignType } from '~/types/ManagePropertyType';
 
 
 
@@ -49,18 +50,28 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         files: any;
     };
       
-    let designImages =  data.files.map((file:any)=>{
-      return uploadBase64(getExtensionFromBase64(file.data)||"", file.data,session.id)
-    });
+    let designImages =  data.files.map((file:any): DesignType|any =>{
+      let url = "";
+      if (!file.url) {
+         url =  uploadBase64(getExtensionFromBase64(file.data)||"", file.data,session.id);
+         console.log("file  uplaoded", url)     }
 
-    return await DesignService.addDesign(
-      {
+      return   {
         customerIp: data.customerIp,
         productId: data.productId,
         configId: data.configId,
-        variantId: data.variantId,
-        files: designImages, // make sure it's JSON-serializable
-      },
+        variantId: data.variantId, 
+        fileName:   file.name,
+        fileSize:   file.size,
+        fileType:   file.type,
+        fileUrl:    file.url ? file.url :url ,
+        storage:    file.url ? "drive" : 'local'
+      };
+    });  
+   
+
+    return await DesignService.addManyDesigns( designImages, 
+    
       session?.id
     );
     
@@ -71,8 +82,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 
-export const  loader = async ({ request }: LoaderFunctionArgs) => {
-  return json({ error: "error  on getting add cart load" });
+export const  loader = async ({ request, params }: LoaderFunctionArgs) => {
+
+  const { admin, session } = await authenticate.public.appProxy(request);
+  const url = new URL(request.url);
+  const query = url.searchParams.get('q');
+  
+  const productId = url.searchParams.get('productId');
+  const customerIp =  url.searchParams.get('customerIp');
+
+  const data = await DesignService.getDesignsUploaded(session?.id||'', productId||'', customerIp||'')
+  
+  return json({ data:data, message: "Files  uploaded  available"  });
 };
 
   

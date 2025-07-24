@@ -87,14 +87,7 @@ export async function sendUploadMail(
     html: emailHtml,
   };
 
-  if (designs?.length > 0) {
-    options.attachments = designs
-      .filter((design) => design.zipUrl)
-      .map((design) => ({
-        filename: design.zipUrl.split("/").pop(),
-        path: design.zipUrl,
-      }));
-  }
+
 
   try {
     await transporter.sendMail(options);

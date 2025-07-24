@@ -12,6 +12,7 @@ import { ShopifyOrderService } from "~/models/ShopifyOrder.service";
 import DesignService from "~/models/Design.service";
 
 export async function sendUploadfile(admin: any, sessionId: string, orderId: any) {
+  console.log("starting");
   try {
       const order = await ShopifyOrderService.getOrder(admin, orderId);
       
@@ -25,48 +26,60 @@ export async function sendUploadfile(admin: any, sessionId: string, orderId: any
       if (designs && designs.length > 0) {
           let validDesigns = [];
           
-          for (let design of designs) {
-              let line_item = order?.line_items.find((line: any) => line.product_id == design.productId);
+          for (let line_item of order?.line_items) {
+              let line_item_designs = designs?.filter((design: any) => line_item.product_id == design.productId);
               
-              if (!line_item) {
+              if (!line_item_designs?.length) {
                   continue;
               }
 
               let zip = new AdmZip();
+              let zipPath = ''
+              let zipFileNumber = 0
               
-              // Vérifier si design.files existe et est itérable
-              if (design.files && typeof design.files === 'object') {
-                  for (let file of design.files) {
-                      try {
-                          // Vérifier si le fichier existe avant de l'ajouter
-                          const filePath = "public/" + file;
-                          const fileName = line_item.title + 
-                          zip.addLocalFile(filePath);
-                      } catch (error) {
-                          console.error(`Error adding file ${file} to zip:`, error);
-                      }
+             
+              for (let design of designs) {
+                  if (design.storage!="local") {
+                      continue;
                   }
+
+                  try {
+                      // Vérifier si le fichier existe avant de l'ajouter
+                      const filePath = "public/" + design.fileUrl;
+                      zip.addLocalFile(filePath);
+                      zipFileNumber= zipFileNumber + 1;
+                    
+                  } catch (error) {
+                      console.error(`Error adding file ${design.name} to zip:`, error);
+                  }
+                  
               }
+             if(zipFileNumber){
+               let zip_name =  line_item.title.replace(/\s+/g, "-").slice(0, 40);
+               zipPath = assignShopDesignPath(sessionId, `${orderId}_${zip_name}.zip`);
+               zip.writeZip(zipPath);
+               zipPath = `${process.env.SHOPIFY_APP_URL}/${zipPath.replace('public/', '')}`;
+             }
 
-              let zip_name =  line_item.title.replace(/\s+/g, "-").slice(0, 40);
 
-              let zipPath = assignShopDesignPath(sessionId, `${orderId}_${zip_name}.zip`);
-              zip.writeZip(zipPath);
-              zipPath = `${process.env.SHOPIFY_APP_URL}/${zipPath.replace('public/', '')}`;
+              console.log('debug: before save  in database')
+              for (const line_item_design of line_item_designs) {
+                line_item_design.zipFile = zipPath;
+                line_item_design.orderId = orderId+"";
+                console.log("Saving  data  in  db", orderId, " design  id",line_item_design.id )
+                validDesigns.push(line_item_design);
 
-              design.zipFile = zipPath;
-              design.orderId = orderId+"";
-              validDesigns.push(design);
-              
-              await DesignService.updateDesign(design, sessionId);
+                await DesignService.updateDesign(line_item_design, sessionId);
+              }
           }
 
           if (validDesigns.length > 0) {
               const shop = await ShopifyShopService.getShop(admin);
               const output = await SettingOutputService.get(sessionId);
 
+              console.log('console before  send  mail');
               if (shop?.email && output?.enableSendMailToAdmin) {
-                  await sendUploadMail(order, shop.email, `All signs options ${order.order_number}`, order.customer, validDesigns);
+                  await sendUploadMail(order, shop.email, `All signs customizers ${order.order_number}`, order.customer, validDesigns);
               }
 
               // Gérer les emails de sortie
@@ -74,7 +87,7 @@ export async function sendUploadfile(admin: any, sessionId: string, orderId: any
               for (const email of outputEmails) {
                   const trimmedEmail = email.trim();
                   if (trimmedEmail) {
-                      await sendUploadMail(order, trimmedEmail, `All signs options ${order.order_number}`, order.customer, validDesigns);
+                      await sendUploadMail(order, trimmedEmail, `All signs customizers ${order.order_number}`, order.customer, validDesigns);
                   }
               }
           }
@@ -257,19 +270,19 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
             
             const output = await SettingOutputService.get(session.id);         
             if (shop?.email && output.enableSendMailToAdmin) {
-              sendRecapMail(mailData, shop.email, `All signs options ${mailData[0].orderNumber}`, order.customer);
+              sendRecapMail(mailData, shop.email, `All signs customizers ${mailData[0].orderNumber}`, order.customer);
             }
 
             for (const email of output.ouputReceiverMails?.split(',') || []) {
               const trimmedEmail = email.trim();
               if (trimmedEmail) {
-                sendRecapMail(mailData,trimmedEmail,`All signs options ${mailData[0].orderNumber}`,order.customer);
+                sendRecapMail(mailData,trimmedEmail,`All signs customizers ${mailData[0].orderNumber}`,order.customer);
               }
             }
             
 
             if (order?.customer?.email && output.enableSendMailToCustom) {
-              sendRecapMail(mailData, order.customer.email, `All signs options ${mailData[0].orderNumber}`,order.customer, false);
+              sendRecapMail(mailData, order.customer.email, `All signs customizers ${mailData[0].orderNumber}`,order.customer, false);
             }
 
           } catch (error) {
