@@ -19601,12 +19601,13 @@
               item.quantity,
               " : "
             ] }),
-            matchedDesigns.map((design) => design.zipFile ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            matchedDesigns.filter(
+              (design, index, self) => design.storage != "local" || design.zipFile && index === self.findIndex((d) => d.zipFile === design.zipFile)
+            ).map((design, index) => design.zipFile || design.fileUrl ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
               Link2,
               {
-                href: design.zipFile,
-                target: "_blank",
-                children: "Download uploads ZIP"
+                href: design.storage == "local" ? design.zipFile : design.fileUrl,
+                children: design.storage == "local" ? "Download ZIP" : "Download file" + index
               },
               design.zipFile
             ) : null)

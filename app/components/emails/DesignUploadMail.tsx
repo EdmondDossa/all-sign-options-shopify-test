@@ -22,6 +22,8 @@ export const DesignUploadMail = ({
   const getDesignsForLineItem = (productId: string) =>
     designs.filter((d) => d.productId === productId);
 
+  console.log(designs);
+
   return (
     <Html>
       <Head />
@@ -44,16 +46,19 @@ export const DesignUploadMail = ({
                   <Text style={{...paragraph, whiteSpace:"nowrap"}}>x {item.quantity}</Text>
                 </div>
 
-                {matchedDesigns.map((design) => (
-                  design.zipFile ? (
+                {matchedDesigns.filter((design, index, self) => design.storage!='local' ||
+                    (design.zipFile &&
+                    index === self.findIndex((d) => d.zipFile === design.zipFile))
+                  ).map((design, index) => (
+                  design.zipFile || design.fileUrl ? (
                     <a
-                      href={design.zipFile}
+                      href={design.storage=='local'? design.zipFile: design.fileUrl }
                       style={button}
-                      target="_blank"
+                    
                       rel="noopener noreferrer"
                       key={design.zipFile}
                     >
-                      Download ZIP
+                      {design.storage=='local'?'Download ZIP ': 'Download file ' + index }
                     </a>
                   ) : null
                 ))}
@@ -136,6 +141,8 @@ const button = {
   display: "inline-block",
   padding: "10px 16px",
   marginTop: "10px",
+  marginRight: "10px",
+  marginLeft: "10px",
   backgroundColor: "#556cd6",
   color: "#ffffff",
   fontSize: "14px",

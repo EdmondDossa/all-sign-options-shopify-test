@@ -132,9 +132,13 @@ model Design {
   configId    Int?
   variantId   String?
   orderId     String?
-  session           Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId         String
-  files       Json?
-  zipFile  String?
+  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   String
+  fileName    String?
+  fileSize    Int?
+  fileUrl     String?
+  fileType    String?
+  storage     String?
+  zipFile     Json?
 }
 
