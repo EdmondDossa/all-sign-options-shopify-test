@@ -1,0 +1,9 @@
+<script>
+    var asoCurrency = "{{cart.currency.symbol}}";
+    var asoPriceFormat ="{{shop.money_format}}";
+    var asoFormattedPrice ="{{ 123456| money_without_currency }}";
+    var asoCurrency_pos= asoPriceFormat[0] == asoCurrency? "left": "right";
+    var asoThousandSep= asoFormattedPrice[1]=="2"?"":asoFormattedPrice[1];
+    var asoDecimalSep= asoFormattedPrice[4]=="5"?".":asoFormattedPrice[4];
+</script>
+

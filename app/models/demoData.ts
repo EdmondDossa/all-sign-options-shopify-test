@@ -300,9 +300,11 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           customizerOptions: {
             measurementUnit: "mm",
-            desktopColumnOrder: "right",
+            desktopColumnOrder: "left",
             showHideMeasurements: "both",
             decimalFormatMeasurements: "with-decimal",
+            finishButtonPosition:'bottom',
+            allowNextButton:false
           },
         },
         languageImages: {
@@ -1280,9 +1282,11 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           customizerOptions: {
             measurementUnit: "mm",
-            desktopColumnOrder: "right",
+            desktopColumnOrder: "left",
             showHideMeasurements: "both",
             decimalFormatMeasurements: "with-decimal",
+            finishButtonPosition:'bottom',
+            allowNextButton:false
           },
         },
         languageImages: {
@@ -2356,9 +2360,11 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           customizerOptions: {
             measurementUnit: "mm",
-            desktopColumnOrder: "right",
+            desktopColumnOrder: "left",
             showHideMeasurements: "both",
             decimalFormatMeasurements: "with-decimal",
+            finishButtonPosition:'bottom',
+            allowNextButton:false
           },
         },
         languageImages: {
@@ -3467,9 +3473,11 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           customizerOptions: {
             measurementUnit: "mm",
-            desktopColumnOrder: "right",
+            desktopColumnOrder: "left",
             showHideMeasurements: "both",
             decimalFormatMeasurements: "with-decimal",
+            finishButtonPosition:'bottom',
+            allowNextButton:false
           },
         },
         languageImages: {
@@ -5745,9 +5753,11 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           customizerOptions: {
             measurementUnit: "mm",
-            desktopColumnOrder: "right",
+            desktopColumnOrder: "left",
             showHideMeasurements: "both",
             decimalFormatMeasurements: "with-decimal",
+            finishButtonPosition:'bottom',
+            allowNextButton:false
           },
         },
         languageImages: {
@@ -7272,9 +7282,11 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           customizerOptions: {
             measurementUnit: "mm",
-            desktopColumnOrder: "right",
+            desktopColumnOrder: "left",
             showHideMeasurements: "both",
             decimalFormatMeasurements: "with-decimal",
+            finishButtonPosition:'bottom',
+            allowNextButton:false
           },
         },
         languageImages: {
@@ -8387,9 +8399,11 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           customizerOptions: {
             measurementUnit: "mm",
-            desktopColumnOrder: "right",
+            desktopColumnOrder: "left",
             showHideMeasurements: "both",
             decimalFormatMeasurements: "with-decimal",
+            finishButtonPosition:'bottom',
+            allowNextButton:false
           },
         },
         languageImages: {
@@ -8994,9 +9008,11 @@ export const configurationDemoData: ConfigurationType[] = [
           },
           customizerOptions: {
             measurementUnit: "mm",
-            desktopColumnOrder: "right",
+            desktopColumnOrder: "left",
             showHideMeasurements: "both",
             decimalFormatMeasurements: "with-decimal",
+            finishButtonPosition:'bottom',
+            allowNextButton:false
           },
         },
         languageImages: {

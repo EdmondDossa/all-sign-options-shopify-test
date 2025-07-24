@@ -39,14 +39,19 @@ export interface ClipartsGroupType{
   }
 
   export interface DesignType  {
-    id?: number;
+    id?:         number;
     customerIp?: string;
-    orderId?: string;
-    productId?: string;
-    configId?: number;
-    variantId?: string;
-    files?: any;
-    zipFile?:string;
+    orderId?:    string;
+    productId?:  string;
+    configId?:   number;
+    variantId?:  string;
+    fileName?:   String;
+    fileSize?:   number;
+    sessionId?:  string;
+    fileUrl?:    string;
+    fileType?:   string;
+    storage?:    string;
+    zipFile?:    string;
   };
   
 

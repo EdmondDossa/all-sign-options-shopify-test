@@ -13,6 +13,23 @@ export default class DesignService {
     }
   }
 
+  static async getDesignsUploaded(sessionId: string, productId:string ,customerIp: string): Promise<any[] | null> {
+    try {
+      return await prisma.design.findMany({
+        where: { 
+          sessionId,productId,customerIp,
+          OR: [
+            { orderId: null },
+            { orderId: "" },
+          ],
+        },
+      });
+    } catch (error) {
+      console.error("Error retrieving designs:", error);
+      return null;
+    }
+  }
+
   static async getDesign(id: number, sessionId: string): Promise<any | null> {
     try {
       return await prisma.design.findFirst({
@@ -62,7 +79,7 @@ export default class DesignService {
   }
 
   static async addDesign(
-    design: DesignType,
+    design: DesignType|any,
     sessionId: string
   ): Promise<any | null> {
     try {
@@ -78,8 +95,25 @@ export default class DesignService {
     }
   }
 
+  static async addManyDesigns(
+    designs: DesignType[]|any,
+    sessionId: string
+  ): Promise<any[] | any> {
+    try {
+      return await prisma.design.createMany({
+        data: designs.map((design:any) => ({
+          ...design,
+          sessionId,
+        }))
+      });
+    } catch (error) {
+      console.error("Error adding designs:", error);
+      return null;
+    }
+  }
+
   static async updateDesign(
-    design: DesignType,
+    design: DesignType|any,
     sessionId: string
   ): Promise<any | null> {
     const { id, ...data } = design;
@@ -90,7 +124,11 @@ export default class DesignService {
           id,
           sessionId,
         },
-        data,
+        data: {
+          orderId:    data.orderId,
+          configId:   data.configId,
+          zipFile:    data.zipFile
+        }
       });
     } catch (error) {
       console.error("Error updating design:", error);

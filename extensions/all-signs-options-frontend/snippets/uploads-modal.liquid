@@ -1,0 +1,542 @@
+<!-- Modal pour l'upload -->
+<div id="aso-upload-modal" class="aso-modal" style="display: none;">
+  <div class="aso-modal-content">
+    <div class="aso-modal-header">
+      <h2>{{ block.settings.upload_button_text | default: "Upload your Signs" }}</h2>
+      <button class="aso-modal-close" onclick="closeUploadModal()">&times;</button>
+    </div>
+    <div class="aso-modal-body">
+      <div class="aso-upload-container">
+        <div class="aso-upload-area" id="uploadArea">
+          <div class="aso-upload-icon">📁</div>
+          <p>Drag and drop your files here or click to browse</p>
+          <input type="file" id="fileInput" accept="image/*,.pdf,.ai,.eps,.svg" multiple style="display: none;">
+          <button class="aso-browse-button" type="button">Browse Files</button>
+        </div>
+        
+        <!-- Liste des fichiers sélectionnés -->
+        <div class="aso-files-list" id="filesList" style="display: none;">
+          <div class="aso-files-header">
+            <h3>Selected Files (<span id="filesCount">0</span>)</h3>
+            <button class="aso-clear-all" onclick="clearAllFiles()">Clear All</button>
+          </div>
+          <div class="aso-files-container" id="filesContainer">
+            <!-- Les fichiers seront ajoutés ici dynamiquement -->
+          </div>
+          <div class="aso-upload-actions">
+            <button class="aso-upload-submit" onclick="handleFileUpload()">Upload All Files</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  
+  
+  
+  let selectedFiles = new Map();
+  let fileCounter = 0;
+
+  function openUploadModal() {
+    document.getElementById('aso-upload-modal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeUploadModal() {
+    document.getElementById('aso-upload-modal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+// Gestion de l'upload de fichier
+
+async function fetchConfigurationUploads(asoConfigurationId) {
+  try {
+    const response = await fetch(`/apps/aso-proxy/api/configuration-upload/${asoConfigurationId}`);
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+
+    const settingsUploads = await response.json();
+    return settingsUploads;
+  } catch (error) {
+    console.error("Erreur lors du chargement de la configuration :", error);
+    return null; 
+  }
+}
+
+function getFileIcon(type, name) {
+    if (type.startsWith('image/')) return '🖼️';
+    if (type === 'application/pdf') return '📄';
+    if (name.toLowerCase().endsWith('.ai')) return '🎨';
+    if (name.toLowerCase().endsWith('.eps')) return '📐';
+    if (name.toLowerCase().endsWith('.svg')) return '🖊️';
+    return '📄';
+  }
+
+  function getFileType(type, name) {
+    if (type.startsWith('image/')) return 'Image';
+    if (type === 'application/pdf') return 'PDF';
+    if (name.toLowerCase().endsWith('.ai')) return 'AI';
+    if (name.toLowerCase().endsWith('.eps')) return 'EPS';
+    if (name.toLowerCase().endsWith('.svg')) return 'SVG';
+    return 'Document';
+  }
+
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+
+
+
+document.addEventListener('DOMContentLoaded', async function() {
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('fileInput');
+  const filesList = document.getElementById('filesList');
+  const filesContainer = document.getElementById('filesContainer');
+  const filesCount = document.getElementById('filesCount');
+
+  const settingsUploads =  await  fetchConfigurationUploads(asoConfigurationId);
+
+  if (uploadArea && fileInput) {
+    // Drag and drop
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadArea.classList.add('drag-over');
+    });
+
+    uploadArea.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+      const files = e.dataTransfer.files;
+      handleMultipleFiles(files);
+    });
+
+    // Sélection de fichier
+    fileInput.addEventListener('change', function(e) {
+      handleMultipleFiles(e.target.files);
+    });
+
+    // Click sur la zone d'upload
+    uploadArea.addEventListener('click', function() {
+      fileInput.click();
+    });
+
+   
+  }
+
+  function handleMultipleFiles(files) {
+    Array.from(files).forEach(file => {
+      if (validateFile(file)) {
+        addFileToList(file);
+      }
+    });
+    updateFilesDisplay();
+  }
+
+  function validateFile(file) {
+      // Conversion des extensions autorisées en tableau et nettoyage
+      const allowedExtensions = settingsUploads.allowFormat.split(',').map(ext => ext.trim().toLowerCase());
+      const maxSize = settingsUploads.maxUploadSize * 1024 * 1024; // Conversion en bytes (MB -> bytes)
+      
+      // Récupération de l'extension du fichier
+      const fileExtension = file.name.toLowerCase().split('.').pop();
+      
+      // Vérification du type de fichier
+      if (!allowedExtensions.includes(fileExtension)) {
+          notyf.error(`The file type of "${file.name}" is not supported. Allowed types: ${allowedExtensions.join(', ')}`);
+          return false;
+      }
+      
+      // Vérification de la taille du fichier
+      if (file.size > maxSize) {
+          const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+          notyf.error(`The file "${file.name}" is too large (${fileSizeMB}MB). Maximum size allowed: ${settingsUploads.maxUploadSize}MB`);
+          return false;
+      }
+      
+      return true;
+  }
+
+  function addFileToList(file) {
+    const fileId = `file_${fileCounter++}`;
+    selectedFiles.set(fileId, file);
+    
+    const fileItem = createFileItem(fileId, file);
+    filesContainer.appendChild(fileItem);
+  }
+
+  function createFileItem(fileId, file) {
+    const fileItem = document.createElement('div');
+    fileItem.className = 'aso-file-item';
+    fileItem.dataset.fileId = fileId;
+
+    const fileIcon = getFileIcon(file.type, file.name);
+    const fileSize = formatFileSize(file.size);
+    const fileType = getFileType(file.type, file.name);
+
+    fileItem.innerHTML = `
+      <div class="aso-file-icon">${fileIcon}</div>
+      <div class="aso-file-details">
+        <p class="aso-file-name" title="${file.name}">${file.name}</p>
+        <p class="aso-file-info">${fileType} • ${fileSize}</p>
+      </div>
+      <button class="aso-file-remove" onclick="removeFile('${fileId}')" title="Remove file">×</button>
+    `;
+
+    return fileItem;
+  }
+
+
+  function updateFilesDisplay() {
+    const fileCount = selectedFiles.size;
+    filesCount.textContent = fileCount;
+    
+    if (fileCount > 0) {
+      filesList.style.display = 'block';
+    } else {
+      filesList.style.display = 'none';
+    }
+  }
+
+  // Fonctions globales
+  window.removeFile = function(fileId) {
+    selectedFiles.delete(fileId);
+    const fileItem = document.querySelector(`[data-file-id="${fileId}"]`);
+    if (fileItem) {
+      fileItem.remove();
+    }
+    updateFilesDisplay();
+  };
+
+  window.clearAllFiles = function() {
+    selectedFiles.clear();
+    filesContainer.innerHTML = '';
+    updateFilesDisplay();
+    fileInput.value = '';
+  };
+
+
+});
+
+// Fonction pour convertir un fichier en base64
+function convertFileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleFileUploads() {
+  if (selectedFiles.size === 0) {
+    notyf.success('Please select at least one file');
+    return;
+  }
+
+  const uploadButton = document.querySelector('.aso-upload-submit');
+  const originalText = uploadButton.textContent;
+  
+  try {
+    // Désactiver le bouton pendant l'upload
+    uploadButton.disabled = true;
+    uploadButton.textContent = 'Uploading...';
+
+    // Convertir tous les fichiers en base64
+    const filesArray = Array.from(selectedFiles.values());
+    const filesBase64 = await Promise.all(
+      filesArray.map(async file => {
+        const base64 = await convertFileToBase64(file);
+        return {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          data: base64
+        };
+      })
+    );
+
+    let ip =""
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const dataIp = await response.json();
+        ip = dataIp.ip;
+    } catch (error) {
+        console.error('Error fetching IP address:', error);
+    } 
+    
+    // Créer l'objet de données selon le schéma requis
+    const requestData = {
+      productId: asoProductId+'',
+      configId: asoConfigurationId,
+      variantId: '',
+      customerIp: ip,
+      files: JSON.stringify(filesBase64)
+    };
+    
+    // Effectuer la requête POST avec JSON
+    const response = await fetch('/apps/aso-proxy/api/uploads', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData)
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+     
+      
+      // Fermer la modal après succès
+      closeUploadModal();
+      
+      // Réinitialiser les fichiers
+      clearAllFiles();
+      
+      // Message de succès
+      notyf.success(`${filesArray.length} file(s) have been uploaded successfully.`);
+      
+      return result;
+    } else {
+      const errorData = await response.json();
+      console.error('Upload error:', errorData);
+      notyf.error('Error while uploading files');
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+    
+  } catch (error) {
+    console.error('Upload error:', error);
+    notyf.error('Error while uploading files');
+    throw error;
+  } finally {
+    // Réactiver le bouton
+    uploadButton.disabled = false;
+    uploadButton.textContent = originalText;
+  }
+}
+
+// Fonction pour fermer la modal (à implémenter selon votre logique existante)
+function closeUploadModal() {
+  const modal = document.getElementById('aso-upload-modal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+  // Réinitialiser les fichiers si nécessaire
+  // clearAllFiles();
+}
+
+
+
+
+async function handleFileUpload() {
+  if (selectedFiles.size === 0) {
+    notyf.success('Please select at least one file');
+    return;
+  }
+
+  const uploadButton = document.querySelector('.aso-upload-submit');
+  const originalText = uploadButton.textContent;
+  
+  try {
+    // Désactiver le bouton pendant l'upload
+    uploadButton.disabled = true;
+    uploadButton.textContent = 'Uploading...';
+
+    // Get files array
+    const filesArray = Array.from(selectedFiles.values());
+    
+    // Upload each file to Google Drive
+    const uploadResults = await Promise.all(
+      filesArray.map(async (file) => {
+        try {
+          // For files larger than 20MB, use resumable upload
+          if (file.size > 5 * 1024 * 1024) {
+            return await uploadLargeFileToDrive(file);
+          } else {
+            return await uploadSmallFileToLocal(file);
+          }
+        } catch (error) {
+          console.error(`Error uploading file ${file.name}:`, error);
+          notyf.error(`Failed to upload ${file.name}`);
+          return null;
+        }
+      })
+    );
+
+    // Filter out any failed uploads
+    const successfulUploads = uploadResults.filter(result => result !== null);
+    
+    if (successfulUploads.length > 0) {
+      // Get IP address
+      let ip = "";
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const dataIp = await response.json();
+        ip = dataIp.ip;
+      } catch (error) {
+        console.error('Error fetching IP address:', error);
+      } 
+      
+      // Prepare data for your server
+      const requestData = {
+        productId: asoProductId + '',
+        configId: asoConfigurationId,
+        variantId: '',
+        customerIp: ip,
+        files: JSON.stringify(successfulUploads)
+      };
+      
+      // Send metadata to your server
+      const response = await fetch('/apps/aso-proxy/api/uploads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        closeUploadModal();
+        clearAllFiles();
+        notyf.success(`${successfulUploads.length} file(s) have been uploaded successfully.`);
+        return result;
+      } else {
+        const errorData = await response.json();
+        console.error('Upload error:', errorData);
+        notyf.error('Error while saving file metadata');
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+    } else {
+      notyf.error('No files were successfully uploaded');
+    }
+    
+  } catch (error) {
+    console.error('Upload error:', error);
+    notyf.error('Error while uploading files');
+    throw error;
+  } finally {
+    // Réactiver le bouton
+    uploadButton.disabled = false;
+    uploadButton.textContent = originalText;
+  }
+}
+
+async function uploadLargeFileToDrive(file) {
+  // Replace with your actual Google Drive API access token
+  const accessToken = await getAccessToken();
+  
+  // Step 1: Initiate resumable upload session
+  const initResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: file.name,
+      mimeType: file.type
+    })
+  });
+
+  if (!initResponse.ok) {
+    throw new Error(`Failed to initiate upload session: ${initResponse.status}`);
+  }
+
+  const uploadUrl = initResponse.headers.get('Location');
+  if (!uploadUrl) {
+    throw new Error('No upload URL received from Google Drive');
+  }
+
+  // Step 2: Upload file in chunks (simplified - in production you should handle chunking properly)
+  const uploadResponse = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': file.type,
+      'Content-Length': file.size.toString()
+    },
+    body: file
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error(`Failed to upload file: ${uploadResponse.status}`);
+  }
+
+  const fileData = await uploadResponse.json();
+  
+  // Get shareable link (you might need additional API calls to set permissions)
+  const fileUrl = `https://drive.google.com/uc?export=download&id=${fileData.id}`;
+  
+  
+  return {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    url: fileUrl,
+    driveId: fileData.id
+  };
+}
+
+async function uploadSmallFileToLocal(file) {
+  // Convert file to base64 for small files
+  const base64Data = await convertFileToBase64(file);
+ 
+  return {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    data:base64Data
+  };
+}
+
+function createMultipartBody(file, base64Content) {
+  const boundary = '-------' + Math.random().toString(36).substr(2, 16);
+  const delimiter = "\r\n--" + boundary + "\r\n";
+  const closeDelim = "\r\n--" + boundary + "--";
+  
+  const metadata = {
+    name: file.name,
+    mimeType: file.type
+  };
+
+  const multipartRequestBody =
+    delimiter +
+    'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+    JSON.stringify(metadata) +
+    delimiter +
+    'Content-Type: ' + file.type + '\r\n' +
+    'Content-Transfer-Encoding: base64\r\n\r\n' +
+    base64Content +
+    closeDelim;
+
+  return {
+    contentType: 'multipart/related; boundary=' + boundary,
+    body: multipartRequestBody
+  };
+}
+
+async function getAccessToken() {
+  const response = await fetch(`/apps/aso-proxy/api/access-token`);
+
+  if (!response.ok) {
+    return;
+  }
+
+  const uploadedFiles = await response.json();
+  return uploadedFiles.data;
+}
+
+</script>

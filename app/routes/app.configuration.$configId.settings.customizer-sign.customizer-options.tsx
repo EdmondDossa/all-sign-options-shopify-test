@@ -23,6 +23,7 @@ import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { z } from "zod";
 import { getError } from "~/utils/error-getting";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
+import { booleanTransform } from "~/utils/transfomerZod";
 
 const settingParams: [string, string] = ["customizerSign", "customizerOptions"];
 const formSchema = z.object({
@@ -30,6 +31,8 @@ const formSchema = z.object({
   showHideMeasurements: z.string(),
   decimalFormatMeasurements: z.string(),
   desktopColumnOrder: z.string(),
+  finishButtonPosition: z.string().nullable(),
+  allowNextButton: z.any().transform(booleanTransform),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -68,10 +71,15 @@ export default function ConfigSettingsGeneral() {
     { label: "Left", value: "left" }
   ];
 
+  const finishButtonPositions = [
+    { label: "Top", value: "top" },
+    { label: "Bottom", value: "bottom" }
+  ];
 
- 
-
-
+  const allowNextButtons = [
+    { label: "Yes", value: "yes" },
+    { label: "No", value: "no" }
+  ];
 
   const submit = useSubmit();
   let { settingData } = useLoaderData<typeof loader>();
@@ -80,14 +88,16 @@ export default function ConfigSettingsGeneral() {
   const navigation = useNavigation();
   let isSubmitting = navigation.state == "submitting";
 
-  console.log("setting data :", settingData);
+
 
   const [formData, setFormData] = useState<any>(
     settingData || {
          measurementUnit: "mm",
          showHideMeasurements: showMeasurementOptions[0].value,
          decimalFormatMeasurements: measurementDecimalFormatOptions[0].value,
-         desktopColumnOrder: positionOptions[0].value,
+         desktopColumnOrder: 'left',
+         finishButtonPosition:'bottom',
+         allowNextButton:false
     },
   );
 
@@ -169,6 +179,29 @@ export default function ConfigSettingsGeneral() {
                   error={getError(actionData, "desktopColumnOrder")}
                  />
                
+                </Grid.Cell>
+
+                <Grid.Cell  columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                 <Select
+                    label="Finish button position"
+                   options={finishButtonPositions}
+                   onChange={(value) =>
+                    handleInputChange("finishButtonPosition", value)
+                  }
+                  value={formData.finishButtonPosition}
+                  error={getError(actionData, "finishButtonPosition")}
+                 />
+                </Grid.Cell>
+                <Grid.Cell  columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                 <Select
+                    label="Allow next button"
+                   options={allowNextButtons }
+                   onChange={(value) =>
+                    handleInputChange("allowNextButton", value =="yes" ? true : false)
+                  }
+                  value={formData.allowNextButton ?  'yes' : 'no'}
+                  error={getError(actionData, "allowNextButton")}
+                 />
                 </Grid.Cell>
               </Grid>
             </Box>
