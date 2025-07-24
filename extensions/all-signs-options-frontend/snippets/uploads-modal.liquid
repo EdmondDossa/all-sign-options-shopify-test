@@ -327,216 +327,216 @@ async function handleFileUploads() {
   }
 }
 
-// Fonction pour fermer la modal (à implémenter selon votre logique existante)
-function closeUploadModal() {
-  const modal = document.getElementById('aso-upload-modal');
-  if (modal) {
-    modal.style.display = 'none';
-  }
-  // Réinitialiser les fichiers si nécessaire
-  // clearAllFiles();
-}
-
-
-
-
-async function handleFileUpload() {
-  if (selectedFiles.size === 0) {
-    notyf.success('Please select at least one file');
-    return;
-  }
-
-  const uploadButton = document.querySelector('.aso-upload-submit');
-  const originalText = uploadButton.textContent;
-  
-  try {
-    // Désactiver le bouton pendant l'upload
-    uploadButton.disabled = true;
-    uploadButton.textContent = 'Uploading...';
-
-    // Get files array
-    const filesArray = Array.from(selectedFiles.values());
-    
-    // Upload each file to Google Drive
-    const uploadResults = await Promise.all(
-      filesArray.map(async (file) => {
-        try {
-          // For files larger than 20MB, use resumable upload
-          if (file.size > 5 * 1024 * 1024) {
-            return await uploadLargeFileToDrive(file);
-          } else {
-            return await uploadSmallFileToLocal(file);
-          }
-        } catch (error) {
-          console.error(`Error uploading file ${file.name}:`, error);
-          notyf.error(`Failed to upload ${file.name}`);
-          return null;
-        }
-      })
-    );
-
-    // Filter out any failed uploads
-    const successfulUploads = uploadResults.filter(result => result !== null);
-    
-    if (successfulUploads.length > 0) {
-      // Get IP address
-      let ip = "";
-      try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const dataIp = await response.json();
-        ip = dataIp.ip;
-      } catch (error) {
-        console.error('Error fetching IP address:', error);
-      } 
-      
-      // Prepare data for your server
-      const requestData = {
-        productId: asoProductId + '',
-        configId: asoConfigurationId,
-        variantId: '',
-        customerIp: ip,
-        files: JSON.stringify(successfulUploads)
-      };
-      
-      // Send metadata to your server
-      const response = await fetch('/apps/aso-proxy/api/uploads', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData)
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        closeUploadModal();
-        clearAllFiles();
-        notyf.success(`${successfulUploads.length} file(s) have been uploaded successfully.`);
-        return result;
-      } else {
-        const errorData = await response.json();
-        console.error('Upload error:', errorData);
-        notyf.error('Error while saving file metadata');
-        throw new Error(`HTTP Error: ${response.status}`);
-      }
-    } else {
-      notyf.error('No files were successfully uploaded');
+  // Fonction pour fermer la modal (à implémenter selon votre logique existante)
+  function closeUploadModal() {
+    const modal = document.getElementById('aso-upload-modal');
+    if (modal) {
+      modal.style.display = 'none';
     }
-    
-  } catch (error) {
-    console.error('Upload error:', error);
-    notyf.error('Error while uploading files');
-    throw error;
-  } finally {
-    // Réactiver le bouton
-    uploadButton.disabled = false;
-    uploadButton.textContent = originalText;
+    // Réinitialiser les fichiers si nécessaire
+    // clearAllFiles();
   }
-}
 
-async function uploadLargeFileToDrive(file) {
-  // Replace with your actual Google Drive API access token
-  const accessToken = await getAccessToken();
+
+
+
+  async function handleFileUpload() {
+    if (selectedFiles.size === 0) {
+      notyf.success('Please select at least one file');
+      return;
+    }
+
+    const uploadButton = document.querySelector('.aso-upload-submit');
+    const originalText = uploadButton.textContent;
+    
+    try {
+      // Désactiver le bouton pendant l'upload
+      uploadButton.disabled = true;
+      uploadButton.textContent = 'Uploading...';
+
+      // Get files array
+      const filesArray = Array.from(selectedFiles.values());
+      
+      // Upload each file to Google Drive
+      const uploadResults = await Promise.all(
+        filesArray.map(async (file) => {
+          try {
+            // For files larger than 20MB, use resumable upload
+            if (file.size > 5 * 1024 * 1024) {
+              return await uploadLargeFileToDrive(file);
+            } else {
+              return await uploadSmallFileToLocal(file);
+            }
+          } catch (error) {
+            console.error(`Error uploading file ${file.name}:`, error);
+            notyf.error(`Failed to upload ${file.name}`);
+            return null;
+          }
+        })
+      );
+
+      // Filter out any failed uploads
+      const successfulUploads = uploadResults.filter(result => result !== null);
+      
+      if (successfulUploads.length > 0) {
+        // Get IP address
+        let ip = "";
+        try {
+          const response = await fetch('https://api.ipify.org?format=json');
+          const dataIp = await response.json();
+          ip = dataIp.ip;
+        } catch (error) {
+          console.error('Error fetching IP address:', error);
+        } 
+        
+        // Prepare data for your server
+        const requestData = {
+          productId: asoProductId + '',
+          configId: asoConfigurationId,
+          variantId: '',
+          customerIp: ip,
+          files: JSON.stringify(successfulUploads)
+        };
+        
+        // Send metadata to your server
+        const response = await fetch('/apps/aso-proxy/api/uploads', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          closeUploadModal();
+          clearAllFiles();
+          notyf.success(`${successfulUploads.length} file(s) have been uploaded successfully.`);
+          return result;
+        } else {
+          const errorData = await response.json();
+          console.error('Upload error:', errorData);
+          notyf.error('Error while saving file metadata');
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+      } else {
+        notyf.error('No files were successfully uploaded');
+      }
+      
+    } catch (error) {
+      console.error('Upload error:', error);
+      notyf.error('Error while uploading files');
+      throw error;
+    } finally {
+      // Réactiver le bouton
+      uploadButton.disabled = false;
+      uploadButton.textContent = originalText;
+    }
+  }
+
+  async function uploadLargeFileToDrive(file) {
+    // Replace with your actual Google Drive API access token
+    const accessToken = await getAccessToken();
+    
+    // Step 1: Initiate resumable upload session
+    const initResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: file.name,
+        mimeType: file.type
+      })
+    });
+
+    if (!initResponse.ok) {
+      throw new Error(`Failed to initiate upload session: ${initResponse.status}`);
+    }
+
+    const uploadUrl = initResponse.headers.get('Location');
+    if (!uploadUrl) {
+      throw new Error('No upload URL received from Google Drive');
+    }
+
+    // Step 2: Upload file in chunks (simplified - in production you should handle chunking properly)
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': file.type,
+        'Content-Length': file.size.toString()
+      },
+      body: file
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error(`Failed to upload file: ${uploadResponse.status}`);
+    }
+
+    const fileData = await uploadResponse.json();
+    
+    // Get shareable link (you might need additional API calls to set permissions)
+    const fileUrl = `https://drive.google.com/uc?export=download&id=${fileData.id}`;
+    
+    
+    return {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      url: fileUrl,
+      driveId: fileData.id
+    };
+  }
+
+  async function uploadSmallFileToLocal(file) {
+    // Convert file to base64 for small files
+    const base64Data = await convertFileToBase64(file);
   
-  // Step 1: Initiate resumable upload session
-  const initResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+    return {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      data:base64Data
+    };
+  }
+
+  function createMultipartBody(file, base64Content) {
+    const boundary = '-------' + Math.random().toString(36).substr(2, 16);
+    const delimiter = "\r\n--" + boundary + "\r\n";
+    const closeDelim = "\r\n--" + boundary + "--";
+    
+    const metadata = {
       name: file.name,
       mimeType: file.type
-    })
-  });
+    };
 
-  if (!initResponse.ok) {
-    throw new Error(`Failed to initiate upload session: ${initResponse.status}`);
+    const multipartRequestBody =
+      delimiter +
+      'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+      JSON.stringify(metadata) +
+      delimiter +
+      'Content-Type: ' + file.type + '\r\n' +
+      'Content-Transfer-Encoding: base64\r\n\r\n' +
+      base64Content +
+      closeDelim;
+
+    return {
+      contentType: 'multipart/related; boundary=' + boundary,
+      body: multipartRequestBody
+    };
   }
 
-  const uploadUrl = initResponse.headers.get('Location');
-  if (!uploadUrl) {
-    throw new Error('No upload URL received from Google Drive');
+  async function getAccessToken() {
+    const response = await fetch(`/apps/aso-proxy/api/access-token`);
+
+    if (!response.ok) {
+      return;
+    }
+
+    const uploadedFiles = await response.json();
+    return uploadedFiles.data;
   }
-
-  // Step 2: Upload file in chunks (simplified - in production you should handle chunking properly)
-  const uploadResponse = await fetch(uploadUrl, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': file.type,
-      'Content-Length': file.size.toString()
-    },
-    body: file
-  });
-
-  if (!uploadResponse.ok) {
-    throw new Error(`Failed to upload file: ${uploadResponse.status}`);
-  }
-
-  const fileData = await uploadResponse.json();
-  
-  // Get shareable link (you might need additional API calls to set permissions)
-  const fileUrl = `https://drive.google.com/uc?export=download&id=${fileData.id}`;
-  
-  
-  return {
-    name: file.name,
-    type: file.type,
-    size: file.size,
-    url: fileUrl,
-    driveId: fileData.id
-  };
-}
-
-async function uploadSmallFileToLocal(file) {
-  // Convert file to base64 for small files
-  const base64Data = await convertFileToBase64(file);
- 
-  return {
-    name: file.name,
-    type: file.type,
-    size: file.size,
-    data:base64Data
-  };
-}
-
-function createMultipartBody(file, base64Content) {
-  const boundary = '-------' + Math.random().toString(36).substr(2, 16);
-  const delimiter = "\r\n--" + boundary + "\r\n";
-  const closeDelim = "\r\n--" + boundary + "--";
-  
-  const metadata = {
-    name: file.name,
-    mimeType: file.type
-  };
-
-  const multipartRequestBody =
-    delimiter +
-    'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-    JSON.stringify(metadata) +
-    delimiter +
-    'Content-Type: ' + file.type + '\r\n' +
-    'Content-Transfer-Encoding: base64\r\n\r\n' +
-    base64Content +
-    closeDelim;
-
-  return {
-    contentType: 'multipart/related; boundary=' + boundary,
-    body: multipartRequestBody
-  };
-}
-
-async function getAccessToken() {
-  const response = await fetch(`/apps/aso-proxy/api/access-token`);
-
-  if (!response.ok) {
-    return;
-  }
-
-  const uploadedFiles = await response.json();
-  return uploadedFiles.data;
-}
 
 </script>
