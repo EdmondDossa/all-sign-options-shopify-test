@@ -73,10 +73,6 @@ export default function ManageClipartCreate() {
     setFormData({ ...formData })
   }
  
-
-
-
-  
   const navigate = useNavigate();
   const onBack = () => {
     navigate("..");
