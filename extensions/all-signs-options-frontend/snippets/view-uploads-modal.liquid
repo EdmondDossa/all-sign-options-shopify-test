@@ -139,7 +139,7 @@
   // Fonction pour télécharger un fichier
   function downloadFile(url, filename) {
     const link = document.createElement('a');
-    link.href = "/apps/aso-proxy/"+ url;
+    link.href = url.includes('drive.google.com') ? url : "/apps/aso-proxy/"+ url;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
