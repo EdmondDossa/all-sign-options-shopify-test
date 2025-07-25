@@ -140,7 +140,7 @@ const formSchema = z.object({
   url:  z
   .string({ required_error: "Font file is required, please upload and select it" })
   .refine(
-    (val) => val.endsWith(".ttf") || val.endsWith(".otf"),
+    (val) => val.toLowerCase().endsWith(".ttf") ||val.toLowerCase().endsWith(".otf"),
     {
       message: "Font file must be .ttf or .otf file type",
     }
