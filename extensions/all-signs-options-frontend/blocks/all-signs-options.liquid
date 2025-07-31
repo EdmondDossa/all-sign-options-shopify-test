@@ -246,6 +246,7 @@
         
           // Fermer la modal après succès
           closeDesignModal();
+          window.parent.postMessage({ type: 'ASO_ENABLE_DESIGNS' }, '*')
           
           // Message de succès
           notyf.success(`Design uploaded successful!`);
