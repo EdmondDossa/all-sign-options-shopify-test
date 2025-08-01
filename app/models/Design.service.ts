@@ -30,6 +30,38 @@ export default class DesignService {
     }
   }
 
+  static async designsDelete(fileId: number, sessionId: string, productId:string ,customerIp: string): Promise<any | null> {
+    try {
+       await prisma.design.delete({
+        where: { 
+          sessionId,productId,customerIp,
+          id:fileId
+        },
+      });
+
+      return true
+    } catch (error) {
+      console.error("Error deleting designs:", error);
+      return false;
+    }
+  }
+
+
+
+  static async getDesignUploaded(fileId: number, sessionId: string, productId:string ,customerIp: string): Promise<any | null> {
+    try {
+      return await prisma.design.findFirst({
+        where: { 
+          sessionId,productId,customerIp,
+          id:fileId
+        },
+      });
+    } catch (error) {
+      console.error("Error getting designs:", error);
+      return null;
+    }
+  }
+
   static async getDesign(id: number, sessionId: string): Promise<any | null> {
     try {
       return await prisma.design.findFirst({
