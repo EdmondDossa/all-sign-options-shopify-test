@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://bent-blocked-seventh-arc.trycloudflare.com"
+application_url = "https://photographs-heaven-obituaries-errors.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://bent-blocked-seventh-arc.trycloudflare.com/auth/callback",
-  "https://bent-blocked-seventh-arc.trycloudflare.com/auth/shopify/callback",
-  "https://bent-blocked-seventh-arc.trycloudflare.com/api/auth/callback"
+  "https://photographs-heaven-obituaries-errors.trycloudflare.com/auth/callback",
+  "https://photographs-heaven-obituaries-errors.trycloudflare.com/auth/shopify/callback",
+  "https://photographs-heaven-obituaries-errors.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://bent-blocked-seventh-arc.trycloudflare.com"
+url = "https://photographs-heaven-obituaries-errors.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
