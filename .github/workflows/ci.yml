@@ -117,8 +117,45 @@ jobs:
           script: |
             cd $PROJECT_DIR
             cd $SUBDIR 
+            
+            echo "=== DÉPLOIEMENT ==="
+            echo "Branche: $SUBDIR"
+            echo "Version: $VERSION"
+            echo "Projet: $PROJECT_NAME"
+            
+            # Mise à jour du fichier .env
             sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" .env || echo "APP_VERSION=$VERSION" >> .env
-            echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
+            
+            # Connexion Docker Hub
+            echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin
+            
+            # Pull des nouvelles images
+            echo "Pull des images..."
             docker-compose pull
-            docker-compose -p $PROJECT_DIR-$SUBDIR down --remove-orphans
-            docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
+            
+            # Arrêt FORCÉ de tous les conteneurs existants
+            echo "Arrêt forcé des conteneurs existants..."
+            docker-compose -p $PROJECT_NAME down --remove-orphans --volumes || true
+            
+            # Nettoyage AGGRESSIF de tous les conteneurs avec ce nom
+            echo "Nettoyage agressif..."
+            docker rm -f pgdb-stage || true
+            docker rm -f frontend-app-stage || true
+            docker container prune -f || true
+            
+            # Démarrage des nouveaux conteneurs
+            echo "Démarrage des conteneurs..."
+            docker-compose -p $PROJECT_NAME up -d --force-recreate
+            
+            # Attendre que les conteneurs soient prêts
+            echo "Attente du démarrage..."
+            sleep 15
+            
+            # Vérification du statut
+            echo "=== STATUT DES CONTAINERS ==="
+            docker-compose -p $PROJECT_NAME ps
+            
+            echo "=== LOGS RÉCENTS ==="
+            docker-compose -p $PROJECT_NAME logs --tail=10
+            
+            echo "=== DÉPLOIEMENT TERMINÉ ==="
