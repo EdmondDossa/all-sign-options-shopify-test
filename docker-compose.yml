@@ -1,6 +1,6 @@
+name: all-signs-options-shopify
 services:
   pgdb:
-    
     image: postgres
     restart: unless-stopped
     shm_size: 128mb
@@ -11,9 +11,9 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     networks:
-      - aso-network
+      - aso-dev-network
     ports:
-      - ${PG_PORT:-5432}:5432
+      - 5432:5432
 
   frontend-app:
     image: vertimcoders/all-signs-options:${APP_VERSION:-latest}
@@ -36,11 +36,11 @@ services:
     depends_on:
       - pgdb 
     networks:
-      - aso-network
+      - aso-dev-network
       - proxy-network
 
 networks:
-  aso-network:
+  aso-dev-network:
   proxy-network:
     name: proxy-network
     external: true

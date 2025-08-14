@@ -6,7 +6,6 @@ on:
     types:
       - closed
     branches: [ "main", "stage" ]
-
 jobs:
   build-images:
     name: Build && push frontend image to docker hub
@@ -36,12 +35,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      #- name: Build and push docker image (Stage images)
+      #  uses: docker/build-push-action@v6
+      #  with:
+      #    context: .
+      #    push: true
+      #    tags: vertimcoders/all-signs-options:latest
+
       - name: Build Docker image
         id: build
         run: |
           docker build -t vertimcoders/all-signs-options:${{ env.VERSION }} .
 
-      - name: Push Docker image (stage)
+      - name: Push Docker image (dev)
         if: github.ref == 'refs/heads/stage'
         run: |
           docker tag vertimcoders/all-signs-options:${{ env.VERSION }} vertimcoders/all-signs-options:${{ env.VERSION }}-dev
@@ -53,6 +59,7 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.pull_request.merged && github.base_ref == 'main'
         run: |
           docker tag vertimcoders/all-signs-options:${{ env.VERSION }} vertimcoders/all-signs-options:latest
+          docker tag vertimcoders/all-signs-options:latest vertimcoders/all-signs-options:latest
           docker push vertimcoders/all-signs-options:${{ env.VERSION }}
           docker push vertimcoders/all-signs-options:latest
         env:
@@ -91,14 +98,6 @@ jobs:
         id: get_version
         run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
-      - name: Set image tag based on branch
-        run: |
-          if [ "${{ env.BRANCH_NAME }}" == "stage" ]; then
-            echo "IMAGE_TAG=${{ env.VERSION }}-dev" >> $GITHUB_ENV
-          else
-            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-          fi
-
       - name: Remote connexion && Start containers
         uses: appleboy/ssh-action@v1.0.3
         env:
@@ -108,27 +107,29 @@ jobs:
           PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
           SUBDIR: ${{ env.BRANCH_NAME }}
           VERSION: ${{ env.VERSION }}
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         with: 
           host: ${{ secrets.VERTIM_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.VERTIM_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_NAME,PROJECT_DIR,SUBDIR,VERSION,IMAGE_TAG
+          envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_NAME,PROJECT_DIR,SUBDIR,VERSION
           script: |
-            echo "=== DÉPLOIEMENT ==="
-            echo "Branche: $SUBDIR"
-            echo "Version: $VERSION"
-            echo "Tag image: $IMAGE_TAG"
-            echo "Projet: $PROJECT_NAME"
-            
             cd $PROJECT_DIR
             cd $SUBDIR 
             
-            # Mise à jour du fichier .env avec le bon tag
-            sed -i "s/^APP_VERSION=.*/APP_VERSION=$IMAGE_TAG/" .env || echo "APP_VERSION=$IMAGE_TAG" >> .env
+            echo "=== DÉPLOIEMENT ==="
+            echo "Branche: $SUBDIR"
+            echo "Version: $VERSION"
+            echo "Projet: $PROJECT_NAME"
             
+            # Mise à jour du fichier .env avec le bon tag d'image
+            if [ "$SUBDIR" == "stage" ]; then
+              IMAGE_TAG="$VERSION-dev"
+            else
+              IMAGE_TAG="latest"
+            fi
+            sed -i "s/^APP_VERSION=.*/APP_VERSION=$IMAGE_TAG/" .env || echo "APP_VERSION=$IMAGE_TAG" >> .env
             echo "APP_VERSION mis à jour: $IMAGE_TAG"
             
             # Connexion Docker Hub
@@ -138,20 +139,21 @@ jobs:
             echo "Pull des images..."
             docker-compose pull
             
-            # Arrêt propre des containers existants
-            echo "Arrêt des containers existants..."
-            docker-compose -p $PROJECT_NAME down --remove-orphans
+            # Arrêt FORCÉ de tous les conteneurs existants
+            echo "Arrêt forcé des conteneurs existants..."
+            docker-compose -p $PROJECT_NAME down --remove-orphans --volumes || true
             
-            # Nettoyage des ressources non utilisées
-            echo "Nettoyage..."
-            docker container prune -f
-            docker image prune -f
+            # Nettoyage AGGRESSIF de tous les conteneurs avec ce nom
+            echo "Nettoyage agressif..."
+            docker rm -f pgdb-stage || true
+            docker rm -f frontend-app-stage || true
+            docker container prune -f || true
             
-            # Démarrage des nouveaux containers
-            echo "Démarrage des containers..."
+            # Démarrage des nouveaux conteneurs
+            echo "Démarrage des conteneurs..."
             docker-compose -p $PROJECT_NAME up -d --force-recreate
             
-            # Attendre que les containers soient prêts
+            # Attendre que les conteneurs soient prêts
             echo "Attente du démarrage..."
             sleep 15
             
