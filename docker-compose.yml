@@ -1,6 +1,7 @@
+name: all-signs-options-shopify
 services:
   pgdb:
-    
+    container_name: pgdb
     image: postgres
     restart: unless-stopped
     shm_size: 128mb
@@ -13,10 +14,10 @@ services:
     networks:
       - aso-network
     ports:
-      - ${PG_PORT:-5432}:5432
+      - 5432:5432
 
   frontend-app:
-    image: vertimcoders/all-signs-options:${APP_VERSION:-latest}
+    image: vertimcoders/all-signs-options:latest
     restart: unless-stopped
     environment:
       SHOPIFY_API_KEY: ${SHOPIFY_API_KEY}
