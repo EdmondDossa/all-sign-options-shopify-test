@@ -6,6 +6,7 @@ on:
     types:
       - closed
     branches: [ "main", "stage" ]
+
 jobs:
   build-images:
     name: Build && push frontend image to docker hub
@@ -35,13 +36,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      #- name: Build and push docker image (Stage images)
-      #  uses: docker/build-push-action@v6
-      #  with:
-      #    context: .
-      #    push: true
-      #    tags: vertimcoders/all-signs-options:latest
-
       - name: Build Docker image
         id: build
         run: |
@@ -59,7 +53,6 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.pull_request.merged && github.base_ref == 'main'
         run: |
           docker tag vertimcoders/all-signs-options:${{ env.VERSION }} vertimcoders/all-signs-options:latest
-          docker tag vertimcoders/all-signs-options:latest vertimcoders/all-signs-options:latest
           docker push vertimcoders/all-signs-options:${{ env.VERSION }}
           docker push vertimcoders/all-signs-options:latest
         env:
@@ -70,22 +63,25 @@ jobs:
     needs: build-images
     runs-on: ubuntu-latest
     steps:
-      - name: Compute COMPOSE_PROJECT_NAME
+      - name: Extract branch name and set deployment config
+        id: extract_branch
         run: |
-          SAFE_REPO=$(echo "${{ github.repository }}" | tr '/._' '-' | tr -cd '[:alnum:]-')
-          echo "COMPOSE_PROJECT_NAME=${SAFE_REPO}-${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
-            - name: Extract branch name
-              id: extract_branch
-              run: |
-                if [ "${{ github.event_name }}" == "push" ]; then
-                  BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
-                elif [ "${{ github.event_name }}" == "pull_request" ]; then
-                  BRANCH_NAME="${{ github.base_ref }}"
-                else
-                  echo "Unsupported event: ${{ github.event_name }}"
-                  exit 1
-                fi
-                echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+          if [ "${{ github.event_name }}" == "push" ]; then
+            BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            BRANCH_NAME="${{ github.base_ref }}"
+          else
+            echo "Unsupported event: ${{ github.event_name }}"
+            exit 1
+          fi
+          
+          # Normalisation du nom de branche pour les noms de containers
+          NORMALIZED_BRANCH=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+          
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+          echo "NORMALIZED_BRANCH=${NORMALIZED_BRANCH}" >> $GITHUB_ENV
+          echo "PROJECT_NAME=all-signs-options-${NORMALIZED_BRANCH}" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v3
       
@@ -101,38 +97,85 @@ jobs:
         id: get_version
         run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
+      - name: Set image tag based on branch
+        run: |
+          if [ "${{ env.BRANCH_NAME }}" == "stage" ]; then
+            echo "IMAGE_TAG=${{ env.VERSION }}-dev" >> $GITHUB_ENV
+          else
+            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          fi
+
       - name: Remote connexion && Start containers
         uses: appleboy/ssh-action@v1.0.3
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PWD: ${{ secrets.DOCKERHUB_PASSWORD }}
           PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
-          BRANCH_NAME: ${{ env.BRANCH_NAME }}
+          SUBDIR: ${{ env.BRANCH_NAME }}
           VERSION: ${{ env.VERSION }}
-          COMPOSE_PROJECT_NAME: ${{ env.COMPOSE_PROJECT_NAME }}
-        with:
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+          NORMALIZED_BRANCH: ${{ env.NORMALIZED_BRANCH }}
+        with: 
           host: ${{ secrets.VERTIM_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.VERTIM_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_DIR,BRANCH_NAME,VERSION,COMPOSE_PROJECT_NAME
+          envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_DIR,SUBDIR,VERSION,IMAGE_TAG,PROJECT_NAME,NORMALIZED_BRANCH
           script: |
-            set -euo pipefail
-            cd "$PROJECT_DIR/$BRANCH_NAME"
-
-            # Maj de la version app dans .env
-            sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" .env || echo "APP_VERSION=$VERSION" >> .env
-
-            # Login Docker Hub
-            echo "$DOCKER_PWD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-
-            # Optionnel: exporter pour 'docker compose' si tu n'utilises pas -p
-            export COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT_NAME"
-
-            # Nettoyage du projet avant de remonter
-            docker compose -p "$COMPOSE_PROJECT_NAME" down --remove-orphans || true
-
-            # Pull et relance
-            docker compose -p "$COMPOSE_PROJECT_NAME" pull
-            docker compose -p "$COMPOSE_PROJECT_NAME" up -d --force-recreate --remove-orphans
+            echo "Déploiement pour la branche: $SUBDIR"
+            echo "Nom du projet: $PROJECT_NAME"
+            echo "Tag de l'image: $IMAGE_TAG"
+            
+            cd $PROJECT_DIR
+            cd $SUBDIR 
+            
+            # Mise à jour du fichier .env
+            sed -i "s/^APP_VERSION=.*/APP_VERSION=$IMAGE_TAG/" .env || echo "APP_VERSION=$IMAGE_TAG" >> .env
+            
+            # Configuration du port PostgreSQL unique par branche
+            if [ "$SUBDIR" == "stage" ]; then
+              PG_PORT=5433
+            else
+              PG_PORT=5432
+            fi
+            sed -i "s/^PG_PORT=.*/PG_PORT=$PG_PORT/" .env || echo "PG_PORT=$PG_PORT" >> .env
+            
+            # Affichage de la configuration
+            echo "Configuration du déploiement:"
+            echo "APP_VERSION=$IMAGE_TAG"
+            echo "PG_PORT=$PG_PORT"
+            echo "PROJECT_NAME=$PROJECT_NAME"
+            
+            # Arrêt des containers existants
+            echo "Arrêt des containers existants..."
+            docker-compose -p $PROJECT_NAME down --remove-orphans --volumes || true
+            
+            # Nettoyage
+            echo "Nettoyage des ressources Docker..."
+            docker container prune -f || true
+            docker image prune -f || true
+            
+            # Connexion Docker Hub
+            echo "Connexion à Docker Hub..."
+            echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin
+            
+            # Pull des images
+            echo "Pull des nouvelles images..."
+            docker-compose pull
+            
+            # Démarrage avec nom de projet unique
+            echo "Démarrage des containers..."
+            docker-compose -p $PROJECT_NAME up -d --force-recreate
+            
+            # Attendre un peu pour que les containers se lancent
+            sleep 10
+            
+            # Vérification du statut
+            echo "Statut des containers:"
+            docker-compose -p $PROJECT_NAME ps
+            
+            # Vérification des logs en cas de problème
+            echo "Logs récents:"
+            docker-compose -p $PROJECT_NAME logs --tail=20
