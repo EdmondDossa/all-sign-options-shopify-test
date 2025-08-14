@@ -123,8 +123,14 @@ jobs:
             echo "Version: $VERSION"
             echo "Projet: $PROJECT_NAME"
             
-            # Mise à jour du fichier .env
-            sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" .env || echo "APP_VERSION=$VERSION" >> .env
+            # Mise à jour du fichier .env avec le bon tag d'image
+            if [ "$SUBDIR" == "stage" ]; then
+              IMAGE_TAG="$VERSION-dev"
+            else
+              IMAGE_TAG="latest"
+            fi
+            sed -i "s/^APP_VERSION=.*/APP_VERSION=$IMAGE_TAG/" .env || echo "APP_VERSION=$IMAGE_TAG" >> .env
+            echo "APP_VERSION mis à jour: $IMAGE_TAG"
             
             # Connexion Docker Hub
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin
