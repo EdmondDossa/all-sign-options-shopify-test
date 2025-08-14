@@ -70,19 +70,22 @@ jobs:
     needs: build-images
     runs-on: ubuntu-latest
     steps:
-      - name: Extract branch name
-        id: extract_branch
+      - name: Compute COMPOSE_PROJECT_NAME
         run: |
-          if [ "${{ github.event_name }}" == "push" ]; then
-            BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            BRANCH_NAME="${{ github.base_ref }}"
-          else
-            echo "Unsupported event: ${{ github.event_name }}"
-            exit 1
-          fi
-          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-
+          SAFE_REPO=$(echo "${{ github.repository }}" | tr '/._' '-' | tr -cd '[:alnum:]-')
+          echo "COMPOSE_PROJECT_NAME=${SAFE_REPO}-${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
+            - name: Extract branch name
+              id: extract_branch
+              run: |
+                if [ "${{ github.event_name }}" == "push" ]; then
+                  BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
+                elif [ "${{ github.event_name }}" == "pull_request" ]; then
+                  BRANCH_NAME="${{ github.base_ref }}"
+                else
+                  echo "Unsupported event: ${{ github.event_name }}"
+                  exit 1
+                fi
+                echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v3
       
@@ -103,21 +106,33 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PWD: ${{ secrets.DOCKERHUB_PASSWORD }}
-          PROJECT_NAME: ${{ github.repository }}
           PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
-          SUBDIR: ${{ env.BRANCH_NAME }}
+          BRANCH_NAME: ${{ env.BRANCH_NAME }}
           VERSION: ${{ env.VERSION }}
-        with: 
+          COMPOSE_PROJECT_NAME: ${{ env.COMPOSE_PROJECT_NAME }}
+        with:
           host: ${{ secrets.VERTIM_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.VERTIM_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_NAME,PROJECT_DIR,SUBDIR,VERSION
+          envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_DIR,BRANCH_NAME,VERSION,COMPOSE_PROJECT_NAME
           script: |
-            cd $PROJECT_DIR
-            cd $SUBDIR 
+            set -euo pipefail
+            cd "$PROJECT_DIR/$BRANCH_NAME"
+
+            # Maj de la version app dans .env
             sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" .env || echo "APP_VERSION=$VERSION" >> .env
-            echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
-            docker-compose pull
-            docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
+
+            # Login Docker Hub
+            echo "$DOCKER_PWD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+
+            # Optionnel: exporter pour 'docker compose' si tu n'utilises pas -p
+            export COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT_NAME"
+
+            # Nettoyage du projet avant de remonter
+            docker compose -p "$COMPOSE_PROJECT_NAME" down --remove-orphans || true
+
+            # Pull et relance
+            docker compose -p "$COMPOSE_PROJECT_NAME" pull
+            docker compose -p "$COMPOSE_PROJECT_NAME" up -d --force-recreate --remove-orphans

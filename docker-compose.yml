@@ -1,7 +1,6 @@
 name: all-signs-options-shopify
 services:
-  pgdb:
-    container_name: pgdb
+  pgdb:    
     image: postgres
     restart: unless-stopped
     shm_size: 128mb
