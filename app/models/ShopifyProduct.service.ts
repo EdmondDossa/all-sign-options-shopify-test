@@ -54,7 +54,7 @@ export class ShopifyProductService {
               metafields: [
                 {
                   description: "ASO configuration  ID",
-                  key: "asoConfigurationIdItem",
+                  key: "asoConfigurationId",
                   namespace: "allSignsOptionsAsoAso",
                   type: "number_integer",
                   value: `${configurationId}`,
@@ -81,52 +81,86 @@ export class ShopifyProductService {
 
   static async update(admin: any, id: string, configurationId: number = 0, metafieldID?: string ) {
     try {
-      const response = await admin.graphql(
-        `#graphql
-                mutation productUpdate($product: ProductUpdateInput!) {
-                  productUpdate(product: $product) {
-                    product {
-                        id
-                        title
-                        handle
-                        status
-                        variants(first: 10) {
-                        edges {
-                            node {
-                            id
-                            price
-                            barcode
-                            createdAt
-                            }
-                        }
-                        }
-                    }
-                    }
-                }`,
-        {
-          variables: {
-            product: {
-              id: id,
+      // If configurationId is 0, we want to delete the metafield completely
+      if (configurationId === 0 && metafieldID) {
+        const response = await admin.graphql(
+          `#graphql
+          mutation metafieldsDelete($metafields: [MetafieldIdentifierInput!]!) {
+            metafieldsDelete(metafields: $metafields) {
+              deletedMetafields {
+                key
+                namespace
+                ownerId
+              }
+              userErrors {
+                field
+                message
+              }
+            }
+          }`,
+          {
+            variables: {
               metafields: [
-                metafieldID?
                 {
-                  id: metafieldID,
-                  value: `${configurationId}`,
-                }:{
-                  description: "ASO configuration  ID",
-                  key: "asoConfigurationId",
+                  ownerId: id,
                   namespace: "allSignsOptionsAsoAso",
-                  type: "number_integer",
-                  value: `${configurationId}`,
+                  key: "asoConfigurationId"
                 }
-              ],
+              ]
+            }
+          }
+        );
+        const responseJson = await response.json();
+        console.log("Metafield deleted:", responseJson);
+        return responseJson.data?.metafieldsDelete?.deletedMetafields?.length > 0 ? { id } : null;
+      } else {
+        // Normal update with configurationId
+        const response = await admin.graphql(
+          `#graphql
+                  mutation productUpdate($product: ProductUpdateInput!) {
+                    productUpdate(product: $product) {
+                      product {
+                          id
+                          title
+                          handle
+                          status
+                          variants(first: 10) {
+                          edges {
+                              node {
+                              id
+                              price
+                              barcode
+                              createdAt
+                              }
+                          }
+                          }
+                      }
+                      }
+                  }`,
+          {
+            variables: {
+              product: {
+                id: id,
+                metafields: [
+                  metafieldID ? {
+                    id: metafieldID,
+                    value: `${configurationId}`,
+                  } : {
+                    description: "ASO configuration  ID",
+                    key: "asoConfigurationId",
+                    namespace: "allSignsOptionsAsoAso",
+                    type: "number_integer",
+                    value: `${configurationId}`,
+                  }
+                ],
+              },
             },
           },
-        },
-      );
-      const responseJson = await response.json();
-      console.log("responseJson ", id, configurationId, responseJson);
-      return responseJson.data?.productCreate?.product;
+        );
+        const responseJson = await response.json();
+        console.log("responseJson ", id, configurationId, responseJson);
+        return responseJson.data?.productUpdate?.product;
+      }
     } catch (error) {
       console.log("error creating  product", error);
       return null;
@@ -158,7 +192,7 @@ export class ShopifyProductService {
 
     } catch (error) {
 
-      console.log("error creating  product", error);
+      console.log("error getting metafield ID", error);
       return null;
     }
   }
@@ -397,8 +431,8 @@ export class ShopifyProductService {
       try {
         const response = await admin.graphql(
           `#graphql
-          query {
-            productVariant(id: "${id}") {
+          query getVariantRecap($id: ID!) {
+            productVariant(id: $id) {
               title
               metafield(namespace: "allSignsOptionsAsoAso",
                 key: "asoConfigurationRecap"){
@@ -407,6 +441,11 @@ export class ShopifyProductService {
               }
             }
           }`,
+          {
+            variables: {
+              id: id
+            }
+          }
         );
         
         const data = await response.json();
@@ -574,6 +613,84 @@ export class ShopifyProductService {
       } catch (error) {
         console.log("error  on getting variant", error);
         return null
+      }
+    }
+
+    /**
+     * Updates multiple products with configuration association
+     * @param admin - Shopify admin API client
+     * @param products - Array of product objects with id and title
+     * @param configurationId - The configuration ID to associate
+     * @returns Promise<boolean> - Returns true if all updates were successful
+     */
+    static async updateMultipleProducts(admin: any, products: Array<{id: string, title: string}>, configurationId: number) {
+      try {
+        const results = await Promise.all(
+          products.map(async (product) => {
+            const metafieldId = await this.getMetafieldID(admin, product.id);
+            return await this.update(admin, product.id, configurationId, metafieldId);
+          })
+        );
+        
+        return results.every(result => result !== null);
+      } catch (error) {
+        console.log("Error updating multiple products:", error);
+        return false;
+      }
+    }
+
+    /**
+     * Removes configuration association from multiple products
+     * @param admin - Shopify admin API client
+     * @param productIds - Array of product IDs to disassociate
+     * @returns Promise<boolean> - Returns true if all removals were successful
+     */
+    static async removeConfigurationFromProducts(admin: any, productIds: string[]) {
+      try {
+        const results = await Promise.all(
+          productIds.map(async (productId) => {
+            const metafieldId = await this.getMetafieldID(admin, productId);
+            return await this.update(admin, productId, 0, metafieldId);
+          })
+        );
+        
+        return results.every(result => result !== null);
+      } catch (error) {
+        console.log("Error removing configuration from products:", error);
+        return false;
+      }
+    }
+
+    /**
+     * Gets all products associated with a configuration
+     * @param admin - Shopify admin API client
+     * @param configurationId - The configuration ID
+     * @returns Promise<Array<{id: string, title: string}>> - Returns array of associated products
+     */
+    static async getProductsByConfiguration(admin: any, configurationId: number) {
+      try {
+        const response = await admin.graphql(
+          `#graphql
+          query getProductsByConfiguration {
+            products(first: 250, query: "metafield:allSignsOptionsAsoAso.asoConfigurationId:${configurationId}") {
+              edges {
+                node {
+                  id
+                  title
+                }
+              }
+            }
+          }`
+        );
+
+        const data = await response.json();
+        return data.data.products.edges.map((edge: any) => ({
+          id: edge.node.id,
+          title: edge.node.title
+        }));
+      } catch (error) {
+        console.log("Error getting products by configuration:", error);
+        return [];
       }
     }
 }
