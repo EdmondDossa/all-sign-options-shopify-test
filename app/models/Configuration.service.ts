@@ -435,15 +435,17 @@ export default class ConfigurationService {
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
-    delete configuration.templates
-    const { id, ...data } = configuration;
+    const { id, products, templates, ...configData } = configuration;
     try {
       return await prisma.configuration.update({
         where: {
           id: id,
           sessionId: sessionId,
         },
-        data: data,
+        data: {
+          ...configData,
+          product: products, // Save products array as product field
+        },
       });
     } catch (error) {
       console.error("Error updating configuration:", error);
@@ -473,9 +475,11 @@ export default class ConfigurationService {
     sessionId: string,
   ): Promise<any | null> {
     try {
+      const { products, templates, ...configData } = configuration;
       return await prisma.configuration.create({
         data: {
-          ...configuration,
+          ...configData,
+          product: products, // Save products array as product field
           sessionId: sessionId,
           data: initialData,
         },

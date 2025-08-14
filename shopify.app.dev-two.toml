@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://consider-retrieve-emacs-trip.trycloudflare.com"
+application_url = "https://phenomenon-contractors-males-luke.trycloudflare.com"
 embedded = true
 
 [build]
@@ -15,17 +15,13 @@ include_config_on_deploy = false
 scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,read_products,read_publications,read_themes,write_products,write_publications"
 
 [auth]
-redirect_urls = [
-  "https://consider-retrieve-emacs-trip.trycloudflare.com/auth/callback",
-  "https://consider-retrieve-emacs-trip.trycloudflare.com/auth/shopify/callback",
-  "https://consider-retrieve-emacs-trip.trycloudflare.com/api/auth/callback"
-]
+redirect_urls = ["https://phenomenon-contractors-males-luke.trycloudflare.com/auth/callback", "https://phenomenon-contractors-males-luke.trycloudflare.com/auth/shopify/callback", "https://phenomenon-contractors-males-luke.trycloudflare.com/api/auth/callback"]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://consider-retrieve-emacs-trip.trycloudflare.com"
+url = "https://phenomenon-contractors-males-luke.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 

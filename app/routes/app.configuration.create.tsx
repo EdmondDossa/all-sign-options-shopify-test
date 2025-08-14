@@ -31,7 +31,7 @@ import z from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage } from "~/utils/message-flash";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
-import { SelectProducField } from "~/components/inputs/SelectProductFied";
+import { MultiProductSelectField } from "~/components/inputs/MultiProductSelectField";
 import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { CustomTinymce } from "~/components/inputs/CustomTinymce";
 import prisma from "~/db.server";
@@ -47,6 +47,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     configuration = await prisma.configuration.findUnique({
       where: { id: parseInt(id), sessionId: session.id },
     });
+    
+    // Load associated products for editing
+    if (configuration) {
+      // Convert product field from database to products array for frontend
+      (configuration as any).products = configuration.product || [];
+      delete (configuration as any).product;
+    }
   }
 
   return json({ configuration });
@@ -67,6 +74,7 @@ export default function ConfigurationEdit() {
       icon: "",
       popupImg: "",
       product: null,
+      products: [],
     },
   );
 
@@ -85,8 +93,8 @@ export default function ConfigurationEdit() {
   const handlePopupImg = (value: string) =>
     setFormData({ ...formData, popupImg: value });
 
-  const handleProduct = (value: any) =>
-    setFormData({ ...formData, product: value });
+  const handleProducts = (value: any) =>
+    setFormData({ ...formData, products: value });
 
   const navigate = useNavigate();
   const onBack = () => {
@@ -97,7 +105,7 @@ export default function ConfigurationEdit() {
     e.preventDefault();
     console.log(" log is nt errors");
     submit(
-      { ...formData, product: JSON.stringify(formData.product) },
+      { ...formData, products: JSON.stringify(formData.products) },
       { method: "POST" },
     );
   };
@@ -156,15 +164,15 @@ export default function ConfigurationEdit() {
                 </Grid.Cell>
 
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
-                  <SelectProducField
-                    label="Product associated with configuration"
+                  <MultiProductSelectField
+                    label="Products associated with configuration"
                     buttonTitle="select"
-                    productTitle={formData.product?.title}
-                    onSelectProductID={(value: any) => {
-                      console.log("Product ID ", value);
-                      handleProduct(value);
+                    selectedProducts={formData.products || []}
+                    onSelectProducts={(value: any) => {
+                      console.log("Products selected ", value);
+                      handleProducts(value);
                     }}
-                    selectProductId={formData.product?.id}
+                    productTitles={formData.products?.map(p => p.title)}
                   />
                 </Grid.Cell>
                 {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
@@ -252,7 +260,7 @@ const formSchema = z.object({
   description: z.string().nullish().transform(stringTransform),
   icon: z.string().nullish().transform(stringTransform),
   popupImg: z.string().nullish().transform(stringTransform),
-  product: z.any().transform(jsonTransform),
+  products: z.any().transform(jsonTransform),
 });
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -275,64 +283,53 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       configuration.id,
       session.id,
     );
-    const oldConfigurationProductID = oldConfiguration.product
-      ? oldConfiguration.product.id
-      : undefined;
+    
+    // Get old products from the database
+    const oldProducts = oldConfiguration?.product || [];
+    const oldProductIds = oldProducts.map((p: any) => p.id);
 
     const configurationObject = await ConfigurationService.updateConfiguration(
       configuration,
       session.id,
     );
-    if (
-      configurationObject &&
-      configurationObject.product?.id &&
-      oldConfigurationProductID != configurationObject.product?.id
-    ) {
-      const metafieldId = await ShopifyProductService.getMetafieldID(
-        admin,
-        configuration?.product?.id,
-      );
-      await ShopifyProductService.update(
-        admin,
-        configurationObject.product.id,
-        configurationObject.id,
-        metafieldId,
-      );
 
-      if (oldConfigurationProductID) {
-        const oldMetafieldId = await ShopifyProductService.getMetafieldID(
-          admin,
-          oldConfigurationProductID,
-        );
-        await ShopifyProductService.update(
-          admin,
-          oldConfigurationProductID,
-          0,
-          oldMetafieldId,
-        );
+    if (configurationObject && configuration.products && configuration.products.length > 0) {
+      // Get new product IDs
+      const newProductIds = configuration.products.map(p => p.id);
+      
+      // Find products to remove (in old but not in new)
+      const productsToRemove = oldProductIds.filter((id: string) => !newProductIds.includes(id));
+      
+      // Find products to add (in new but not in old)
+      const productsToAdd = configuration.products.filter((p: any) => !oldProductIds.includes(p.id));
+
+      // Remove configuration from products that are no longer associated
+      if (productsToRemove.length > 0) {
+        await ShopifyProductService.removeConfigurationFromProducts(admin, productsToRemove);
       }
+
+      // Add configuration to new products
+      if (productsToAdd.length > 0) {
+        await ShopifyProductService.updateMultipleProducts(admin, productsToAdd, configurationObject.id);
+      }
+    } else if (oldProductIds.length > 0) {
+      // If no products selected, remove all associations
+      await ShopifyProductService.removeConfigurationFromProducts(admin, oldProductIds);
     }
+
     return redirect(
       `..${flashMessage("Configuration updated successfully")}`,
     );
   } else {
-    const app_url = process.env.APP_URL;
-    const metafieldId = await ShopifyProductService.getMetafieldID(
-      admin,
-      configuration?.product?.id,
-    );
     const configurationObject = await ConfigurationService.addConfiguration(
       configuration,
       session.id,
     );
-    if (configurationObject && configurationObject.product?.id) {
-      const product = await ShopifyProductService.update(
-        admin,
-        configurationObject.product.id,
-        configurationObject.id,
-        metafieldId,
-      );
+    
+    if (configurationObject && configuration.products && configuration.products.length > 0) {
+      await ShopifyProductService.updateMultipleProducts(admin, configuration.products, configurationObject.id);
     }
+    
     return redirect(`../${configurationObject.id}/demo`);
   }
 };
