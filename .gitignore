@@ -16,3 +16,5 @@ shopify.app.dev-two.toml
 .env.main
 package-lock.json
 yarn.lock
+
+.shopify
