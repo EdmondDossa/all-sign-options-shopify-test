@@ -41,7 +41,7 @@ jobs:
         run: |
           docker build -t vertimcoders/all-signs-options:${{ env.VERSION }} .
 
-      - name: Push Docker image (dev)
+      - name: Push Docker image (stage)
         if: github.ref == 'refs/heads/stage'
         run: |
           docker tag vertimcoders/all-signs-options:${{ env.VERSION }} vertimcoders/all-signs-options:${{ env.VERSION }}-dev
@@ -63,7 +63,7 @@ jobs:
     needs: build-images
     runs-on: ubuntu-latest
     steps:
-      - name: Extract branch name and set deployment config
+      - name: Extract branch name
         id: extract_branch
         run: |
           if [ "${{ github.event_name }}" == "push" ]; then
@@ -74,13 +74,7 @@ jobs:
             echo "Unsupported event: ${{ github.event_name }}"
             exit 1
           fi
-          
-          # Normalisation du nom de branche pour les noms de containers
-          NORMALIZED_BRANCH=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
-          
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-          echo "NORMALIZED_BRANCH=${NORMALIZED_BRANCH}" >> $GITHUB_ENV
-          echo "PROJECT_NAME=all-signs-options-${NORMALIZED_BRANCH}" >> $GITHUB_ENV
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -110,72 +104,62 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PWD: ${{ secrets.DOCKERHUB_PASSWORD }}
+          PROJECT_NAME: ${{ github.repository }}
           PROJECT_DIR: ${{ secrets.PROJECT_DIR }}
           SUBDIR: ${{ env.BRANCH_NAME }}
           VERSION: ${{ env.VERSION }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
-          PROJECT_NAME: ${{ env.PROJECT_NAME }}
-          NORMALIZED_BRANCH: ${{ env.NORMALIZED_BRANCH }}
         with: 
           host: ${{ secrets.VERTIM_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.VERTIM_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_DIR,SUBDIR,VERSION,IMAGE_TAG,PROJECT_NAME,NORMALIZED_BRANCH
+          envs: DOCKER_USERNAME,DOCKER_PWD,PROJECT_NAME,PROJECT_DIR,SUBDIR,VERSION,IMAGE_TAG
           script: |
-            echo "Déploiement pour la branche: $SUBDIR"
-            echo "Nom du projet: $PROJECT_NAME"
-            echo "Tag de l'image: $IMAGE_TAG"
+            echo "=== DÉPLOIEMENT ==="
+            echo "Branche: $SUBDIR"
+            echo "Version: $VERSION"
+            echo "Tag image: $IMAGE_TAG"
+            echo "Projet: $PROJECT_NAME"
             
             cd $PROJECT_DIR
             cd $SUBDIR 
             
-            # Mise à jour du fichier .env
+            # Mise à jour du fichier .env avec le bon tag
             sed -i "s/^APP_VERSION=.*/APP_VERSION=$IMAGE_TAG/" .env || echo "APP_VERSION=$IMAGE_TAG" >> .env
             
-            # Configuration du port PostgreSQL unique par branche
-            if [ "$SUBDIR" == "stage" ]; then
-              PG_PORT=5433
-            else
-              PG_PORT=5432
-            fi
-            sed -i "s/^PG_PORT=.*/PG_PORT=$PG_PORT/" .env || echo "PG_PORT=$PG_PORT" >> .env
-            
-            # Affichage de la configuration
-            echo "Configuration du déploiement:"
-            echo "APP_VERSION=$IMAGE_TAG"
-            echo "PG_PORT=$PG_PORT"
-            echo "PROJECT_NAME=$PROJECT_NAME"
-            
-            # Arrêt des containers existants
-            echo "Arrêt des containers existants..."
-            docker-compose -p $PROJECT_NAME down --remove-orphans --volumes || true
-            
-            # Nettoyage
-            echo "Nettoyage des ressources Docker..."
-            docker container prune -f || true
-            docker image prune -f || true
+            echo "APP_VERSION mis à jour: $IMAGE_TAG"
             
             # Connexion Docker Hub
-            echo "Connexion à Docker Hub..."
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin
             
-            # Pull des images
-            echo "Pull des nouvelles images..."
+            # Pull des nouvelles images
+            echo "Pull des images..."
             docker-compose pull
             
-            # Démarrage avec nom de projet unique
+            # Arrêt propre des containers existants
+            echo "Arrêt des containers existants..."
+            docker-compose -p $PROJECT_NAME down --remove-orphans
+            
+            # Nettoyage des ressources non utilisées
+            echo "Nettoyage..."
+            docker container prune -f
+            docker image prune -f
+            
+            # Démarrage des nouveaux containers
             echo "Démarrage des containers..."
             docker-compose -p $PROJECT_NAME up -d --force-recreate
             
-            # Attendre un peu pour que les containers se lancent
-            sleep 10
+            # Attendre que les containers soient prêts
+            echo "Attente du démarrage..."
+            sleep 15
             
             # Vérification du statut
-            echo "Statut des containers:"
+            echo "=== STATUT DES CONTAINERS ==="
             docker-compose -p $PROJECT_NAME ps
             
-            # Vérification des logs en cas de problème
-            echo "Logs récents:"
-            docker-compose -p $PROJECT_NAME logs --tail=20
+            echo "=== LOGS RÉCENTS ==="
+            docker-compose -p $PROJECT_NAME logs --tail=10
+            
+            echo "=== DÉPLOIEMENT TERMINÉ ==="
