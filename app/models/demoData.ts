@@ -34,6 +34,7 @@ export const configurationDemoData: ConfigurationType[] = [
               zipOutFolderPrefix: "aso_",
             },
             designComposition: true,
+            pdfDpi: 300,
           },
           product: {
             designFromScratch: true,
@@ -1016,6 +1017,7 @@ export const configurationDemoData: ConfigurationType[] = [
               zipOutFolderPrefix: "aso_",
             },
             designComposition: true,
+            pdfDpi: 300,
           },
           product: {
             designFromScratch: true,
@@ -2094,6 +2096,7 @@ export const configurationDemoData: ConfigurationType[] = [
               zipOutFolderPrefix: "aso_",
             },
             designComposition: true,
+            pdfDpi: 300,
           },
           product: {
             designFromScratch: true,
@@ -3207,6 +3210,7 @@ export const configurationDemoData: ConfigurationType[] = [
               zipOutFolderPrefix: "aso_",
             },
             designComposition: true,
+            pdfDpi: 300,
           },
           product: {
             designFromScratch: true,
@@ -5487,6 +5491,7 @@ export const configurationDemoData: ConfigurationType[] = [
               zipOutFolderPrefix: "aso_",
             },
             designComposition: true,
+            pdfDpi: 300,
           },
           product: {
             designFromScratch: true,
@@ -7016,6 +7021,7 @@ export const configurationDemoData: ConfigurationType[] = [
               zipOutFolderPrefix: "aso_",
             },
             designComposition: true,
+            pdfDpi: 300,
           },
           product: {
             designFromScratch: true,
@@ -8133,6 +8139,7 @@ export const configurationDemoData: ConfigurationType[] = [
               zipOutFolderPrefix: "aso_",
             },
             designComposition: true,
+            pdfDpi: 300,
           },
           product: {
             designFromScratch: true,
@@ -8742,6 +8749,7 @@ export const configurationDemoData: ConfigurationType[] = [
               zipOutFolderPrefix: "aso_",
             },
             designComposition: true,
+            pdfDpi: 300,
           },
           product: {
             designFromScratch: true,
@@ -10109,3 +10117,7 @@ export const fontData: FontType[] = [
     isGoogleFont: false
   },
 ];
+
+
+
+

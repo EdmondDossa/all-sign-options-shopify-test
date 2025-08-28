@@ -424,7 +424,8 @@ function getDefaultConfig(){
                         "active": true,
                         "zipOutFolderPrefix": "aso_"
                     },
-                    "designComposition": true
+                    "designComposition": true,
+                    "pdfDpi": 300
                 },
                 "product": {
                     "designFromScratch": true,
