@@ -1,6 +1,7 @@
 export interface OutputType{
     zipName: boolean;
     calculateOutput: boolean;
+    pdfDpi?: 72 | 150 | 300 | 600;
 }
 
 export interface ShapeType {

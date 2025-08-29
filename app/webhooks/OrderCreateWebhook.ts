@@ -1,11 +1,15 @@
+import { jsPDF } from "jspdf";
 import AdmZip from "adm-zip";
+import { fileBuffer, generateUniqueId, uploadBufferWithName } from "~/utils/uploadBase64";
+import { assignShopDesignPath } from "~/utils/fileUrl";
+import { getExtensionFromBase64 } from "~/utils/uploadBase64";
+import { calculateImagePlacementWithDpi, getJpegQualityFromDpi } from "~/utils/uploadBase64";
+import sizeOf from 'buffer-image-size';
+import ConfigurationService from "~/models/Configuration.service";
 import { sendRecapMail, sendUploadMail } from "~/email";
+import { unlink } from "fs";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
 import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
-import { calculateImagePlacement, fileBuffer, generateUniqueId, getExtensionFromBase64, uploadBufferWithName } from "~/utils/uploadBase64";
-import { jsPDF } from "jspdf";
-import { assignShopDesignPath } from "~/utils/fileUrl";
-import { unlink } from "fs";
 import SettingOutputService from "~/models/SettingOutput.service";
 import { updateOrCreateJsonData } from "~/utils/jsonHandler";
 import { ShopifyOrderService } from "~/models/ShopifyOrder.service";
@@ -105,6 +109,21 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
     if (order) {
         await sendUploadfile(admin, session.id, parseInt( order.id||"0") );
 
+      // Récupérer la configuration pour obtenir le DPI configuré
+      let pdfDpi: 72 | 150 | 300 | 600 = 300; // Valeur par défaut
+      try {
+        const configurations = await ConfigurationService.getConfigurations(session.id);
+        if (configurations && configurations.length > 0) {
+          const config = configurations[0]; // Prendre la première configuration
+          const outputSettings = config.data?.settings?.generals?.output;
+          if (outputSettings?.pdfDpi && [72, 150, 300, 600].includes(outputSettings.pdfDpi)) {
+            pdfDpi = outputSettings.pdfDpi;
+          }
+        }
+      } catch (error) {
+        console.log("Erreur lors de la récupération de la configuration DPI, utilisation de la valeur par défaut 300:", error);
+      }
+
       for(const line_item of order.line_items){
         let variantMetaData :any = await ShopifyProductService.getVariantRecap(admin,`gid://shopify/ProductVariant/${line_item.variant_id}`)
         if (variantMetaData) {
@@ -139,9 +158,13 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                     zip.addFile(fileName, content,"image");
                     designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName, content,session.id)}`)
                     
-                    let doc = new jsPDF({ orientation: "landscape", });
-                    let imageSize = calculateImagePlacement(content);
-                    doc.addImage(content, "jpeg", imageSize.x, imageSize.y, imageSize.width, imageSize.height);
+                    let doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+                    const pageW = doc.internal.pageSize.getWidth();
+                    const pageH = doc.internal.pageSize.getHeight();
+                    const dimensions = sizeOf(content);
+                    let imageSize = calculateImagePlacementWithDpi(dimensions.width, dimensions.height, pageW, pageH, pdfDpi);
+                    const quality = getJpegQualityFromDpi(pdfDpi);
+                    doc.addImage(content, "jpeg", imageSize.x, imageSize.y, imageSize.width, imageSize.height, undefined, "FAST", quality);
                     let filenamePath = assignShopDesignPath(session.id, `${fileName}.pdf`);
                     doc.save(filenamePath);
                     zip.addLocalFile(filenamePath,undefined,`${fileName}.pdf`, "application/pdf");
@@ -184,9 +207,13 @@ export async function OrderCreateWebhook(admin:any,session:any,payload:any){
                     if(content){
                       zip.addFile(fileName, content,"image");
                       designImages.push(`${process.env.SHOPIFY_APP_URL}/${uploadBufferWithName(fileName, content,session.id)}`)
-                      let doc = new jsPDF({ orientation: "landscape", });
-                      let imageSize = calculateImagePlacement(content);
-                      doc.addImage(content, "JPEG", imageSize.x, imageSize.y, imageSize.width, imageSize.height);
+                      let doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+                      const pageW = doc.internal.pageSize.getWidth();
+                      const pageH = doc.internal.pageSize.getHeight();
+                      const dimensions = sizeOf(content);
+                      let imageSize = calculateImagePlacementWithDpi(dimensions.width, dimensions.height, pageW, pageH, pdfDpi);
+                      const quality = getJpegQualityFromDpi(pdfDpi);
+                      doc.addImage(content, "JPEG", imageSize.x, imageSize.y, imageSize.width, imageSize.height, undefined, "FAST", quality);
                       let filenamePath = assignShopDesignPath(session.id,`${fileName}.pdf`)
                       doc.save(filenamePath);
                       zip.addLocalFile(filenamePath,undefined,`${fileName}.pdf`, "application/pdf");
