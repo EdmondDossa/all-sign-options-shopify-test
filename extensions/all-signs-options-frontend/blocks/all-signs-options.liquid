@@ -88,7 +88,7 @@
 {% render 'style' %}
 
 <!-- Affichage normal du configurateur -->
-{% if block.settings.useIframe == false or block.settings.useModal == false %}
+{% if block.settings.useIframe == false %}
 
   <link rel="stylesheet"  href="{{'index.css' |asset_url }}">
   <script defer src="{{'shopify.js'|asset_url}}"></script>
@@ -101,20 +101,31 @@
     const iframeBaseUrl = '/apps/aso-proxy/assets-preview/aso-iframe.html';
     const iframeUrl = `${iframeBaseUrl}?asoProductId=${encodeURIComponent(asoProductId)}&asoCurrency=${encodeURIComponent(asoCurrency)}&asoPriceFormat=${encodeURIComponent(asoPriceFormat)}&asoRegularPrice=${encodeURIComponent(asoRegularPrice)}&asoCurrency_pos=${encodeURIComponent(asoCurrency_pos)}&asoThousandSep=${encodeURIComponent(asoThousandSep)}&asoDecimalSep=${encodeURIComponent(asoDecimalSep)}&asoConfigurationId=${encodeURIComponent(asoConfigurationId)}`;
 
-    const iframe = document.createElement('iframe');
-    iframe.src = iframeUrl;
-    iframe.width = '100%';
-    iframe.height = '100%';
-    iframe.style.border = 'none';
-    iframe.setAttribute('name', 'ASOIframe');
+    function createIframe(targetDiv) {
+      const iframe = document.createElement('iframe');
+      iframe.src = iframeUrl;
+      iframe.width = '100%';
+      iframe.height = '100%';
+      iframe.style.border = 'none';
+      iframe.setAttribute('name', 'ASOIframe');
 
-    const targetDiv = document.querySelector('.aso-app');
-    if (targetDiv) {
-      targetDiv.innerHTML = '';
-      targetDiv.appendChild(iframe);
+      if (targetDiv) {
+        targetDiv.innerHTML = '';
+        targetDiv.appendChild(iframe);
+      }
     }
 
-  
+    // Créer l'iframe pour l'affichage direct (quand useModal est false)
+    {% if block.settings.useModal == false %}
+      const targetDiv = document.querySelector('.aso-app');
+      createIframe(targetDiv);
+    {% endif %}
+
+    // Fonction pour créer l'iframe dans le modal (quand useModal est true)
+    window.createIframeInModal = function() {
+      const modalTargetDiv = document.querySelector('#aso-design-modal .aso-app');
+      createIframe(modalTargetDiv);
+    };
         
   </script>
 
@@ -141,6 +152,15 @@
     document.getElementById('aso-design-modal').style.display = 'block';
     document.body.style.overflow = 'hidden';
     window.dispatchEvent(new Event('resize')); 
+    
+    {% if block.settings.useIframe %}
+    // Créer l'iframe dans le modal si useIframe est activé
+    setTimeout(function() {
+      if (window.createIframeInModal) {
+        window.createIframeInModal();
+      }
+    }, 100);
+    {% endif %}
   }
 
   function closeDesignModal() {
