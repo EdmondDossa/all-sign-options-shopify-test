@@ -26,6 +26,7 @@ const initialData = {
           zipOutFolderPrefix: "aso_",
         },
         designComposition: true,
+        pdfDpi: 300,
       },
       product: {
         designFromScratch: true,

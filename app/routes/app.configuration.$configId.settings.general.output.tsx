@@ -51,6 +51,9 @@ const formSchema = z.object({
       }),
     ),
   designComposition: z.any().transform(booleanTransform).pipe(z.boolean()),
+  pdfDpi: z.number().int().min(72).max(600).refine((val) => [72, 150, 300, 600].includes(val), {
+    message: "DPI must be one of: 72, 150, 300, 600"
+  }).default(300),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -79,6 +82,13 @@ export default function ConfigSettingsGeneral() {
     { label: "PNG+ JPEG", value: "png+jpeg" },
   ];
 
+  const pdfDpiOptions = [
+    { label: "72 DPI (Screen)", value: "72" },
+    { label: "150 DPI (Basic Print)", value: "150" },
+    { label: "300 DPI (Quality Print)", value: "300" },
+    { label: "600 DPI (High Quality Print)", value: "600" },
+  ];
+
   const [formData, setFormData] = useState<any>(
     settingData || {
       filesFormat: options[0].value,
@@ -88,6 +98,7 @@ export default function ConfigSettingsGeneral() {
         zipOutFolderPrefix: "aso_",
       },
       designComposition: false,
+      pdfDpi: 300,
     },
   );
 
@@ -130,6 +141,28 @@ export default function ConfigSettingsGeneral() {
                       value={formData.filesFormat}
                       error={getError(actionData, "filesFormat")}
                     />
+                    <Text as="p" variant="bodySm" tone="subdued">
+                      Note: A PDF file will be automatically generated in addition to the selected format, regardless of your choice.
+                    </Text>
+                  </BlockStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <BlockStack gap="300">
+                    <Text as="strong" fontWeight="bold" variant="bodyLg">
+                      PDF Quality (DPI)
+                    </Text>
+                    <Select
+                      label="Select PDF quality for automatic PDF generation"
+                      options={pdfDpiOptions}
+                      onChange={(value) =>
+                        handleInputChange("pdfDpi", parseInt(value))
+                      }
+                      value={formData.pdfDpi?.toString() || "300"}
+                      error={getError(actionData, "pdfDpi")}
+                    />
+                    <Text as="p" variant="bodySm" tone="subdued">
+                      Tip: The higher the DPI, the larger the PDF file can be; 300 DPI is recommended for printing.
+                    </Text>
                   </BlockStack>
                 </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>

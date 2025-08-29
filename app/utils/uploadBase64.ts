@@ -117,5 +117,95 @@ export const calculateImagePlacement = (imgBuffer: Buffer) => {
   };
 };
 
+/**
+ * Convertit les pixels en millimètres selon le DPI spécifié
+ * @param px - Largeur ou hauteur en pixels
+ * @param dpi - Résolution en DPI
+ * @returns Dimension en millimètres
+ */
+export function pixelsToMm(px: number, dpi: number): number {
+  return (px / dpi) * 25.4;
+}
+
+/**
+ * Type pour le placement d'image avec dimensions en millimètres
+ */
+export type ImagePlacement = { 
+  x: number; 
+  y: number; 
+  width: number; 
+  height: number; 
+};
+
+/**
+ * Calcule le placement d'une image dans un PDF en tenant compte du DPI
+ * @param imgPxWidth - Largeur de l'image en pixels
+ * @param imgPxHeight - Hauteur de l'image en pixels
+ * @param pageWidthMm - Largeur de la page en millimètres
+ * @param pageHeightMm - Hauteur de la page en millimètres
+ * @param dpi - Résolution en DPI (72, 150, 300, 600)
+ * @param marginMm - Marge en millimètres (défaut: 10)
+ * @returns Placement de l'image avec coordonnées et dimensions en millimètres
+ */
+export function calculateImagePlacementWithDpi(
+  imgPxWidth: number,
+  imgPxHeight: number,
+  pageWidthMm: number,
+  pageHeightMm: number,
+  dpi: 72 | 150 | 300 | 600,
+  marginMm = 10
+): ImagePlacement {
+  // Convertir les dimensions de l'image de pixels vers millimètres
+  const rawWmm = pixelsToMm(imgPxWidth, dpi);
+  const rawHmm = pixelsToMm(imgPxHeight, dpi);
+
+  // Calculer les dimensions maximales disponibles (page - marges)
+  const maxW = pageWidthMm - marginMm * 2;
+  const maxH = pageHeightMm - marginMm * 2;
+
+  // Calculer l'échelle pour s'adapter à la page tout en conservant le ratio
+  const scale = Math.min(maxW / rawWmm, maxH / rawHmm, 1);
+  
+  // Appliquer l'échelle
+  const w = rawWmm * scale;
+  const h = rawHmm * scale;
+  
+  // Centrer l'image
+  const x = (pageWidthMm - w) / 2;
+  const y = (pageHeightMm - h) / 2;
+
+  return { x, y, width: w, height: h };
+}
+
+/**
+ * Calcule la qualité JPEG en fonction du DPI
+ * @param dpi - Résolution en DPI
+ * @returns Qualité JPEG (0.0 à 1.0)
+ */
+export function getJpegQualityFromDpi(dpi: 72 | 150 | 300 | 600): number {
+  if (dpi >= 600) return 1.0;
+  if (dpi >= 300) return 0.95;
+  if (dpi >= 150) return 0.9;
+  return 0.85;
+}
+
+// Tests unitaires pour les fonctions DPI
+if (process.env.NODE_ENV === 'test') {
+  // Test pixelsToMm
+  console.assert(pixelsToMm(300, 300) === 25.4, '300px à 300 DPI devrait être 25.4mm');
+  console.assert(pixelsToMm(72, 72) === 25.4, '72px à 72 DPI devrait être 25.4mm');
+  
+  // Test getJpegQualityFromDpi
+  console.assert(getJpegQualityFromDpi(72) === 0.85, '72 DPI devrait avoir une qualité de 0.85');
+  console.assert(getJpegQualityFromDpi(150) === 0.9, '150 DPI devrait avoir une qualité de 0.9');
+  console.assert(getJpegQualityFromDpi(300) === 0.95, '300 DPI devrait avoir une qualité de 0.95');
+  console.assert(getJpegQualityFromDpi(600) === 1.0, '600 DPI devrait avoir une qualité de 1.0');
+  
+  // Test calculateImagePlacementWithDpi
+  const placement = calculateImagePlacementWithDpi(1000, 500, 297, 210, 300);
+  console.assert(placement.width > 0 && placement.height > 0, 'Le placement devrait avoir des dimensions positives');
+  console.assert(placement.x >= 0 && placement.y >= 0, 'Les coordonnées devraient être positives');
+}
+
 
   
