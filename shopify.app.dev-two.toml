@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://levitra-iii-tgp-hc.trycloudflare.com"
+application_url = "https://al-oxford-tx-eur.trycloudflare.com"
 embedded = true
 
 [build]
@@ -15,13 +15,13 @@ include_config_on_deploy = true
 scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,read_products,read_publications,read_themes,write_products,write_publications"
 
 [auth]
-redirect_urls = ["https://levitra-iii-tgp-hc.trycloudflare.com/auth/callback", "https://levitra-iii-tgp-hc.trycloudflare.com/auth/shopify/callback", "https://levitra-iii-tgp-hc.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://al-oxford-tx-eur.trycloudflare.com/auth/callback", "https://al-oxford-tx-eur.trycloudflare.com/auth/shopify/callback", "https://al-oxford-tx-eur.trycloudflare.com/api/auth/callback"]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://levitra-iii-tgp-hc.trycloudflare.com"
+url = "https://al-oxford-tx-eur.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
