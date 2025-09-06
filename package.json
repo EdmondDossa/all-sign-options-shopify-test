@@ -3,7 +3,8 @@
   "private": true,
   "version": "2.9",
   "scripts": {
-    "build": "remix vite:build",
+    "build": "prisma generate && remix vite:build",
+    "postinstall": "node ./postinstall.js && prisma generate && prisma migrate deploy",
     "dev": "shopify app dev",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
@@ -17,8 +18,7 @@
     "shopify": "shopify",
     "prisma": "prisma",
     "graphql-codegen": "graphql-codegen",
-    "vite": "vite",
-    "postinstall": "node ./postinstall.js"
+    "vite": "vite"
   },
   "type": "module",
   "engines": {
