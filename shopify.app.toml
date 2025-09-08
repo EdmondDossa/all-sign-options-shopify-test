@@ -2,7 +2,7 @@
 
 client_id = "adf4506adb0b3a2e093f1a910b28e181"
 name = "All Signs Options"
-application_url = "https://suse-inside-happens-crimes.trycloudflare.com"
+application_url = "https://aso-app.vertimcoders.com/"
 embedded = true
 
 [build]
@@ -16,16 +16,29 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://suse-inside-happens-crimes.trycloudflare.com/auth/callback",
-  "https://suse-inside-happens-crimes.trycloudflare.com/auth/shopify/callback",
-  "https://suse-inside-happens-crimes.trycloudflare.com/api/auth/callback"
+  "https://aso-app.vertimcoders.com//auth/callback",
+  "https://aso-app.vertimcoders.com//auth/shopify/callback",
+  "https://aso-app.vertimcoders.com//api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2025-04"
 
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks"
+
+  [[webhooks.subscriptions]]
+  topics = [ "orders/create" ]
+  uri = "/webhooks"
+
+  # Webhooks de conformité obligatoires pour l'App Store
+  [[webhooks.subscriptions]]
+  compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+  uri = "/webhooks"
+
 [app_proxy]
-url = "https://suse-inside-happens-crimes.trycloudflare.com"
+url = "https://aso-app.vertimcoders.com/"
 subpath = "aso-proxy"
 prefix = "apps"
 
