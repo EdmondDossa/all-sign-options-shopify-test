@@ -2,7 +2,7 @@
 
 client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
-application_url = "https://focused-determining-tale-realize.trycloudflare.com"
+application_url = "https://bible-thehun-look-uh.trycloudflare.com"
 embedded = true
 
 [build]
@@ -15,13 +15,13 @@ include_config_on_deploy = true
 scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,read_products,read_publications,read_themes,write_products,write_publications"
 
 [auth]
-redirect_urls = ["https://focused-determining-tale-realize.trycloudflare.com/auth/callback", "https://focused-determining-tale-realize.trycloudflare.com/auth/shopify/callback", "https://focused-determining-tale-realize.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://bible-thehun-look-uh.trycloudflare.com/auth/callback", "https://bible-thehun-look-uh.trycloudflare.com/auth/shopify/callback", "https://bible-thehun-look-uh.trycloudflare.com/api/auth/callback"]
 
 [webhooks]
 api_version = "2025-04"
 
 [app_proxy]
-url = "https://focused-determining-tale-realize.trycloudflare.com"
+url = "https://bible-thehun-look-uh.trycloudflare.com"
 subpath = "aso-proxy"
 prefix = "apps"
 
