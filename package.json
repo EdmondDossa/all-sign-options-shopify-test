@@ -2,6 +2,7 @@
   "name": "all-signs-option",
   "private": true,
   "version": "2.16",
+
   "scripts": {
     "build": "remix vite:build",
     "dev": "shopify app dev",
