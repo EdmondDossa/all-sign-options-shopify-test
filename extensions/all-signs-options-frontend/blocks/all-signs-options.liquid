@@ -23,19 +23,19 @@
   <!-- Boutons pour ouvrir les modals -->
   <div class="aso-modal-buttons-container">
     {% if block.settings.design_button_enabled and asoConfigurationId %}
-      <button id="asoDesignBtn" class="aso-modal-button aso-design-button" type="button" 
+      <button class="aso-modal-button aso-design-button" onclick="openDesignModal()" 
               style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
         {{ block.settings.design_button_text | default: "Design your own Sign" }}
       </button>
     {% endif %}
     {% if  block.settings.upload_button_enabled %}
-      <button id="asoUploadBtn" class="aso-modal-button aso-upload-button" type="button" 
+      <button class="aso-modal-button aso-upload-button" onclick="openUploadModal()" 
               style="background-color: {{ block.settings.upload_button_color }}; color: {{ block.settings.upload_button_text_color }};">
         {{ block.settings.upload_button_text | default: "Upload your Sign" }}
       </button>
     {% endif %}
     {% if block.settings.view_uploads_button_enabled %}
-      <button id="asoViewUploadsBtn" class="aso-modal-button aso-view-uploads-button" type="button" 
+      <button class="aso-modal-button aso-view-uploads-button" onclick="openViewUploadsModal()" 
               style="background-color: {{ block.settings.view_uploads_button_color }}; color: {{ block.settings.view_uploads_button_text_color }};">
         {{ block.settings.view_uploads_button_text | default: "View Uploaded Files" }}
       </button>
@@ -151,7 +151,6 @@
   function openDesignModal() {
     document.getElementById('aso-design-modal').style.display = 'block';
     document.body.style.overflow = 'hidden';
-    document.body.classList.add('aso-modal-open');
     window.dispatchEvent(new Event('resize')); 
     
     {% if block.settings.useIframe %}
@@ -167,31 +166,6 @@
   function closeDesignModal() {
     document.getElementById('aso-design-modal').style.display = 'none';
     document.body.style.overflow = 'auto';
-    document.body.classList.remove('aso-modal-open');
-    lockProductForm(false);
-  }
-
-  function closeUploadModal() {
-    document.getElementById('aso-upload-modal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-    document.body.classList.remove('aso-modal-open');
-    lockProductForm(false);
-  }
-
-  function closeViewUploadsModal() {
-    document.getElementById('aso-view-uploads-modal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-    document.body.classList.remove('aso-modal-open');
-    lockProductForm(false);
-  }
-
-  // Fonction pour désactiver/activer les boutons d'ajout au panier
-  function lockProductForm(lock = true) {
-    const productForm = document.querySelector('form[action="/cart/add"]');
-    if (!productForm) return;
-    productForm.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(b => {
-      b.disabled = lock;
-    });
   }
 
   // Fermer les modals en cliquant à l'extérieur
@@ -211,122 +185,19 @@
     }
   });
 
-  // Event listeners pour les boutons avec protection
-  document.addEventListener('DOMContentLoaded', function() {
-    // Récupérer le form d'ajout au panier
-    const productForm = document.querySelector('form[action="/cart/add"]');
-
-    // Binder proprement les boutons
-    document.getElementById('asoDesignBtn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      lockProductForm(true);
-      openDesignModal();
-    });
-
-    document.getElementById('asoUploadBtn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      lockProductForm(true);
-      document.getElementById('aso-upload-modal').style.display = 'block';
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('aso-modal-open');
-    });
-
-    document.getElementById('asoViewUploadsBtn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      lockProductForm(true);
-      document.getElementById('aso-view-uploads-modal').style.display = 'block';
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('aso-modal-open');
-    });
-
-    // 1 Bloque toute tentative de submit quand une modale ASO est ouverte
-    productForm?.addEventListener('submit', (e) => {
-      if (document.body.classList.contains('aso-modal-open')) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        console.warn('[ASO] Submit bloqué pendant la modale.');
-      }
-    });
-
-    // 2 Par sécurité, on annule tout "submit" déclenché depuis notre container de boutons
-    productForm?.addEventListener('click', (e) => {
-      if (e.target.closest('.aso-modal-buttons-container')) {
-        // Empêche qu'un autre script interprète le clic comme un add-to-cart
-        e.preventDefault();
-        e.stopImmediatePropagation();
-      }
-    }, true); // capture: intercepte avant d'autres listeners
-  });
-
-  // Fonction globale pour fermer les modales (utilisée par d'autres scripts)
-  window.asoCloseModal = function () {
-    document.body.classList.remove('aso-modal-open');
-    lockProductForm(false);
-    closeDesignModal();
-    closeUploadModal();
-    closeViewUploadsModal();
-  };
-
 
 
   window.addEventListener('message', async function(event) {
       if (event.data && event.data.type === 'ADD_TO_CART_CHECKOUT') {
         const formData = event.data.payload;
         console.log("payload data", formData);
-        
-        // Utiliser la nouvelle fonction avec propriétés
-        if (window.asoAddproductToCart) {
-          // Utiliser les propriétés envoyées par l'iframe ou créer des propriétés par défaut
-          const properties = formData.properties || {
-            '_ASO Design ID': formData.designId || '',
-            '_ASO Preview URL': formData.previewUrl || '',
-            '_ASO JSON': JSON.stringify(formData.config || {}),
-            '_ASO Configuration': formData.config?.recaps?.configuration?.name || '',
-            '_ASO Material': formData.config?.recaps?.material?.value || '',
-            '_ASO Size': `${formData.config?.recaps?.sign?.size?.value?.width?.value || ''} x ${formData.config?.recaps?.sign?.size?.value?.height?.value || ''}`,
-            '_ASO Shape': formData.config?.recaps?.sign?.shape?.value || '',
-            '_ASO Color': formData.config?.recaps?.sign?.color?.value?.name || formData.config?.recaps?.sign?.color?.value?.face1?.name || ''
-          };
-          
-          const result = await window.asoAddproductToCart(formData.id, formData.quantity, properties);
-          if (result) {
-            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
-          }
-        } else {
-          // Fallback vers l'ancienne méthode
-          document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
-        }
+        document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
       }
 
       if (event.data && event.data.type === 'ADD_TO_CART') {
         const formData = event.data.payload;
         console.log("payload data", formData);
-        
-        // Utiliser la nouvelle fonction avec propriétés
-        if (window.asoAddproductToCart) {
-          // Utiliser les propriétés envoyées par l'iframe ou créer des propriétés par défaut
-          const properties = formData.properties || {
-            '_ASO Design ID': formData.designId || '',
-            '_ASO Preview URL': formData.previewUrl || '',
-            '_ASO JSON': JSON.stringify(formData.config || {}),
-            '_ASO Configuration': formData.config?.recaps?.configuration?.name || '',
-            '_ASO Material': formData.config?.recaps?.material?.value || '',
-            '_ASO Size': `${formData.config?.recaps?.sign?.size?.value?.width?.value || ''} x ${formData.config?.recaps?.sign?.size?.value?.height?.value || ''}`,
-            '_ASO Shape': formData.config?.recaps?.sign?.shape?.value || '',
-            '_ASO Color': formData.config?.recaps?.sign?.color?.value?.name || formData.config?.recaps?.sign?.color?.value?.face1?.name || ''
-          };
-          
-          const result = await window.asoAddproductToCart(formData.id, formData.quantity, properties);
-          if (result) {
-            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
-          }
-        } else {
-          // Fallback vers l'ancienne méthode
-          document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
-        }
+        document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
       }
 
       if (event.data && event.data.type ===  'UPLOAD_ON_FINISH') {
