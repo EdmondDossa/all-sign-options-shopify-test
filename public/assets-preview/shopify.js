@@ -148,12 +148,11 @@ async function aso_confiurator_dataFunction(){
 
 
 
-async function asoAddproductToCart(variantId, quantity=1, properties={}) { 
+async function asoAddproductToCart(variantId, quantity=1) { 
   let formData = {
     'items': [{
      'id': variantId,
-     'quantity': quantity,
-     'properties': properties
+     'quantity': quantity
      }]
    };
    try {
@@ -165,10 +164,9 @@ async function asoAddproductToCart(variantId, quantity=1, properties={}) {
         body: JSON.stringify(formData)
       })
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("added to cart", result)
-        return result;
+      if (response.json()) {
+        console.log("added to cart", response.json())
+        return true
       }
       
       
@@ -179,9 +177,6 @@ async function asoAddproductToCart(variantId, quantity=1, properties={}) {
  
    return false;
 }
-
-// Rendre la fonction accessible globalement
-window.asoAddproductToCart = asoAddproductToCart;
 
 
 
@@ -207,19 +202,7 @@ async function asoCreateVariantAndAddToCart(price, option) {
   
     console.log('Success:', responseData);   
 
-    // Créer les propriétés pour le panier
-    const properties = {
-      '_ASO Design ID': responseData.variantId || '',
-      '_ASO Preview URL': responseData.previewUrl || '',
-      '_ASO JSON': JSON.stringify(option),
-      '_ASO Configuration': option.recaps?.configuration?.name || '',
-      '_ASO Material': option.recaps?.material?.value || '',
-      '_ASO Size': `${option.recaps?.sign?.size?.value?.width?.value || ''} x ${option.recaps?.sign?.size?.value?.height?.value || ''}`,
-      '_ASO Shape': option.recaps?.sign?.shape?.value || '',
-      '_ASO Color': option.recaps?.sign?.color?.value?.name || option.recaps?.sign?.color?.value?.face1?.name || ''
-    };
-
-    let isAddedToCart = await asoAddproductToCart(parseInt(responseData.variantId), 1, properties);
+    let isAddedToCart = await asoAddproductToCart(parseInt(responseData.variantId),1);
     if (isAddedToCart) {
       setTimeout(()=>{
         document.location = asoCartUrl; 
