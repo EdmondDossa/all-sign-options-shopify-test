@@ -276,13 +276,57 @@
       if (event.data && event.data.type === 'ADD_TO_CART_CHECKOUT') {
         const formData = event.data.payload;
         console.log("payload data", formData);
-        document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
+        
+        // Utiliser la nouvelle fonction avec propriétés
+        if (window.asoAddproductToCart) {
+          // Utiliser les propriétés envoyées par l'iframe ou créer des propriétés par défaut
+          const properties = formData.properties || {
+            '_ASO Design ID': formData.designId || '',
+            '_ASO Preview URL': formData.previewUrl || '',
+            '_ASO JSON': JSON.stringify(formData.config || {}),
+            '_ASO Configuration': formData.config?.recaps?.configuration?.name || '',
+            '_ASO Material': formData.config?.recaps?.material?.value || '',
+            '_ASO Size': `${formData.config?.recaps?.sign?.size?.value?.width?.value || ''} x ${formData.config?.recaps?.sign?.size?.value?.height?.value || ''}`,
+            '_ASO Shape': formData.config?.recaps?.sign?.shape?.value || '',
+            '_ASO Color': formData.config?.recaps?.sign?.color?.value?.name || formData.config?.recaps?.sign?.color?.value?.face1?.name || ''
+          };
+          
+          const result = await window.asoAddproductToCart(formData.id, formData.quantity, properties);
+          if (result) {
+            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
+          }
+        } else {
+          // Fallback vers l'ancienne méthode
+          document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
+        }
       }
 
       if (event.data && event.data.type === 'ADD_TO_CART') {
         const formData = event.data.payload;
         console.log("payload data", formData);
-        document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
+        
+        // Utiliser la nouvelle fonction avec propriétés
+        if (window.asoAddproductToCart) {
+          // Utiliser les propriétés envoyées par l'iframe ou créer des propriétés par défaut
+          const properties = formData.properties || {
+            '_ASO Design ID': formData.designId || '',
+            '_ASO Preview URL': formData.previewUrl || '',
+            '_ASO JSON': JSON.stringify(formData.config || {}),
+            '_ASO Configuration': formData.config?.recaps?.configuration?.name || '',
+            '_ASO Material': formData.config?.recaps?.material?.value || '',
+            '_ASO Size': `${formData.config?.recaps?.sign?.size?.value?.width?.value || ''} x ${formData.config?.recaps?.sign?.size?.value?.height?.value || ''}`,
+            '_ASO Shape': formData.config?.recaps?.sign?.shape?.value || '',
+            '_ASO Color': formData.config?.recaps?.sign?.color?.value?.name || formData.config?.recaps?.sign?.color?.value?.face1?.name || ''
+          };
+          
+          const result = await window.asoAddproductToCart(formData.id, formData.quantity, properties);
+          if (result) {
+            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
+          }
+        } else {
+          // Fallback vers l'ancienne méthode
+          document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
+        }
       }
 
       if (event.data && event.data.type ===  'UPLOAD_ON_FINISH') {

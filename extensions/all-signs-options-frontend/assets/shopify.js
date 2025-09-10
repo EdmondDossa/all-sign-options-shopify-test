@@ -168,11 +168,12 @@ async function aso_confiurator_dataFunction(){
 
 
 
-async function asoAddproductToCart(variantId, quantity=1) { 
+async function asoAddproductToCart(variantId, quantity=1, properties={}) { 
   let formData = {
     'items': [{
      'id': variantId,
-     'quantity': quantity
+     'quantity': quantity,
+     'properties': properties
      }]
    };
    try {
@@ -184,8 +185,9 @@ async function asoAddproductToCart(variantId, quantity=1) {
         body: JSON.stringify(formData)
       })
 
-      if (response.json()) {
-        return true
+      if (response.ok) {
+        const result = await response.json();
+        return result;
       }
       
       
@@ -196,6 +198,9 @@ async function asoAddproductToCart(variantId, quantity=1) {
  
    return false;
 }
+
+// Rendre la fonction accessible globalement
+window.asoAddproductToCart = asoAddproductToCart;
 
 
 async function getAsoCheckoutUrl(cartId) {
@@ -295,11 +300,27 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
   
     console.log('Success:', responseData);   
 
-  
-    if (redirectToCheckOut) {
-      document.location = window.location.origin + `/cart/${responseData.variantId}:1`;
-    } else {
-      document.location = window.location.origin + `/cart/${responseData.variantId}:1?storefront=true`;
+    // Créer les propriétés pour le panier
+    const properties = {
+      '_ASO Design ID': responseData.variantId || '',
+      '_ASO Preview URL': responseData.previewUrl || '',
+      '_ASO JSON': JSON.stringify(option),
+      '_ASO Configuration': option.recaps?.configuration?.name || '',
+      '_ASO Material': option.recaps?.material?.value || '',
+      '_ASO Size': `${option.recaps?.sign?.size?.value?.width?.value || ''} x ${option.recaps?.sign?.size?.value?.height?.value || ''}`,
+      '_ASO Shape': option.recaps?.sign?.shape?.value || '',
+      '_ASO Color': option.recaps?.sign?.color?.value?.name || option.recaps?.sign?.color?.value?.face1?.name || ''
+    };
+
+    // Utiliser la nouvelle fonction avec propriétés
+    const cartResult = await asoAddproductToCart(responseData.variantId, 1, properties);
+    
+    if (cartResult) {
+      if (redirectToCheckOut) {
+        document.location = window.location.origin + `/cart/${responseData.variantId}:1`;
+      } else {
+        document.location = window.location.origin + `/cart/${responseData.variantId}:1?storefront=true`;
+      }
     }
   } catch (error) {
     console.error('Error: ', error);
