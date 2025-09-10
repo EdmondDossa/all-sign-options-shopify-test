@@ -272,19 +272,22 @@ async function asoUploadsOnfinish(option){
 async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProductId, regularPrice=asoRegularPrice, redirectToCheckOut=false) {
 
   try {
-
+    console.log('[ASO] asoCreateVariantAndAddToCart called with:', { price, option, asoProductID, regularPrice, redirectToCheckOut });
 
     if (option.uploadFileOnFinish) {
+      console.log('[ASO] Upload file on finish detected, returning null');
       asoUploadsOnfinish(option);
       return null;
     }
-
 
     const data = {
       productId: `gid://shopify/Product/${asoProductID}`,
       price: parseFloat(`${price}` )+parseFloat(`${regularPrice}`),
       option: JSON.stringify(option)
     };
+    
+    console.log('[ASO] Making API call to /apps/aso-proxy/api/add-cart-variant');
+    console.log('[ASO] Request data:', data);
     
     let response = await fetch('/apps/aso-proxy/api/add-cart-variant', {
       method: 'POST',
@@ -294,12 +297,54 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
       body: JSON.stringify(data)
     });
   
+    console.log('[ASO] API response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed with status: ${response.status}`);
+    }
+    
     let responseData = await response.json();
   
+    console.log('[ASO] API response data:', responseData);   
+
+    // Vérifier que la réponse contient bien un variantId
+    if (!responseData || !responseData.variantId) {
+      console.error('[ASO] Invalid API response - missing variantId:', responseData);
+      throw new Error('Invalid API response - missing variantId');
+    }
+
     asoAddproductToCart(responseData.variantId, 1, redirectToCheckOut);
     
   } catch (error) {
-    console.error('Error: ', error);
+    console.error('[ASO] Error in asoCreateVariantAndAddToCart:', error);
+    
+    // En cas d'erreur, essayer d'ajouter le produit de base au panier
+    console.log('[ASO] Fallback: trying to add base product to cart');
+    try {
+      const fallbackData = {
+        'items': [{
+          'id': asoProductID,
+          'quantity': 1
+        }]
+      };
+      
+      let fallbackResponse = await fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(fallbackData)
+      });
+      
+      if (fallbackResponse.ok) {
+        console.log('[ASO] Fallback successful, redirecting to cart');
+        document.location = window.location.origin + '/cart';
+      } else {
+        console.error('[ASO] Fallback also failed');
+      }
+    } catch (fallbackError) {
+      console.error('[ASO] Fallback error:', fallbackError);
+    }
   }
 }
 

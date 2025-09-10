@@ -120,5 +120,11 @@ jobs:
             sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" .env || echo "APP_VERSION=$VERSION" >> .env
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
             docker-compose pull
-            docker-compose -p $PROJECT_DIR-$SUBDIR down
+            # Stop and remove containers with the correct names (project prefix applied)
+            docker stop pgdb-$SUBDIR 2>/dev/null || true
+            docker rm pgdb-$SUBDIR 2>/dev/null || true
+            docker stop $PROJECT_DIR-$SUBDIR-frontend-app-1 2>/dev/null || true
+            docker rm $PROJECT_DIR-$SUBDIR-frontend-app-1 2>/dev/null || true
+            # Force remove any existing containers with the project prefix
+            docker-compose -p $PROJECT_DIR-$SUBDIR down --remove-orphans
             docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
