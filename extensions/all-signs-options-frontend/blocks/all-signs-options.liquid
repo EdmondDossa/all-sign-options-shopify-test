@@ -270,19 +270,69 @@
     closeViewUploadsModal();
   };
 
+  // Fonction globale pour créer une variante et l'ajouter au panier
+  window.asoCreateVariantAndAddToCart = async function(price, option, asoProductID=asoProductId, regularPrice=asoRegularPrice, redirectToCheckOut=false) {
+    try {
+      if (option.uploadFileOnFinish) {
+        // Gérer l'upload de fichier
+        return null;
+      }
+
+      const data = {
+        productId: `gid://shopify/Product/${asoProductID}`,
+        price: parseFloat(`${price}`) + parseFloat(`${regularPrice}`),
+        option: JSON.stringify(option)
+      };
+      
+      let response = await fetch('/apps/aso-proxy/api/add-cart-variant', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+    
+      let responseData = await response.json();
+    
+      console.log('Success:', responseData);   
+
+      if (redirectToCheckOut) {
+        document.location = window.location.origin + `/cart/${responseData.variantId}:1`;
+      } else {
+        document.location = window.location.origin + `/cart/${responseData.variantId}:1?storefront=true`;
+      }
+    } catch (error) {
+      console.error('Error: ', error);
+    }
+  };
+
 
 
   window.addEventListener('message', async function(event) {
       if (event.data && event.data.type === 'ADD_TO_CART_CHECKOUT') {
         const formData = event.data.payload;
         console.log("payload data", formData);
-        document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
+        
+        // Utiliser la fonction qui crée la variante avec les propriétés
+        if (window.asoCreateVariantAndAddToCart) {
+          await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId, formData.regularPrice, true);
+        } else {
+          // Fallback vers l'ancienne méthode
+          document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
+        }
       }
 
       if (event.data && event.data.type === 'ADD_TO_CART') {
         const formData = event.data.payload;
         console.log("payload data", formData);
-        document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
+        
+        // Utiliser la fonction qui crée la variante avec les propriétés
+        if (window.asoCreateVariantAndAddToCart) {
+          await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId, formData.regularPrice, false);
+        } else {
+          // Fallback vers l'ancienne méthode
+          document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
+        }
       }
 
       if (event.data && event.data.type ===  'UPLOAD_ON_FINISH') {
