@@ -122,8 +122,15 @@ jobs:
             docker-compose pull
             # Nettoyage robuste des conteneurs existants
             docker-compose -p $PROJECT_DIR-$SUBDIR down --remove-orphans || true
+            # Supprimer tous les conteneurs avec les noms problématiques
             docker container rm -f pgdb-stage 2>/dev/null || true
             docker container rm -f frontend-app-stage 2>/dev/null || true
-            # Supprimer les conteneurs orphelins
+            docker container rm -f $PROJECT_DIR-$SUBDIR-pgdb-1 2>/dev/null || true
+            docker container rm -f $PROJECT_DIR-$SUBDIR-frontend-app-1 2>/dev/null || true
+            # Supprimer tous les conteneurs contenant "pgdb" dans le nom
+            docker ps -a --filter "name=pgdb" --format "{{.Names}}" | xargs -r docker rm -f 2>/dev/null || true
+            # Supprimer tous les conteneurs arrêtés
             docker container prune -f || true
+            # Attendre un peu pour s'assurer que tout est nettoyé
+            sleep 2
             docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
