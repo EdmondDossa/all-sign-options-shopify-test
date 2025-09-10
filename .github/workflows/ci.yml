@@ -120,5 +120,10 @@ jobs:
             sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" .env || echo "APP_VERSION=$VERSION" >> .env
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
             docker-compose pull
-            docker-compose -p $PROJECT_DIR-$SUBDIR down
+            # Nettoyage robuste des conteneurs existants
+            docker-compose -p $PROJECT_DIR-$SUBDIR down --remove-orphans || true
+            docker container rm -f pgdb-stage 2>/dev/null || true
+            docker container rm -f frontend-app-stage 2>/dev/null || true
+            # Supprimer les conteneurs orphelins
+            docker container prune -f || true
             docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
