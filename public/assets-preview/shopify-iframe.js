@@ -180,10 +180,11 @@ async function aso_confiurator_dataFunction(){
 
 
 
-async function asoAddproductToCart(variantId, quantity=1 , checkout) { 
+async function asoAddproductToCart(variantId, quantity=1, properties={}, checkout) { 
   let formData = {
      'id': variantId,
-     'quantity': quantity
+     'quantity': quantity,
+     'properties': properties
     }
    try {
     window.parent.postMessage({
@@ -191,7 +192,7 @@ async function asoAddproductToCart(variantId, quantity=1 , checkout) {
         payload: formData
       }, '*'); 
       
-  
+   
    } catch (error) {
       console.log("Error on sending  message:", error)
    }
@@ -296,7 +297,19 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
   
     let responseData = await response.json();
   
-    asoAddproductToCart(responseData.variantId, 1, redirectToCheckOut);
+    // Créer les propriétés pour le panier
+    const properties = {
+      '_ASO Design ID': responseData.variantId || '',
+      '_ASO Preview URL': responseData.previewUrl || '',
+      '_ASO JSON': JSON.stringify(option),
+      '_ASO Configuration': option.recaps?.configuration?.name || '',
+      '_ASO Material': option.recaps?.material?.value || '',
+      '_ASO Size': `${option.recaps?.sign?.size?.value?.width?.value || ''} x ${option.recaps?.sign?.size?.value?.height?.value || ''}`,
+      '_ASO Shape': option.recaps?.sign?.shape?.value || '',
+      '_ASO Color': option.recaps?.sign?.color?.value?.name || option.recaps?.sign?.color?.value?.face1?.name || ''
+    };
+
+    asoAddproductToCart(responseData.variantId, 1, properties, redirectToCheckOut);
     
   } catch (error) {
     console.error('Error: ', error);
