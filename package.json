@@ -1,7 +1,7 @@
 {
   "name": "all-signs-option",
   "private": true,
-  "version": "2.25",
+  "version": "2.26",
 
   "scripts": {
     "build": "remix vite:build",
