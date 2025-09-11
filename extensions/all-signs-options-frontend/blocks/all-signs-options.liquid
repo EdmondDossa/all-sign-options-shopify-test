@@ -288,10 +288,15 @@
       }
 
       // Vérifier et corriger le prix
-      const calculatedPrice = parseFloat(`${price}`) + parseFloat(`${regularPrice}`);
+      let calculatedPrice = parseFloat(`${price}`) + parseFloat(`${regularPrice}`);
       if (!isFinite(calculatedPrice) || calculatedPrice < 0) {
         console.error('[ASO] Invalid price calculation:', { price, regularPrice, calculatedPrice });
-        throw new Error(`Invalid price calculation: ${calculatedPrice}`);
+        console.log('[ASO] Using fallback price calculation');
+        
+        // Utiliser un prix par défaut basé sur le prix régulier
+        const fallbackPrice = parseFloat(`${regularPrice}`) || 0;
+        calculatedPrice = fallbackPrice + (fallbackPrice * 0.1); // Ajouter 10% comme marge
+        console.log('[ASO] Fallback price set to:', calculatedPrice);
       }
 
       const data = {
@@ -385,12 +390,12 @@
           console.error('[ASO] Missing required data in payload:', formData);
           console.log('[ASO] Available variables:', { asoProductId, asoRegularPrice });
           
-          // Essayer d'utiliser les variables globales si disponibles
-          if (window.asoCreateVariantAndAddToCart && typeof asoProductId !== 'undefined') {
-            console.log('[ASO] Using global variables as fallback');
-            await window.asoCreateVariantAndAddToCart(formData.price || 0, formData.option || {}, asoProductId, asoRegularPrice, true);
+          // Si on a un ID de variante, rediriger directement vers le checkout
+          if (formData.id && formData.id !== 'undefined') {
+            console.log('[ASO] Using variant ID for direct checkout redirect:', formData.id);
+            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity || 1}`;
           } else {
-            console.log('[ASO] Fallback to direct cart redirect');
+            console.log('[ASO] Fallback to direct checkout redirect with product ID');
             document.location = window.location.origin + `/cart/${formData.id || asoProductId}:${formData.quantity || 1}`;
           }
         } else {
@@ -416,12 +421,12 @@
           console.error('[ASO] Missing required data in payload:', formData);
           console.log('[ASO] Available variables:', { asoProductId, asoRegularPrice });
           
-          // Essayer d'utiliser les variables globales si disponibles
-          if (window.asoCreateVariantAndAddToCart && typeof asoProductId !== 'undefined') {
-            console.log('[ASO] Using global variables as fallback');
-            await window.asoCreateVariantAndAddToCart(formData.price || 0, formData.option || {}, asoProductId, asoRegularPrice, false);
+          // Si on a un ID de variante, rediriger directement vers le panier
+          if (formData.id && formData.id !== 'undefined') {
+            console.log('[ASO] Using variant ID for direct cart redirect:', formData.id);
+            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity || 1}?storefront=true`;
           } else {
-            console.log('[ASO] Fallback to direct cart redirect');
+            console.log('[ASO] Fallback to direct cart redirect with product ID');
             document.location = window.location.origin + `/cart/${formData.id || asoProductId}:${formData.quantity || 1}?storefront=true`;
           }
         } else {
