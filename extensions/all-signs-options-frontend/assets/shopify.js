@@ -286,10 +286,15 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
     }
 
     // Vérifier et corriger le prix
-    const calculatedPrice = parseFloat(`${price}`) + parseFloat(`${regularPrice}`);
+    let calculatedPrice = parseFloat(`${price}`) + parseFloat(`${regularPrice}`);
     if (!isFinite(calculatedPrice) || calculatedPrice < 0) {
       console.error('[ASO] Invalid price calculation:', { price, regularPrice, calculatedPrice });
-      throw new Error(`Invalid price calculation: ${calculatedPrice}`);
+      console.log('[ASO] Using fallback price calculation');
+      
+      // Utiliser un prix par défaut basé sur le prix régulier
+      const fallbackPrice = parseFloat(`${regularPrice}`) || 0;
+      calculatedPrice = fallbackPrice + (fallbackPrice * 0.1); // Ajouter 10% comme marge
+      console.log('[ASO] Fallback price set to:', calculatedPrice);
     }
 
     const data = {
@@ -344,12 +349,18 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
     // En cas d'erreur, essayer d'ajouter le produit de base au panier
     console.log('[ASO] Fallback: trying to add base product to cart');
     try {
+      // Extraire l'ID numérique du produit (enlever le préfixe gid://shopify/Product/)
+      const numericProductId = asoProductID.replace('gid://shopify/Product/', '');
+      console.log('[ASO] Using numeric product ID for fallback:', numericProductId);
+      
       const fallbackData = {
         'items': [{
-          'id': asoProductID,
+          'id': numericProductId,
           'quantity': 1
         }]
       };
+      
+      console.log('[ASO] Fallback request data:', fallbackData);
       
       let fallbackResponse = await fetch(window.Shopify.routes.root + 'cart/add.js', {
         method: 'POST',
@@ -359,14 +370,24 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
         body: JSON.stringify(fallbackData)
       });
       
+      console.log('[ASO] Fallback response status:', fallbackResponse.status);
+      
       if (fallbackResponse.ok) {
         console.log('[ASO] Fallback successful, redirecting to cart');
         document.location = window.location.origin + '/cart';
       } else {
-        console.error('[ASO] Fallback also failed');
+        const errorText = await fallbackResponse.text();
+        console.error('[ASO] Fallback failed with status:', fallbackResponse.status, 'Error:', errorText);
+        
+        // Dernier recours : redirection simple vers le panier
+        console.log('[ASO] Last resort: redirecting to cart page');
+        document.location = window.location.origin + '/cart';
       }
     } catch (fallbackError) {
       console.error('[ASO] Fallback error:', fallbackError);
+      // Dernier recours : redirection simple vers le panier
+      console.log('[ASO] Last resort: redirecting to cart page');
+      document.location = window.location.origin + '/cart';
     }
   }
 }
