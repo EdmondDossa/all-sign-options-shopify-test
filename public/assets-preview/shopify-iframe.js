@@ -286,9 +286,16 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
       return null;
     }
 
+    // Vérifier et corriger le prix
+    const calculatedPrice = parseFloat(`${price}`) + parseFloat(`${regularPrice}`);
+    if (!isFinite(calculatedPrice) || calculatedPrice < 0) {
+      console.error('[ASO] Invalid price calculation:', { price, regularPrice, calculatedPrice });
+      throw new Error(`Invalid price calculation: ${calculatedPrice}`);
+    }
+
     const data = {
       productId: `gid://shopify/Product/${asoProductID}`,
-      price: parseFloat(`${price}` )+parseFloat(`${regularPrice}`),
+      price: calculatedPrice,
       option: JSON.stringify(option)
     };
     
@@ -312,6 +319,12 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
     let responseData = await response.json();
   
     console.log('[ASO] API response data:', responseData);   
+
+    // Vérifier si l'API a retourné une erreur
+    if (responseData.status === false) {
+      console.error('[ASO] API returned error:', responseData);
+      throw new Error(`API error: ${responseData.message || 'Unknown error'}`);
+    }
 
     // Vérifier que la réponse contient bien un variantId
     if (!responseData || !responseData.variantId) {
