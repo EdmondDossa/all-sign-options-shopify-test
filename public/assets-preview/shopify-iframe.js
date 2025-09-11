@@ -274,6 +274,12 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
   try {
     console.log('[ASO] asoCreateVariantAndAddToCart called with:', { price, option, asoProductID, regularPrice, redirectToCheckOut });
 
+    // Vérifier que l'option est définie
+    if (!option || typeof option !== 'object') {
+      console.error('[ASO] Invalid option data:', option);
+      throw new Error('Invalid option data');
+    }
+
     if (option.uploadFileOnFinish) {
       console.log('[ASO] Upload file on finish detected, returning null');
       asoUploadsOnfinish(option);

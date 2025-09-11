@@ -275,6 +275,12 @@
     try {
       console.log('[ASO] asoCreateVariantAndAddToCart called with:', { price, option, asoProductID, regularPrice, redirectToCheckOut });
       
+      // Vérifier que l'option est définie
+      if (!option || typeof option !== 'object') {
+        console.error('[ASO] Invalid option data:', option);
+        throw new Error('Invalid option data');
+      }
+      
       if (option.uploadFileOnFinish) {
         console.log('[ASO] Upload file on finish detected, returning null');
         // Gérer l'upload de fichier
@@ -361,14 +367,29 @@
         console.log('[ASO] ADD_TO_CART_CHECKOUT payload:', formData);
         console.log('[ASO] asoCreateVariantAndAddToCart available:', !!window.asoCreateVariantAndAddToCart);
         
-        // Utiliser la fonction qui crée la variante avec les propriétés
-        if (window.asoCreateVariantAndAddToCart) {
-          console.log('[ASO] Calling asoCreateVariantAndAddToCart with checkout=true');
-          await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId, formData.regularPrice, true);
+        // Vérifier que les données nécessaires sont présentes
+        if (!formData.price || !formData.option) {
+          console.error('[ASO] Missing required data in payload:', formData);
+          console.log('[ASO] Available variables:', { asoProductId, asoRegularPrice });
+          
+          // Essayer d'utiliser les variables globales si disponibles
+          if (window.asoCreateVariantAndAddToCart && typeof asoProductId !== 'undefined') {
+            console.log('[ASO] Using global variables as fallback');
+            await window.asoCreateVariantAndAddToCart(formData.price || 0, formData.option || {}, asoProductId, asoRegularPrice, true);
+          } else {
+            console.log('[ASO] Fallback to direct cart redirect');
+            document.location = window.location.origin + `/cart/${formData.id || asoProductId}:${formData.quantity || 1}`;
+          }
         } else {
-          console.log('[ASO] Fallback to direct cart redirect');
-          // Fallback vers l'ancienne méthode
-          document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
+          // Utiliser la fonction qui crée la variante avec les propriétés
+          if (window.asoCreateVariantAndAddToCart) {
+            console.log('[ASO] Calling asoCreateVariantAndAddToCart with checkout=true');
+            await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId || asoProductId, formData.regularPrice || asoRegularPrice, true);
+          } else {
+            console.log('[ASO] Fallback to direct cart redirect');
+            // Fallback vers l'ancienne méthode
+            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
+          }
         }
       }
 
@@ -377,14 +398,29 @@
         console.log('[ASO] ADD_TO_CART payload:', formData);
         console.log('[ASO] asoCreateVariantAndAddToCart available:', !!window.asoCreateVariantAndAddToCart);
         
-        // Utiliser la fonction qui crée la variante avec les propriétés
-        if (window.asoCreateVariantAndAddToCart) {
-          console.log('[ASO] Calling asoCreateVariantAndAddToCart with checkout=false');
-          await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId, formData.regularPrice, false);
+        // Vérifier que les données nécessaires sont présentes
+        if (!formData.price || !formData.option) {
+          console.error('[ASO] Missing required data in payload:', formData);
+          console.log('[ASO] Available variables:', { asoProductId, asoRegularPrice });
+          
+          // Essayer d'utiliser les variables globales si disponibles
+          if (window.asoCreateVariantAndAddToCart && typeof asoProductId !== 'undefined') {
+            console.log('[ASO] Using global variables as fallback');
+            await window.asoCreateVariantAndAddToCart(formData.price || 0, formData.option || {}, asoProductId, asoRegularPrice, false);
+          } else {
+            console.log('[ASO] Fallback to direct cart redirect');
+            document.location = window.location.origin + `/cart/${formData.id || asoProductId}:${formData.quantity || 1}?storefront=true`;
+          }
         } else {
-          console.log('[ASO] Fallback to direct cart redirect');
-          // Fallback vers l'ancienne méthode
-          document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
+          // Utiliser la fonction qui crée la variante avec les propriétés
+          if (window.asoCreateVariantAndAddToCart) {
+            console.log('[ASO] Calling asoCreateVariantAndAddToCart with checkout=false');
+            await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId || asoProductId, formData.regularPrice || asoRegularPrice, false);
+          } else {
+            console.log('[ASO] Fallback to direct cart redirect');
+            // Fallback vers l'ancienne méthode
+            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
+          }
         }
       }
 
