@@ -4,6 +4,9 @@ api_version = "2024-04"
 # Change the merchant-facing name of the extension in locales/en.default.json
 name = "t:name"
 handle = "aso-admin-order-detail"
+
+uid = "94ca868b-4146-83f9-c10f-e7cbf6cf57540c5bbff4"
+
 type = "ui_extension"
 
 [[extensions.targeting]]
