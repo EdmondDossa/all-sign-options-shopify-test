@@ -51,7 +51,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     // Load associated products for editing
     if (configuration) {
       // Convert product field from database to products array for frontend
-      (configuration as any).products = configuration.product || [];
+      (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
       delete (configuration as any).product;
     }
   }
@@ -172,7 +172,7 @@ export default function ConfigurationEdit() {
                       console.log("Products selected ", value);
                       handleProducts(value);
                     }}
-                    productTitles={formData.products?.map(p => p.title)}
+                    productTitles={(formData.products || []).map(p => p.title)}
                   />
                 </Grid.Cell>
                 {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
