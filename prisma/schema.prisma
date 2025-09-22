@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,135 +7,126 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Session {
-  id              String    @id
-  shop            String
-  state           String
-  isOnline        Boolean   @default(false)
-  scope           String?
-  expires         DateTime?
-  accessToken     String
-  userId          BigInt?
-  isInitialized   Boolean   @default(false)
-  firstName       String?
-  lastName        String?
-  email           String?
-  accountOwner    Boolean   @default(false)
-  locale          String?
-  collaborator    Boolean?  @default(false)
-  emailVerified   Boolean?  @default(false)
-  configurations  Configuration[]
-  fonts           Font[]
-  clipartsGroup   ClipartsGroup[]
-  templates       Template[] 
-  categories      Category[] 
-  setting         Setting?
-  Design          Design[]
+  id             String          @id
+  shop           String
+  state          String
+  isOnline       Boolean         @default(false)
+  scope          String?
+  expires        DateTime?
+  accessToken    String
+  userId         BigInt?
+  isInitialized  Boolean         @default(false)
+  accountOwner   Boolean         @default(false)
+  collaborator   Boolean?        @default(false)
+  email          String?
+  emailVerified  Boolean?        @default(false)
+  firstName      String?
+  lastName       String?
+  locale         String?
+  categories     Category[]
+  clipartsGroup  ClipartsGroup[]
+  configurations Configuration[]
+  Design         Design[]
+  fonts          Font[]
+  setting        Setting?
+  templates      Template[]
 }
 
-model Upload{
-  id          Int    @id @default(autoincrement())
-  files       Json? 
-  shop        String @unique 
-} 
-
+model Upload {
+  id    Int    @id @default(autoincrement())
+  files Json?
+  shop  String @unique
+}
 
 model Configuration {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  icon        String
-  popupImg    String
-  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId   String
-  data        Json?
-  product     Json?
-  templates      Template[] 
+  id           Int        @id @default(autoincrement())
+  name         String
+  description  String?
+  icon         String
+  popupImg     String
+  sessionId    String
+  data         Json?
+  product      Json?
+  materialType String?
+  productType  String?
+  session      Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  templates    Template[]
 }
-
-
 
 model Font {
-  id            Int      @id @default(autoincrement())
-  label         String
-  url           String
-  isGoogleFont  Boolean
-  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  id           Int     @id @default(autoincrement())
+  label        String
+  url          String
+  isGoogleFont Boolean
+  sessionId    String
+  session      Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model ClipartsGroup {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
   sessionId   String
+  cliparts    Clipart[]
+  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
-
-
-model ClipartsGroup{
-  id            Int      @id @default(autoincrement())
-  title         String
-  description   String
-  cliparts      Clipart[] 
-  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId   String
+model Clipart {
+  id              Int           @id @default(autoincrement())
+  title           String
+  url             String
+  additionalPrice Float
+  clipartsGroupId Int
+  clipartsGroup   ClipartsGroup @relation(fields: [clipartsGroupId], references: [id], onDelete: Cascade)
 }
 
-
-model Clipart{
-    id                Int      @id @default(autoincrement())
-    title             String
-    url               String
-    additionalPrice   Float
-    clipartsGroup     ClipartsGroup @relation(fields: [clipartsGroupId], references: [id], onDelete: Cascade)
-    clipartsGroupId   Int 
+model Setting {
+  id        Int     @id @default(autoincrement())
+  data      Json?
+  sessionId String  @unique
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
-model Setting{
-  id          Int      @id @default(autoincrement())
-  data        Json?      
-  session     Session   @relation(fields: [sessionId], references: [id],onDelete: Cascade)
-  sessionId   String @unique
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String
+  sessionId String
+  session   Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  templates Template[]
 }
-
-
-model Category{
-  id            Int      @id @default(autoincrement())
-  name         String
-  templates      Template[] 
-  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId   String
-}
-
 
 model Template {
-  id                Int      @id @default(autoincrement())
-  name              String
-  basePrice         Float
-  prevImg           String
-  realImg           String?
-  recaps             Json?
-  enabledAddToCart  Boolean  @default(false)
-  enabledAutoImgUpdate  Boolean  @default(false)
-  configuration     Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
-  configurationId   Int
-  category          Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade )
-  categoryId        Int?
-  session           Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId         String
-  data            Json?
+  id                   Int           @id @default(autoincrement())
+  name                 String
+  basePrice            Float
+  configurationId      Int
+  categoryId           Int?
+  sessionId            String
+  data                 Json?
+  enabledAddToCart     Boolean       @default(false)
+  prevImg              String
+  recaps               Json?
+  enabledAutoImgUpdate Boolean       @default(false)
+  realImg              String?
+  category             Category?     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  configuration        Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+  session              Session       @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
-
 
 model Design {
-  id          Int      @id @default(autoincrement())
-  customerIp  String?
-  productId   String?
-  configId    Int?
-  variantId   String?
-  orderId     String?
-  session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId   String
-  fileName    String?
-  fileSize    Int?
-  fileUrl     String?
-  fileType    String?
-  storage     String?
-  zipFile     Json?
+  id         Int     @id @default(autoincrement())
+  sessionId  String
+  customerIp String?
+  orderId    String?
+  productId  String?
+  configId   Int?
+  variantId  String?
+  fileName   String?
+  fileSize   Int?
+  fileType   String?
+  fileUrl    String?
+  storage    String?
+  zipFile    Json?
+  session    Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
-
