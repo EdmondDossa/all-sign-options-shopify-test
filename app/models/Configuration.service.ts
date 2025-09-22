@@ -39,6 +39,11 @@ const initialData = {
         hideAddToCartButtonOnShopPage: true,
         hideAddToCartButtonOnDetailPage: true,
       },
+      quantityLimits: {
+        enableQuantityLimits: false,
+        minQuantity: 1,
+        maxQuantity: undefined,
+      },
     },
     themeColors: {
       skin: "default",

@@ -96,6 +96,7 @@ export default function ConfigurationEdit() {
   const handleProducts = (value: any) =>
     setFormData({ ...formData, products: value });
 
+
   const navigate = useNavigate();
   const onBack = () => {
     navigate("..");
@@ -175,6 +176,7 @@ export default function ConfigurationEdit() {
                     productTitles={(formData.products || []).map(p => p.title)}
                   />
                 </Grid.Cell>
+                
                 {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                   <CustomTinymce
                     error={
