@@ -23,6 +23,9 @@ export default function ConfigSettingsGeneral() {
           <InlineStack gap="400" align="center">
             <SubTabItem to="product"> Produit</SubTabItem>
             <SubTabItem to="output"> output</SubTabItem>
+            <SubTabItem to="quantity-limits">
+              Quantity Limits
+            </SubTabItem>
             <SubTabItem to="mobile-option">
               Mobile Option
             </SubTabItem>

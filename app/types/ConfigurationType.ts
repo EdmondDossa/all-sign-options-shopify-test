@@ -7,5 +7,5 @@
     data?: any;
      product?: any;
      products?: Array<{id: string, title: string}>;
-     templates?: any
+     templates?: any;
 }
