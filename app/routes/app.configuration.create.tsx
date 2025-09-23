@@ -63,10 +63,10 @@ export default function ConfigurationEdit() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  console.log("action data :", actionData);
+  console.log("Client - Action data received:", actionData);
   let { configuration } = useLoaderData<typeof loader>();
   
-  console.log("configuration :", configuration);
+  console.log("Client - Configuration loaded:", configuration);
   const [formData, setFormData] = useState<ConfigurationType>(
     (configuration as ConfigurationType) || {
       name: "",
@@ -104,7 +104,8 @@ export default function ConfigurationEdit() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(" log is nt errors");
+    console.log("Client - Submitting form data:", formData);
+    console.log("Client - Products being sent:", formData.products);
     submit(
       { ...formData, products: JSON.stringify(formData.products) },
       { method: "POST" },
@@ -136,7 +137,7 @@ export default function ConfigurationEdit() {
                     onChange={handleName}
                     autoComplete="on"
                     error={
-                      actionData?.errors?.name ? actionData.errors.name[0] : ""
+                      actionData && 'errors' in actionData && actionData.errors?.name ? actionData.errors.name[0] : ""
                     }
                   />
                 </Grid.Cell>
@@ -147,7 +148,7 @@ export default function ConfigurationEdit() {
                     onChange={handleDescription}
                     autoComplete="on"
                     error={
-                      actionData?.errors?.description
+                      actionData && 'errors' in actionData && actionData.errors?.description
                         ? actionData.errors.description[0]
                         : ""
                     }
@@ -156,7 +157,7 @@ export default function ConfigurationEdit() {
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
                   <FileInput
                     error={
-                      actionData?.errors?.icon ? actionData.errors.icon[0] : ""
+                      actionData && 'errors' in actionData && actionData.errors?.icon ? actionData.errors.icon[0] : ""
                     }
                     title="Upload image"
                     path={formData.icon}
@@ -170,7 +171,7 @@ export default function ConfigurationEdit() {
                     buttonTitle="select"
                     selectedProducts={formData.products || []}
                     onSelectProducts={(value: any) => {
-                      console.log("Products selected ", value);
+                      console.log("Client - Products selected:", value);
                       handleProducts(value);
                     }}
                     productTitles={(formData.products || []).map(p => p.title)}
@@ -266,18 +267,20 @@ const formSchema = z.object({
 });
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  try {
+    const { session, admin } = await authenticate.admin(request);
 
-  const formData = await request.formData();
-  const url = new URL(request.url);
-  const id = url.searchParams.get("id");
-  const submission = parseWithZod(formData, { schema: formSchema });
+    const formData = await request.formData();
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
+    const submission = parseWithZod(formData, { schema: formSchema });
 
-  if (submission.status !== "success") {
-    return json({ status: false, message: null, errors: submission.error });
-  }
+    if (submission.status !== "success") {
+      return json({ status: false, message: null, errors: submission.error });
+    }
 
-  let configuration: ConfigurationType = submission.value as ConfigurationType;
+    let configuration: ConfigurationType = submission.value as ConfigurationType;
+    console.log("Action - Configuration received:", configuration);
 
   if (id) {
     configuration.id = parseInt(id);
@@ -286,9 +289,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       session.id,
     );
     
+    console.log("Action - Old configuration:", oldConfiguration);
+    
     // Get old products from the database
     const oldProducts = oldConfiguration?.product || [];
-    const oldProductIds = oldProducts.map((p: any) => p.id);
+    console.log("Action - Old products:", oldProducts);
+    const oldProductIds = Array.isArray(oldProducts) ? oldProducts.map((p: any) => p.id) : [];
+    console.log("Action - Old product IDs:", oldProductIds);
 
     const configurationObject = await ConfigurationService.updateConfiguration(
       configuration,
@@ -296,14 +303,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
 
     if (configurationObject && configuration.products && configuration.products.length > 0) {
+      console.log("Action - New products:", configuration.products);
       // Get new product IDs
-      const newProductIds = configuration.products.map(p => p.id);
+      const newProductIds = Array.isArray(configuration.products) ? configuration.products.map(p => p.id) : [];
+      console.log("Action - New product IDs:", newProductIds);
       
       // Find products to remove (in old but not in new)
       const productsToRemove = oldProductIds.filter((id: string) => !newProductIds.includes(id));
+      console.log("Action - Products to remove:", productsToRemove);
       
       // Find products to add (in new but not in old)
-      const productsToAdd = configuration.products.filter((p: any) => !oldProductIds.includes(p.id));
+      const productsToAdd = Array.isArray(configuration.products) ? configuration.products.filter((p: any) => !oldProductIds.includes(p.id)) : [];
+      console.log("Action - Products to add:", productsToAdd);
 
       // Remove configuration from products that are no longer associated
       if (productsToRemove.length > 0) {
@@ -329,9 +340,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
     
     if (configurationObject && configuration.products && configuration.products.length > 0) {
+      console.log("Action - Creating new configuration with products:", configuration.products);
       await ShopifyProductService.updateMultipleProducts(admin, configuration.products, configurationObject.id);
     }
     
     return redirect(`../${configurationObject.id}/demo`);
+  }
+  } catch (error) {
+    console.error("Action - Error occurred:", error);
+    return json({ 
+      status: false, 
+      message: "An error occurred while saving the configuration", 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };
