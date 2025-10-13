@@ -1,5 +1,6 @@
 import {
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -78,56 +79,58 @@ export default function ManageFontCreate() {
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-        <Form onSubmit={handleSubmit} method="POST">
-          <SpacingBackground backgroundColor="#F9F9F9">
-            <Box paddingInline="300" paddingBlock="600">
-              <Text as="h6" variant="bodyMd" fontWeight="bold">
-                {" "}
-                {font ? "Update font" : "Add new font"}{" "}
-              </Text>
-            </Box>
-          </SpacingBackground>
-          <Divider borderWidth="100" />
-          <SpacingBackground backgroundColor="#F8F9FB">
-            <Box paddingInline="300" paddingBlock="1000">
-              <Grid gap={{ lg: "30px" }}>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <FileInput
-                    type="font"
-                    helperText=".ttf, .otf Font File Type (Required)"
-                    error={getError(actionData, "url")}
-                    title="Upload font file"
-                    path={formData.url}
-                    handlePath={(value: string) => {
-                      handleUrl(value);
-                    }}
-                  />
-                </Grid.Cell>
+      <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
+        <Card>
+          <Form onSubmit={handleSubmit} method="POST">
+            <div>
+              <Box paddingInline="100" paddingBlock="200">
+                <Text as="h6" variant="bodyMd" fontWeight="bold">
+                  {" "}
+                  {font ? "Update font" : "Add new font"}{" "}
+                </Text>
+              </Box>
+            </div>
+            <Divider borderWidth="100" />
+            <div>
+              <Box paddingInline="300" paddingBlock="1000">
+                <Grid gap={{ lg: "30px" }}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    label="Label"
-                    value={`${formData.label}`}
-                    onChange={handleLabel}
-                    autoComplete="on"
-                    error={getError(actionData, "label")}
-                  />
-                </Grid.Cell>
-             
-              </Grid>
-            </Box>
-          </SpacingBackground>
-          <Divider borderWidth="100" />
-          <SpacingBackground backgroundColor="#F9F9F9">
-            <Box paddingInline="300" paddingBlock="300">
-              <InlineStack align="end" gap="600">
-                <BackBtn isLoading={isLoading} title="Back" />
-                <BiSaveBtn isLoading={isSubmitting} title="Save" />
-              </InlineStack>
-            </Box>
-          </SpacingBackground>
-        </Form>
-      </SpacingBackground>
+                    <FileInput
+                      type="font"
+                      helperText=".ttf, .otf Font File Type (Required)"
+                      error={getError(actionData, "url")}
+                      title="Upload font file"
+                      path={formData.url}
+                      handlePath={(value: string) => {
+                        handleUrl(value);
+                      }}
+                    />
+                  </Grid.Cell>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                    <TextField
+                      label="Label"
+                      value={`${formData.label}`}
+                      onChange={handleLabel}
+                      autoComplete="on"
+                      error={getError(actionData, "label")}
+                    />
+                  </Grid.Cell>
+              
+                </Grid>
+              </Box>
+            </div>
+            <Divider borderWidth="100" />
+            <div>
+              <Box paddingInline="300" paddingBlock="300">
+                <InlineStack align="end" gap="600">
+                  <BackBtn isLoading={isLoading} title="Back" />
+                  <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                </InlineStack>
+              </Box>
+            </div>
+          </Form>
+        </Card>
+      </div>
     </div>
   );
 }
@@ -137,14 +140,9 @@ const formSchema = z.object({
     .string({ required_error: "Label is required" })
     .min(3, "Label is too short")
     .max(100, "Label is too long"),
-  url:  z
-  .string({ required_error: "Font file is required, please upload and select it" })
-  .refine(
-    (val) => val.toLowerCase().endsWith(".ttf") ||val.toLowerCase().endsWith(".otf"),
-    {
-      message: "Font file must be .ttf or .otf file type",
-    }
-  ),
+  url: z
+    .string({ required_error: "Font file is required, please upload and select it" })
+ .endsWith("tf", "Font file must be .ttf or .otf file type"),
   isGoogleFont: z
     .any()
     .transform((val) => `${val}`.toLowerCase() == "true")

@@ -5,8 +5,7 @@ import {
   Card,
   Divider,
   IndexTable,
-  InlineStack,
-  Text
+  InlineStack
 
 } from "@shopify/polaris";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
@@ -95,46 +94,41 @@ export default function ManageFontIndex() {
     ),
   );
   return (
-    <div style={{margin:"10px 0px "}}>
+    <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
       <Card>
-        <InlineStack gap="100" align="space-between" blockAlign='center'>
-          <Text as="h2" variant="headingMd">
-            Fonts
-          </Text>
-
-          <InlineStack align="end">
-            <button
-              className="primary-btn"
-              type="button"
-              onClick={onHandleCreate}
-            >
-              <Box paddingInline="200">
-                <InlineStack gap="200">
-                  <PlusIcon />
-                  <span className="primary-btn-text"> Add new Font</span>
-                </InlineStack>
-              </Box>
-            </button>
-          </InlineStack>
-        </InlineStack>
-      </Card>
-      
-      <div style={{margin:"10px 0px "}}>
-        <Card>
-          <IndexTable
-            resourceName={resourceName}
-            itemCount={fonts?fonts.length:0}
-            headings={[
-              { title: "Title" },
-              { title: "Action", alignment:"center" },
-            ]}
-            selectable={false}
-          >
-            {rowMarkup}
-          </IndexTable>
+        <BoxBackground>
+          <Box padding="150">
+            <InlineStack gap="100" align="end">
+              <button
+                className="primary-btn"
+                type="button"
+                onClick={onHandleCreate}
+              >
+                <Box paddingInline="300">
+                  <InlineStack gap="300">
+                    <PlusIcon />
+                    <span className="primary-btn-text"> Add new Font</span>
+                  </InlineStack>
+                </Box>
+              </button>
+            </InlineStack>
+          </Box>
           <Divider borderWidth="050" />
-        </Card>
-      </div>
+        </BoxBackground>
+        <IndexTable
+          resourceName={resourceName}
+          itemCount={fonts?fonts.length:0}
+          headings={[
+            { title: "Title" },
+            { title: "Action", alignment:"center" },
+          ]}
+          selectable={false}
+        >
+          {rowMarkup}
+        </IndexTable>
+      </Card>
     </div>
+
+
   );
 }

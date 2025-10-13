@@ -111,21 +111,28 @@ export default function ManageClipartIndex() {
     </IndexTable.Row>
   ));
   return (
-    <div style={{margin:"10px 0px "}}>
+    <>
+    <div>
       <Card>
-        <InlineStack gap="100" align="space-between" blockAlign='center'>
-          <Text as="h2" variant="headingMd">
+          <InlineStack gap="100" align="start">
+            <Text as="h2" variant="headingMd">
             List of clipart group
-          </Text>
-
-          <InlineStack align="end">
+            </Text>
+        </InlineStack>
+      </Card>
+    </div>
+    
+    <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
+      <Card>
+        <Box padding="150">
+          <InlineStack gap="100" align="end">
             <button
               className="primary-btn"
               type="button"
               onClick={onHandleCreate}
             >
-              <Box paddingInline="200">
-                <InlineStack gap="200">
+              <Box paddingInline="300">
+                <InlineStack gap="300">
                   <PlusIcon />
                   <span className="primary-btn-text">
                     Add new clipart group
@@ -134,26 +141,22 @@ export default function ManageClipartIndex() {
               </Box>
             </button>
           </InlineStack>
-        </InlineStack>
+        </Box>
+        <Divider borderWidth="050" />
+        <IndexTable
+          resourceName={resourceName}
+          itemCount={clipartsGroups ? clipartsGroups.length : 0}
+          headings={[
+            { title: "Title" },
+            { title: "Description" },
+            { title: "Action", alignment: "center" },
+          ]}
+          selectable={false}
+        >
+          {rowMarkup}
+        </IndexTable>
       </Card>
-      
-      <div style={{margin:"10px 0px "}}>
-        <Card>
-          <IndexTable
-            resourceName={resourceName}
-            itemCount={clipartsGroups ? clipartsGroups.length : 0}
-            headings={[
-              { title: "Title" },
-              { title: "Description" },
-              { title: "Action", alignment: "center" },
-            ]}
-            selectable={false}
-          >
-            {rowMarkup}
-          </IndexTable>
-          <Divider borderWidth="050" />
-        </Card>
-      </div>
     </div>
+    </>
   );
 }

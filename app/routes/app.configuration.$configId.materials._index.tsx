@@ -353,7 +353,7 @@ export default function MaterialIndex() {
       <div
         style={{
           display: "flex",
-          height: "100%",
+          height: "94.5%",
           padding: "10px",
           backgroundColor: "transparent",
         }}

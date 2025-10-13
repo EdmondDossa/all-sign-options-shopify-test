@@ -1,5 +1,6 @@
 import {
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -71,15 +72,16 @@ export default function SettingShapeEdit() {
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+      <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
+        <Card>
           <Form onSubmit={handleSubmit} method="POST">
-            <SpacingBackground backgroundColor="#F9F9F9">
-            <Box paddingInline="300" paddingBlock="600">
+            <div>
+            <Box paddingInline="300" paddingBlock="300">
                   <Text as="h6" variant="bodyMd" fontWeight="bold" >Edit Shape</Text>
             </Box>
-            </SpacingBackground>
+            </div>
             <Divider borderWidth="100" />
-             <SpacingBackground backgroundColor="#F8F9FB">
+             <div>
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
           
@@ -99,9 +101,9 @@ export default function SettingShapeEdit() {
                 </Grid.Cell>
               </Grid>
             </Box>
-            </SpacingBackground>
+            </div>
             <Divider borderWidth="100" />
-             <SpacingBackground backgroundColor="#F9F9F9">
+             <div>
 
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
@@ -109,9 +111,10 @@ export default function SettingShapeEdit() {
               <BiSaveBtn isLoading={isSubmitting} title="Save" />
               </InlineStack>
             </Box>
-            </SpacingBackground>
+            </div>
           </Form>
-      </SpacingBackground>
+        </Card>
+      </div>
     </div>
   );
 }
@@ -158,4 +161,3 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   return null;
 };
-

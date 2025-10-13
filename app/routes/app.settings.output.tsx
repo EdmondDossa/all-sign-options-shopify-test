@@ -1,6 +1,7 @@
 import {
   BlockStack,
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -73,102 +74,104 @@ export default function ManageSizeCreate() {
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="10px 0px">
-        <Form onSubmit={handleSubmit(onSubmit)} method="POST">
-          <SpacingBackground backgroundColor="#F8F9FB">
-            <Box paddingInline="300" paddingBlock="1200">
-              <Grid gap={{ lg: '30px' }}>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <BlockStack gap="100">
-                    <InlineStack gap="300" blockAlign="center">
-                      <Text as="strong" fontWeight="bold" variant="bodyMd">
-                        Use order id as zip name
+      <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
+        <Card>
+          <Form onSubmit={handleSubmit(onSubmit)} method="POST">
+            <div>
+              <Box paddingInline="300" paddingBlock="1200">
+                <Grid gap={{ lg: '30px' }}>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <BlockStack gap="100">
+                      <InlineStack gap="300" blockAlign="center">
+                        <Text as="strong" fontWeight="bold" variant="bodyMd">
+                          Use order id as zip name
+                        </Text>
+                        <Controller
+                          name="zipName"
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <ReactSwitchCustom checked={value} setChecked={onChange} />
+                          )}
+                        />
+                      </InlineStack>
+                      <Text as="span" tone="subdued">
+                        Use the command id as the name of the zip file that will
+                        contain the uploaded files during customization.
                       </Text>
+                    </BlockStack>
+                  </Grid.Cell>
+
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <BlockStack gap="300">
+                      <InlineStack gap="600" blockAlign="start">
+
+                        <InlineStack gap="300" blockAlign="center">
+                          <Text as="strong" fontWeight="bold" variant="bodyLg">
+                            Enable sending mail to customer
+                          </Text>
+                          <Controller
+                            name="enableSendMailToCustom"
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                              <ReactSwitchCustom checked={value} setChecked={onChange} />
+                            )}
+                          />
+                        </InlineStack>
+
+                        <InlineStack gap="300" blockAlign="center">
+                          <Text as="strong" fontWeight="bold" variant="bodyLg">
+                            Enable sending mail to admin
+                          </Text>
+                          <Controller
+                            name="enableSendMailToAdmin"
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                              <ReactSwitchCustom checked={value} setChecked={onChange} />
+                            )}
+                          />
+                        </InlineStack>
+                      </InlineStack>
+
+
                       <Controller
-                        name="zipName"
+                        name="ouputReceiverMails"
                         control={control}
-                        render={({ field: { value, onChange } }) => (
-                          <ReactSwitchCustom checked={value} setChecked={onChange} />
+                        rules={{
+                          pattern: {
+                            value: /^([\w.-]+@[\w.-]+\.\w{2,},\s*)*([\w.-]+@[\w.-]+\.\w{2,})$/,
+                            message: "List of email invalide (separate comma)",
+                          },
+                        }}
+                        render={({ field , fieldState}) => (
+                          <TextField
+                            label="List of mails to send output"
+                            {...field}
+                            error= {
+                              fieldState.error?.message ||
+                              getError(actionData, 'ouputReceiverMails')
+                            }
+                            autoComplete="off"
+                          />
                         )}
                       />
-                    </InlineStack>
-                    <Text as="span" tone="subdued">
-                      Use the command id as the name of the zip file that will
-                      contain the uploaded files during customization.
-                    </Text>
-                  </BlockStack>
-                </Grid.Cell>
+                    </BlockStack>
+                  </Grid.Cell>
+                </Grid>
+              </Box>
+            </div>
 
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <BlockStack gap="300">
-                    <InlineStack gap="600" blockAlign="start">
+            <Divider borderWidth="100" />
 
-                      <InlineStack gap="300" blockAlign="center">
-                        <Text as="strong" fontWeight="bold" variant="bodyLg">
-                          Enable sending mail to customer
-                        </Text>
-                        <Controller
-                          name="enableSendMailToCustom"
-                          control={control}
-                          render={({ field: { value, onChange } }) => (
-                            <ReactSwitchCustom checked={value} setChecked={onChange} />
-                          )}
-                        />
-                      </InlineStack>
-
-                      <InlineStack gap="300" blockAlign="center">
-                        <Text as="strong" fontWeight="bold" variant="bodyLg">
-                          Enable sending mail to admin
-                        </Text>
-                        <Controller
-                          name="enableSendMailToAdmin"
-                          control={control}
-                          render={({ field: { value, onChange } }) => (
-                            <ReactSwitchCustom checked={value} setChecked={onChange} />
-                          )}
-                        />
-                      </InlineStack>
-                    </InlineStack>
-
-
-                    <Controller
-                      name="ouputReceiverMails"
-                      control={control}
-                      rules={{
-                        pattern: {
-                          value: /^([\w.-]+@[\w.-]+\.\w{2,},\s*)*([\w.-]+@[\w.-]+\.\w{2,})$/,
-                          message: "List of email invalide (separate comma)",
-                        },
-                      }}
-                      render={({ field , fieldState}) => (
-                        <TextField
-                          label="List of mails to send output"
-                          {...field}
-                          error= {
-                            fieldState.error?.message ||
-                            getError(actionData, 'ouputReceiverMails')
-                          }
-                          autoComplete="off"
-                        />
-                      )}
-                    />
-                  </BlockStack>
-                </Grid.Cell>
-              </Grid>
-            </Box>
-          </SpacingBackground>
-
-          <Divider borderWidth="100" />
-
-          <SpacingBackground backgroundColor="#F9F9F9">
-            <Box paddingInline="300" paddingBlock="300">
-              <InlineStack align="end" gap="600">
-                <BiSaveBtn isLoading={isSubmitting} title="Save" />
-              </InlineStack>
-            </Box>
-          </SpacingBackground>
-        </Form>
-      </SpacingBackground>
+            <div>
+              <Box paddingInline="300" paddingBlock="300">
+                <InlineStack align="end" gap="600">
+                  <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                </InlineStack>
+              </Box>
+            </div>
+          </Form>
+        </Card>
+      </div>
     </div>
   );
 }

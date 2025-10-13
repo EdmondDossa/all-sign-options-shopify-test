@@ -2,6 +2,7 @@ import {
   Badge,
   Box,
   ButtonGroup,
+  Card,
   Divider,
   IndexTable,
   InlineStack,
@@ -128,8 +129,8 @@ export default function MaterialFixingMethod() {
   return (
     <>
     
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-        <BoxBackground>
+      <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
+        <Card>
           <BoxBackground>
             <Box padding="150">
 
@@ -166,8 +167,8 @@ export default function MaterialFixingMethod() {
           >
             {rowMarkup}
           </IndexTable>
-        </BoxBackground>
-      </SpacingBackground>
+        </Card>
+      </div>
     </>
   );
 }

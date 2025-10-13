@@ -1,5 +1,6 @@
 import {
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -73,6 +74,10 @@ export default function ManageClipartCreate() {
     setFormData({ ...formData })
   }
  
+
+
+
+  
   const navigate = useNavigate();
   const onBack = () => {
     navigate("..");
@@ -86,60 +91,64 @@ export default function ManageClipartCreate() {
   
   return (
     <div>
-       <BoxBackground>
-      <Box paddingInline="300" paddingBlock="400">
-          <InlineStack gap="100" align="start">
-            <Text as="h2" variant="headingMd">
-            List of clipart group
-            </Text>
-        </InlineStack>
-      </Box>
-    </BoxBackground>
+      {/* <div>
+        <Card>
+            <InlineStack gap="100" align="start">
+              <Text as="h2" variant="headingMd">
+              List of clipart group
+              </Text>
+          </InlineStack>
+        </Card>
+      </div> */}
 
       <SpacingBackground width="100%" height="auto" margin="16px 0px ">
           <Form onSubmit={handleSubmit} method="POST">
-            <SpacingBackground backgroundColor="#F9F9F9">
-            <Box paddingInline="300" paddingBlock="600">
-                  <Text as="h6" variant="bodyMd" fontWeight="bold" >{clipartsGroup?'Update clipart group' :"Create new clipart group"} </Text>
-            </Box>
-          </SpacingBackground>
+            {/* <SpacingBackground backgroundColor="#F9F9F9"> */}
+            <div>
+              <Card>
+                    <Text as="h6" variant="bodyMd" fontWeight="bold" >{clipartsGroup?'Update clipart group' :"Create new clipart group"} </Text>
+              </Card>
+            </div>
             <Divider borderWidth="100" />
-            <SpacingBackground backgroundColor="#F8F9FB">
-              
-            <Box paddingInline="300" paddingBlock="1000">
-              <Grid gap={{lg:"30px"}}>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    label="Title"
-                    value={`${formData.title}`}
-                    onChange={handleTitle}
-                    autoComplete="on"
-                    error={getError(actionData,"title")}
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    label="Description"
-                    value={`${formData.description}`}
-                    onChange={handleDescription}
-                    autoComplete="on"
-                    error={getError(actionData,"description")}
-                  />
-                </Grid.Cell>
-            
-              </Grid>
-            </Box>
-              </SpacingBackground>
-            <Divider borderWidth="100" />
-            <SpacingBackground backgroundColor="#F9F9F9">
-              
-            <Box paddingInline="300" paddingBlock="300">
-              <InlineStack align="end" gap="600">
-              <BackBtn isLoading={isLoading} title="Back"/>
-              <BiSaveBtn isLoading={isSubmitting} title="Save" />
-              </InlineStack>
-            </Box>
-              </SpacingBackground>
+
+            <div style={{margin:"10px 0px"}}>
+              <Card>
+                <div>
+                  <Box paddingInline="300" paddingBlock="1000">
+                    <Grid gap={{lg:"30px"}}>
+                      <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                        <TextField
+                          label="Title"
+                          value={`${formData.title}`}
+                          onChange={handleTitle}
+                          autoComplete="on"
+                          error={getError(actionData,"title")}
+                        />
+                      </Grid.Cell>
+                      <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                        <TextField
+                          label="Description"
+                          value={`${formData.description}`}
+                          onChange={handleDescription}
+                          autoComplete="on"
+                          error={getError(actionData,"description")}
+                        />
+                      </Grid.Cell>
+                  
+                    </Grid>
+                  </Box>
+                </div>
+                  <Divider borderWidth="100" />
+                <div>
+                  <Box paddingInline="300" paddingBlock="300">
+                    <InlineStack align="end" gap="600">
+                    <BackBtn isLoading={isLoading} title="Back"/>
+                    <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                    </InlineStack>
+                  </Box>
+                </div>
+              </Card>
+            </div>
           </Form>
       </SpacingBackground>
     </div>
@@ -186,4 +195,3 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       : json({ ...jFlashMessage("Clipart group on Size adding") });
   } 
 };
-

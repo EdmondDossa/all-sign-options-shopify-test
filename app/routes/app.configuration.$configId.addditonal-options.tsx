@@ -28,7 +28,7 @@ export default function Materiels() {
 
   return (
     <Page fullWidth>
-      <BoxBackground>
+      {/* <BoxBackground>
         <Box paddingInline="300" paddingBlock="600">
           <InlineStack>
             <InlineStack gap="100" align="start">
@@ -43,7 +43,7 @@ export default function Materiels() {
             </InlineStack>
           </InlineStack>
         </Box>
-      </BoxBackground>
+      </BoxBackground> */}
 
       <Outlet
         context={{
