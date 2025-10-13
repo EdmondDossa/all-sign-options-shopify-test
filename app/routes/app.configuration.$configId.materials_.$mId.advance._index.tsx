@@ -1,10 +1,15 @@
 import {
+  ActionList,
   BlockStack,
   Box,
+  Button,
   ButtonGroup,
+  Card,
   Divider,
+  Icon,
   IndexTable,
   InlineStack,
+  Popover,
   Text,
 } from "@shopify/polaris";
 
@@ -12,8 +17,10 @@ import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
 import {
   Link,
+  useFetcher,
   useNavigate,
   useOutletContext,
+  useParams,
   useSubmit,
 } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
@@ -35,26 +42,64 @@ import { ConfigurationType } from "~/types/ConfigurationType";
 import { truncateText } from "~/utils/truncate-text";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { fileUrl } from "~/utils/fileUrl";
+import { useEffect, useState } from "react";
+import { DeleteIcon, EditIcon, MenuHorizontalIcon, PlusCircleIcon } from "@shopify/polaris-icons";
 
+import Materiels from "./app.configuration.$configId.materials_.$mId.advance.$cId";
+import MaterialComponentCreate from "./app.configuration.$configId.materials_.$mId.advance.edit";
+import MaterialAdvancedItemsIndex from "./app.configuration.$configId.materials_.$mId.advance.$cId._index";
+import { FixingMethodType, ShapeType } from "~/types/SettingsType";
+
+interface AdvanceMaterialProps {
+  // configuration: ConfigurationType;
+  materialComponents: MaterialAdvanceComponentType[]
+  materialId: number | undefined,
+  manageShapes: ShapeType[];
+  manageFixingMethods: FixingMethodType[];
+}
 // This example is for guidance purposes. Copying it will come with caveats.
-export default function MaterialAdvancedIndex() {
+export default function MaterialAdvancedIndex({materialComponents, materialId, manageShapes, manageFixingMethods}: AdvanceMaterialProps) {
+// export default function MaterialAdvancedIndex() {
+
   const submit = useSubmit();
   const navigate = useNavigate();
+  const params = useParams();
+  const configId = params.configId;
+  const deleteFetcher = useFetcher() as any
+  const setDafaultFetcher = useFetcher() as any
 
-  let { materialComponents, material, configuration } = useOutletContext<{
-    materialComponents: MaterialAdvanceComponentType[];
-    material: MaterialAdvance;
-    configuration: ConfigurationType;
-  }>();
+  // let { materialComponents, material, configuration } = useOutletContext<{
+  //   materialComponents: MaterialAdvanceComponentType[];
+  //   material: MaterialAdvance;
+  //   configuration: ConfigurationType;
+  // }>();
 
   useHandleFlashMessage();
 
   const handeleDelete = (id: number) => {
-    submit({ id: id }, { method: "DELETE" });
+    // submit({ id: id }, { method: "DELETE" });
+
+    const requestBody: any = {
+      operation: "delete",
+      configId: configId,
+      materialId: materialId,
+      componentId: id
+    }
+
+    deleteFetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/advance-add-component-manager",
+      encType: "application/json",
+    })
   };
 
+  const [currentComponentID, setCurrentComponentID] = useState<number>(0)
   const handleUpdate = (id: number) => {
-    submit({ id: id }, { method: "GET", action: "edit" });
+    // submit({ id: id }, { method: "GET", action: "edit" });
+    setActivePopoverId(-1)
+    setCurrentComponentID(id)
+    setEdit(true)
+    setShowEditSection(true)
   };
 
   const handeleDefault = (id: number) => {
@@ -67,15 +112,39 @@ export default function MaterialAdvancedIndex() {
       return curr;
     });
 
-    submit({ id: id }, { method: "PUT" });
+    // submit({ id: id }, { method: "PUT" });
+
+    const requestBody: any = {
+      operation: "set-default",
+      configId: configId,
+      materialId: materialId,
+      componentId: id
+    }
+
+    setDafaultFetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/advance-add-component-manager",
+      encType: "application/json",
+    })
   };
 
+  const [showComponentSection, setShowComponentSection] = useState<boolean>(false)
+  const [selectedComponentId, setSelectedComponentId] = useState<number>(0)
   const onManageOption = (id: number) => {
-    navigate(`${id}`);
+    // navigate(`${id}`);
+    setActivePopoverId(-1)
+    setSelectedComponentId(id)
+    setShowComponentSection(true)
+    console.log(materialComponents[selectedComponentId], "azere")
   };
 
+  const [showEditSection, setShowEditSection] = useState<boolean>(false)
+  const [edit, setEdit] = useState<boolean>(false)
   const handleEdit = () => {
-    navigate("edit");
+    // navigate("edit");
+    setActivePopoverId(-1)
+    setEdit(false)
+    setShowEditSection(true)
   };
 
   const resourceName = {
@@ -83,140 +152,165 @@ export default function MaterialAdvancedIndex() {
     plural: "Components",
   };
 
-  const rowMarkup = materialComponents?.map(
-    ({ name, description, icon, isDefault }, index) => (
-      <IndexTable.Row id={`${index}`} key={`${index}`} position={index}>
-        <IndexTable.Cell>
-          <InlineStack blockAlign="center" gap="300" wrap={false}>
-            <BorderCircleText
-              onClick={() => onManageOption(index)}
-              text={name}
-            />
-               <span className="btn-span" onClick={() =>onManageOption(index)}>
-            {truncateText(name)}
-            </span>
-          </InlineStack>
-        </IndexTable.Cell>
-        <IndexTable.Cell>
-          <span className="btn-span" onClick={() =>onManageOption(index)}>
-            {truncateText(description)}
-            </span>
-        </IndexTable.Cell>
-        <IndexTable.Cell className="td-center">
-        { icon && <img
-            style={{ height: "30px" }}
-            src={fileUrl(icon)}
-            alt={"product " + name}
-          />}
-        </IndexTable.Cell>
-        <IndexTable.Cell className="td-center">
-          <ReactSwitchCustom
-            checked={isDefault || false}
-            setChecked={() => (isDefault ? "" : handeleDefault(index))}
-          ></ReactSwitchCustom>
-        </IndexTable.Cell>
+  const [active, setActive] = useState(false);
+  const [activePopoverId, setActivePopoverId] = useState<number | null>(null);
+  const [localMaterielComponents, setLocalMaterielComponents] = useState(materialComponents)
+  // const rowMarkup = materialComponents?.map(
+  //   ({ name, description, icon, isDefault }, index) => (
+  const rowMarkup = localMaterielComponents?.map(
+    ({ name, description, icon, isDefault }, index) => {
+      const isActive = activePopoverId === index;
 
-        <IndexTable.Cell className="td-center">
-          <ButtonGroup fullWidth noWrap gap="loose">
-            <button
-              className="add-option-btn"
-              onClick={() => onManageOption(index)}
+      return(
+        <IndexTable.Row id={`${index}`} key={`${index}`} position={index} onClick={() => onManageOption(index)}>
+          <IndexTable.Cell>
+            <InlineStack blockAlign="center" gap="300" wrap={false}>
+              <BorderCircleText
+                onClick={() => onManageOption(index)}
+                text={name}
+              />
+                <span className="btn-span" onClick={() =>onManageOption(index)}>
+              {truncateText(name)}
+              </span>
+            </InlineStack>
+          </IndexTable.Cell>
+          <IndexTable.Cell>
+            <span className="btn-span" onClick={() =>onManageOption(index)}>
+              {truncateText(description)}
+              </span>
+          </IndexTable.Cell>
+          <IndexTable.Cell className="td-center">
+          { icon && <img
+              style={{ height: "30px" }}
+              src={fileUrl(icon)}
+              alt={"product " + name}
+            />}
+          </IndexTable.Cell>
+          <IndexTable.Cell className="td-center">
+            <div onClick={(e) => { e.stopPropagation() }}>
+              <ReactSwitchCustom
+                checked={isDefault || false}
+                setChecked={() => (isDefault ? "" : handeleDefault(index))}
+              ></ReactSwitchCustom>
+            </div>
+          </IndexTable.Cell>
+
+          <IndexTable.Cell className="td-center">
+            <Popover
+              active={isActive}
+              activator={
+                <div onClick={(e) => { e.stopPropagation() }}>
+                  <Button
+                    onClick={() =>
+                      setActivePopoverId(isActive ? null : index)
+                    }
+                    icon={<Icon source={MenuHorizontalIcon} />}
+                  />
+                </div>
+              }
+              onClose={() => setActivePopoverId(null)}
+              preferredAlignment="right"
             >
-              <InlineStack gap="100" blockAlign="center">
-                {" "}
-                <RoundManageHistoryIcon /> <Text as="span">
-                  {" "}
-                  add options{" "}
-                </Text>{" "}
-              </InlineStack>
-            </button>
-            <EditIconBtn
-              size="micro"
-              onClick={() => {
-                handleUpdate(index);
-              }}
-            />
-            <DeleteIconBtn
-              size="micro"
-              onClick={() => {
-                handeleDelete(index);
-              }}
-            />
-          </ButtonGroup>
-        </IndexTable.Cell>
-      </IndexTable.Row>
-    ),
+              <ActionList 
+                items={[
+                  { content: 'Add option', icon: PlusCircleIcon, onAction: () => onManageOption(index) },
+                  { content: 'Edit', icon: EditIcon, onAction: () => handleUpdate(index) },
+                  { content: 'Delete', icon: DeleteIcon, onAction: () => handeleDelete(index), destructive: true, },
+                ]}
+              />
+            </Popover>
+          </IndexTable.Cell>
+        </IndexTable.Row>
+      )
+    },
   );
 
-  return (
-    <>
-      <BoxBackground>
-        <Box paddingInline="300" paddingBlock="600">
-          <InlineStack align="start">
-            <InlineStack gap="100" align="start" blockAlign="start">
-              <Text as="h2" variant="headingMd">
-                {configuration?.name}
-              </Text>
-              <NextLtrIcon />
-              <Link className="link" to="../../materials">
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  Materials
-                </Text>
-              </Link>
-              <NextLtrIcon />
-              <Text as="h2" variant="headingMd" tone="subdued">
-                {material?.name} (Advance)
-              </Text>
-            </InlineStack>
-          </InlineStack>
-        </Box>
-        <Divider borderWidth="100" />
-      </BoxBackground>
-      <Divider borderWidth="100" />
+  useEffect(()=>{
+    setLocalMaterielComponents([...materialComponents])
+  }, [materialId, materialComponents])
 
-      <SpacingBackground width="100%" height="auto">
-        <BoxBackground>
-          <Box padding="300">
-            <BlockStack gap="300">
-              <InlineStack gap="100" align="space-between">
-                <Text as="h2" variant="headingMd">
-                  List of components
-                </Text>
-                <button
-                  className="primary-btn"
-                  type="button"
-                  onClick={handleEdit}
-                >
-                  <Box paddingInline="300">
-                    <InlineStack gap="300">
-                      <PlusIcon />
-                      <span className="primary-btn-text">
-                        Add new component
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button>
+  return (
+    <div>
+      {!showEditSection && !showComponentSection &&
+        <div style={{width: "100%"}}>
+          <BoxBackground>
+            {/* <Box paddingInline="300" paddingBlock="600">
+              <InlineStack align="start">
+                <InlineStack gap="100" align="start" blockAlign="start">
+                  <Text as="h2" variant="headingMd">
+                    {configuration?.name}
+                  </Text>
+                  <NextLtrIcon />
+                  <Link className="link" to="../../materials">
+                    <Text as="h2" variant="headingMd" tone="subdued">
+                      Materials
+                    </Text>
+                  </Link>
+                  <NextLtrIcon />
+                  <Text as="h2" variant="headingMd" tone="subdued">
+                    {material?.name} (Advancee)
+                  </Text>
+                </InlineStack>
               </InlineStack>
-            </BlockStack>
-          </Box>
-          <Divider borderWidth="050" />
-        </BoxBackground>
-        <IndexTable
-          resourceName={resourceName}
-          itemCount={materialComponents ? materialComponents.length : 0}
-          selectable={false}
-          headings={[
-            { title: "Title" },
-            { title: "Desciption" },
-            { title: "Icon", alignment: "center" },
-            { title: "Default", alignment: "center" },
-            { title: "Action", alignment: "center" },
-          ]}
-        >
-          {rowMarkup}
-        </IndexTable>
-      </SpacingBackground>
-    </>
+            </Box> */}
+            <Divider borderWidth="100" />
+          </BoxBackground>
+          <Divider borderWidth="100" />
+
+          <Card>
+            <SpacingBackground width="100%" height="auto">
+              <BoxBackground>
+                <Box padding="300">
+                  <BlockStack gap="300">
+                    <InlineStack gap="100" align="space-between">
+                      <Text as="h2" variant="headingMd">
+                        List of componentss
+                      </Text>
+                      <button
+                        className="primary-btn"
+                        type="button"
+                        onClick={handleEdit}
+                      >
+                        <Box paddingInline="300">
+                          <InlineStack gap="300">
+                            <PlusIcon />
+                            <span className="primary-btn-text">
+                              Add new componentt
+                            </span>
+                          </InlineStack>
+                        </Box>
+                      </button>
+                    </InlineStack>
+                  </BlockStack>
+                </Box>
+                <Divider borderWidth="050" />
+              </BoxBackground>
+              <IndexTable
+                resourceName={resourceName}
+                itemCount={materialComponents ? materialComponents.length : 0}
+                selectable={false}
+                headings={[
+                  { title: "Title" },
+                  { title: "Desciption" },
+                  { title: "Icon", alignment: "center" },
+                  { title: "Default", alignment: "center" },
+                  { title: "Action", alignment: "center" },
+                ]}
+              >
+                {rowMarkup}
+              </IndexTable>
+            </SpacingBackground>
+          </Card>
+        </div>
+      }
+      {showEditSection && !showComponentSection &&
+        <MaterialComponentCreate materialId={materialId} materialComponents={materialComponents} edit={edit} index={currentComponentID} onClick={setShowEditSection} />
+      }
+
+      {showComponentSection &&
+        <MaterialAdvancedItemsIndex manageShapes={manageShapes} manageFixingMethods={manageFixingMethods} materialId={materialId} componentId={selectedComponentId} materialOptions={localMaterielComponents[selectedComponentId].options} onClick={setShowComponentSection} />
+      }
+    </div>
   );
 }
 

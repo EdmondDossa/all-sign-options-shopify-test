@@ -25,7 +25,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return json({ additionalOptions });
 };
 
-export default function MaterialAdditionalOptionIndex() {
-  let { additionalOptions } = useLoaderData<typeof loader>();
+interface MaterialAddOptionsProps{
+  additionalOptions: ConfigAdditionalOption[]
+}
+export default function MaterialAdditionalOptionInd({additionalOptions}:MaterialAddOptionsProps) {
+  // let { additionalOptions } = useLoaderData<typeof loader>();
+  console.log(additionalOptions, "add options")
   return <Outlet context={{ additionalOptions }} />;
 }

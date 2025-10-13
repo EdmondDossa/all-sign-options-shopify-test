@@ -7,6 +7,9 @@ import { ConfigShape } from "~/types/ConfigDataType";
 import { ShapeType } from "~/types/SettingsType";
 import { PRICING_PLANS } from "~/utils/pricing";
 
+import MaterialShapeIndex from "./app.configuration.$configId.materials_.$mId.simple.shape._index";
+
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
@@ -15,7 +18,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   let shapes: ConfigShape[] | null = null;
 
-  const manageShapes: ShapeType[] | null = await SettingShapesService.get(
+  const manageShapes: ShapeType[] | null = await SettingShapesService.get( 
     session.id,
   );
 
@@ -23,18 +26,31 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     shapes = await MaterialShapeService.getAll(session.id, configId, mId);
   }
 
-  return json({ manageShapes, shapes });
+  console.log(manageShapes, '999')
+
+  return json( manageShapes );
+  // return manageShapes;
 };
 
-export default function MaterialColors() {
-  let { manageShapes, shapes } = useLoaderData<typeof loader>();
-  const {  plan } = useOutletContext<{
-    plan: string;
-  }>();
+interface MaterialShapeProps {
+  plan: string;
+  shapes: ConfigShape[];
+  manageShapes: ShapeType[], 
+  materialId: number | undefined, 
+}
+
+export default function MaterialShapes({materialId, plan, shapes, manageShapes}: MaterialShapeProps) {
+  // let manageShapes = useLoaderData<typeof loader>();
+  // const {  plan } = useOutletContext<{
+  //   plan: string;
+  // }>();
   if (plan == PRICING_PLANS.STARTER && manageShapes) {
     manageShapes = manageShapes.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes);
     shapes = shapes?.filter(curr => curr.shapeId < PRICING_PLANS.STARTER_RULES.materialShapes)
       ?.slice(0, PRICING_PLANS.STARTER_RULES.materialShapes) || [];
   }
-  return <Outlet context={{ manageShapes, shapes, plan }} />;
+
+  // return <Outlet context={{ manageShapes, shapes, plan }} />;
+  return <MaterialShapeIndex materialId={materialId} plan={plan} manageShapes={manageShapes} shapes={shapes} />;
+
 }

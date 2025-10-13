@@ -12,6 +12,7 @@ import {
 } from "@remix-run/react";
 import {
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -19,7 +20,7 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { BackBtn } from "~/components/buttons/BackBtn";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
@@ -39,8 +40,8 @@ export default function MaterialEdit() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  console.log("action data :", actionData);
-  let { materials, plan } = useOutletContext<{ materials: Material[], plan: string }>();
+  // console.log("action data :", actionData);
+  let { materials, plan, materialType } = useOutletContext<{ materials: Material[], plan: string, materialType: string }>();
   const [searchParams] = useSearchParams();
   const id = parseInt(searchParams.get("id") || "");
   let material = materials?.find((curr, index) => index === id);
@@ -62,6 +63,11 @@ export default function MaterialEdit() {
     { value: "simple", label: "Simple" },
   
   ];
+  let simpleType = [ { value: "simple", label: "Simple" }, ];
+  let advanceType = [ { value: "advance", label: "Advance" } ];
+  let layerType = [ { value: "layer", label: "layer" } ]
+
+  console.log(materialType, "edit material")
 
   if (plan ==  PRICING_PLANS.PRO) {
     types.push(  { value: "advance", label: "Advance" })
@@ -93,82 +99,99 @@ export default function MaterialEdit() {
     navigate("..");
   };
 
+  useEffect(()=>{
+    if(materialType != undefined || materialType != null){
+      if(materialType == "simple"){
+        types = [ { value: "simple", label: "Simple" } ]
+      }
+      if(materialType == "advance"){
+        types = [ { value: "advance", label: "Advance" } ]
+      }
+      // if(materialType == "layer"){
+      //   types = [ { value: "layer", label: "layer" } ]
+      // }
+    }
+  }, [materials, materialType, id])
+
   return (
-    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+    <div style={{width: "100%", height: "auto", margin: "16px 0px"}}>
       <Form onSubmit={handleSubmit} method="POST">
-        <SpacingBackground backgroundColor="#F9F9F9">
-          <Box paddingInline="300" paddingBlock="600">
+        <Card>
+          {/* <Box paddingInline="300" paddingBlock="600"> */}
             <Text as="h6" variant="bodyMd" fontWeight="bold">
               {material ? "Update material" : "Create new material"}
             </Text>
-          </Box>
-        </SpacingBackground>
+          {/* </Box> */}
+        </Card>
         <Divider borderWidth="100" />
-        <SpacingBackground backgroundColor="#F8F9FB">
-          <Box paddingInline="300" paddingBlock="1000">
-            <Grid gap={{ lg: "30px" }}>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                <TextField
-                  label="Name"
-                  value={`${formData.name}`}
-                  onChange={handleName}
-                  autoComplete="on"
-                  error={getError(actionData, "name")}
-                />
-              </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                <TextField
-                  label="Description"
-                  value={`${formData.description}`}
-                  onChange={handleDescription}
-                  autoComplete="on"
-                  error={getError(actionData, "description")}
-                />
-              </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                <FileInput
-                  error={getError(actionData, "icon")}
-                  title="Upload icon"
-                  path={formData.icon}
-                  handlePath={handleIcon}
-                />
-              </Grid.Cell>
+        <Card>
+          <div>
+            <Box paddingInline="300" paddingBlock="600">
+              <Grid gap={{ lg: "30px" }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="Name"
+                    value={`${formData.name}`}
+                    onChange={handleName}
+                    autoComplete="on"
+                    error={getError(actionData, "name")}
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="Description"
+                    value={`${formData.description}`}
+                    onChange={handleDescription}
+                    autoComplete="on"
+                    error={getError(actionData, "description")}
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <FileInput
+                    error={getError(actionData, "icon")}
+                    title="Upload icon"
+                    path={formData.icon}
+                    handlePath={handleIcon}
+                  />
+                </Grid.Cell>
 
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                <Select
-                  label="Behevior (type)"
-                  options={types}
-                  disabled={!Number.isNaN(id)}
-                  onChange={handleType}
-                  value={formData.type}
-                />
-              </Grid.Cell>
-              {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                <CustomTinymce
-                  error={
-                    actionData?.errors?.popImg
-                      ? actionData.errors.popImg[0]
-                      : ""
-                  }
-                  title="Complete description"
-                  onEditorChange={handlePopImg}
-                  value={formData.popImg}
-                />
-              </Grid.Cell> */}
-            </Grid>
-          </Box>
-        </SpacingBackground>
-        <Divider borderWidth="100" />
-        <SpacingBackground backgroundColor="#F9F9F9">
-          <Box paddingInline="300" paddingBlock="300">
-            <InlineStack align="end" gap="600">
-              <BackBtn isLoading={isLoading} title="Back" />
-              <BiSaveBtn isLoading={isSubmitting} title="Save" />
-            </InlineStack>
-          </Box>
-        </SpacingBackground>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <Select
+                    label="Behevior (type)"
+                    options={ (materialType == null || materialType == undefined) ? types : (materialType == 'simple' ? simpleType : (materialType == 'advance' ? advanceType : layerType))}
+                    disabled={!Number.isNaN(id)}
+                    onChange={handleType}
+                    value={formData.type}
+                  />
+                </Grid.Cell>
+                {/* <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                  <CustomTinymce
+                    error={
+                      actionData?.errors?.popImg
+                        ? actionData.errors.popImg[0]
+                        : ""
+                    }
+                    title="Complete description"
+                    onEditorChange={handlePopImg}
+                    value={formData.popImg}
+                  />
+                </Grid.Cell> */}
+              </Grid>
+            </Box>
+          </div>
+          <Divider borderWidth="100" />
+          <div>
+            <Box paddingInline="300" paddingBlock="300">
+              <InlineStack align="end" gap="600">
+                <BackBtn isLoading={isLoading} title="Back" />
+                <BiSaveBtn isLoading={isSubmitting} title="Save" />
+              </InlineStack>
+            </Box>
+          </div>
+
+        </Card>
       </Form>
-    </SpacingBackground>
+    </div>
   );
 }
 

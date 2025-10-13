@@ -19,11 +19,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     );
   }
   let plan = await getPlan(billing,session?.shop, admin);
+  let sessionId = session.id
 
-  return json({ configuration, plan });
+  return json({ configuration, plan, configId, sessionId });
 };
 
 export default function Materiels() {
-  const { configuration, plan } = useLoaderData<typeof loader>();
-  return <Outlet context={{ configuration, plan }} />;
+  const { configuration, plan, configId, sessionId } = useLoaderData<typeof loader>();
+  return <Outlet context={{ configuration, plan, configId, sessionId }} />;
 }

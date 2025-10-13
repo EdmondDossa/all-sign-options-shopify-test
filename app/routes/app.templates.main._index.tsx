@@ -12,6 +12,7 @@ import {
 import {
   BlockStack,
   Box,
+  Card,
   Grid,
   Icon,
   InlineStack,
@@ -141,9 +142,9 @@ export default function ConfigurationTemplates() {
 
 
   return (
-      <SpacingBackground width="100%" height="auto" margin="10px 0px ">
-        <BoxBackground>
-          <Box paddingInline="300" paddingBlock="300">
+      <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
+        <Card>
+          <Box>
             <InlineStack gap="100" align="space-between" blockAlign="center">
               <Text as="h2" variant="headingMd">
                  Templates  list
@@ -202,10 +203,10 @@ export default function ConfigurationTemplates() {
             </InlineStack>
             </InlineStack>
           </Box>
-        </BoxBackground>
+        </Card>
 
   
-        <SpacingBackground width="100%" height="auto" margin="10px 0px" backgroundColor="#F8F9FB">
+        <div style={{width:"100%", height:"auto", margin:"10px 0px", backgroundColor:"#F8F9FB"}}>
           <Box paddingInline="300" paddingBlock="300">
           <Grid gap={{ lg: "20px" }}>
               {data.map((item: any) => {
@@ -225,10 +226,10 @@ export default function ConfigurationTemplates() {
             </Grid>
           </Box>
           
-        </SpacingBackground>
+        </div>
         
       
-      </SpacingBackground>
+      </div>
   
   );
 };

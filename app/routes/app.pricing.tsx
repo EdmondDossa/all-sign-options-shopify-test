@@ -162,6 +162,7 @@ export default function PricingPage() {
       <ui-title-bar title="Pricing" />
       <CalloutCard
           title="Subscription to all signs options"
+          // illustration=""
           illustration="/aso_logo.png"
           primaryAction={plan !="free"?{
             content: 'Cancel Current Plan',

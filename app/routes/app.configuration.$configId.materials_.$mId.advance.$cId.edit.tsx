@@ -3,15 +3,18 @@ import {
   Form,
   redirect,
   useActionData,
+  useFetcher,
   useNavigate,
   useNavigation,
   useOutletContext,
+  useParams,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
 import {
   BlockStack,
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -41,24 +44,37 @@ import {
 } from "~/components/inputs/MulticomboxBorder";
 import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 
-export default function MaterialComponentCreate() {
+interface MaterialComponentProps {
+  materialOptions: MaterialAdvanceOptionType[] | undefined;
+  manageShapes: ShapeType[];
+  manageFixingsMethods: FixingMethodType[];
+  materialId: number | undefined,
+  componentId: number | undefined,
+  id: number;
+  onClick: (id: boolean) => void;
+  edit: boolean
+}
+export default function MaterialComponentCreate({ materialOptions, manageShapes, manageFixingsMethods, materialId, componentId, id, onClick, edit }: MaterialComponentProps) {
   const navigate = useNavigate();
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { materialOptions, manageShapes, manageFixingsMethods } =
-    useOutletContext<{
-      materialOptions: MaterialAdvanceOptionType[];
-      manageShapes: ShapeType[];
-      manageFixingsMethods: FixingMethodType[];
-    }>();
+  const params = useParams();
+  const configId = params.configId;
+  const fetcher = useFetcher() as any
+  // const { materialOptions, manageShapes, manageFixingsMethods } =
+  //   useOutletContext<{
+  //     materialOptions: MaterialAdvanceOptionType[];
+  //     manageShapes: ShapeType[];
+  //     manageFixingsMethods: FixingMethodType[];
+  //   }>();
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
   const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get("id") || "");
+  // const id = parseInt(searchParams.get("id") || "");
   console.log("action data :", actionData);
   let materialOption = materialOptions?.find((curr, index) => index == id);
   const [formData, setFormData] = useState<MaterialAdvanceOptionType>(
-    materialOption
+    edit && materialOption
       ? (materialOption as MaterialAdvanceOptionType)
       : {
           name: "",
@@ -85,7 +101,7 @@ export default function MaterialComponentCreate() {
   );
 
   let isLoading = navigation.state == "loading";
-  let isSubmitting = navigation.state == "submitting";
+  let isSubmitting = fetcher.state == "submitting";
 
   const handleName = (value: string) =>
     setFormData({ ...formData, name: value });
@@ -143,15 +159,38 @@ export default function MaterialComponentCreate() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit(
-      {
-        ...formData,
-        size: JSON.stringify(formData.size),
-        color: JSON.stringify(formData.color),
-        fixingMethods: JSON.stringify(formData.fixingMethods),
-      },
-      { method: "POST" },
-    );
+    // submit(
+    //   {
+    //     ...formData,
+    //     size: JSON.stringify(formData.size),
+    //     color: JSON.stringify(formData.color),
+    //     fixingMethods: JSON.stringify(formData.fixingMethods),
+    //   },
+    //   { method: "POST" },
+    // );
+
+    const requestBody: any = {
+      operation: edit ? "update" : "add",
+      configId: configId,
+      materialId: materialId,
+      componentId: componentId,
+      optionData: formData
+    }
+
+    if(edit){
+      requestBody.optionId = id
+    }
+
+    fetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/advance-add-component-option-manager",
+      encType: "application/json",
+    })
+
+    if(!isSubmitting){
+      onClick(false)
+    }
+
   };
 
   console.log("actionData", actionData);
@@ -178,11 +217,11 @@ export default function MaterialComponentCreate() {
   };
 
   return (
-    <SpacingBackground width="100%" height="auto">
-      <BoxBackground>
-        <Box padding="300">
+    <div style={{width:"100%", height:"auto", padding: "8px 0px"}}>
+      <Card>
+        <Box padding="100">
           <Text as="h2" variant="headingMd">
-            {Number.isNaN(id) ? "Add option" : "Edit option"}
+            {!edit ? "Add option" : "Edit option"}
           </Text>
         </Box>
         <Divider borderWidth="050" />
@@ -388,7 +427,10 @@ export default function MaterialComponentCreate() {
           <Divider borderWidth="050" />
           <Box paddingInline="300" paddingBlock="300">
             <InlineStack align="end" gap="600">
-              <button className="back-large-btn" type="button" onClick={onBack}>
+              <button className="back-large-btn" type="button" 
+                // onClick={onBack}
+                onClick={()=> onClick(false)}
+              >
                 <Box paddingInline="1000">
                   <InlineStack gap="300">
                     <RayStartArrowIcon />{" "}
@@ -403,8 +445,8 @@ export default function MaterialComponentCreate() {
             </InlineStack>
           </Box>
         </Form>
-      </BoxBackground>
-    </SpacingBackground>
+      </Card>
+    </div>
   );
 }
 

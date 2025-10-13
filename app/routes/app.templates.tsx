@@ -46,19 +46,21 @@ export default function Settings(){
 export const SettingTabheader = () => {
     
   return (
-    <SpacingBackground
-    backgroundColor="#F9F9F9"
-    width="100%"
-    height="auto"
-    border="1px solid #DDDDDD"
-  >
-    <Box paddingBlock="200">
-      <InlineStack gap="600" align="center">
-        <SubTabItem to="main"> Templates</SubTabItem>
-        <SubTabItem to="categories"> Categories</SubTabItem>
-      </InlineStack>
-    </Box>
-  </SpacingBackground>
+    <div
+      style={{backgroundColor:"#F9F9F9",
+        width:"100%",
+        height:"auto",
+        border:"1px solid #DDDDDD",
+        borderRadius: "10px"
+      }}
+    >
+      <Box paddingBlock="200">
+        <InlineStack gap="600" align="center">
+          <SubTabItem to="main"> Templates</SubTabItem>
+          <SubTabItem to="categories"> Categories</SubTabItem>
+        </InlineStack>
+      </Box>
+    </div>
       )
 };
 

@@ -1,6 +1,7 @@
 import {
   Box,
   ButtonGroup,
+  Card,
   Divider,
   IndexTable,
   InlineStack,
@@ -110,28 +111,21 @@ export default function ManageClipartIndex() {
     </IndexTable.Row>
   ));
   return (
-    <>
-    <BoxBackground>
-      <Box paddingInline="300" paddingBlock="600">
-          <InlineStack gap="100" align="start">
-            <Text as="h2" variant="headingMd">
+    <div style={{margin:"10px 0px "}}>
+      <Card>
+        <InlineStack gap="100" align="space-between" blockAlign='center'>
+          <Text as="h2" variant="headingMd">
             List of clipart group
-            </Text>
-        </InlineStack>
-      </Box>
-    </BoxBackground>
-    
-    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-      <BoxBackground>
-        <Box padding="150">
-          <InlineStack gap="100" align="end">
+          </Text>
+
+          <InlineStack align="end">
             <button
               className="primary-btn"
               type="button"
               onClick={onHandleCreate}
             >
-              <Box paddingInline="300">
-                <InlineStack gap="300">
+              <Box paddingInline="200">
+                <InlineStack gap="200">
                   <PlusIcon />
                   <span className="primary-btn-text">
                     Add new clipart group
@@ -140,22 +134,26 @@ export default function ManageClipartIndex() {
               </Box>
             </button>
           </InlineStack>
-        </Box>
-        <Divider borderWidth="050" />
-      </BoxBackground>
-      <IndexTable
-        resourceName={resourceName}
-        itemCount={clipartsGroups ? clipartsGroups.length : 0}
-        headings={[
-          { title: "Title" },
-          { title: "Description" },
-          { title: "Action", alignment: "center" },
-        ]}
-        selectable={false}
-      >
-        {rowMarkup}
-      </IndexTable>
-    </SpacingBackground>
-    </>
+        </InlineStack>
+      </Card>
+      
+      <div style={{margin:"10px 0px "}}>
+        <Card>
+          <IndexTable
+            resourceName={resourceName}
+            itemCount={clipartsGroups ? clipartsGroups.length : 0}
+            headings={[
+              { title: "Title" },
+              { title: "Description" },
+              { title: "Action", alignment: "center" },
+            ]}
+            selectable={false}
+          >
+            {rowMarkup}
+          </IndexTable>
+          <Divider borderWidth="050" />
+        </Card>
+      </div>
+    </div>
   );
 }

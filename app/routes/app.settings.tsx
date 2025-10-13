@@ -1,6 +1,7 @@
 import {
   BlockStack,
     Box,
+    Card,
     InlineStack,
     Page,
     Text,
@@ -36,8 +37,8 @@ export default function Settings() {
     const { plan } = useLoaderData<typeof loader>();
     
     return (<Page fullWidth>
-        <BoxBackground>
-          <Box paddingInline="300" paddingBlock="600">
+        <div>
+          <Card >
             <InlineStack>
               <InlineStack gap="100" align="start">
                 <Text as="h2" variant="headingMd">
@@ -45,8 +46,8 @@ export default function Settings() {
                 </Text>
               </InlineStack>
             </InlineStack>
-          </Box>
-      </BoxBackground>
+          </Card>
+      </div>
       <SpacingBackground width="100%" height="auto" margin="20px 0 0 0">
         <SettingTabheader />
         <Outlet context={{plan}}/>
@@ -60,29 +61,33 @@ export default function Settings() {
 export const SettingTabheader = () => {
     
   return (
-    <SpacingBackground width="100%" height="auto" border="1px solid #DDDDDD">
+    <div style={{width:"100%", height:"auto", border:"1px solid #DDDDDD", borderRadius: "12px", overflow: "hidden"}}>
+      {/* <Card>s */}
         <Box paddingInline="100" background="bg-surface">
-        <InlineStack gap="100" align="center">
-          <TabItems to="output">
-            {" "}
-            <OutputSvg /> Output
-          </TabItems>
-          <TabItems to="shape">
-            {" "}
-            <ShapeSvg/> Shapes
-          </TabItems>
-          <TabItems to="fixing-method">
-            {" "}
-            <FixingMethodSvg /> Fixing method
-          </TabItems>
-          <TabItems to="border">
-            {" "}
-            <BorderSvg /> Border
-          </TabItems>
-        </InlineStack>
-      </Box>
-    </SpacingBackground>
-      )
+          <InlineStack gap="100" align="center">
+            <TabItems to="output">
+              {" "}
+              <OutputSvg /> Output
+            </TabItems>
+            <TabItems to="shape">
+              {" "}
+              <ShapeSvg/> Shapes
+            </TabItems>
+            <TabItems to="fixing-method">
+              {" "}
+              <FixingMethodSvg /> Fixing method
+            </TabItems>
+            <TabItems to="border">
+              {" "}
+              <BorderSvg /> Border
+            </TabItems>
+          </InlineStack>
+        </Box>
+
+      {/* </Card>s */}
+    </div>
+      
+  )
 };
 
 
