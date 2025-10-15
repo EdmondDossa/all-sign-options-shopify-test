@@ -141,11 +141,19 @@ export default function MaterialSizeIndex({materialId, customSize, allSizes, thi
       //   body: JSON.stringify(requestBody)
       // });
 
-      deletefetcher.submit(requestBody, {
-        action: "/api/size-manager", 
-        method: "POST", 
-        encType: "application/json"
-      })
+      deletefetcher.submit(
+        {
+          operation: "delete",
+          configId: configId,
+          materialId: finalMaterialId,
+          sizeId: id,
+        },
+        {
+          method: "POST",
+          action: "/api/size-manager",
+          encType: "application/json",
+        }
+      )
       
       // console.log("=== Fetch response status:", response.status, "===");
       // console.log("=== Fetch response headers:", response.headers, "===");
@@ -185,16 +193,17 @@ export default function MaterialSizeIndex({materialId, customSize, allSizes, thi
     const configId = parseInt(params.configId ?? "");
     const finalMaterialId = materialId ?? 0;
 
-    setDefaultfetcher.submit({
-        operation: 'set-default',
-        configId,
-        materialId: finalMaterialId,
-        sizeId: id
-      }, 
+    setDefaultfetcher.submit(
       {
-        action:"/api/size-manager", 
-        method: "POST", 
-        encType: "application/json"
+        operation: "set-default",
+        configId: configId,
+        materialId: finalMaterialId,
+        sizeId: id,
+      },
+      {
+        method: "POST",
+        action: "/api/size-manager",
+        encType: "application/json",
       }
     );
       

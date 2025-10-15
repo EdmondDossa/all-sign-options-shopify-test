@@ -205,7 +205,7 @@ export default function MaterialColorIndex({
       {
         method: "POST",
         action: "/api/color-manager",
-        encType: "application/json"
+        encType: "application/json",
       },
     );
   };
@@ -233,7 +233,7 @@ export default function MaterialColorIndex({
       {
         method: "POST",
         action: "/api/color-manager",
-        encType: "application/json"
+        encType: "application/json",
       },
     );
     // Mise à jour optimiste de l'UI
@@ -276,8 +276,8 @@ export default function MaterialColorIndex({
       bulkUpdateFetcher.submit(
         {
           operation: "bulk-update",
-          configId: configId.toString(),
-          materialId: finalMaterialId.toString(),
+          configId: configId,
+          materialId: finalMaterialId,
           colors: JSON.stringify(newOrder),
         },
         {

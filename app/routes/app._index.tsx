@@ -60,9 +60,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   let configurations;
   try {
     const shop = await ShopifyShopService.getShop(admin);
-
+    
     templateUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-option-template"}&target=newAppsSection`;
-    configurationUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-options"}&target=newAppsSection`;
+      configurationUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-options"}&target=newAppsSection`;
 
     configurations = await ConfigurationService.getConfigurations(session.id);
     // console.log("log log", LATEST_API_VERSION);
@@ -133,6 +133,97 @@ export default function Index() {
           },
         }}
       />
+        {templateUrl && configurationUrl && <Box paddingBlock="300">
+          <Grid>
+            
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <Banner>
+                Click
+              <LinksConfirmBtn
+                  url={configurationUrl}
+                  modalTitle="Configuration Design Screen Block"
+                  title={"here to install configuration screen"}>
+                 
+                      <ExceptionList
+                        
+                        items={[
+                          {
+                            icon: AlertCircleIcon,
+                            status: "warning",
+                            description:
+                              `Note that in the online store, the configuration design screen is still disabled
+                              if it doesn't have any product assigned to it, either by default or dynamically,
+                               such as on the product detail page.
+                              
+                              `,
+                          
+                          },
+                        ]}
+                   />
+               
+                    <Text as="h6" variant="bodyMd" fontWeight="bold">
+                      Block Embed Instructions In Theme Editor
+                    </Text>
+                      <List type="bullet">
+                        <List.Item>Select a product assigned to a configuration in the block settings. </List.Item>
+                        <List.Item>Save the theme edition</List.Item>
+                      </List>
+                </LinksConfirmBtn> {" "}
+             in your online store
+          
+          </Banner>
+            </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <Banner>
+            Click{" "}
+
+            {" "} <LinksConfirmBtn
+                  url={templateUrl}
+                  modalTitle="Templates List Block"
+                  title={"here to add template screen"}>
+                    <ExceptionList
+                        
+                        items={[
+                          {
+                            icon: AlertCircleIcon,
+                            status:"critical",
+                            description:
+                              `Only  available for premium subscriptions.
+                              `,
+                          
+                          },
+                        ]}
+                   />
+               <ExceptionList
+                        
+                        items={[
+                          {
+                            icon: AlertCircleIcon,
+                            status:"warning",
+                            description:
+                              `Note that in the online store, this block will show all available templates
+                              but if it doesn't have any template, it will be empty.
+                              `,
+                          
+                          },
+                        ]}
+                   />
+               
+                    <Text as="h6" variant="bodyMd" fontWeight="bold">
+                    Block Embed Instructions In Theme Editor
+                    </Text>
+                      <List type="bullet">
+                        <List.Item>Select the page that contains the design configuration screen  block on the block setting.</List.Item>
+                        <List.Item>Save the theme edition</List.Item>
+                      </List>
+                </LinksConfirmBtn> {" "}
+            to your online store
+          </Banner>
+              </Grid.Cell>
+        </Grid>
+
+        </Box>
+}
       <Layout>
         {/* Header avec métriques */}
         <Layout.Section>
@@ -164,7 +255,7 @@ export default function Index() {
           </Card>
 
           <Box width="100%" paddingBlockStart="300">
-            <BlockStack gap="300">
+          <BlockStack gap="300">
               {/* Main Menu */}
               <div
                 style={{
@@ -378,7 +469,7 @@ export default function Index() {
                             </Text>
                             <Text as="p">
                               Explore the app documentation
-                            </Text>
+                      </Text>
                           </BlockStack>
                         </div>
                         <Button onClick={() => window.open("https://docs.signsdesigner.us/docs/aso-wp-documentation/", "_blank")}>View docs</Button>
@@ -400,7 +491,7 @@ export default function Index() {
                 <Box padding="400">
                   <Text as="h3" variant="headingMd">
                     Recent Updates
-                  </Text>
+                      </Text>
 
                   <Box paddingBlockStart="400">
                     <BlockStack gap="300">
@@ -425,8 +516,8 @@ export default function Index() {
                   </Box>
                 </Box>
               </div> */}
-            </BlockStack>
-          </Box>
+                    </BlockStack>
+                  </Box>
         </Layout.Section>
 
         <Layout.Section variant="oneThird">
@@ -463,8 +554,8 @@ export default function Index() {
                                 </Text>
                                 <Text as="h4" variant="headingSm">
                                   {customiser.name}
-                                </Text>
-                              </Box>
+              </Text>
+            </Box>
                               <Box>
                                 <Badge size="small" tone="info">
                                   {/* {customiser.type} */}
@@ -544,10 +635,10 @@ export default function Index() {
                         ))}
                       </BlockStack>
                     </Box>
-                  </Box>
-                </Card>
-              </BlockStack>
             </Box>
+                </Card>
+          </BlockStack>
+      </Box>
           </InlineStack>
         </Layout.Section>
       </Layout>

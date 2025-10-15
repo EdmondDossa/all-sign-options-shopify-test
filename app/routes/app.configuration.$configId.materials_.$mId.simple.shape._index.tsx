@@ -88,11 +88,19 @@ export default function MaterialShape({ materialId, manageShapes, shapes, plan }
       };
       
 
-      deleteFetcher.submit(requestBody, {
-        method: "POST",
-        action: "/api/shape-manager",
-        encType: "application/json",
-      })
+      deleteFetcher.submit(
+        {
+          operation: "delete",
+          configId: configId,
+          materialId: finalMaterialId,
+          shapeId: id,
+        },
+        {
+          method: "POST",
+          action: "/api/shape-manager",
+          encType: "application/json",
+        }
+      )
 
     } catch (error) {
       console.error("Error deleting shape:", error);
@@ -136,11 +144,19 @@ export default function MaterialShape({ materialId, manageShapes, shapes, plan }
         shapeId: id
       };
 
-      setDefaultFetcher.submit(requestBody, {
-        method: "POST",
-        action: "/api/shape-manager",
-        encType: "application/json",
-      })
+      setDefaultFetcher.submit(
+        {
+          operation: "set-default",
+          configId: configId,
+          materialId: finalMaterialId,
+          shapeId: id,
+        },
+        {
+          method: "POST",
+          action: "/api/shape-manager",
+          encType: "application/json",
+        }
+      )
       
       // console.log("=== Request body being sent for set-default ===");
       // console.log("Request body:", requestBody);

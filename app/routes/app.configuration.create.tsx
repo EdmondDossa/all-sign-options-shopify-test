@@ -73,6 +73,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     });
   }
 
+  if (configuration) {
+    (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
+    delete (configuration as any).product;
+  }
+
   return json({ configuration });
 };
 
