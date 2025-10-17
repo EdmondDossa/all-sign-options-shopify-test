@@ -251,14 +251,17 @@
       }
     });
 
-    // 2 Par sécurité, on annule tout "submit" déclenché depuis notre container de boutons
+    // 2 Par sécurité, on annule tout "submit" déclenché depuis nos boutons ASO uniquement
     productForm?.addEventListener('click', (e) => {
-      if (e.target.closest('.aso-modal-buttons-container')) {
-        // Empêche qu'un autre script interprète le clic comme un add-to-cart
+      // Seulement cibler les boutons ASO spécifiques, pas tout le container
+      if (e.target.id === 'asoDesignBtn' || 
+          e.target.id === 'asoUploadBtn' || 
+          e.target.id === 'asoViewUploadsBtn' ||
+          e.target.closest('#asoDesignBtn, #asoUploadBtn, #asoViewUploadsBtn')) {
         e.preventDefault();
-        e.stopImmediatePropagation();
+        e.stopPropagation(); // Utiliser stopPropagation au lieu de stopImmediatePropagation
       }
-    }, true); // capture: intercepte avant d'autres listeners
+    }, false); // Utiliser la phase de bouillonnement au lieu de la capture
   });
 
   // Fonction globale pour fermer les modales (utilisée par d'autres scripts)
