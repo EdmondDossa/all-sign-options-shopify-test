@@ -8,19 +8,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const configId = parseInt(params.configId ?? "");
   let configuration = await ConfigurationService.getConfiguration(configId,session.id);
 
-
   if (!Number.isNaN(configId)) {
-    configuration =  await  ConfigurationService.getConfiguration(configId,session.id);
+    configuration = await ConfigurationService.getConfiguration(configId,session.id);
   }
 
-  return json({ configuration });
-};
+  // Extraire materials de la configuration
+  const materials = configuration?.data?.materials || [];
   
+  return json({ configuration, materials });
+};
 
 export default function ConfigurationView() {
-  const {configuration} = useLoaderData<typeof loader>();
+  const {configuration, materials} = useLoaderData<typeof loader>();
     
   return (
-    <Outlet context={{configuration}} />
+    <Outlet context={{configuration, materials}} />
   );
 }
