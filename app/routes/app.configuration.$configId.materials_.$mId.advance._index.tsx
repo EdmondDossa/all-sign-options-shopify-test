@@ -157,7 +157,7 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
   const [localMaterielComponents, setLocalMaterielComponents] = useState(materialComponents)
   // const rowMarkup = materialComponents?.map(
   //   ({ name, description, icon, isDefault }, index) => (
-  const rowMarkup = localMaterielComponents?.map(
+  const rowMarkup = (localMaterielComponents || [])?.map(
     ({ name, description, icon, isDefault }, index) => {
       const isActive = activePopoverId === index;
 
@@ -226,7 +226,7 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
   );
 
   useEffect(()=>{
-    setLocalMaterielComponents([...materialComponents])
+    setLocalMaterielComponents([...(materialComponents || [])])
   }, [materialId, materialComponents])
 
   return (
@@ -287,7 +287,7 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
               </BoxBackground>
               <IndexTable
                 resourceName={resourceName}
-                itemCount={materialComponents ? materialComponents.length : 0}
+                itemCount={(materialComponents || []).length}
                 selectable={false}
                 headings={[
                   { title: "Title" },
