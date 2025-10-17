@@ -22,7 +22,7 @@
 {% if block.settings.useModal %}
   <!-- Boutons pour ouvrir les modals -->
   <div class="aso-modal-buttons-container">
-    {% if block.settings.design_button_enabled and asoConfigurationId %}
+    {% if block.settings.design_button_enabled and asoConfigurationId and asoConfigurationId != blank and asoConfigurationId != "" %}
       <button id="asoDesignBtn" class="aso-modal-button aso-design-button" type="button" 
               style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
         {{ block.settings.design_button_text | default: "Design your own Sign" }}
@@ -71,17 +71,19 @@
   <!-- Modal pour voir les fichiers uploadés -->
   {% render 'view-uploads-modal' %}
 {% else %}
-  <div class="shopify-app-wrapper"  >
-    <div class="aso-app" id="app">
-      {% render 'loader' %}
-    </div>
-    <div class='aso-app-not-found'>
-      <div class="aso-app-not-found-item">
-        No design configuration has been found.
-        Please select a product assigned to a valid design configuration for this block.
+  {% if asoConfigurationId and asoConfigurationId != blank and asoConfigurationId != "" %}
+    <div class="shopify-app-wrapper"  >
+      <div class="aso-app" id="app">
+        {% render 'loader' %}
+      </div>
+      <div class='aso-app-not-found'>
+        <div class="aso-app-not-found-item">
+          No design configuration has been found.
+          Please select a product assigned to a valid design configuration for this block.
+        </div>
       </div>
     </div>
-  </div>
+  {% endif %}
 {% endif %}
 
 
