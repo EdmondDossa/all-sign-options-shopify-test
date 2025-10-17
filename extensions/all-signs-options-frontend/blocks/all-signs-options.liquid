@@ -22,7 +22,7 @@
 {% if block.settings.useModal %}
   <!-- Boutons pour ouvrir les modals -->
   <div class="aso-modal-buttons-container">
-    {% if block.settings.design_button_enabled and asoConfigurationId and asoConfigurationId != blank and asoConfigurationId != "" %}
+    {% if block.settings.design_button_enabled and asoConfigurationId %}
       <button id="asoDesignBtn" class="aso-modal-button aso-design-button" type="button" 
               style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
         {{ block.settings.design_button_text | default: "Design your own Sign" }}
@@ -71,19 +71,17 @@
   <!-- Modal pour voir les fichiers uploadés -->
   {% render 'view-uploads-modal' %}
 {% else %}
-  {% if asoConfigurationId and asoConfigurationId != blank and asoConfigurationId != "" %}
-    <div class="shopify-app-wrapper"  >
-      <div class="aso-app" id="app">
-        {% render 'loader' %}
-      </div>
-      <div class='aso-app-not-found'>
-        <div class="aso-app-not-found-item">
-          No design configuration has been found.
-          Please select a product assigned to a valid design configuration for this block.
-        </div>
+  <div class="shopify-app-wrapper"  >
+    <div class="aso-app" id="app">
+      {% render 'loader' %}
+    </div>
+    <div class='aso-app-not-found'>
+      <div class="aso-app-not-found-item">
+        No design configuration has been found.
+        Please select a product assigned to a valid design configuration for this block.
       </div>
     </div>
-  {% endif %}
+  </div>
 {% endif %}
 
 
@@ -253,17 +251,14 @@
       }
     });
 
-    // 2 Par sécurité, on annule tout "submit" déclenché depuis nos boutons ASO uniquement
+    // 2 Par sécurité, on annule tout "submit" déclenché depuis notre container de boutons
     productForm?.addEventListener('click', (e) => {
-      // Seulement cibler les boutons ASO spécifiques, pas tout le container
-      if (e.target.id === 'asoDesignBtn' || 
-          e.target.id === 'asoUploadBtn' || 
-          e.target.id === 'asoViewUploadsBtn' ||
-          e.target.closest('#asoDesignBtn, #asoUploadBtn, #asoViewUploadsBtn')) {
+      if (e.target.closest('.aso-modal-buttons-container')) {
+        // Empêche qu'un autre script interprète le clic comme un add-to-cart
         e.preventDefault();
-        e.stopPropagation(); // Utiliser stopPropagation au lieu de stopImmediatePropagation
+        e.stopImmediatePropagation();
       }
-    }, false); // Utiliser la phase de bouillonnement au lieu de la capture
+    }, true); // capture: intercepte avant d'autres listeners
   });
 
   // Fonction globale pour fermer les modales (utilisée par d'autres scripts)
