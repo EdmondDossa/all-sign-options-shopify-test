@@ -1,6 +1,7 @@
 import {
   Box,
   ButtonGroup,
+  Card,
   Divider,
   IndexTable,
   InlineStack,
@@ -111,18 +112,18 @@ export default function ManageClipartIndex() {
   ));
   return (
     <>
-    <BoxBackground>
-      <Box paddingInline="300" paddingBlock="600">
+    <div>
+      <Card>
           <InlineStack gap="100" align="start">
             <Text as="h2" variant="headingMd">
             List of clipart group
             </Text>
         </InlineStack>
-      </Box>
-    </BoxBackground>
+      </Card>
+    </div>
     
-    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-      <BoxBackground>
+    <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
+      <Card>
         <Box padding="150">
           <InlineStack gap="100" align="end">
             <button
@@ -142,20 +143,20 @@ export default function ManageClipartIndex() {
           </InlineStack>
         </Box>
         <Divider borderWidth="050" />
-      </BoxBackground>
-      <IndexTable
-        resourceName={resourceName}
-        itemCount={clipartsGroups ? clipartsGroups.length : 0}
-        headings={[
-          { title: "Title" },
-          { title: "Description" },
-          { title: "Action", alignment: "center" },
-        ]}
-        selectable={false}
-      >
-        {rowMarkup}
-      </IndexTable>
-    </SpacingBackground>
+        <IndexTable
+          resourceName={resourceName}
+          itemCount={clipartsGroups ? clipartsGroups.length : 0}
+          headings={[
+            { title: "Title" },
+            { title: "Description" },
+            { title: "Action", alignment: "center" },
+          ]}
+          selectable={false}
+        >
+          {rowMarkup}
+        </IndexTable>
+      </Card>
+    </div>
     </>
   );
 }

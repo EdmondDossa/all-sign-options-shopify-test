@@ -5,14 +5,17 @@ import {
   Link,
   redirect,
   useActionData,
+  useFetcher,
   useNavigate,
   useNavigation,
   useOutletContext,
+  useParams,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
 import {
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -39,37 +42,47 @@ import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
 import { stringTransform } from "~/utils/transfomerZod";
 
-export default function MaterialComponentCreate() {
+interface MaterialAdavanceProps {
+  materialComponents: MaterialAdvanceComponentType[];
+  index: number;
+  onClick: (id: boolean) => void;
+  edit: boolean;
+  materialId: number | undefined
+}
+export default function MaterialComponentCreate( { materialId, materialComponents, edit, index, onClick} :MaterialAdavanceProps) {
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { materialComponents, material, configuration } = useOutletContext<{
-    materialComponents: MaterialAdvanceComponentType[];
-    material: MaterialAdvance;
-    configuration: ConfigurationType;
-  }>();
+  const params = useParams();
+  const configId = params.configId;
+  const fetcher = useFetcher() as any
+  // const { materialComponents, material, configuration } = useOutletContext<{
+  //   materialComponents: MaterialAdvanceComponentType[];
+  //   material: MaterialAdvance;
+  //   configuration: ConfigurationType;
+  // }>();
 
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
-  const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get("id") || "");
+  // const [searchParams] = useSearchParams();
+  // const id = parseInt(searchParams.get("id") || "");
+  const id = edit ? index : 0
   console.log("action data :", actionData);
   let materialComponent = materialComponents?.find(
     (curr:any, index:number) => index == id,
   );
   const [formData, setFormData] = useState<MaterialAdvanceComponentType>(
-    materialComponent
-      ? (materialComponent as MaterialAdvanceComponentType)
-      : {
-          name: "",
-          description: "",
-          icon: "",
-          options: [],
-          isDefault: false,
-        },
+    edit ? (materialComponent as MaterialAdvanceComponentType)
+    : {
+        name: "",
+        description: "",
+        icon: "",
+        options: [],
+        isDefault: false,
+      },
   );
 
   let isLoading = navigation.state == "loading";
-  let isSubmitting = navigation.state == "submitting";
+  let isSubmitting = fetcher.state == "submitting";
 
   const handleName = (value: string) =>
     setFormData({ ...formData, name: value });
@@ -80,7 +93,27 @@ export default function MaterialComponentCreate() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit({ ...formData, options: null }, { method: "POST" });
+    // submit({ ...formData, options: null }, { method: "POST" });
+    const requestBody: any = {
+      operation: edit ? "update" : "add",
+      configId: configId,
+      materialId: materialId,
+      componentData: formData,
+    }
+
+    if(edit){
+      requestBody.componentId = index
+    }
+
+    fetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/advance-add-component-manager",
+      encType: "application/json",
+    })
+
+    if(!isSubmitting){
+      onClick(false)
+    }
   };
 
   const navigate = useNavigate();
@@ -90,33 +123,9 @@ export default function MaterialComponentCreate() {
 
   return (
     <>
-      <BoxBackground>
-        <Box paddingInline="300" paddingBlock="600">
-          <InlineStack align="start">
-            <InlineStack gap="100" align="start" blockAlign="start">
-              <Text as="h2" variant="headingMd">
-                {configuration?.name}
-              </Text>
-              <NextLtrIcon />
-              <Link className="link" to="../../materials">
-                <Text as="h2" variant="headingMd" tone="subdued">
-                  Materials
-                </Text>
-              </Link>
-              <NextLtrIcon />
-              <Text as="h2" variant="headingMd" tone="subdued">
-                {material?.name} (Advance)
-              </Text>
-            </InlineStack>
-          </InlineStack>
-        </Box>
-        <Divider borderWidth="100" />
-      </BoxBackground>
-      <Divider borderWidth="100" />
-
-      <SpacingBackground width="100%" height="auto">
-        <BoxBackground>
-          <Box padding="300">
+      <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
+        <Card>
+          <Box paddingInline="100" paddingBlockEnd="300">
             <Text as="h2" variant="headingMd">
               {Number.isNaN(id) ? " Add  component" : "Edit component"}
             </Text>
@@ -124,7 +133,7 @@ export default function MaterialComponentCreate() {
           <Divider borderWidth="050" />
 
           <Form onSubmit={handleSubmit} method="POST">
-            <Box paddingInline="300" paddingBlock="1000">
+            <Box paddingInline="300" paddingBlock="400">
               <Grid gap={{ lg: "30px" }}>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
                   <TextField
@@ -162,7 +171,7 @@ export default function MaterialComponentCreate() {
                 <button
                   className="back-large-btn"
                   type="button"
-                  onClick={onBack}
+                  onClick={()=> onClick(false)}
                 >
                   <Box paddingInline="1000">
                     <InlineStack gap="300">
@@ -178,8 +187,8 @@ export default function MaterialComponentCreate() {
               </InlineStack>
             </Box>
           </Form>
-        </BoxBackground>
-      </SpacingBackground>
+        </Card>
+      </div>
     </>
   );
 }

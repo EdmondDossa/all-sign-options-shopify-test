@@ -4,12 +4,17 @@ import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import NextLtrIcon from "~/components/icons/NextLtrIcon";
 import MaterialService from "~/models/Material.service";
-import { Material } from "~/types/ConfigDataType";
+import { ConfigAdditionalOption, Material } from "~/types/ConfigDataType";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { PRICING_PLANS } from "~/utils/pricing";
 import {  getPlan } from "~/utils/pricing-server.server";
+import { FixingMethodType, ShapeType } from "~/types/SettingsType";
+import SettingShapesService from "~/models/SettingShapes.service";
+import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
+import SettingBorderService from "~/models/SettingBorder.service";
+import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin, billing } = await authenticate.admin(request);
@@ -22,14 +27,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const  plan = await getPlan(billing,session?.shop, admin);
 
-  return json({ materials, plan });
+  const manageFixingMethods: FixingMethodType[] | null = await SettingFixingMethodService.get(session.id);
+  const manageShapes: ShapeType[] | null = await SettingShapesService.get( session.id,);
+  const manageBorders = await SettingBorderService.get( session.id, );
+
+  return json({ materials, plan, manageFixingMethods, manageShapes, manageBorders });
 };
 
 export default function Materiels() {
-  let { materials, plan } = useLoaderData<typeof loader>();
+  let { materials, plan, manageFixingMethods, manageShapes, manageBorders } = useLoaderData<typeof loader>();
   const { configuration } = useOutletContext<{
     configuration: ConfigurationType;
   }>();
+
+  // console.log(configuration, "77777")
 
   if (plan == PRICING_PLANS.STARTER && materials) {  
     materials = materials?.filter((m, i) => PRICING_PLANS.STARTER_RULES.materialTypes.includes(m.type))
@@ -38,8 +49,8 @@ export default function Materiels() {
 
   return (
     <Page fullWidth>
-      <BoxBackground>
-        <Box paddingInline="300" paddingBlock="600">
+      {/* <BoxBackground>
+        <Box padding="300">
           <InlineStack>
             <InlineStack gap="100" align="start">
               <Text as="h2" variant="headingMd">
@@ -53,9 +64,10 @@ export default function Materiels() {
             </InlineStack>
           </InlineStack>
         </Box>
-      </BoxBackground>
+      </BoxBackground> */}
 
-      <Outlet context={{ materials: materials , plan}} />
+      <Outlet context={{ materials: materials , plan, manageFixingMethods, manageShapes, manageBorders}} />
+      {/* {console.log(materials)} */}
     </Page>
   );
 }

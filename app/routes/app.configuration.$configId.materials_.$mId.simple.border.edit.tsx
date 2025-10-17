@@ -1,6 +1,7 @@
 import {
   BlockStack,
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -13,9 +14,11 @@ import {
   Form,
   redirect,
   useActionData,
+  useFetcher,
   useNavigate,
   useNavigation,
   useOutletContext,
+  useParams,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -35,19 +38,34 @@ import MaterialBorderService from "~/models/MaterialBorderService.service";
 import { flashMessage } from "~/utils/message-flash";
 import { jsonTransform } from "~/utils/transfomerZod";
 
-export default function MaterialBorderCreate() {
+interface MaterialBorderProps {
+  manageBorders: BorderType[];
+  configSizes: ConfigSize[];
+  manageShapes: ShapeType[];
+  borders: ConfigBorder[];
+  id: number;
+  onClick: (id: boolean) => void;
+  edit: boolean;
+  materialId: number | undefined
+}
+export default function MaterialBorderCreate({ materialId, configSizes, manageBorders, borders, manageShapes, id, onClick, edit }: MaterialBorderProps) {
   const [selected, setSelected] = useState("1");
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  let { configSizes, manageBorders, borders, manageShapes } = useOutletContext<{
-    manageBorders: BorderType[];
-    configSizes: ConfigSize[];
-    manageShapes: ShapeType[];
-    borders: ConfigBorder[];
-  }>();
+
+  const params = useParams();
+  const configId = params.configId;
+  const borderFetcher = useFetcher() as any
+
+  // let { configSizes, manageBorders, borders, manageShapes } = useOutletContext<{
+  //   manageBorders: BorderType[];
+  //   configSizes: ConfigSize[];
+  //   manageShapes: ShapeType[];
+  //   borders: ConfigBorder[];
+  // }>();
   const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get("id") || "");
+  // const id = parseInt(searchParams.get("id") || "");
   let configBorder = borders?.find((curr, index) => index === id);
 
   const options = manageBorders
@@ -66,7 +84,7 @@ export default function MaterialBorderCreate() {
     : [];
 
   const [formData, setFormData] = useState<ConfigBorder>(
-    configBorder
+    edit && configBorder
       ? (configBorder as ConfigBorder)
       : {
           manageBorderId: parseInt(options[0]?.value),
@@ -90,7 +108,7 @@ export default function MaterialBorderCreate() {
     : [];
 
   let isLoading = navigation.state == "loading";
-  let isSubmitting = navigation.state == "submitting";
+  let isSubmitting = borderFetcher.state == "submitting";
 
   const HandleManageBorderId = (value: string) =>
     setFormData({ ...formData, manageBorderId: parseInt(value) });
@@ -109,16 +127,64 @@ export default function MaterialBorderCreate() {
 
   console.log("action data :", actionData);
 
+  // const handleSubmit = (e: any) => {
+  //   e.preventDefault();
+  //   submit(
+  //     {
+  //       ...formData,
+  //       excludeSizes: JSON.stringify(formData.excludeSizes),
+  //       excludeShapes: JSON.stringify(formData.excludeShapes),
+  //     },
+  //     { method: "POST" },
+  //   );
+  // };
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit(
-      {
+    // submit(
+    //   {
+    //     ...formData,
+    //     excludeSizes: JSON.stringify(formData.excludeSizes),
+    //     excludeShapes: JSON.stringify(formData.excludeShapes),
+    //   },
+    //   { method: "POST" },
+    // );
+
+    const requestBody = edit ? {
+      operation: 'update',
+      configId: configId,
+      materialId: materialId,
+      // borderData: {
+      //   ...formData,
+      //   excludeSizes: JSON.stringify(formData.excludeSizes),
+      //   excludeShapes: JSON.stringify(formData.excludeShapes),
+      // },
+      borderData: {
         ...formData,
-        excludeSizes: JSON.stringify(formData.excludeSizes),
-        excludeShapes: JSON.stringify(formData.excludeShapes),
+        excludeSizes: formData.excludeSizes,
+        excludeShapes: formData.excludeShapes,
       },
-      { method: "POST" },
-    );
+      borderId: id
+    } : {
+      operation: 'add',
+      configId: configId,
+      materialId: materialId,
+      borderData: {
+        ...formData,
+        excludeSizes: formData.excludeSizes,
+        excludeShapes: formData.excludeShapes,
+      },
+    }
+
+    borderFetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/border-manager",
+      encType: "application/json",
+    });
+
+    if(borderFetcher.state !== 'submitting'){
+      onClick(false)
+    }
   };
 
   const navigate = useNavigate();
@@ -128,93 +194,96 @@ export default function MaterialBorderCreate() {
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-        <BoxBackground>
-          <Form onSubmit={handleSubmit} method="POST">
-            <Box paddingInline="300" paddingBlock="1000">
-              <Grid gap={{ lg: "30px" }}>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <Select
-                    label="Select border"
-                    options={options}
-                    value={`${formData.manageBorderId}`}
-                    onChange={HandleManageBorderId}
-                    error={getError(actionData, "manageBorderId")}
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                  <TextField
-                    label="Additional Price"
-                    type="number"
-                    value={`${formData.additionalPrice}`}
-                    onChange={(value) => handleAdditionalPrice(value)}
-                    onBlur={(value)=>handleAdditionalPrice("",true)}
-                    
-                    autoComplete="on"
-                    error={getError(actionData, "additionalPrice")}
-                  />
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <BlockStack gap="300">
-                    <Text as="strong" variant="headingMd">
-                      Exclude size
-                    </Text>
-                    <MultiCombobox
-                      labelHidden={true}
-                      helpText="exclude the sizes of this border"
-                      label="Exclude size"
-                      placeholder="Select exclude size"
-                      selectedOptions={formData.excludeSizes.map(
-                        (curr) => `${curr}`,
-                      )}
-                      data={sizes}
-                      setSelectedOptions={handleExcludeSizes}
-                    ></MultiCombobox>
-                  </BlockStack>
-                </Grid.Cell>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <BlockStack gap="300">
-                    <Text as="strong" variant="headingMd">
-                      Exclude shapes
-                    </Text>
-                    <MultiCombobox
-                      labelHidden={true}
-                      helpText="exclude the shapes of this border"
-                      label="Exclude shapes"
-                      placeholder="Select excluded shapes"
-                      selectedOptions={formData.excludeShapes.map(
-                        (curr) => `${curr}`,
-                      )}
-                      data={shapes}
-                      setSelectedOptions={handleExcludeShapes}
-                    ></MultiCombobox>
-                  </BlockStack>
-                </Grid.Cell>
-              </Grid>
-            </Box>
-            <Divider borderWidth="050" />
-            <Box paddingInline="300" paddingBlock="300">
-              <InlineStack align="end" gap="600">
-                <button
-                  className="back-large-btn"
-                  type="button"
-                  onClick={onBack}
-                >
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <RayStartArrowIcon />{" "}
-                      <span style={{ color: "black", fontWeight: "bold" }}>
-                        Back
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button>
-                <BiSaveBtn isLoading={isSubmitting} title="Save" />
-              </InlineStack>
-            </Box>
-          </Form>
-        </BoxBackground>
-      </SpacingBackground>
+      <div style={{width:"100%" ,height:"auto" ,margin:"0px 0px "}}>
+        <div>
+          <Card>
+            <Form onSubmit={handleSubmit} method="POST">
+              <Box paddingInline="300" paddingBlock="1000">
+                <Grid gap={{ lg: "30px" }}>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                    <Select
+                      label="Select border"
+                      options={options}
+                      value={`${formData.manageBorderId}`}
+                      onChange={HandleManageBorderId}
+                      error={getError(actionData, "manageBorderId")}
+                    />
+                  </Grid.Cell>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                    <TextField
+                      label="Additional Price"
+                      type="number"
+                      value={`${formData.additionalPrice}`}
+                      onChange={(value) => handleAdditionalPrice(value)}
+                      onBlur={(value)=>handleAdditionalPrice("",true)}
+                      
+                      autoComplete="on"
+                      error={getError(actionData, "additionalPrice")}
+                    />
+                  </Grid.Cell>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <BlockStack gap="300">
+                      <Text as="strong" variant="headingMd">
+                        Exclude size
+                      </Text>
+                      <MultiCombobox
+                        labelHidden={true}
+                        helpText="exclude the sizes of this border"
+                        label="Exclude size"
+                        placeholder="Select exclude size"
+                        selectedOptions={formData.excludeSizes.map(
+                          (curr) => `${curr}`,
+                        )}
+                        data={sizes}
+                        setSelectedOptions={handleExcludeSizes}
+                      ></MultiCombobox>
+                    </BlockStack>
+                  </Grid.Cell>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <BlockStack gap="300">
+                      <Text as="strong" variant="headingMd">
+                        Exclude shapes
+                      </Text>
+                      <MultiCombobox
+                        labelHidden={true}
+                        helpText="exclude the shapes of this border"
+                        label="Exclude shapes"
+                        placeholder="Select excluded shapes"
+                        selectedOptions={formData.excludeShapes.map(
+                          (curr) => `${curr}`,
+                        )}
+                        data={shapes}
+                        setSelectedOptions={handleExcludeShapes}
+                      ></MultiCombobox>
+                    </BlockStack>
+                  </Grid.Cell>
+                </Grid>
+              </Box>
+              <Divider borderWidth="050" />
+              <Box paddingInline="300" paddingBlock="300">
+                <InlineStack align="end" gap="600">
+                  <button
+                    className="back-large-btn"
+                    type="button"
+                    // onClick={onBack}
+                    onClick={()=> onClick(false)}
+                  >
+                    <Box paddingInline="1000">
+                      <InlineStack gap="300">
+                        <RayStartArrowIcon />{" "}
+                        <span style={{ color: "black", fontWeight: "bold" }}>
+                          Back
+                        </span>
+                      </InlineStack>
+                    </Box>
+                  </button>
+                  <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                </InlineStack>
+              </Box>
+            </Form>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

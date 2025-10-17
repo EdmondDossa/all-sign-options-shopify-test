@@ -1,8 +1,9 @@
 import { parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
-import { Form, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSearchParams, useSubmit } from "@remix-run/react";
+import { Form, redirect, useActionData, useFetcher, useNavigate, useNavigation, useOutletContext, useParams, useSearchParams, useSubmit } from "@remix-run/react";
 import {
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -24,20 +25,30 @@ import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
 import { stringTransform } from "~/utils/transfomerZod";
 
-export default function MaterialAdditionalOptionCreate() {
+interface MaterialAddOptionsProps{
+  materialId: number | undefined,
+  additionalOptions: ConfigAdditionalOption[]
+  id: number;
+  onClick: (id: boolean) => void;
+  edit: boolean
+}
+export default function MaterialAdditionalOptionCreate({ materialId, additionalOptions, id, onClick, edit}: MaterialAddOptionsProps) {
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { additionalOptions } = useOutletContext<{
-    additionalOptions: ConfigAdditionalOption[];
-  }>();
+  const params = useParams();
+  const configId = params.configId;
+  const fetcher = useFetcher() as any
+  // const { additionalOptions } = useOutletContext<{
+  //   additionalOptions: ConfigAdditionalOption[];
+  // }>();
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
   const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get("id") || "");
-  console.log("action data :", actionData);
+  // const id = parseInt(searchParams.get("id") || "");
+  // console.log("action data :", actionData);
   let additionalOption = additionalOptions?.find((curr, index) => index == id);
   const [formData, setFormData] = useState<ConfigAdditionalOption>(
-    additionalOption?
+    edit && additionalOption?
     additionalOption as ConfigAdditionalOption
       : {
         title: "",
@@ -48,7 +59,7 @@ export default function MaterialAdditionalOptionCreate() {
   );
 
   let isLoading = navigation.state == "loading";
-  let isSubmitting = navigation.state == "submitting";
+  let isSubmitting = fetcher.state == "submitting";
 
   const handleTitle= (value: string) =>
     setFormData({ ...formData, title: value });
@@ -60,7 +71,38 @@ export default function MaterialAdditionalOptionCreate() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit({ ...formData }, { method: "POST" });
+    // submit({ ...formData }, { method: "POST" });
+
+    const requestBody: any = {
+      operation: edit ? 'update' : 'add',
+      configId: configId,
+      materialId: materialId,
+      // componentId: id,
+      additionalOptionData: formData,
+    } 
+    if(edit){
+      requestBody.additionalOptionId = id
+    }
+    // : {
+    //   operation: 'add',
+    //   configId: configId,
+    //   materialId: materialId,
+    //   componentData: formData
+    // }
+
+    console.log(requestBody, "8888")
+
+    fetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/simple-additionnal-option-manager",
+      encType: "application/json",
+    })
+
+    if(!isSubmitting){
+      onClick(false)
+    }
+
+
   };
 
   const navigate = useNavigate();
@@ -69,66 +111,70 @@ export default function MaterialAdditionalOptionCreate() {
   };
 
   return (
-    <SpacingBackground width="100%" height="auto">
-      <BoxBackground>
-        <Box padding="300">
-          <Text as="h2" variant="headingMd">
-           
-          {Number.isNaN(id)?' Add new component ':'Edit component'}
+    <div style={{width: "100%", height:"auto"}}>
+      <Card>
+          <Box padding="100">
+            <Text as="h2" variant="headingMd">
             
-          </Text>
-        </Box>
-        <Divider borderWidth="050" />
+            {/* {Number.isNaN(id)?' Add new component ':'Edit component'} */}
+            {!edit?' Add new component ':'Edit component'}
+              
+            </Text>
+          </Box>
+          <Divider borderWidth="050" />
 
-        <Form onSubmit={handleSubmit} method="POST">
-        <Box paddingInline="300" paddingBlock="1000">
-              <Grid gap={{lg:"30px"}}>
+          <Form onSubmit={handleSubmit} method="POST">
+          <Box paddingInline="300" paddingBlock="300">
+                <Grid gap={{lg:"30px"}}>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                  label="Title"
+                    value={`${formData.title}`}
+                    autoComplete="off"
+                  onChange={handleTitle}
+                  error={getError(actionData, "title")}
+                />
+                  </Grid.Cell>
+              
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
                 <TextField
-                label="Title"
-                  value={`${formData.title}`}
+                  label="Description"
+                  value={`${formData.description}`}
                   autoComplete="off"
-                onChange={handleTitle}
-                error={getError(actionData, "title")}
-              />
+                onChange={handleDescription}
+                error={getError(actionData, "description")}
+                />
+                  </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                <FileInput error={getError(actionData, "icon")} title="Upload icon"
+                      path={formData.icon} handlePath={handleIcon} />
                 </Grid.Cell>
-             
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <TextField
-                label="Description"
-                value={`${formData.description}`}
-                autoComplete="off"
-              onChange={handleDescription}
-              error={getError(actionData, "description")}
-              />
-                </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <FileInput error={getError(actionData, "icon")} title="Upload icon"
-                    path={formData.icon} handlePath={handleIcon} />
-              </Grid.Cell>
-              </Grid>
+                </Grid>
+              </Box>
+          
+            <Divider borderWidth="050" />
+            <Box paddingInline="300" paddingBlock="300">
+              <InlineStack align="end" gap="600">
+                <button className="back-large-btn" type="button" 
+                  // onClick={onBack}
+                  onClick={()=> onClick(false)}
+                >
+                  <Box paddingInline="1000">
+                    <InlineStack gap="300">
+                      <RayStartArrowIcon />{" "}
+                      <span style={{ color: "black", fontWeight: "bold" }}>
+                        {" "}
+                        Back
+                      </span>
+                    </InlineStack>
+                  </Box>
+                </button>
+                <BiSaveBtn isLoading={isSubmitting} title="Save" />
+              </InlineStack>
             </Box>
-        
-          <Divider borderWidth="050" />
-          <Box paddingInline="300" paddingBlock="300">
-            <InlineStack align="end" gap="600">
-              <button className="back-large-btn" type="button" onClick={onBack}>
-                <Box paddingInline="1000">
-                  <InlineStack gap="300">
-                    <RayStartArrowIcon />{" "}
-                    <span style={{ color: "black", fontWeight: "bold" }}>
-                      {" "}
-                      Back
-                    </span>
-                  </InlineStack>
-                </Box>
-              </button>
-              <BiSaveBtn isLoading={isSubmitting} title="Save" />
-            </InlineStack>
-          </Box>
-        </Form>
-      </BoxBackground>
-    </SpacingBackground>
+          </Form>
+      </Card>
+    </div>
   );
 }
 

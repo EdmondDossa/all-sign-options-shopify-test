@@ -9,15 +9,18 @@ import {
   Text,
   TextField,
   InlineError,
+  Card,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   redirect,
   useActionData,
+  useFetcher,
   useNavigate,
   useNavigation,
   useOutletContext,
+  useParams,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -44,16 +47,28 @@ interface FormDataType {
   error?: string;
 }
 
-export default function MaterialFixingMethod() {
+interface MaterialShapeProps{
+  manageShapes: ShapeType[];
+  shapes: ConfigShape[];
+  id: number;
+  onClick: (id: boolean) => void;
+  edit: boolean;
+  materialId: number | undefined;
+  onUpdateShapes?: (updatedShapes: ConfigShape[]) => void;
+}
+
+export default function MaterialShapeEdit({ manageShapes, shapes, id, onClick, edit, materialId, onUpdateShapes }: MaterialShapeProps) {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  let { manageShapes, shapes } = useOutletContext<{
-    manageShapes: ShapeType[];
-    shapes: ConfigShape[];
-  }>();
+  const params = useParams()
+  const fetcher = useFetcher<any>();
+  // let { manageShapes, shapes } = useOutletContext<{
+  //   manageShapes: ShapeType[];
+  //   shapes: ConfigShape[];
+  // }>();
   const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get("id") || "");
+  // const id = parseInt(searchParams.get("id") || "");
   let configShape = shapes?.find((curr, index) => index === id);
 
   const options = manageShapes
@@ -70,7 +85,7 @@ export default function MaterialFixingMethod() {
     : [];
 
   const [formData, setFormData] = useState<FormDataType>(
-    configShape
+    edit && configShape
       ? {
           configShapes: [configShape as ConfigShape],
         }
@@ -128,37 +143,79 @@ export default function MaterialFixingMethod() {
     }
   };
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
+  // const handleSubmit = (e: any) => {
+  //   e.preventDefault();
 
-    console.log("before  hello  world");
+  //   console.log("before  hello  world");
     
-    // Validate shape sizes before submitting
-    const hasInvalidSizes = formData.configShapes.some(shape => {
-      if (shape.shapeSize && manageShapes[shape.shapeId]?.value === "cut-to-shape" ) {
-        return !(shape.shapeSize.small < shape.shapeSize.medium && shape.shapeSize.medium < shape.shapeSize.large);
-      }
-      return false;
-    });
+  //   // Validate shape sizes before submitting
+  //   const hasInvalidSizes = formData.configShapes.some(shape => {
+  //     if (shape.shapeSize && manageShapes[shape.shapeId]?.value === "cut-to-shape" ) {
+  //       return !(shape.shapeSize.small < shape.shapeSize.medium && shape.shapeSize.medium < shape.shapeSize.large);
+  //     }
+  //     return false;
+  //   });
 
-    if (hasInvalidSizes) {
-      // Show error message
-      const errorMessage = "Error: Small < Medium < Large is not found";
-      setFormData(prev => ({
-        ...prev,
-        error: errorMessage
-      }));
-      return;
-    }
+  //   if (hasInvalidSizes) {
+  //     // Show error message
+  //     const errorMessage = "Error: Small < Medium < Large is not found";
+  //     setFormData(prev => ({
+  //       ...prev,
+  //       error: errorMessage
+  //     }));
+  //     return;
+  //   }
 
-    submit(
-      { configShapes: JSON.stringify(formData.configShapes) },
-      { method: "POST" },
-    );
-  };
+  //   submit(
+  //     { configShapes: JSON.stringify(formData.configShapes) },
+  //     { method: "POST" },
+  //   );
+  // };
 
   let isLoading = navigation.state == "loading";
-  let isSubmitting = navigation.state == "submitting";
+  // let isSubmitting = navigation.state == "submitting";
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    
+    try {
+      setIsSubmitting(true);
+      const configId = parseInt(params.configId ?? "");
+      const finalMaterialId = materialId ?? 0;
+      
+      // Déterminer si c'est une édition ou un ajout
+      const isEdit = edit && id >= 0;
+      const apiEndpoint = '/api/shape-manager';
+      const requestBody: any = edit ? {
+        operation: 'update',
+        configId,
+        materialId: finalMaterialId,
+        shapeId: id,
+        shapeData: formData.configShapes
+      } : {
+        operation: 'add',
+        configId,
+        materialId: finalMaterialId,
+        shapeData: formData.configShapes
+      };
+
+      fetcher.submit(requestBody, {
+        method: "POST",
+        action: "/api/shape-manager",
+        encType: "application/json",
+      });
+    } catch (error) {
+      console.error("Error updating shape:", error);
+    } finally {
+      setIsSubmitting(false);
+      onClick(false)
+    }
+  };
+
+  useEffect(() => {
+    // console.log(fetcher, "azerty");
+  }, []);
 
   const navigate = useNavigate();
   const onBack = () => {
@@ -167,208 +224,211 @@ export default function MaterialFixingMethod() {
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-        <BoxBackground>
-          <Form onSubmit={handleSubmit} method="POST">
-            <Box paddingInline="300" paddingBlock="1000">
-              <Grid gap={{ lg: "30px" }}>
-                {formData.configShapes.map((currConfigShape, index) => (
-                  <Grid.Cell
-                    columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
-                  >
-                    <InlineStack wrap={false} as="div" gap="400">
-                      <Box width={currConfigShape.enablePricingBySurface ? "25%" : "40%"}>
-                        <Select
-                          label="Select shapes"
-                          options={options}
-                          value={`${currConfigShape.shapeId}`}
-                          onChange={(value) => {
-                            currConfigShape.shapeId = parseFloat(value);
-                            formData.configShapes[index] = currConfigShape;
-                            setFormData({ ...formData });
-                          }}
-                          error={getError(
-                            actionData,
-                            `configShapes.${index}.shapeId`,
-                          )}
-                        />
-                      </Box>
-                      <Box width={currConfigShape.enablePricingBySurface ? "25%" : "40%"}>
-                        <TextField
-                          label="Additional price"
-                          type="number"
-                          value={`${currConfigShape.additionalPrice}`}
-                          onChange={(value) => {
-                            currConfigShape.additionalPrice = value;
-                            formData.configShapes[index] = currConfigShape;
-                            setFormData({ ...formData });
-                          }}
-                          onBlur={(value) => {
-                            currConfigShape.additionalPrice = parseFloat(`${currConfigShape.additionalPrice}`);
-                            formData.configShapes[index] = currConfigShape;
-                            setFormData({ ...formData });
-                          }}
-                          autoComplete="off"
-                          error={getError(
-                            actionData,
-                            `configShapes.${index}.additionalPrice`,
-                          )}
-                        />
-                      </Box>
-                      {currConfigShape.enablePricingBySurface && (
+      <div style={{width:"100%", height:"auto", margin:"0px 0px "}}>
+        <Card>
+          <div>
+            <Form onSubmit={handleSubmit} method="POST">
+              <Box paddingInline="300" paddingBlock="1000">
+                <Grid gap={{ lg: "30px" }}>
+                  {formData.configShapes.map((currConfigShape, index) => (
+                    <Grid.Cell
+                      columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                    >
+                      <InlineStack wrap={false} as="div" gap="400">
+                        <Box width={currConfigShape.enablePricingBySurface ? "25%" : "40%"}>
+                          <Select
+                            label="Select shapes"
+                            options={options}
+                            value={`${currConfigShape.shapeId}`}
+                            onChange={(value) => {
+                              currConfigShape.shapeId = parseFloat(value);
+                              formData.configShapes[index] = currConfigShape;
+                              setFormData({ ...formData });
+                            }}
+                            error={getError(
+                              actionData,
+                              `configShapes.${index}.shapeId`,
+                            )}
+                          />
+                        </Box>
                         <Box width={currConfigShape.enablePricingBySurface ? "25%" : "40%"}>
                           <TextField
-                            label="Surface for  this price"
+                            label="Additional price"
                             type="number"
-                            value={`${currConfigShape.surface}`}
+                            value={`${currConfigShape.additionalPrice}`}
                             onChange={(value) => {
-                              currConfigShape.surface = value;
+                              currConfigShape.additionalPrice = value;
                               formData.configShapes[index] = currConfigShape;
                               setFormData({ ...formData });
                             }}
                             onBlur={(value) => {
-                              currConfigShape.surface = parseFloat(`${currConfigShape.surface}`);
+                              currConfigShape.additionalPrice = parseFloat(`${currConfigShape.additionalPrice}`);
                               formData.configShapes[index] = currConfigShape;
                               setFormData({ ...formData });
                             }}
                             autoComplete="off"
                             error={getError(
                               actionData,
-                              `configShapes.${index}.surface`,
+                              `configShapes.${index}.additionalPrice`,
                             )}
                           />
                         </Box>
-                      )}
-                      <Box width="18%">
-                        <BlockStack gap="200">
-                          <Text as="span">
-                            Enable Pricing By Surface
-                          </Text>
-                          <InlineStack wrap={false} gap="100" blockAlign="center">
-                            <Text as="span"> No</Text>
-                            <ReactSwitchCustom
-                              checked={currConfigShape.enablePricingBySurface?true:false}
-                              setChecked={(value:any) => {
-                                currConfigShape.enablePricingBySurface = value;
+                        {currConfigShape.enablePricingBySurface && (
+                          <Box width={currConfigShape.enablePricingBySurface ? "25%" : "40%"}>
+                            <TextField
+                              label="Surface for  this price"
+                              type="number"
+                              value={`${currConfigShape.surface}`}
+                              onChange={(value) => {
+                                currConfigShape.surface = value;
                                 formData.configShapes[index] = currConfigShape;
                                 setFormData({ ...formData });
                               }}
+                              onBlur={(value) => {
+                                currConfigShape.surface = parseFloat(`${currConfigShape.surface}`);
+                                formData.configShapes[index] = currConfigShape;
+                                setFormData({ ...formData });
+                              }}
+                              autoComplete="off"
+                              error={getError(
+                                actionData,
+                                `configShapes.${index}.surface`,
+                              )}
                             />
-                            <Text as="span"> Yes</Text>
-                          </InlineStack>
-                        </BlockStack>
-                      </Box>
-                      <Box width="1%">
-                        <Bleed marginInlineStart="400">
-                          <RemoveNowIconBtn
-                            onClick={() => handleDeleteItem(index)}
-                          />
-                        </Bleed>
-                      </Box>
-                    </InlineStack>
-                    {/* Add shapeSize fields when Cut to Shape is selected */}
-                    {manageShapes[currConfigShape.shapeId]?.value === "cut-to-shape" && (
-                      <Box paddingBlockStart="400">
-                        <BlockStack gap="400">
-                          <Grid gap={{ lg: "20px" }}>
-                            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                              <TextField
-                                label="Shape Size Small (px)"
-                                type="number"
-                                value={`${currConfigShape.shapeSize?.small || 0}`}
-                                onChange={(value) => {
-                                  if (!currConfigShape.shapeSize) {
-                                    currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
-                                  }
-                                  currConfigShape.shapeSize.small = parseFloat(value);
+                          </Box>
+                        )}
+                        <Box width="18%">
+                          <BlockStack gap="200">
+                            <Text as="span">
+                              Enable Pricing By Surface
+                            </Text>
+                            <InlineStack wrap={false} gap="100" blockAlign="center">
+                              <Text as="span"> No</Text>
+                              <ReactSwitchCustom
+                                checked={currConfigShape.enablePricingBySurface?true:false}
+                                setChecked={(value:any) => {
+                                  currConfigShape.enablePricingBySurface = value;
                                   formData.configShapes[index] = currConfigShape;
                                   setFormData({ ...formData });
                                 }}
-                                autoComplete="off"
                               />
-                            </Grid.Cell>
-                            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                              <TextField
-                                label="Shape Size Medium (px)"
-                                type="number"
-                                value={`${currConfigShape.shapeSize?.medium || 0}`}
-                                onChange={(value) => {
-                                  if (!currConfigShape.shapeSize) {
-                                    currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
-                                  }
-                                  currConfigShape.shapeSize.medium = parseFloat(value);
-                                  formData.configShapes[index] = currConfigShape;
-                                  setFormData({ ...formData });
-                                }}
-                                autoComplete="off"
-                              />
-                            </Grid.Cell>
-                            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
-                              <TextField
-                                label="Shape Size Large (px)"
-                                type="number"
-                                value={`${currConfigShape.shapeSize?.large || 0}`}
-                                onChange={(value) => {
-                                  if (!currConfigShape.shapeSize) {
-                                    currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
-                                  }
-                                  currConfigShape.shapeSize.large = parseFloat(value);
-                                  formData.configShapes[index] = currConfigShape;
-                                  setFormData({ ...formData });
-                                }}
-                                autoComplete="off"
-                              />
-                            </Grid.Cell>
-                          </Grid>
-                          {formData.error && (
-                            <Box paddingBlockStart="200">
-                              <InlineError message={formData.error} fieldID="shapeSizeError" />
-                            </Box>
-                          )}
-                        </BlockStack>
-                      </Box>
-                    )}
-                  </Grid.Cell>
-                ))}
-                {Number.isNaN(id) &&
-                  options.length > formData.configShapes?.length && (
-                    <Grid.Cell
-                      columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
-                    >
-                      <Box width="150px">
-                        <BiAddBtn
-                          title="Add shapes"
-                          handleClick={() => handleAddItem()}
-                        />
-                      </Box>
+                              <Text as="span"> Yes</Text>
+                            </InlineStack>
+                          </BlockStack>
+                        </Box>
+                        <Box width="1%">
+                          <Bleed marginInlineStart="400">
+                            <RemoveNowIconBtn
+                              onClick={() => handleDeleteItem(index)}
+                            />
+                          </Bleed>
+                        </Box>
+                      </InlineStack>
+                      {/* Add shapeSize fields when Cut to Shape is selected */}
+                      {manageShapes[currConfigShape.shapeId]?.value === "cut-to-shape" && (
+                        <Box paddingBlockStart="400">
+                          <BlockStack gap="400">
+                            <Grid gap={{ lg: "20px" }}>
+                              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                                <TextField
+                                  label="Shape Size Small (px)"
+                                  type="number"
+                                  value={`${currConfigShape.shapeSize?.small || 0}`}
+                                  onChange={(value) => {
+                                    if (!currConfigShape.shapeSize) {
+                                      currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
+                                    }
+                                    currConfigShape.shapeSize.small = parseFloat(value);
+                                    formData.configShapes[index] = currConfigShape;
+                                    setFormData({ ...formData });
+                                  }}
+                                  autoComplete="off"
+                                />
+                              </Grid.Cell>
+                              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                                <TextField
+                                  label="Shape Size Medium (px)"
+                                  type="number"
+                                  value={`${currConfigShape.shapeSize?.medium || 0}`}
+                                  onChange={(value) => {
+                                    if (!currConfigShape.shapeSize) {
+                                      currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
+                                    }
+                                    currConfigShape.shapeSize.medium = parseFloat(value);
+                                    formData.configShapes[index] = currConfigShape;
+                                    setFormData({ ...formData });
+                                  }}
+                                  autoComplete="off"
+                                />
+                              </Grid.Cell>
+                              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                                <TextField
+                                  label="Shape Size Large (px)"
+                                  type="number"
+                                  value={`${currConfigShape.shapeSize?.large || 0}`}
+                                  onChange={(value) => {
+                                    if (!currConfigShape.shapeSize) {
+                                      currConfigShape.shapeSize = { small: 0, medium: 0, large: 0 };
+                                    }
+                                    currConfigShape.shapeSize.large = parseFloat(value);
+                                    formData.configShapes[index] = currConfigShape;
+                                    setFormData({ ...formData });
+                                  }}
+                                  autoComplete="off"
+                                />
+                              </Grid.Cell>
+                            </Grid>
+                            {formData.error && (
+                              <Box paddingBlockStart="200">
+                                <InlineError message={formData.error} fieldID="shapeSizeError" />
+                              </Box>
+                            )}
+                          </BlockStack>
+                        </Box>
+                      )}
                     </Grid.Cell>
-                  )}
-              </Grid>
-            </Box>
-            <Divider borderWidth="050" />
-            <Box paddingInline="300" paddingBlock="300">
-              <InlineStack align="end" gap="600">
-                <button
-                  className="back-large-btn"
-                  type="button"
-                  onClick={onBack}
-                >
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <RayStartArrowIcon />{" "}
-                      <span style={{ color: "black", fontWeight: "bold" }}>
-                        {" "}
-                        Back
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button>
-                <BiSaveBtn isLoading={isSubmitting} title="Save" />
-              </InlineStack>
-            </Box>
-          </Form>
-        </BoxBackground>
-      </SpacingBackground>
+                  ))}
+                  {Number.isNaN(id) &&
+                    options.length > formData.configShapes?.length && (
+                      <Grid.Cell
+                        columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                      >
+                        <Box width="150px">
+                          <BiAddBtn
+                            title="Add shapes"
+                            handleClick={() => handleAddItem()}
+                          />
+                        </Box>
+                      </Grid.Cell>
+                    )}
+                </Grid>
+              </Box>
+              <Divider borderWidth="050" />
+              <Box paddingInline="300" paddingBlock="300">
+                <InlineStack align="end" gap="600">
+                  <button
+                    className="back-large-btn"
+                    type="button"
+                    // onClick={onBack}
+                    onClick={() => onClick(false)}
+                  >
+                    <Box paddingInline="1000">
+                      <InlineStack gap="300">
+                        <RayStartArrowIcon />{" "}
+                        <span style={{ color: "black", fontWeight: "bold" }}>
+                          {" "}
+                          Back
+                        </span>
+                      </InlineStack>
+                    </Box>
+                  </button>
+                  <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                </InlineStack>
+              </Box>
+            </Form>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

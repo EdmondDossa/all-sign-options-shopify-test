@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
-import { Box, InlineStack, Text } from "@shopify/polaris";
+import { Box, Card, InlineStack, Text } from "@shopify/polaris";
 import NextLtrIcon from "~/components/icons/NextLtrIcon";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import ClipartService from "~/models/Clipart.service";
@@ -21,24 +21,21 @@ export default function ManageSize() {
   
   return (
     <>
-      <BoxBackground>
-        <Box paddingInline="300" paddingBlock="400">
-          <InlineStack>
-            <InlineStack gap="100" align="start">
-              <Link className="link" to="..">
-                <Text as="h2" variant="headingMd" >
-                Clipart groups
-                </Text>
-              </Link>
-              <NextLtrIcon />
-              <Text as="h2" variant="headingMd" tone="subdued">
-                {clipartGroup.title}
+      <Card>
+        <InlineStack>
+          <InlineStack gap="100" align="start">
+            <Link className="link" to="..">
+              <Text as="h2" variant="headingMd" >
+              Clipart groups
               </Text>
-            </InlineStack>
+            </Link>
+            <NextLtrIcon />
+            <Text as="h2" variant="headingMd" tone="subdued">
+              {clipartGroup.title}
+            </Text>
           </InlineStack>
-        </Box>
-     
-      </BoxBackground>
+        </InlineStack>
+      </Card>
       <Outlet context={{clipartGroup}}/>
     </>
   );

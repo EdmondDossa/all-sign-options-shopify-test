@@ -19,30 +19,31 @@ import { ConfigurationType } from "~/types/ConfigurationType";
 
 export default function Materiels(){
   const { configuration } = useOutletContext<{ configuration: ConfigurationType; }>();
-    return (<Page fullWidth>
-        <BoxBackground>
-          <Box paddingInline="300" paddingBlock="600">
-            <InlineStack>
-              <InlineStack gap="100" align="start">
-                <Text as="h2" variant="headingMd">
-                  {configuration.name}
-                </Text>
-                <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                Settings
-                </Text>
-                
-              </InlineStack>
+    return (
+    <Page fullWidth>
+      {/* <BoxBackground>
+        <Box paddingInline="300" paddingBlock="600">
+          <InlineStack>
+            <InlineStack gap="100" align="start">
+              <Text as="h2" variant="headingMd">
+                {configuration.name}
+              </Text>
+              <NextLtrIcon />
+              <Text as="h2" variant="headingMd" tone="subdued">
+              Settings
+              </Text>
+              
             </InlineStack>
-          </Box>
-      </BoxBackground>
-      <SpacingBackground width="100%" height="auto" margin="20px 0 0 0">
+          </InlineStack>
+        </Box>
+      </BoxBackground> */}
+      <SpacingBackground width="100%" height="auto" margin="5px 0 0 0">
         <SettingTabheader />
         <Divider borderWidth="100" />
         <Outlet/>
       </SpacingBackground>
        
-      </Page>)
+    </Page>)
 }
 
 
@@ -50,29 +51,29 @@ export default function Materiels(){
 export const SettingTabheader = () => {
     
   return (
-    <SpacingBackground width="100%" height="auto" border="1px solid #DDDDDD">
+    <div style={{width:"100%", height:"auto", border:"1px solid #DDDDDD", borderRadius: "10px", overflow: "hidden"}}>
         <Box paddingInline="300" background="bg-surface">
-        <InlineStack gap="100" align="center">
-          <TabItems to="general">
-            {" "}
-            <RoundManageHistorySvg /> General
-          </TabItems>
-          <TabItems to="customizer-sign">
-            {" "}
-            <RoundManageHistorySvg /> Customizer sign 
-          </TabItems>
-          <TabItems to="language-text">
-            {" "}
-            <TextImageSvg /> Language & image
-          </TabItems>
-          <TabItems to="theme-color">
-            {" "}
-            <ColorPaletteSvg /> Theme & Color
-          </TabItems>
-        </InlineStack>
-      </Box>
+          <InlineStack gap="100" align="center">
+            <TabItems to="general">
+              {" "}
+              <RoundManageHistorySvg /> General
+            </TabItems>
+            <TabItems to="customizer-sign">
+              {" "}
+              <RoundManageHistorySvg /> Customizer sign 
+            </TabItems>
+            <TabItems to="language-text">
+              {" "}
+              <TextImageSvg /> Language & image
+            </TabItems>
+            <TabItems to="theme-color">
+              {" "}
+              <ColorPaletteSvg /> Theme & Color
+            </TabItems>
+          </InlineStack>
+        </Box>
       
-    </SpacingBackground>
+    </div>
     )
 };
 

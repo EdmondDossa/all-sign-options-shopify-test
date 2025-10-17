@@ -17,6 +17,7 @@ import { FixingMethodType, ShapeType } from "~/types/SettingsType";
 import SettingShapesService from "~/models/SettingShapes.service";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
 import { ConfigurationType } from "~/types/ConfigurationType";
+import MaterialAdvancedIndex from "./app.configuration.$configId.materials_.$mId.advance._index";
   
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -38,9 +39,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return json({materialOptions,manageShapes,manageFixingsMethods });
 };
 
-  
+interface AdvanceMaterialProps {
+  configuration: ConfigurationType;
+  materialComponents: MaterialAdvanceComponentType[]
+  material: MaterialAdvance
+}  
 
 export default function Materiels(){
+// export default function Materiels({ materialComponents , material, configuration}: AdvanceMaterialProps){
+
   let { materialOptions, manageShapes, manageFixingsMethods } = useLoaderData<typeof loader>();
   const { materialComponents , material, configuration} = useOutletContext<{
     materialComponents: MaterialAdvanceComponentType[];
@@ -51,39 +58,41 @@ export default function Materiels(){
   const materialComponent = materialComponents?.find((currMaterialComponent: any,index:number) => index === parseInt(params.cId ?? ""));
 
   return (
-    <>
-        <BoxBackground>
-          <Box paddingInline="300" paddingBlock="600">
-            <InlineStack align="start">
-              <InlineStack gap="100" align="start" blockAlign="start">
-                <Text as="h2" variant="headingMd">
-                  {configuration?.name}
-                </Text>
-                <NextLtrIcon />
-                <Link className="link" to="../../../materials">
-            <Text as="h2" variant="headingMd">
-              Materials
+    <div style={{width: "100%"}}>
+      <BoxBackground>
+        <Box paddingInline="300" paddingBlock="600">
+          <InlineStack align="start">
+            <InlineStack gap="100" align="start" blockAlign="start">
+              <Text as="h2" variant="headingMd">
+                {configuration?.name}
+              </Text>
+              <NextLtrIcon />
+              <Link className="link" to="../../../materials">
+          <Text as="h2" variant="headingMd">
+            Materialsz
+          </Text>
+          </Link>
+            <NextLtrIcon />
+            <Link className="link" to="..">
+              <Text as="h2" variant="headingMd" >
+                {material?.name} (Advances)
             </Text>
-            </Link>
-              <NextLtrIcon />
-              <Link className="link" to="..">
-                <Text as="h2" variant="headingMd" >
-                  {material?.name} (Advance)
-              </Text>
-            </Link>
-              <NextLtrIcon />
-                <Text as="h2" variant="headingMd" tone="subdued">
-                 {materialComponent?.name}
-              </Text>
-              
-              </InlineStack>
+          </Link>
+            <NextLtrIcon />
+              <Text as="h2" variant="headingMd" tone="subdued">
+                {materialComponent?.name}
+            </Text>
+            
             </InlineStack>
-          </Box>
-          <Divider borderWidth="100" />
-        </BoxBackground>
+          </InlineStack>
+        </Box>
         <Divider borderWidth="100" />
-        <Outlet context={{materialOptions,manageShapes,manageFixingsMethods }}/>
+      </BoxBackground>
+      <Divider borderWidth="100" />
+      
+      <Outlet context={{materialOptions,manageShapes,manageFixingsMethods }}/>
+      {/* <MaterialAdvancedIndex materialComponents={materialComponents} material={material} configuration={configuration}/> */}
 
-      </>
+    </div>
       )
 }

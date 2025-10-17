@@ -2,6 +2,7 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import {
   Box,
+  Card,
   InlineStack,
   Page,
   Text,
@@ -22,15 +23,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function ManageSize() {
   return (<Page fullWidth>
-    <BoxBackground>
-      <Box paddingInline="300" paddingBlock="600">
+    <div>
+      <Card>
           <InlineStack gap="100" align="start">
             <Text as="h2" variant="headingMd">
               Manage Font
             </Text>
         </InlineStack>
-      </Box>
-    </BoxBackground>
+      </Card>
+    </div>
     <Outlet/>
   </Page>);
 }
