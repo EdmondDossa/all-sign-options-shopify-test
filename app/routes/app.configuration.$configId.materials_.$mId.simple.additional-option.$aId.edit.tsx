@@ -1,9 +1,10 @@
 import { parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
-import { Form, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSearchParams, useSubmit } from "@remix-run/react";
+import { Form, redirect, useActionData, useFetcher, useNavigate, useNavigation, useOutletContext, useParams, useSearchParams, useSubmit } from "@remix-run/react";
 import {
   BlockStack,
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -27,21 +28,36 @@ import { getError } from "~/utils/error-getting";
 import { flashMessage } from "~/utils/message-flash";
 import { booleanTransform, jsonTransform, stringTransform } from "~/utils/transfomerZod";
 
-export default function MaterialAdditionalOptionCreate() {
+
+interface MaterialAddOptionsProps {
+  additionalOptionItems: ConfigAdditionalOptionItem[];
+  configColors: ConfigColor[], 
+  materialId: number | undefined,
+  componentId: number,
+  id: number,
+  edit: boolean,
+  refreshOptionItems: (data: ConfigAdditionalOptionItem[]) => void,
+  onClick: (id: boolean) => void
+  // on
+}
+export default function MaterialAdditionalOptionCreate({ additionalOptionItems, configColors, materialId, componentId, id, edit, onClick, refreshOptionItems }: MaterialAddOptionsProps) {
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { additionalOptionItems, configColors } = useOutletContext<{
-    additionalOptionItems: ConfigAdditionalOptionItem[];
-    configColors: ConfigColor[]
-  }>();
+  const fetcher = useFetcher<any>();
+  const params = useParams();
+  const configId = params.configId;
+  // const { additionalOptionItems, configColors } = useOutletContext<{
+  //   additionalOptionItems: ConfigAdditionalOptionItem[];
+  //   configColors: ConfigColor[]
+  // }>();
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
   const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get("id") || "");
-  console.log("action data :", actionData);
+  // const id = parseInt(searchParams.get("id") || "");
+  // console.log("action data :", actionData);
   let additionalOptionItem = additionalOptionItems?.find((curr, index) => index == id);
   const [formData, setFormData] = useState<ConfigAdditionalOptionItem>(
-    additionalOptionItem?
+    edit ?
     additionalOptionItem as ConfigAdditionalOptionItem
       : {
         title: "",
@@ -57,7 +73,7 @@ export default function MaterialAdditionalOptionCreate() {
   );
 
   let isLoading = navigation.state == "loading";
-  let isSubmitting = navigation.state == "submitting";
+  let isSubmitting = fetcher.state == "submitting";
   const colors = configColors ? configColors.map((configColor,index) => ({ label: configColor.name||'', value: `${index}` })) : [];
 
 
@@ -68,7 +84,7 @@ export default function MaterialAdditionalOptionCreate() {
   const handleIcon = (value: string) =>
     setFormData({ ...formData, icon: value });
 
-    const handlePopImg = (value: string) =>
+  const handlePopImg = (value: string) =>
       setFormData({ ...formData, popImg: value });
   const handleAdditionalPrice= (value: string, onBlur = false) =>
     setFormData({ ...formData, additionalPrice: onBlur ?  parseFloat(`${formData.additionalPrice}`):value });
@@ -77,10 +93,33 @@ export default function MaterialAdditionalOptionCreate() {
   const handleEnablePricingBySurface= (value: string) =>
     setFormData({ ...formData, enablePricingBySurface: value? true : false });
 
+  console.log(componentId, "compo ID")
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit({ ...formData, excludeColors: JSON.stringify(formData.excludeColors) }, { method: "POST" });
+    // submit({ ...formData, excludeColors: JSON.stringify(formData.excludeColors) }, { method: "POST" });
+
+    const requestBody: any = {
+      operation: edit ? "update" : "add",
+      configId: configId,
+      materialId: materialId,
+      additionalId: componentId,
+      optionItemData: formData,
+    }
+    if(edit){
+      requestBody.optionItemId = id
+    }
+
+    fetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/simple-additionnalOptionItems-manager",
+      encType: "application/json",
+    })
+
+    if(!isSubmitting){
+      console.log(fetcher)
+      onClick(false)
+    }
   };
 
   const navigate = useNavigate();
@@ -89,9 +128,12 @@ export default function MaterialAdditionalOptionCreate() {
   };
 
   return (
-    <SpacingBackground width="100%" height="auto">
-      <BoxBackground>
-        <Box padding="300">
+    <div style={{
+      width: '100%',
+      height: 'auto'
+    }}>
+      <Card>
+        <Box paddingInline="100" paddingBlockEnd="300">
           <Text as="h2" variant="headingMd">
           {Number.isNaN(id)?'Add new option ':'Edit option'}
           
@@ -100,97 +142,97 @@ export default function MaterialAdditionalOptionCreate() {
         <Divider borderWidth="050" />
 
         <Form onSubmit={handleSubmit} method="POST">
-        <Box paddingInline="300" paddingBlock="1000">
-              <Grid gap={{lg:"30px"}}>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                <TextField
-                label="Title"
-                  value={`${formData.title}`}
-                  autoComplete="off"
-                onChange={handleTitle}
-                error={getError(actionData, "title")}
-              />
-                </Grid.Cell>
-             
+          <Box paddingInline="300" paddingBlock="300">
+            <Grid gap={{lg:"30px"}}>
               <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
               <TextField
-                label="Description"
-                value={`${formData.description}`}
+              label="Title"
+                value={`${formData.title}`}
                 autoComplete="off"
-              onChange={handleDescription}
-              error={getError(actionData, "description")}
-              />
-                </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <FileInput error={getError(actionData, "icon")} title="Upload icon"
-                    path={formData.icon} handlePath={handleIcon} />
+              onChange={handleTitle}
+              error={getError(actionData, "title")}
+            />
               </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <FileInput error={getError(actionData, "popImg")} title="Upload Image" buttonTitle="upload image"
-                    path={formData.popImg} handlePath={handlePopImg} />
+            
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <TextField
+              label="Description"
+              value={`${formData.description}`}
+              autoComplete="off"
+            onChange={handleDescription}
+            error={getError(actionData, "description")}
+            />
               </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
-                    <MultiCombobox
-                      helpText="exclude the colors of this option"
-                      label="Exclude colors"
-                      placeholder="Search colors"
-                      selectedOptions={formData.excludeColors.map((curr) => `${curr}`)}
-                      data={colors}
-                      setSelectedOptions={(value:any) => {
-                        formData.excludeColors = value.map((curr:any) => parseFloat(curr));
-                        setFormData({ ...formData });
-                      }}
-                    ></MultiCombobox>
-                </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <FileInput error={getError(actionData, "icon")} title="Upload icon"
+                  path={formData.icon} handlePath={handleIcon} />
+            </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <FileInput error={getError(actionData, "popImg")} title="Upload Image" buttonTitle="upload image"
+                  path={formData.popImg} handlePath={handlePopImg} />
+            </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <MultiCombobox
+                    helpText="exclude the colors of this option"
+                    label="Exclude colors"
+                    placeholder="Search colors"
+                    selectedOptions={formData.excludeColors.map((curr) => `${curr}`)}
+                    data={colors}
+                    setSelectedOptions={(value:any) => {
+                      formData.excludeColors = value.map((curr:any) => parseFloat(curr));
+                      setFormData({ ...formData });
+                    }}
+                  ></MultiCombobox>
+              </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+            <TextField
+                label="Additional  price"
+                type="number"
+              value={`${formData.additionalPrice}`}
+              autoComplete="off"
+            onChange={value=>handleAdditionalPrice(value)}
+            onBlur={value=>handleAdditionalPrice("", true)}
+            error={getError(actionData, "additionalPrice")}
+            />
+            </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
               <TextField
-                  label="Additional  price"
+                  label="Surface for  this price"
                   type="number"
-                value={`${formData.additionalPrice}`}
-                autoComplete="off"
-              onChange={value=>handleAdditionalPrice(value)}
-              onBlur={value=>handleAdditionalPrice("", true)}
-              error={getError(actionData, "additionalPrice")}
+                  value={`${formData.surface}`}
+                  autoComplete="off"
+                  onChange={value=>handleSurface(value)}
+                  onBlur={value=>handleSurface(value+"", true)}
+                  error={getError(actionData, "surface")}
               />
-              </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                <TextField
-                    label="Surface for  this price"
-                    type="number"
-                    value={`${formData.surface}`}
-                    autoComplete="off"
-                    onChange={value=>handleSurface(value)}
-                    onBlur={value=>handleSurface(value+"", true)}
-                    error={getError(actionData, "surface")}
-                />
-              </Grid.Cell>
-              <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-               <BlockStack gap="200">
-                  <Text as="span">
-                    Enable Pricing By Surface
-                  </Text>
-                  <InlineStack wrap={false} gap="100" blockAlign="center">
-                    <Text as="span"> No</Text>
-                    <ReactSwitchCustom
-                      checked={formData.enablePricingBySurface? true : false}
-                      setChecked={(value:any) => {
-                        formData.enablePricingBySurface = value;
-                        setFormData({ ...formData });
-                      }}
-                    />
-                    <Text as="span"> Yes</Text>
-                  </InlineStack>
-                </BlockStack>
-              </Grid.Cell>
+            </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+              <BlockStack gap="200">
+                <Text as="span">
+                  Enable Pricing By Surface
+                </Text>
+                <InlineStack wrap={false} gap="100" blockAlign="center">
+                  <Text as="span"> No</Text>
+                  <ReactSwitchCustom
+                    checked={formData.enablePricingBySurface? true : false}
+                    setChecked={(value:any) => {
+                      formData.enablePricingBySurface = value;
+                      setFormData({ ...formData });
+                    }}
+                  />
+                  <Text as="span"> Yes</Text>
+                </InlineStack>
+              </BlockStack>
+            </Grid.Cell>
 
 
-              </Grid>
-            </Box>
+            </Grid>
+          </Box>
         
           <Divider borderWidth="050" />
           <Box paddingInline="300" paddingBlock="300">
             <InlineStack align="end" gap="600">
-              <button className="back-large-btn" type="button" onClick={onBack}>
+              <button className="back-large-btn" type="button" onClick={()=> onClick(false)}>
                 <Box paddingInline="1000">
                   <InlineStack gap="300">
                     <RayStartArrowIcon />{" "}
@@ -205,8 +247,8 @@ export default function MaterialAdditionalOptionCreate() {
             </InlineStack>
           </Box>
         </Form>
-      </BoxBackground>
-    </SpacingBackground>
+      </Card>
+    </div>
   );
 }
 

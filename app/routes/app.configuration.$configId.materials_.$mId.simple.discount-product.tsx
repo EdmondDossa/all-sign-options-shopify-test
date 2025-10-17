@@ -2,21 +2,24 @@ import {
   Bleed,
   BlockStack,
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   redirect,
   useActionData,
+  useFetcher,
   useLoaderData,
   useNavigate,
   useNavigation,
   useOutletContext,
+  useParams,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -94,19 +97,26 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       );
 };
 
-export default function MaterialDiscount() {
+interface MaterialDisountProps {
+  discounts: Array<object>;
+  materialId: number | undefined;
+}
+export default function MaterialDiscount({discounts, materialId}: MaterialDisountProps) {
   const submit = useSubmit();
-  const { discounts } = useLoaderData<typeof loader>();
+  // const { discounts } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const navigate = useNavigate();
+  const params = useParams();
+  const discountFetcher = useFetcher() as any;
+
   
-  const isSubmitting = navigation.state === "submitting";
+  const isSubmitting = discountFetcher.state === "submitting";
 
   // Initialisation de React Hook Form
-  const { control, handleSubmit, getValues,formState: { errors } } = useForm<FormData>({
+  const { control, handleSubmit, getValues, reset, formState: { errors } } = useForm<FormData>({
     defaultValues: {
-      lots:discounts?.length? discounts :[{ quantity: 0, discountPercentage: 0 }]
+      lots:discounts?.length ? discounts : [{ quantity: 0, discountPercentage: 0 }]
     }
   });
 
@@ -140,8 +150,32 @@ export default function MaterialDiscount() {
   };
 
   const onSubmit = (data: FormData) => {
-    submit({ lots: JSON.stringify(data.lots) }, { method: "POST" });
+
+    const configId = parseInt(params.configId ?? "");
+    const finalMaterialId = materialId ?? 0;
+
+    const requestBody = {
+      operation: 'update',
+      configId: configId,
+      materialId: finalMaterialId,
+      discounts: data.lots
+    }
+
+    discountFetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/discount-manager",
+      encType: "application/json",
+    });
+    
+    console.log(discountFetcher, "featcher")
+
   };
+
+  useEffect(() => {
+    reset({
+      lots: discounts?.length ? discounts : [{ quantity: 0, discountPercentage: 0 }],
+    });
+  }, [discounts, materialId, reset]);
 
   const onBack = () => {
     navigate("..");
@@ -149,8 +183,8 @@ export default function MaterialDiscount() {
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="16px 0px">
-        <BoxBackground>
+      <div style={{width:"100%" ,height:"auto" ,margin:"0px 0px "}}>
+        <Card>
           <Form onSubmit={handleSubmit(onSubmit)} method="POST">
             <Box paddingInline="300" paddingBlock="1000">
               <Grid gap={{ lg: "30px" }}>
@@ -240,8 +274,8 @@ export default function MaterialDiscount() {
               </InlineStack>
             </Box>
           </Form>
-        </BoxBackground>
-      </SpacingBackground>
+        </Card>
+      </div>
     </div>
   );
 }

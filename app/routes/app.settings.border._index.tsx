@@ -1,6 +1,7 @@
 import {
   Box,
   ButtonGroup,
+  Card,
   Divider,
   IndexTable,
   InlineStack,
@@ -55,29 +56,31 @@ export default function MaterialFixingMethod() {
     </IndexTable.Row>
   ));
   return (
-    <SpacingBackground margin="10px 0px ">
-      <BoxBackground>
-        <Box padding="400">
-          <InlineStack gap="100" align="start">
-            <Text as="h6" variant="bodyMd" fontWeight="bold">
-              List of Border
-            </Text>
-          </InlineStack>
-        </Box>
-        <Divider borderWidth="050" />
-      </BoxBackground>
-      <IndexTable
-        resourceName={resourceName}
-        itemCount={borders ? borders.length : 0}
-        headings={[
-          { title: "Title" },
-          { title: "Icon", alignment: "center" },
-          { title: "Action", alignment: "center" },
-        ]}
-        selectable={false}
-      >
-        {rowMarkup}
-      </IndexTable>
-    </SpacingBackground>
+    <div style={{margin:"10px 0px"}}>
+      <Card>
+        <BoxBackground>
+          <Box padding="400">
+            <InlineStack gap="100" align="start">
+              <Text as="h6" variant="bodyMd" fontWeight="bold">
+                List of Border
+              </Text>
+            </InlineStack>
+          </Box>
+          <Divider borderWidth="050" />
+        </BoxBackground>
+        <IndexTable
+          resourceName={resourceName}
+          itemCount={borders ? borders.length : 0}
+          headings={[
+            { title: "Title" },
+            { title: "Icon", alignment: "center" },
+            { title: "Action", alignment: "center" },
+          ]}
+          selectable={false}
+        >
+          {rowMarkup}
+        </IndexTable>
+      </Card>
+    </div>
   );
 }

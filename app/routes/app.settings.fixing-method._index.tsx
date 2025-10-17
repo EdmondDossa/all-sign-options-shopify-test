@@ -1,6 +1,7 @@
 import {
   Box,
   ButtonGroup,
+  Card,
   Divider,
   IndexTable,
   InlineStack,
@@ -61,30 +62,32 @@ export default function SettingFixingMethod() {
     ),
   );
   return (
-    <SpacingBackground margin="10px 0px ">
-      <BoxBackground>
-        <Box padding="400">
-          <InlineStack gap="100" align="start">
-            <Text as="h6" variant="bodyMd" fontWeight="bold">
-              List of fixing method
-            </Text>
-          </InlineStack>
-        </Box>
-        <Divider borderWidth="050" />
-      </BoxBackground>
-      <IndexTable
-        resourceName={resourceName}
-        itemCount={fixingMethods ? fixingMethods.length : 0}
-        headings={[
-          { title: "Title" },
-          { title: "Description" },
-          { title: "Icom", alignment: "center" },
-          { title: "Action", alignment: "center" },
-        ]}
-        selectable={false}
-      >
-        {rowMarkup}
-      </IndexTable>
-    </SpacingBackground>
+    <div style={{margin:"10px 0px"}}>
+      <Card>
+        <BoxBackground>
+          <Box padding="300">
+            <InlineStack gap="100" align="start">
+              <Text as="h6" variant="bodyMd" fontWeight="bold">
+                List of fixing method
+              </Text>
+            </InlineStack>
+          </Box>
+          <Divider borderWidth="050" />
+        </BoxBackground>
+        <IndexTable
+          resourceName={resourceName}
+          itemCount={fixingMethods ? fixingMethods.length : 0}
+          headings={[
+            { title: "Title" },
+            { title: "Description" },
+            { title: "Icom", alignment: "center" },
+            { title: "Action", alignment: "center" },
+          ]}
+          selectable={false}
+        >
+          {rowMarkup}
+        </IndexTable>
+      </Card>
+    </div>
   );
 }

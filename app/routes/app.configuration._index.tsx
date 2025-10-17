@@ -1,12 +1,18 @@
 import {
+  ActionList,
+  Badge,
   BlockStack,
   Box,
+  Button,
   ButtonGroup,
+  Card,
   Divider,
+  Icon,
   IndexTable,
   InlineGrid,
   InlineStack,
   Page,
+  Popover,
   Select,
   Text,
 } from "@shopify/polaris";
@@ -37,6 +43,8 @@ import { fileUrl } from "~/utils/fileUrl";
 import { DuplicateIconBtn } from "~/components/buttons/DuplicateIconBtn";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { PRICING_PLANS } from "~/utils/pricing";
+import { DeleteIcon, DuplicateIcon, EditIcon, MenuHorizontalIcon, ViewIcon } from "@shopify/polaris-icons";
+import ManageFontIcon from "~/components/icons/ManageFontIcon";
 // import {LATEST_API_VERSION} from "@shopify/shopify-app-remix/server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -105,6 +113,16 @@ export default function Configuration() {
   const [configTitle, setConfigTitle] = useState<string>("");
 
   const navigate = useNavigate();
+
+  const [active, setActive] = useState(false);
+  const [activePopoverId, setActivePopoverId] = useState<string | null>(null);
+
+  const togglePopover = useCallback(() => setActive((active) => !active), []);
+
+  const handleAction = (action: string, id: string) => {
+    console.log(`Action "${action}" sur l'élément ID: ${id}`);
+    setActivePopoverId(null); // ferme le popover
+  };
   const onHandleConfigurationCreate = () => {
     navigate("/app/configuration/create");
   };
@@ -138,120 +156,132 @@ export default function Configuration() {
   };
 
   const rowMarkup = configurations.map(
-    ({ id, name, description, icon, popupImg }, index) => (
-      <IndexTable.Row id={`${id}`} key={id} position={index}>
-        <IndexTable.Cell>
-          <InlineStack blockAlign="center" gap="300" wrap={false}>
-            <BorderCircleText onClick={() => handleMaterials(id)} text={name} />{" "}
+    ({ id, name, description, icon, popupImg, materialType }, index) => {
+      const isActive = activePopoverId === id;
+      let materialTyp = 'simple'
+      console.log(materialType, "material type")
+  
+      return (
+        <IndexTable.Row id={`${id}`} key={id} position={index} onClick={() => handleMaterials(id)}>
+          <IndexTable.Cell>
+            <InlineStack blockAlign="center" gap="300" wrap={false}>
+              <BorderCircleText onClick={() => handleMaterials(id)} text={name} />
+              <span className="btn-span" onClick={() => handleMaterials(id)}>
+                {truncateText(name)}
+              </span>
+            </InlineStack>
+          </IndexTable.Cell>
+  
+          <IndexTable.Cell>
             <span className="btn-span" onClick={() => handleMaterials(id)}>
-            {truncateText(name)}
+              {truncateText(description)}
             </span>
-          </InlineStack>
-        </IndexTable.Cell>
-        <IndexTable.Cell>
+          </IndexTable.Cell>
+  
+          <IndexTable.Cell className="td-center">
+            {icon && (
+              <img
+                style={{ height: "30px" }}
+                src={fileUrl(icon)}
+                alt={`product thumbnail ${name}`}
+              />
+            )}
+          </IndexTable.Cell>
 
-            <span className="btn-span" onClick={() => handleMaterials(id)}>
-            {truncateText(description)}
-            </span>
-          
-        </IndexTable.Cell>
-        <IndexTable.Cell className="td-center">
-        { icon && <img
-            style={{ height: "30px" }}
-            src={fileUrl(icon)}
-            alt={"product thumbnail" + name}
-          />}
-        </IndexTable.Cell>
-
-        <IndexTable.Cell className="td-center">
-          <ButtonGroup fullWidth={true} noWrap gap="loose">
-            <ViewIconBtn
-              onClick={() => {
-                handlePreviews(id);
-              }}
-            />
-            <ManageBtn title="Materials" handleClick={() => handleMaterials(id)} />
-            <EditIconBtn
-              size="micro"
-              onClick={() => {
-                handleUpdate(id);
-              }}
-            />
-            <DuplicateIconBtn
-              handeleDuplicate={() => {
-                handeleDuplicate(id);
-              }}
-              handleTitle={setConfigTitle}
-              title={configTitle}
-              onModalOpen={() => {
-                setConfigTitle(name);
-              }}
-            />
-            <DeleteIconBtn
-              size="micro"
-              onClick={() => {
-                handeleDelete(id);
-              }}
-            />
-          </ButtonGroup>
-        </IndexTable.Cell>
-      </IndexTable.Row>
-    ),
+          <IndexTable.Cell className="td-center">
+            {(materialType === null || materialType === undefined) && 
+              <Badge>
+                none
+              </Badge>
+            }
+            {(materialType != null || materialType != undefined) &&
+              <Badge tone={
+                materialType === 'simple' ? 'info' : materialType === 'advance' ? 'success' : 'attention'
+              }>
+                {materialType}
+              </Badge>
+            }
+          </IndexTable.Cell>
+  
+          <IndexTable.Cell className="td-center">
+            <div onClick={(e) => { e.stopPropagation() }}>
+              <Popover
+                active={isActive}
+                activator={
+                  <Button
+                    onClick={() =>
+                      setActivePopoverId(isActive ? null : id)
+                    }
+                    icon={<Icon source={MenuHorizontalIcon} />}
+                  />
+                }
+                onClose={() => setActivePopoverId(null)}
+                preferredAlignment="right"
+              >
+                <ActionList
+                  items={[
+                    { content: 'Preview', icon: ViewIcon, onAction: () => handlePreviews(id) },
+                    { content: 'Edit', icon: EditIcon, onAction: () => handleUpdate(id) },
+                    { content: 'Duplicate', icon: DuplicateIcon, onAction: () => handeleDuplicate(id) },
+                    { content: 'Delete', icon: DeleteIcon, onAction: () => handeleDelete(id), destructive: true, },
+                  ]}
+                />
+              </Popover>
+            </div>
+          </IndexTable.Cell>
+        </IndexTable.Row>
+      );
+    }
   );
   return (
     <Page fullWidth>
-       <BoxBackground>
-      <Box paddingInline="300" paddingBlock="600">
-          <InlineStack gap="100" align="start">
-            <Text as="h2" variant="headingMd">
-              Configurations list
-            </Text>
-        </InlineStack>
-      </Box>
-    </BoxBackground>
-      <SpacingBackground  margin="16px 0px ">
-        <BoxBackground>
-          <Box padding="300">
-            <BlockStack gap="300">
-              
+      <Card>
+        <InlineStack gap="100" align="space-between" blockAlign='center'>
+          <Text as="h2" variant="headingMd">
+            Configurations list
+          </Text>
 
-     { !(plan == PRICING_PLANS.STARTER && configurations?.length>=PRICING_PLANS.STARTER_RULES.configurations)      &&   <InlineStack align="end">
-                
-                <button
-                  className="primary-btn"
-                  type="button"
-                  onClick={onHandleConfigurationCreate}
-                >
-                  <Box paddingInline="300">
-                    <InlineStack gap="300">
-                      <PlusIcon />
-                      <span className="primary-btn-text">
-                        {" "}
-                        Add new configuration
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button>
-              </InlineStack>}
-            </BlockStack>
-          </Box>
-        </BoxBackground>
-        <IndexTable
-          resourceName={resourceName}
-          itemCount={configurations.length}
-          selectable={false}
-          headings={[
-            { title: "Name configuration" },
-            { title: "Desciption" },
-            { title: "Icon", alignment: "center" },
-            { title: "Action", alignment: "center" },
-          ]}
-        >
-          {rowMarkup}
-        </IndexTable>
-        <Divider borderWidth="050" />
-        
-      </SpacingBackground>
+          { !(plan == PRICING_PLANS.STARTER && configurations?.length>=PRICING_PLANS.STARTER_RULES.configurations)  &&
+            <InlineStack align="end">
+              <button
+                className="primary-btn"
+                type="button"
+                onClick={onHandleConfigurationCreate}
+              >
+                <Box paddingInline="200">
+                  <InlineStack gap="200">
+                    <PlusIcon />
+                    <span className="primary-btn-text">
+                      {" "}
+                      Add new configuration
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>
+            </InlineStack>
+          }
+        </InlineStack>
+      </Card>
+      
+      <div  style={{margin:"10px 0px "}}>
+        <Card>
+          <IndexTable
+            resourceName={resourceName}
+            itemCount={configurations.length}
+            selectable={false}
+            headings={[
+              { title: "Name configuration" },
+              { title: "Desciption" },
+              { title: "Icon", alignment: "center" },
+              { title: "Material Type", alignment: "center" },
+              { title: "Action", alignment: "center" },
+            ]}
+          >
+            {rowMarkup}
+          </IndexTable>
+          <Divider borderWidth="050" />
+        </Card>
+      </div>
     </Page>
   );
 }

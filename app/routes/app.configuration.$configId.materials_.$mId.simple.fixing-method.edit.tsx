@@ -2,6 +2,7 @@ import {
   Bleed,
   BlockStack,
   Box,
+  Card,
   Divider,
   Grid,
   InlineStack,
@@ -14,9 +15,11 @@ import {
   Form,
   redirect,
   useActionData,
+  useFetcher,
   useNavigate,
   useNavigation,
   useOutletContext,
+  useParams,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -38,19 +41,32 @@ import { BiAddBtn } from "~/components/buttons/BiAddBtn";
 import { jsonTransform } from "~/utils/transfomerZod";
 import { MultiCombobox } from "~/components/inputs/MultiCombobox";
 
-export default function MaterialFixingMethod() {
+
+interface MaterialFixingMethodProps {
+  manageFixingMethods: FixingMethodType[];
+  fixingMethods: ConfigFixingMethod[];
+  configSizes: ConfigSize[];
+  manageShapes: ShapeType[];
+  id: number;
+  onClick: (id: boolean) => void;
+  edit: boolean;
+  materialId: number | undefined
+}
+export default function MaterialFixingMethodEdit({ manageFixingMethods, fixingMethods, configSizes, manageShapes, id, onClick, edit, materialId }: MaterialFixingMethodProps) {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  let { manageFixingMethods, fixingMethods, configSizes, manageShapes } =
-    useOutletContext<{
-      manageFixingMethods: FixingMethodType[];
-      fixingMethods: ConfigFixingMethod[];
-      configSizes: ConfigSize[];
-      manageShapes: ShapeType[];
-    }>();
+  const params = useParams();
+  const dataFetcher = useFetcher() as any;
+  // let { manageFixingMethods, fixingMethods, configSizes, manageShapes } =
+  //   useOutletContext<{
+  //     manageFixingMethods: FixingMethodType[];
+  //     fixingMethods: ConfigFixingMethod[];
+  //     configSizes: ConfigSize[];
+  //     manageShapes: ShapeType[];
+  //   }>();
   const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get("id") || "");
+  // const id = parseInt(searchParams.get("id") || "");
   let configFixingMethod = fixingMethods?.find((curr, index) => index === id);
 
   const options = manageFixingMethods
@@ -72,7 +88,7 @@ export default function MaterialFixingMethod() {
   const [formData, setFormData] = useState<{
     configFixingMethods: ConfigFixingMethod[];
   }>(
-    configFixingMethod
+    edit && configFixingMethod
       ? {
           configFixingMethods: [configFixingMethod as ConfigFixingMethod],
         }
@@ -120,16 +136,40 @@ export default function MaterialFixingMethod() {
     }
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    submit(
-      { configFixingMethods: JSON.stringify(formData.configFixingMethods) },
-      { method: "POST" },
-    );
+    setIsSubmitting(true)
+
+    const configId = parseInt(params.configId ?? "");
+    const finalMaterialId = materialId ?? 0;
+
+    const requestBody = edit ? {
+      operation: 'update',
+      configId: configId,
+      materialId: finalMaterialId,
+      fixingMethodData: formData.configFixingMethods,
+      fixingMethodId: id
+    } : {
+      operation: 'add',
+      configId: configId,
+      materialId: finalMaterialId,
+      fixingMethodData: formData.configFixingMethods,
+    }
+
+    dataFetcher.submit(requestBody, {
+      method: "POST",
+      action: "/api/fixing-method-manager",
+      encType: "application/json",
+    });
+
+    setIsSubmitting(false)
+    onClick(false)
   };
 
   let isLoading = navigation.state == "loading";
-  let isSubmitting = navigation.state == "submitting";
+  // let isSubmitting = navigation.state == "submitting";
   const sizes = configSizes
     ? configSizes.map((configSize, index) => ({
         label: configSize.label || "",
@@ -150,177 +190,180 @@ export default function MaterialFixingMethod() {
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-        <BoxBackground>
-          <Form onSubmit={handleSubmit} method="POST">
-            <Box paddingInline="300" paddingBlock="1000">
-              <Grid gap={{ lg: "30px" }}>
-                {formData.configFixingMethods.map((fixingMethod, index) => (
-                  <>
-                    <Grid.Cell
-                      columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
-                    >
-                      <Divider borderWidth="100" />
-                      <Divider borderWidth="100" />
-                    </Grid.Cell>
-                    <Grid.Cell
-                      columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
-                    >
-                      <BlockStack>
-                        <Bleed marginBlockEnd="400">
-                          <InlineStack wrap={false} align="end" gap="200">
-                            <RemoveNowIconBtn
-                              onClick={() => handleDeleteItem(index)}
-                            />
-                          </InlineStack>
-                        </Bleed>
-                        <Box width="100%">
-                          <Grid>
-                            <Grid.Cell
-                              columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-                            >
-                              <Select
-                                label="Select fixing method"
-                                options={options}
-                                value={`${fixingMethod.fixingMethodId}`}
-                                onChange={(value) => {
-                                  fixingMethod.fixingMethodId =
-                                    parseFloat(value);
-                                  formData.configFixingMethods[index] =
-                                    fixingMethod;
-                                  setFormData({ ...formData });
-                                }}
-                                error={getError(
-                                  actionData,
-                                  `manageFixingMethods.${index}.fixingMethodId`,
-                                )}
+      <div style={{width:"100%", height:"auto", margin:"0px 0px "}}>
+        <Card>
+          <div>
+            <Form onSubmit={handleSubmit} method="POST">
+              <Box paddingInline="300" paddingBlock="1000">
+                <Grid gap={{ lg: "30px" }}>
+                  {formData.configFixingMethods.map((fixingMethod, index) => (
+                    <>
+                      <Grid.Cell
+                        columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                      >
+                        <Divider borderWidth="100" />
+                        <Divider borderWidth="100" />
+                      </Grid.Cell>
+                      <Grid.Cell
+                        columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                      >
+                        <BlockStack>
+                          <Bleed marginBlockEnd="400">
+                            <InlineStack wrap={false} align="end" gap="200">
+                              <RemoveNowIconBtn
+                                onClick={() => handleDeleteItem(index)}
                               />
-                            </Grid.Cell>
-                            <Grid.Cell
-                              columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-                            >
-                              <TextField
-                                label="Additional price"
-                                type="number"
-                                value={`${fixingMethod.additionalPrice}`}
-                                onChange={(value) => {
-                                  fixingMethod.additionalPrice = value;
-                                  formData.configFixingMethods[index] =
-                                    fixingMethod;
-                                  setFormData({ ...formData });
-                                }}
-                                onBlur={(value) => {
-                                  formData.configFixingMethods[index].additionalPrice =
-                                   parseFloat(`${fixingMethod.additionalPrice||"0"}`)
-                                  setFormData({ ...formData });
-                                }}
-                                autoComplete="off"
-                                error={getError(
-                                  actionData,
-                                  `manageFixingMethods.${index}.additionalPrice`,
-                                )}
-                              />
-                            </Grid.Cell>
-                            <Grid.Cell
-                              columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}
-                            >
-                              <BlockStack gap="300">
-                                <Text as="strong" variant="headingMd">
-                                  Exclude size
-                                </Text>
-                                <MultiCombobox
-                                  labelHidden={true}
-                                  helpText="exclude the sizes of this border"
-                                  label="Exclude size"
-                                  placeholder="Select exclude size"
-                                  selectedOptions={fixingMethod.excludeSizes.map(
-                                    (curr) => `${curr}`,
-                                  )}
-                                  data={sizes}
-                                  setSelectedOptions={(value: any) => {
-                                    fixingMethod.excludeSizes = value.map(
-                                      (curr: any) => parseFloat(curr),
-                                    );
+                            </InlineStack>
+                          </Bleed>
+                          <Box width="100%">
+                            <Grid>
+                              <Grid.Cell
+                                columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                              >
+                                <Select
+                                  label="Select fixing method"
+                                  options={options}
+                                  value={`${fixingMethod.fixingMethodId}`}
+                                  onChange={(value) => {
+                                    fixingMethod.fixingMethodId =
+                                      parseFloat(value);
                                     formData.configFixingMethods[index] =
                                       fixingMethod;
                                     setFormData({ ...formData });
                                   }}
-                                ></MultiCombobox>
-                              </BlockStack>
-                            </Grid.Cell>
-                            <Grid.Cell
-                              columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}
-                            >
-                              <BlockStack gap="300">
-                                <Text as="strong" variant="headingMd">
-                                  Exclude shapes
-                                </Text>
-                                <MultiCombobox
-                                  labelHidden={true}
-                                  helpText="exclude the shapes of this border"
-                                  label="Exclude shapes"
-                                  placeholder="Select excluded shapes"
-                                  selectedOptions={fixingMethod.excludeShapes.map(
-                                    (curr) => `${curr}`,
+                                  error={getError(
+                                    actionData,
+                                    `manageFixingMethods.${index}.fixingMethodId`,
                                   )}
-                                  data={shapes}
-                                  setSelectedOptions={(value: any) => {
-                                    fixingMethod.excludeShapes = value.map(
-                                      (curr: any) => parseFloat(curr),
-                                    );
+                                />
+                              </Grid.Cell>
+                              <Grid.Cell
+                                columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                              >
+                                <TextField
+                                  label="Additional price"
+                                  type="number"
+                                  value={`${fixingMethod.additionalPrice}`}
+                                  onChange={(value) => {
+                                    fixingMethod.additionalPrice = value;
                                     formData.configFixingMethods[index] =
                                       fixingMethod;
                                     setFormData({ ...formData });
                                   }}
-                                ></MultiCombobox>
-                              </BlockStack>
-                            </Grid.Cell>
-                          </Grid>
-                        </Box>
-                      </BlockStack>
-                    </Grid.Cell>
-                  </>
-                ))}
+                                  onBlur={(value) => {
+                                    formData.configFixingMethods[index].additionalPrice =
+                                    parseFloat(`${fixingMethod.additionalPrice||"0"}`)
+                                    setFormData({ ...formData });
+                                  }}
+                                  autoComplete="off"
+                                  error={getError(
+                                    actionData,
+                                    `manageFixingMethods.${index}.additionalPrice`,
+                                  )}
+                                />
+                              </Grid.Cell>
+                              <Grid.Cell
+                                columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}
+                              >
+                                <BlockStack gap="300">
+                                  <Text as="strong" variant="headingMd">
+                                    Exclude size
+                                  </Text>
+                                  <MultiCombobox
+                                    labelHidden={true}
+                                    helpText="exclude the sizes of this border"
+                                    label="Exclude size"
+                                    placeholder="Select exclude size"
+                                    selectedOptions={fixingMethod.excludeSizes.map(
+                                      (curr) => `${curr}`,
+                                    )}
+                                    data={sizes}
+                                    setSelectedOptions={(value: any) => {
+                                      fixingMethod.excludeSizes = value.map(
+                                        (curr: any) => parseFloat(curr),
+                                      );
+                                      formData.configFixingMethods[index] =
+                                        fixingMethod;
+                                      setFormData({ ...formData });
+                                    }}
+                                  ></MultiCombobox>
+                                </BlockStack>
+                              </Grid.Cell>
+                              <Grid.Cell
+                                columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}
+                              >
+                                <BlockStack gap="300">
+                                  <Text as="strong" variant="headingMd">
+                                    Exclude shapes
+                                  </Text>
+                                  <MultiCombobox
+                                    labelHidden={true}
+                                    helpText="exclude the shapes of this border"
+                                    label="Exclude shapes"
+                                    placeholder="Select excluded shapes"
+                                    selectedOptions={fixingMethod.excludeShapes.map(
+                                      (curr) => `${curr}`,
+                                    )}
+                                    data={shapes}
+                                    setSelectedOptions={(value: any) => {
+                                      fixingMethod.excludeShapes = value.map(
+                                        (curr: any) => parseFloat(curr),
+                                      );
+                                      formData.configFixingMethods[index] =
+                                        fixingMethod;
+                                      setFormData({ ...formData });
+                                    }}
+                                  ></MultiCombobox>
+                                </BlockStack>
+                              </Grid.Cell>
+                            </Grid>
+                          </Box>
+                        </BlockStack>
+                      </Grid.Cell>
+                    </>
+                  ))}
 
-                {Number.isNaN(id) &&
-                  options?.length > formData.configFixingMethods?.length && (
-                    <Grid.Cell
-                      columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
-                    >
-                      <Box width="300px">
-                        <BiAddBtn
-                          title="Add fixing method"
-                          handleClick={() => handleAddItem()}
-                        />
-                      </Box>
-                    </Grid.Cell>
-                  )}
-              </Grid>
-            </Box>
-            <Divider borderWidth="050" />
-            <Box paddingInline="300" paddingBlock="300">
-              <InlineStack align="end" gap="600">
-                <button
-                  className="back-large-btn"
-                  type="button"
-                  onClick={onBack}
-                >
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <RayStartArrowIcon />{" "}
-                      <span style={{ color: "black", fontWeight: "bold" }}>
-                        {" "}
-                        Back
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button>
-                <BiSaveBtn isLoading={isSubmitting} title="Save" />
-              </InlineStack>
-            </Box>
-          </Form>
-        </BoxBackground>
-      </SpacingBackground>
+                  {Number.isNaN(id) &&
+                    options?.length > formData.configFixingMethods?.length && (
+                      <Grid.Cell
+                        columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
+                      >
+                        <Box width="300px">
+                          <BiAddBtn
+                            title="Add fixing method"
+                            handleClick={() => handleAddItem()}
+                          />
+                        </Box>
+                      </Grid.Cell>
+                    )}
+                </Grid>
+              </Box>
+              <Divider borderWidth="050" />
+              <Box paddingInline="300" paddingBlock="300">
+                <InlineStack align="end" gap="600">
+                  <button
+                    className="back-large-btn"
+                    type="button"
+                    // onClick={onBack}
+                    onClick={()=> onClick(false)}
+                  >
+                    <Box paddingInline="1000">
+                      <InlineStack gap="300">
+                        <RayStartArrowIcon />{" "}
+                        <span style={{ color: "black", fontWeight: "bold" }}>
+                          {" "}
+                          Back
+                        </span>
+                      </InlineStack>
+                    </Box>
+                  </button>
+                  <BiSaveBtn isLoading={isSubmitting} title="Save" />
+                </InlineStack>
+              </Box>
+            </Form>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

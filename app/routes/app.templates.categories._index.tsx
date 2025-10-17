@@ -2,6 +2,7 @@ import {
   BlockStack,
   Box,
   ButtonGroup,
+  Card,
   Divider,
   IndexTable,
   InlineStack,
@@ -108,44 +109,46 @@ export default function ManageClipartIndex() {
     </IndexTable.Row>
   ));
   return (
-    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-      <BoxBackground>
-        <Box padding="150">
-          <InlineStack gap="100" align="end">
-            <button
-              className="primary-btn"
-              type="button"
-              onClick={onHandleCreate}
-            >
-              <Box paddingInline="300">
-                <InlineStack gap="300">
-                  <PlusIcon />
-                  <span className="primary-btn-text">
-                    Add new  category
-                  </span>
-                </InlineStack>
-              </Box>
-            </button>
-          </InlineStack>
-        </Box>
-        <Divider borderWidth="050" />
-      </BoxBackground>
-      <IndexTable
-        resourceName={resourceName}
-        itemCount={categories ? categories.length : 0}
-        headings={[
-          { title: "Name" },
-          { title: "Action", alignment: "center" },
-        ]}
-        selectable={false}
-      >
-        {rowMarkup}
-      </IndexTable>
+    <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
+      <Card>
+        <BoxBackground>
+          <Box paddingBlockEnd="200">
+            <InlineStack gap="100" align="end">
+              <button
+                className="primary-btn"
+                type="button"
+                onClick={onHandleCreate}
+              >
+                <Box paddingInline="300">
+                  <InlineStack gap="300">
+                    <PlusIcon />
+                    <span className="primary-btn-text">
+                      Add new  category
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>
+            </InlineStack>
+          </Box>
+          <Divider borderWidth="050" />
+        </BoxBackground>
+        <IndexTable
+          resourceName={resourceName}
+          itemCount={categories ? categories.length : 0}
+          headings={[
+            { title: "Name" },
+            { title: "Action", alignment: "center" },
+          ]}
+          selectable={false}
+        >
+          {rowMarkup}
+        </IndexTable>
+      </Card>
       <EditCategoryModal onSubmit={(value:any)=> console.log(value)} category={category} open={enableCategoryEdit} onClose={()=>{
         setEnableCategoryEdit(false)
         
         }} />
-    </SpacingBackground>
+    </div>
   );
 }
 

@@ -1,6 +1,7 @@
 import {
   Bleed,
   Box,
+  Card,
   Checkbox,
   Divider,
   Grid,
@@ -256,161 +257,163 @@ export default function ClipartCreate() {
 
   return (
     <div>
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+      <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
+        <Card>
           <Form onSubmit={handleSubmit} method="POST">
-            <SpacingBackground backgroundColor="#F9F9F9">
-              <Box paddingInline="300" paddingBlock="600">
-                  <InlineStack align="space-between">
-                    <Text as="h6" variant="bodyMd" fontWeight="bold" > {clipart?" Update clipart":'Add new clipart'}</Text>
+            <div>
+              <Box paddingInline="300" paddingBlock="200">
+                <InlineStack align="space-between">
+                  <Text as="h6" variant="bodyMd" fontWeight="bold" > {clipart?" Update clipart":'Add new clipart'}</Text>
+                  <InlineStack gap="300" blockAlign="center">
+
+                  {!clipart && <InlineStack gap="300" blockAlign="center">
+                    <Text as="strong" fontWeight="bold" variant="bodyLg">Use Api cliparts</Text>
+                    <ReactSwitchCustom checked={isApiUsed} setChecked={(value: boolean) => handleIsApiUsedChange(value)}/>
+                  </InlineStack>}
+                  {isApiUsed && 
                     <InlineStack gap="300" blockAlign="center">
-
-                    {!clipart && <InlineStack gap="300" blockAlign="center">
-                      <Text as="strong" fontWeight="bold" variant="bodyLg">Use Api cliparts</Text>
-                      <ReactSwitchCustom checked={isApiUsed} setChecked={(value: boolean) => handleIsApiUsedChange(value)}/>
-                    </InlineStack>}
-                    {isApiUsed && 
-                      <InlineStack gap="300" blockAlign="center">
-                        <Checkbox checked={selectAll} label="All" onChange={handleSelectAll}/>
-                        <ComboxSelect placeholder="select groups" selectedOption={apiClipartGroup} setSelectedOption={ (value:string) =>handlesetApiClipartGroup(value)} label="Cliparts Groups " labelHidden data={apiClipartGroups} />
-                      </InlineStack>
-                    }
-                    
-                    { (!isApiUsed && !clipart) && 
-                    <FileUploader
-                      multiple
-                      type="image"
-                      fileData={[]}
-                      setFilesData={handleImages}
-                      title="select cliparts"
-                    >
-                    <BiAddBtn title="Add images" handleClick={()=>""} />
-                    </FileUploader>}
+                      <Checkbox checked={selectAll} label="All" onChange={handleSelectAll}/>
+                      <ComboxSelect placeholder="select groups" selectedOption={apiClipartGroup} setSelectedOption={ (value:string) =>handlesetApiClipartGroup(value)} label="Cliparts Groups " labelHidden data={apiClipartGroups} />
                     </InlineStack>
+                  }
+                  
+                  { (!isApiUsed && !clipart) && 
+                  <FileUploader
+                    multiple
+                    type="image"
+                    fileData={[]}
+                    setFilesData={handleImages}
+                    title="select cliparts"
+                  >
+                  <BiAddBtn title="Add images" handleClick={()=>""} />
+                  </FileUploader>}
                   </InlineStack>
+                </InlineStack>
               </Box>
-            </SpacingBackground>
+            </div>
             <Divider borderWidth="100" />
-             <SpacingBackground backgroundColor="#F8F9FB">
-            <Box paddingInline="300" paddingBlock="1000">
-            <Scrollable
-              shadow
-              style={{maxHeight: '50vh', paddingBottom:"2rem"}}
-              focusable
-              scrollbarGutter="stable"
-              scrollbarWidth="thin"
-            >
-              <Grid gap={{ lg: "15px" }}>
-        
-               
-                { (!saveSelectedCliparts && isApiUsed) && <>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                  <Grid gap={{ lg: "30px" }}>
-                    { clipartsResources[apiClipartGroup]?.map((clipartResource: string) => (
-                      
-                      <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
-                        <ClipartItem active={selectCliparts.has(clipartResource)} imgSrc={clipartResource}  onChange={(checked:boolean) => {handleSelectCliparts(clipartResource)} }/>
-                      </Grid.Cell>
-                    ))
-                        
-                    }
-                  
-                  </Grid>
-
-                </Grid.Cell>
-                 
-                </>
-                  
-             }
-              {( saveSelectedCliparts || !isApiUsed) &&
-                    formData.cliparts.map((clipartItem, index) => (
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                      
-                        <InlineStack wrap={false} as="div" gap="400">
-                          <Box width="52%">
-                          <TextField
-                    label="Label"
-                    value={`${clipartItem.title}`}
-                    onChange={(value) => {
-                      clipartItem.title = value;
-                      formData.cliparts[index] = clipartItem;
-                      setFormData({ ...formData });
-                    }}
-                        autoComplete="on"
-                              error={getError(actionData, `cliparts.${index}.title`)}
-                  />
+            <div>
+              <Box paddingInline="300" paddingBlock="1000">
+                <Scrollable
+                  shadow
+                  style={{maxHeight: '50vh', paddingBottom:"2rem"}}
+                  focusable
+                  scrollbarGutter="stable"
+                  scrollbarWidth="thin"
+                >
+                  <Grid gap={{ lg: "15px" }}>
+            
+                    
+                    { (!saveSelectedCliparts && isApiUsed) && <>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                      <Grid gap={{ lg: "30px" }}>
+                        { clipartsResources[apiClipartGroup]?.map((clipartResource: string) => (
                           
-                          </Box>
-                          <Box width="52%">
-                          <FileInput error={getError(actionData, "url")} title="Upload icon"
-                              path={`${clipartItem.url}`}
-                              handlePath={(value: string) => {
-                                clipartItem.url = value;
-                                formData.cliparts[index] = clipartItem;
-                                setFormData({ ...formData });
-                              }} />
-                          </Box>
-                          <Box width="52%">
+                          <Grid.Cell columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
+                            <ClipartItem active={selectCliparts.has(clipartResource)} imgSrc={clipartResource}  onChange={(checked:boolean) => {handleSelectCliparts(clipartResource)} }/>
+                          </Grid.Cell>
+                        ))
                             
-                      <TextField
-                        label="Additional price"
-                        type="number"
-                        value={`${clipartItem.additionalPrice}`}
-                        onChange={(value) => {
-                          clipartItem.additionalPrice = value;
-                          formData.cliparts[index] = clipartItem;
-                          setFormData({ ...formData });
-                        }}
-                              
-                              
-                        onBlur={(value) => {
-                          clipartItem.additionalPrice = parseFloat(`${clipartItem.additionalPrice}`);
-                          formData.cliparts[index] = clipartItem;
-                          setFormData({ ...formData });
-                        }}
-                        autoComplete="off"
-                              error={getError(actionData, `manageFixingMethods.${index}.additionalPrice`)}
-                        />
-                     
-                          </Box>
-                          
-                          <InlineStack blockAlign="center">
-                            <RemoveNowIconBtn onClick={() => handleDeleteClipart(index)} />
-                          </InlineStack>
-                              
-                             
-                          
-                      </InlineStack>
-                        
-                
-                </Grid.Cell>
-                         ))
                         }
-               {(!clipart && !isApiUsed) && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                <Box width="150px">
-                    <BiAddBtn title="Add clipart" handleClick={()=>handleAddClipart()} />
-                  </Box>
-                </Grid.Cell>}
-              </Grid>
-            </Scrollable>
-         
-            </Box>
-            </SpacingBackground>
+                      
+                      </Grid>
+
+                    </Grid.Cell>
+                      
+                    </>
+                      
+                  }
+                  {( saveSelectedCliparts || !isApiUsed) &&
+                        formData.cliparts.map((clipartItem, index) => (
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                          
+                            <InlineStack wrap={false} as="div" gap="400">
+                              <Box width="52%">
+                              <TextField
+                        label="Label"
+                        value={`${clipartItem.title}`}
+                        onChange={(value) => {
+                          clipartItem.title = value;
+                          formData.cliparts[index] = clipartItem;
+                          setFormData({ ...formData });
+                        }}
+                            autoComplete="on"
+                                  error={getError(actionData, `cliparts.${index}.title`)}
+                      />
+                              
+                              </Box>
+                              <Box width="52%">
+                              <FileInput error={getError(actionData, "url")} title="Upload icon"
+                                  path={`${clipartItem.url}`}
+                                  handlePath={(value: string) => {
+                                    clipartItem.url = value;
+                                    formData.cliparts[index] = clipartItem;
+                                    setFormData({ ...formData });
+                                  }} />
+                              </Box>
+                              <Box width="52%">
+                                
+                          <TextField
+                            label="Additional price"
+                            type="number"
+                            value={`${clipartItem.additionalPrice}`}
+                            onChange={(value) => {
+                              clipartItem.additionalPrice = value;
+                              formData.cliparts[index] = clipartItem;
+                              setFormData({ ...formData });
+                            }}
+                                  
+                                  
+                            onBlur={(value) => {
+                              clipartItem.additionalPrice = parseFloat(`${clipartItem.additionalPrice}`);
+                              formData.cliparts[index] = clipartItem;
+                              setFormData({ ...formData });
+                            }}
+                            autoComplete="off"
+                                  error={getError(actionData, `manageFixingMethods.${index}.additionalPrice`)}
+                            />
+                          
+                              </Box>
+                              
+                              <InlineStack blockAlign="center">
+                                <RemoveNowIconBtn onClick={() => handleDeleteClipart(index)} />
+                              </InlineStack>
+                                  
+                                  
+                              
+                          </InlineStack>
+                            
+                    
+                    </Grid.Cell>
+                              ))
+                            }
+                    {(!clipart && !isApiUsed) && <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <Box width="150px">
+                        <BiAddBtn title="Add clipart" handleClick={()=>handleAddClipart()} />
+                      </Box>
+                    </Grid.Cell>}
+                  </Grid>
+                </Scrollable>
+              
+              </Box>
+            </div>
             <Divider borderWidth="100" />
-             <SpacingBackground backgroundColor="#F9F9F9">
+            <div>
 
-            <Box paddingInline="300" paddingBlock="300">
-              <InlineStack align="end" gap="600">
-              <BackBtn isLoading={isLoading} title="Back"/>
+              <Box paddingInline="300" paddingBlock="300">
+                <InlineStack align="end" gap="600">
+                <BackBtn isLoading={isLoading} title="Back"/>
 
-              { (!isApiUsed || saveSelectedCliparts) ?
-                  <BiSaveBtn isLoading={isSubmitting} title="Save" />:
-                  <BiAddBtn title="Add selected cliparts" handleClick={()=>handleSaveSelectedCliparts()} />
-              }
-              </InlineStack>
-            </Box>
-            </SpacingBackground>
+                { (!isApiUsed || saveSelectedCliparts) ?
+                    <BiSaveBtn isLoading={isSubmitting} title="Save" />:
+                    <BiAddBtn title="Add selected cliparts" handleClick={()=>handleSaveSelectedCliparts()} />
+                }
+                </InlineStack>
+              </Box>
+            </div>
           </Form>
-      </SpacingBackground>
+        </Card>
+      </div>
     </div>
   );
 }
