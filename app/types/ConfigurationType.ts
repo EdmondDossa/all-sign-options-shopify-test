@@ -8,4 +8,6 @@
      product?: any;
      products?: Array<{id: string, title: string}>;
      templates?: any;
+     materialType?: string;
+     productType?: string;
 }

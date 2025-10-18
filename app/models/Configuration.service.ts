@@ -670,11 +670,13 @@ export default class ConfigurationService {
     sessionId: string,
   ): Promise<any | null> {
     try {
-      const { products, templates, ...configData } = configuration;
+      const { products, templates, materialType, productType, ...configData } = configuration;
       return await prisma.configuration.create({
         data: {
           ...configData,
           product: products, // Save products array as product field
+          materialType: materialType, // Save materialType
+          productType: productType, // Save productType
           sessionId: sessionId,
           data: initialData,
         },
