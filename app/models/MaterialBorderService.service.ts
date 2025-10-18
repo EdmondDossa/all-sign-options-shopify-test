@@ -67,7 +67,7 @@ export default class MaterialBorderService {
   }
 
 
-  static async editSetting(
+  static async editSettings(
     configurationId: number,
     sessionId: string,
     materialId: number,
