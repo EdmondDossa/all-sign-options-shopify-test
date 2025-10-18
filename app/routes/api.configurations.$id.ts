@@ -85,6 +85,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     if (config && config.data) {
         config.data.materialType = config.materialType;
         config.data.productType = config.productType;
+        console.log("API configurations - Data after adding materialType/productType:", {
+            materialType: config.data.materialType,
+            productType: config.data.productType
+        });
     }
 
     return json(config );
