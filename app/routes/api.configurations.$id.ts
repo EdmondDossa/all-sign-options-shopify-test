@@ -81,11 +81,19 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     config = await replaceDomainUrl(config, admin);
 
-    // S'assurer que materialType et productType sont bien présents au niveau racine
+    // Ajouter materialType et productType dans l'objet data pour le configurateur frontend
+    if (config && config.data) {
+        config.data.materialType = config.materialType;
+        config.data.productType = config.productType;
+    }
+
+    // S'assurer que materialType et productType sont bien présents au niveau racine ET dans data
     console.log("API configurations - Final config before return:", {
         id: config?.id,
         materialType: config?.materialType,
         productType: config?.productType,
+        dataMaterialType: config?.data?.materialType,
+        dataProductType: config?.data?.productType,
         hasData: !!config?.data
     });
 
