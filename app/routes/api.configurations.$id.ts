@@ -58,6 +58,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     config = configs?.find((curr: any) => curr.id == params.id)
 
+    // Debug log to check materialType and productType
+    console.log("API configurations - Config found:", {
+        id: config?.id,
+        materialType: config?.materialType,
+        productType: config?.productType,
+        name: config?.name
+    });
     
     if (plan == PRICING_PLANS.STARTER) {
         configs = configs?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)
