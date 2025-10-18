@@ -613,7 +613,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       let borderSetting: BorderSettingType =
         submission.value as BorderSettingType;
       if (borderSetting) {
-        let res = await MaterialBorderService.editSetting(
+        let res = await MaterialBorderService.editSettings(
           configId,
           session.id,
           mId,

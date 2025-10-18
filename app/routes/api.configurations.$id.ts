@@ -9,6 +9,7 @@ import { replaceDomainUrl } from "~/utils/fileUrlServer.server";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+    console.log("API configurations called with params:", params);
     let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
     let admin: any = null;
     let session: any = null;
@@ -58,6 +59,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     config = configs?.find((curr: any) => curr.id == params.id)
 
+    // Debug log to check materialType and productType
+    console.log("API configurations - Config found:", {
+        id: config?.id,
+        materialType: config?.materialType,
+        productType: config?.productType,
+        name: config?.name
+    });
     
     if (plan == PRICING_PLANS.STARTER) {
         configs = configs?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)
@@ -72,6 +80,22 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 
     config = await replaceDomainUrl(config, admin);
+
+    // Ajouter materialType et productType dans l'objet data pour le configurateur frontend
+    if (config && config.data) {
+        config.data.materialType = config.materialType;
+        config.data.productType = config.productType;
+    }
+
+    // S'assurer que materialType et productType sont bien présents au niveau racine ET dans data
+    console.log("API configurations - Final config before return:", {
+        id: config?.id,
+        materialType: config?.materialType,
+        productType: config?.productType,
+        dataMaterialType: config?.data?.materialType,
+        dataProductType: config?.data?.productType,
+        hasData: !!config?.data
+    });
 
     return json(config );
 
