@@ -15,9 +15,9 @@ scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,rea
 
 [auth]
 redirect_urls = [
-  "https://aso-app.vertimcoders.com//auth/callback",
-  "https://aso-app.vertimcoders.com//auth/shopify/callback",
-  "https://aso-app.vertimcoders.com//api/auth/callback"
+  "https://aso-app.vertimcoders.com/auth/callback",
+  "https://aso-app.vertimcoders.com/auth/shopify/callback",
+  "https://aso-app.vertimcoders.com/api/auth/callback"
 ]
 
 [webhooks]
