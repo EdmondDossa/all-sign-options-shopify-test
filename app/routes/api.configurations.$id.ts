@@ -9,6 +9,7 @@ import { replaceDomainUrl } from "~/utils/fileUrlServer.server";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+    console.log("API configurations called with params:", params);
     let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
     let admin: any = null;
     let session: any = null;
