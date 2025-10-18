@@ -81,15 +81,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     config = await replaceDomainUrl(config, admin);
 
-    // Ajouter materialType et productType dans l'objet data pour le configurateur frontend
-    if (config && config.data) {
-        config.data.materialType = config.materialType;
-        config.data.productType = config.productType;
-        console.log("API configurations - Data after adding materialType/productType:", {
-            materialType: config.data.materialType,
-            productType: config.data.productType
-        });
-    }
+    // S'assurer que materialType et productType sont bien présents au niveau racine
+    console.log("API configurations - Final config before return:", {
+        id: config?.id,
+        materialType: config?.materialType,
+        productType: config?.productType,
+        hasData: !!config?.data
+    });
 
     return json(config );
 
