@@ -31,8 +31,6 @@ model Session {
   fonts          Font[]
   setting        Setting?
   templates      Template[]
-
-  @@map("session")
 }
 
 model Upload {
