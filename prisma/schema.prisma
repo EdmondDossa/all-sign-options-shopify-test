@@ -7,32 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model session {
-  id             String          @id
-  shop           String
-  state          String
-  isOnline       Boolean         @default(false)
-  scope          String?
-  expires        DateTime?
-  accessToken    String
-  userId         BigInt?
-  isInitialized  Boolean         @default(false)
-  accountOwner   Boolean         @default(false)
-  collaborator   Boolean?        @default(false)
-  email          String?
-  emailVerified  Boolean?        @default(false)
-  firstName      String?
-  lastName       String?
-  locale         String?
-  categories     Category[]
-  clipartsGroup  ClipartsGroup[]
-  configurations Configuration[]
-  Design         Design[]
-  fonts          Font[]
-  setting        Setting?
-  templates      Template[]
-}
-
 model Upload {
   id    Int    @id @default(autoincrement())
   files Json?
@@ -129,4 +103,30 @@ model Design {
   storage    String?
   zipFile    Json?
   session    session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model session {
+  id             String          @id
+  shop           String
+  state          String
+  isOnline       Boolean         @default(false)
+  scope          String?
+  expires        DateTime?
+  accessToken    String
+  userId         BigInt?
+  isInitialized  Boolean         @default(false)
+  accountOwner   Boolean         @default(false)
+  collaborator   Boolean?        @default(false)
+  email          String?
+  emailVerified  Boolean?        @default(false)
+  firstName      String?
+  lastName       String?
+  locale         String?
+  categories     Category[]
+  clipartsGroup  ClipartsGroup[]
+  configurations Configuration[]
+  Design         Design[]
+  fonts          Font[]
+  setting        Setting?
+  templates      Template[]
 }
