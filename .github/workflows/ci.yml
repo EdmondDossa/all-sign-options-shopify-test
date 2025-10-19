@@ -121,4 +121,23 @@ jobs:
             echo "$DOCKER_PWD" | docker login --username $DOCKER_USERNAME --password-stdin && 
             docker-compose pull
             docker-compose -p $PROJECT_DIR-$SUBDIR down
-            docker-compose -p $PROJECT_DIR-$SUBDIR up -d --force-recreate
+            
+            # Start database first
+            docker-compose -p $PROJECT_DIR-$SUBDIR up -d pgdb
+            echo "Waiting for database to be ready..."
+            sleep 15
+            
+            # Start frontend app
+            docker-compose -p $PROJECT_DIR-$SUBDIR up -d frontend-app
+            echo "Waiting for app to be ready..."
+            sleep 10
+            
+            # Run Prisma migrations
+            echo "Running Prisma migrations..."
+            docker-compose -p $PROJECT_DIR-$SUBDIR exec -T frontend-app npx prisma migrate deploy || echo "Migration failed, trying to resolve..."
+            
+            # If migration fails, try to resolve the failed migration
+            docker-compose -p $PROJECT_DIR-$SUBDIR exec -T frontend-app npx prisma migrate resolve --applied 20251018115728_rename_session_table_to_lowercase || echo "Migration resolve failed"
+            
+            # Restart the app after migration
+            docker-compose -p $PROJECT_DIR-$SUBDIR restart frontend-app
