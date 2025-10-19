@@ -8,22 +8,29 @@ datasource db {
 }
 
 model Session {
-  id            String    @id
-  shop          String
-  state         String
-  isOnline      Boolean   @default(false)
-  scope         String?
-  expires       DateTime?
-  accessToken   String
-  userId        BigInt?
-  isInitialized Boolean   @default(false)
-  accountOwner  Boolean   @default(false)
-  collaborator  Boolean?  @default(false)
-  email         String?
-  emailVerified Boolean?  @default(false)
-  firstName     String?
-  lastName      String?
-  locale        String?
+  id             String          @id
+  shop           String
+  state          String
+  isOnline       Boolean         @default(false)
+  scope          String?
+  expires        DateTime?
+  accessToken    String
+  userId         BigInt?
+  isInitialized  Boolean         @default(false)
+  accountOwner   Boolean         @default(false)
+  collaborator   Boolean?        @default(false)
+  email          String?
+  emailVerified  Boolean?        @default(false)
+  firstName      String?
+  lastName       String?
+  locale         String?
+  categories     Category[]
+  clipartsGroup  ClipartsGroup[]
+  configurations Configuration[]
+  Design         Design[]
+  fonts          Font[]
+  setting        Setting?
+  templates      Template[]
 }
 
 model Upload {
@@ -43,6 +50,7 @@ model Configuration {
   product      Json?
   materialType String?
   productType  String?
+  session      Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   templates    Template[]
 }
 
@@ -52,6 +60,7 @@ model Font {
   url          String
   isGoogleFont Boolean
   sessionId    String
+  session      Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
 model ClipartsGroup {
@@ -60,6 +69,7 @@ model ClipartsGroup {
   description String
   sessionId   String
   cliparts    Clipart[]
+  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
 model Clipart {
@@ -72,15 +82,17 @@ model Clipart {
 }
 
 model Setting {
-  id        Int    @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   data      Json?
-  sessionId String @unique
+  sessionId String  @unique
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
 model Category {
   id        Int        @id @default(autoincrement())
   name      String
   sessionId String
+  session   Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   templates Template[]
 }
 
@@ -99,6 +111,7 @@ model Template {
   realImg              String?
   category             Category?     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   configuration        Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+  session              Session       @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
 model Design {
@@ -115,4 +128,5 @@ model Design {
   fileUrl    String?
   storage    String?
   zipFile    Json?
+  session    Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
