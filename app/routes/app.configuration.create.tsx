@@ -43,7 +43,6 @@ import z from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage } from "~/utils/message-flash";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
-import { SelectProducField } from "~/components/inputs/SelectProductFied";
 import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { CustomTinymce } from "~/components/inputs/CustomTinymce";
 import prisma from "~/db.server";
