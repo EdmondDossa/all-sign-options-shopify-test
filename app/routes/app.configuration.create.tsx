@@ -43,6 +43,7 @@ import z from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage } from "~/utils/message-flash";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
+import { SelectProducField } from "~/components/inputs/SelectProductFied";
 import { jsonTransform, stringTransform } from "~/utils/transfomerZod";
 import { CustomTinymce } from "~/components/inputs/CustomTinymce";
 import prisma from "~/db.server";
@@ -179,7 +180,6 @@ export default function ConfigurationEdit() {
   const submitData: any = { 
     ...formData, 
     product: JSON.stringify(formData.product),
-    products: JSON.stringify(formData.products),
     materialType: materialType,
     productType: productType
   };
@@ -1339,7 +1339,7 @@ export default function ConfigurationEdit() {
                   onChange={handleDescription}
                   autoComplete="on"
                   error={
-                    actionData && 'errors' in actionData && actionData.errors?.description
+                    actionData?.errors?.description
                       ? actionData.errors.description[0]
                       : ""
                   }
@@ -1349,7 +1349,7 @@ export default function ConfigurationEdit() {
               <div style={{display: "flex", flexDirection: "column", gap: "8px", padding: '16px', backgroundColor:  '#F5F5F5', border: '1px solid #E0E0E0', borderRadius: '14px',}}>
                 <FileInput
                     error={
-                      actionData && 'errors' in actionData && actionData.errors?.icon ? actionData.errors.icon[0] : ""
+                      actionData?.errors?.icon ? actionData.errors.icon[0] : ""
                     }
                     title="Upload image"
                     path={formData.icon}
@@ -1372,7 +1372,7 @@ export default function ConfigurationEdit() {
             </div>
 
             <div style={{width: "30%", display: configuration ? "none" : "flex"}}>
-              <div style={{display: "flex", flexDirection: "column", gap: "8px", padding: '16px', backgroundColor:  '#F5F5F5', border: '1px solid #E0E0E0', borderRadius: '14px',}}>
+              <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "8px", padding: '16px', backgroundColor:  '#F5F5F5', border: '1px solid #E0E0E0', borderRadius: '14px',}}>
                 <p style={{fontWeight: "700", paddingBottom: "10px"}}>Summary</p>
 
                 <p style={{color: "#757575"}}>Category: <span style={{color: "#424242", fontWeight: "600"}}> {productCategorie != 'signage' ? (productCategorie != 'apparel' ? "Goodies" : "Textile") : "Signs"} </span></p>
@@ -1515,7 +1515,7 @@ export default function ConfigurationEdit() {
                   Back
                 </Button>
               )}
-
+              
               {step < 4 ? (
                 <button 
                   onClick={nextStep} 
@@ -1617,48 +1617,43 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       configuration.id,
       session.id,
     );
-    
-    console.log("Action - Old configuration:", oldConfiguration);
-    
-    // Get old products from the database
-    const oldProducts = oldConfiguration?.products || [];
-    console.log("Action - Old products:", oldProducts);
-    const oldProductIds = Array.isArray(oldProducts) ? oldProducts.map((p: any) => p.id) : [];
-    console.log("Action - Old product IDs:", oldProductIds);
+    const oldConfigurationProductID = oldConfiguration.product
+      ? oldConfiguration.product.id
+      : undefined;
 
     const configurationObject = await ConfigurationService.updateConfiguration(
       configuration,
       session.id,
     );
+    if (
+      configurationObject &&
+      configurationObject.product?.id &&
+      oldConfigurationProductID != configurationObject.product?.id
+    ) {
+      const metafieldId = await ShopifyProductService.getMetafieldID(
+        admin,
+        configuration?.product?.id,
+      );
+      await ShopifyProductService.update(
+        admin,
+        configurationObject.product.id,
+        configurationObject.id,
+        metafieldId,
+      );
 
-    if (configurationObject && configuration.products && configuration.products.length > 0) {
-      console.log("Action - New products:", configuration.products);
-      // Get new product IDs
-      const newProductIds = Array.isArray(configuration.products) ? configuration.products.map((p: any) => p.id) : [];
-      console.log("Action - New product IDs:", newProductIds);
-      
-      // Find products to remove (in old but not in new)
-      const productsToRemove = oldProductIds.filter((id: string) => !newProductIds.includes(id));
-      console.log("Action - Products to remove:", productsToRemove);
-      
-      // Find products to add (in new but not in old)
-      const productsToAdd = Array.isArray(configuration.products) ? configuration.products.filter((p: any) => !oldProductIds.includes(p.id)) : [];
-      console.log("Action - Products to add:", productsToAdd);
-
-      // Remove configuration from products that are no longer associated
-      if (productsToRemove.length > 0) {
-        await ShopifyProductService.removeConfigurationFromProducts(admin, productsToRemove);
+      if (oldConfigurationProductID) {
+        const oldMetafieldId = await ShopifyProductService.getMetafieldID(
+          admin,
+          oldConfigurationProductID,
+        );
+        await ShopifyProductService.update(
+          admin,
+          oldConfigurationProductID,
+          0,
+          oldMetafieldId,
+        );
       }
-
-      // Add configuration to new products
-      if (productsToAdd.length > 0) {
-        await ShopifyProductService.updateMultipleProducts(admin, productsToAdd, configurationObject.id);
-      }
-    } else if (oldProductIds.length > 0) {
-      // If no products selected, remove all associations
-      await ShopifyProductService.removeConfigurationFromProducts(admin, oldProductIds);
     }
-
     return redirect(
       `..${flashMessage("Configuration updated successfully")}`,
     );
