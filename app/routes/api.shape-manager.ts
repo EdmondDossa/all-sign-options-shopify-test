@@ -110,14 +110,17 @@ export async function action({ request }: ActionFunctionArgs) {
         : requestData.mId) as string,
     );
     const shapeId = parseInt(
-      (requestData.shapeId !== undefined ? requestData.shapeId : "-1") as string,
+      (requestData.shapeId !== undefined
+        ? requestData.shapeId
+        : "-1") as string,
     );
-
     console.log("=== API shape-manager - Parsed values ===");
     console.log("operation:", requestData.operation);
     console.log("configId:", configId, "type:", typeof configId);
     console.log("materialId:", materialId, "type:", typeof materialId);
     console.log("shapeId:", shapeId, "type:", typeof shapeId);
+    console.log("shapeData:", requestData.shapeData);
+    console.log("shapes:", requestData.shapes);
 
     // Validation des IDs requis
     if (
@@ -125,6 +128,14 @@ export async function action({ request }: ActionFunctionArgs) {
       (requestData.operation !== "get-all" && isNaN(materialId))
     ) {
       console.log("ERROR: Invalid IDs");
+      console.log("configId:", requestData.configId, "-> parsed:", configId);
+      console.log(
+        "materialId:",
+        requestData.materialId,
+        "-> parsed:",
+        materialId,
+      );
+      console.log("mId:", requestData.mId);
       return json(
         {
           error: "Valid configId and materialId are required",
@@ -167,12 +178,14 @@ export async function action({ request }: ActionFunctionArgs) {
         }
 
         console.log("API shape-manager - Calling MaterialShapeService.add");
-        result = await MaterialShapeService.add(
-          configId,
-          session.id,
-          materialId,
-          requestData.shapeData,
-        );
+        for (const configShape of requestData.shapeData) {
+          result = await MaterialShapeService.add(
+            configId,
+            session.id,
+            materialId,
+            configShape,
+          );
+        }
         successMessage = "Shape added successfully";
         break;
       }
@@ -180,19 +193,23 @@ export async function action({ request }: ActionFunctionArgs) {
       case "update": {
         if (shapeId === undefined || !requestData.shapeData) {
           return json(
-            { error: "shapeId and shapeData are required for update operation" },
+            {
+              error: "shapeId and shapeData are required for update operation",
+            },
             { status: 400 },
           );
         }
 
         console.log("API shape-manager - Calling MaterialShapeService.update");
-        result = await MaterialShapeService.update(
-          configId,
-          session.id,
-          materialId,
-          requestData.shapeData,
-          shapeId,
-        );
+        for (const configShape of requestData.shapeData) {
+          result = await MaterialShapeService.update(
+            configId,
+            session.id,
+            materialId,
+            configShape,
+            shapeId,
+          );
+        }
         successMessage = "Shape updated successfully";
         break;
       }
