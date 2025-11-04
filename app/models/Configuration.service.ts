@@ -1112,6 +1112,9 @@ export default class ConfigurationService {
         where: {
           sessionId: sessionId,
         },
+        include: includeTempletes ? {
+          templates: true
+        } : undefined,
         orderBy: {
           id: "asc",
         }

@@ -37,9 +37,11 @@ import {
 } from '@shopify/polaris-icons';
 import { authenticate } from "~/shopify.server";
 import TemplateService from "~/models/Template.service";
+import CategoryService from "~/models/Category.service";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { fileUrl } from "~/utils/fileUrl";
+import { ComboxSelect } from "~/components/inputs/ComboxSelect";
 
 
 
@@ -50,7 +52,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     session.id,
   );
 
-  return json({ templates });
+  const categories = await CategoryService.getCategorys(session.id);
+
+  return json({ templates, categories });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -81,8 +85,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function ConfigurationTemplates() {
   const  [searchTag,  setSearchTag] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const submit = useSubmit();
-  let { templates } = useLoaderData<typeof loader>();
+  let { templates, categories } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
  
 
@@ -94,15 +99,25 @@ export default function ConfigurationTemplates() {
     value: any;
     image: string;
     basePrice: number|any;
+    categoryId: number | null;
   }> =templates?.map((item, index) => {
     return {
       label: item.name,
       value: `${item.id}`,
       image: item.prevImg,
-      basePrice: item.basePrice
+      basePrice: item.basePrice,
+      categoryId: item.categoryId
     };
   })||[];
 
+  // Filter by category first
+  if (selectedCategoryId !== null) {
+    data = data.filter((item) => {
+      return item.categoryId === selectedCategoryId;
+    });
+  }
+
+  // Then filter by search tag
   data = data.filter((item) => {
     return item.label.toLowerCase().includes(searchTag.toLowerCase());
   });
@@ -150,10 +165,29 @@ export default function ConfigurationTemplates() {
                  Templates  list
             </Text>
             <InlineStack gap="100" align="space-between" blockAlign="center">
+              <Box minWidth="200px">
+                <ComboxSelect
+                  label="Filter by category"
+                  placeholder="All categories"
+                  selectedOption={selectedCategoryId !== null ? `${selectedCategoryId}` : "0"}
+                  data={[
+                    { label: "All categories", value: "0" },
+                    ...(categories?.map((category: any) => ({
+                      label: category.name,
+                      value: `${category.id}`,
+                    })) || [])
+                  ]}
+                  setSelectedOption={(value: any) => {
+                    setSelectedCategoryId(value === "0" ? null : parseInt(value));
+                  }}
+                  labelHidden={true}
+                />
+              </Box>
               <TextField
+                label="Search templates"
                 prefix={<Icon source={SearchIcon} />}
                 value={searchTag}
-                label="Search demo data"
+                placeholder="Search templates"
                 onChange={setSearchTag}
                 autoComplete="on"
                 labelHidden
@@ -172,7 +206,7 @@ export default function ConfigurationTemplates() {
                     </InlineStack>
                   </Box>
               </button>
-              {/* <button
+              <button
                   className="primary-btn"
                   type="button"
                   onClick={ ()=>{ onHandleImport() } }
@@ -199,7 +233,7 @@ export default function ConfigurationTemplates() {
                       </span>
                     </InlineStack>
                   </Box>
-                </button> */}
+                </button>
             </InlineStack>
             </InlineStack>
           </Box>

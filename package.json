@@ -18,7 +18,8 @@
     "prisma": "prisma",
     "graphql-codegen": "graphql-codegen",
     "vite": "vite",
-    "postinstall": "node ./postinstall.js"
+    "postinstall": "node ./postinstall.js",
+    "export:templates": "node scripts/export-templates-by-category.js"
   },
   "type": "module",
   "engines": {
