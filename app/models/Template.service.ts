@@ -117,12 +117,61 @@ export default class TemplateService {
     sessionId: string,
   ): Promise<any| null> {
     try {
+      // Get template before deletion to check its configuration
+      const template = await prisma.template.findFirst({
+        where: {
+          id: id,
+          sessionId: sessionId
+        },
+        include: {
+          configuration: true,
+        },
+      });
+
+      if (!template) {
+        return null;
+      }
+
+      // Delete the template
       await prisma.template.delete({
         where: {
           id: id,
           sessionId: sessionId
         },
       });
+
+      // Check if configuration should be deleted (if it's a pack configuration)
+      if (template.configuration) {
+        const configName = template.configuration.name || "";
+        
+        // Check if this is a pack configuration (ends with " (Pack)")
+        if (configName.endsWith(" (Pack)")) {
+          // Check if there are other templates using this configuration
+          const remainingTemplates = await prisma.template.findMany({
+            where: {
+              configurationId: template.configurationId,
+              sessionId: sessionId,
+            },
+          });
+
+          // If no other templates use this configuration, delete it
+          if (remainingTemplates.length === 0) {
+            try {
+              await prisma.configuration.delete({
+                where: {
+                  id: template.configurationId,
+                  sessionId: sessionId,
+                },
+              });
+              console.log(`Deleted pack configuration: ${configName}`);
+            } catch (error) {
+              console.error(`Error deleting pack configuration ${configName}:`, error);
+            }
+          }
+        }
+      }
+
+      return { success: true };
     } catch (error) {
       console.error("Error deleting template:", error);
       return Promise.resolve(null);

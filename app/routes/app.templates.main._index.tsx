@@ -32,12 +32,10 @@ import { SearchIcon } from "@shopify/polaris-icons";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
 import { SettingIconBtn } from "~/components/buttons/SettingIconBtn";
-import {
-  PlusCircleIcon
-} from '@shopify/polaris-icons';
 import { authenticate } from "~/shopify.server";
 import TemplateService from "~/models/Template.service";
 import CategoryService from "~/models/Category.service";
+import TemplatePackService from "~/models/TemplatePack.service";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { fileUrl } from "~/utils/fileUrl";
@@ -68,6 +66,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case "DELETE": {
       console.log("start deleting");
       await TemplateService.deleteTemplate(parseInt(id), session.id);
+      
+      // Check pack access after template deletion
+      await TemplatePackService.checkPackAccessAfterDeletion(session.id);
+      
       return json({
         ...jFlashMessage("Template deleted successfully"),
       });
@@ -140,6 +142,9 @@ export default function ConfigurationTemplates() {
     navigate("export");
   };
 
+  const onHandlePacks = () => {
+    navigate("/app/templates/packs");
+  };
 
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
@@ -201,39 +206,53 @@ export default function ConfigurationTemplates() {
                     <InlineStack gap="100">
                       <PlusIcon />
                       <span className="primary-btn-text">
-                        Add  
+                       Create Template  
                       </span>
                     </InlineStack>
                   </Box>
               </button>
               <button
-                  className="primary-btn"
-                  type="button"
-                  onClick={ ()=>{ onHandleImport() } }
-                >
-                  <Box paddingInline="100">
-                    <InlineStack gap="100">
-                      <ImportIcon />
-                      <span className="primary-btn-text">
-                        Import  
-                      </span>
-                    </InlineStack>
-                  </Box>
+                className="primary-btn"
+                type="button"
+                onClick={ ()=>{ onHandlePacks() } }
+              >
+                <Box paddingInline="100">
+                  <InlineStack gap="100">
+                    <PlusIcon />
+                    <span className="primary-btn-text">
+                      Add Packs  
+                    </span>
+                  </InlineStack>
+                </Box>
               </button>
               <button
-                  className="primary-btn"
-                  type="button"
-                  onClick={ ()=>{ onHandleExport() } }
-                >
-                  <Box paddingInline="100">
-                    <InlineStack gap="100">
-                      <ExportIcon />
-                      <span className="primary-btn-text">
-                        Export  
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button>
+                className="primary-btn"
+                type="button"
+                onClick={ ()=>{ onHandleImport() } }
+              >
+                <Box paddingInline="100">
+                  <InlineStack gap="100">
+                    <ImportIcon />
+                    <span className="primary-btn-text">
+                      Import  
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>
+              <button
+                className="primary-btn"
+                type="button"
+                onClick={ ()=>{ onHandleExport() } }
+              >
+                <Box paddingInline="100">
+                  <InlineStack gap="100">
+                    <ExportIcon />
+                    <span className="primary-btn-text">
+                      Export  
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>
             </InlineStack>
             </InlineStack>
           </Box>

@@ -243,55 +243,73 @@ async function exportTemplatesByCategory(sessionId = null, shopName = null) {
           continue;
         }
 
-        // Group templates by configuration for better organization
-        // We'll use the primary configuration (most templates) as the base
-        const configTemplateCount = {};
+        // Group templates by their configuration
+        const templatesByConfig = {};
         category.templates.forEach((template) => {
-          configTemplateCount[template.configurationId] = 
-            (configTemplateCount[template.configurationId] || 0) + 1;
+          if (!templatesByConfig[template.configurationId]) {
+            templatesByConfig[template.configurationId] = [];
+          }
+          templatesByConfig[template.configurationId].push({
+            id: template.id,
+            name: template.name,
+            basePrice: template.basePrice,
+            prevImg: template.prevImg,
+            realImg: template.realImg,
+            enabledAddToCart: template.enabledAddToCart,
+            recaps: template.recaps,
+            data: template.data,
+            enabledAutoImgUpdate: template.enabledAutoImgUpdate,
+            configurationId: template.configurationId, // Keep reference to original config
+          });
         });
-        
-        const primaryConfigId = Object.keys(configTemplateCount).reduce((a, b) =>
-          configTemplateCount[a] > configTemplateCount[b] ? a : b
-        );
-        const primaryConfiguration = configurations.find(c => c.id === parseInt(primaryConfigId));
 
-        // Get fonts using the same logic as UI export (filter by selectedFonts)
-        const fonts = await getFontsForConfiguration(primaryConfiguration, session.id);
+        // Build configurations array with their associated templates and fonts
+        const configurationsForExport = [];
+        const allFontsMap = new Map(); // Track all fonts to avoid duplicates
 
-        // Prepare templates for export (same structure as existing export)
-        const templatesForExport = category.templates.map((template) => ({
-          id: template.id,
-          name: template.name,
-          basePrice: template.basePrice,
-          prevImg: template.prevImg,
-          realImg: template.realImg,
-          enabledAddToCart: template.enabledAddToCart,
-          recaps: template.recaps,
-          data: template.data,
-          enabledAutoImgUpdate: template.enabledAutoImgUpdate,
-        }));
+        for (const config of configurations) {
+          const configTemplates = templatesByConfig[config.id] || [];
+          
+          // Get fonts for this configuration
+          const configFonts = await getFontsForConfiguration(config, session.id);
+          
+          // Add fonts to global map (avoid duplicates)
+          configFonts.forEach((font) => {
+            if (!allFontsMap.has(font.id)) {
+              allFontsMap.set(font.id, {
+                id: font.id,
+                label: font.label,
+                url: font.url,
+                isGoogleFont: font.isGoogleFont,
+              });
+            }
+          });
 
-        // Create export structure EXACTLY like the UI export
-        // Structure: configuration object with templates, fonts, data, uploadsPrefix
+          configurationsForExport.push({
+            id: config.id,
+            name: config.name,
+            description: config.description,
+            icon: config.icon,
+            popupImg: config.popupImg,
+            sessionId: config.sessionId,
+            data: config.data,
+            product: config.product,
+            materialType: config.materialType,
+            productType: config.productType,
+            templates: configTemplates,
+            // Note: fonts are collected globally to avoid duplicates
+          });
+        }
+
+        // Create export structure with all configurations
+        // Structure: category, configurations array, fonts array, uploadsPrefix
         let exportData = {
-          id: primaryConfiguration.id,
-          name: primaryConfiguration.name,
-          description: primaryConfiguration.description,
-          icon: primaryConfiguration.icon,
-          popupImg: primaryConfiguration.popupImg,
-          sessionId: primaryConfiguration.sessionId,
-          data: primaryConfiguration.data,
-          product: primaryConfiguration.product,
-          materialType: primaryConfiguration.materialType,
-          productType: primaryConfiguration.productType,
-          templates: templatesForExport,
-          fonts: fonts.map((font) => ({
-            id: font.id,
-            label: font.label,
-            url: font.url,
-            isGoogleFont: font.isGoogleFont,
-          })),
+          category: {
+            id: category.id,
+            name: category.name,
+          },
+          configurations: configurationsForExport,
+          fonts: Array.from(allFontsMap.values()),
           uploadsPrefix: uploadsPrefix,
         };
 
@@ -306,16 +324,25 @@ async function exportTemplatesByCategory(sessionId = null, shopName = null) {
         // Create filename from category name
         const fileName = `${sanitizeFileName(category.name)}.json`;
         const filePath = path.join(tempDir, fileName);
+        
+        // Also save to scripts directory for import script
+        const scriptsFilePath = path.join(__dirname, fileName);
 
         // Write JSON file
-        fs.writeFileSync(filePath, JSON.stringify(exportData, null, 2), "utf8");
+        const jsonContent = JSON.stringify(exportData, null, 2);
+        fs.writeFileSync(filePath, jsonContent, "utf8");
+        fs.writeFileSync(scriptsFilePath, jsonContent, "utf8");
+        
         exportedFiles.push({
           fileName,
           filePath,
           categoryName: category.name,
         });
 
-        console.log(`    ✓ Exported ${category.templates.length} template(s) to ${fileName}`);
+        const totalTemplates = category.templates.length;
+        const totalConfigs = configurationsForExport.length;
+        console.log(`    ✓ Exported ${totalTemplates} template(s) with ${totalConfigs} configuration(s) to ${fileName}`);
+        console.log(`    ✓ Saved to scripts directory: ${scriptsFilePath}`);
       }
 
       if (exportedFiles.length === 0) {
