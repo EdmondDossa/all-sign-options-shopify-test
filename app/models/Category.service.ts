@@ -84,4 +84,21 @@ export default class CategoryService {
       return Promise.resolve(null);
     }
   }
+
+  static async getCategoryByName(
+    name: string,
+    sessionId: string
+  ): Promise<any | null> {
+    try {
+      return await prisma.category.findFirst({
+        where: {
+          name: name,
+          sessionId: sessionId,
+        },
+      });
+    } catch (error) {
+      console.error("Error retrieving category by name:", error);
+      return null;
+    }
+  }
 }

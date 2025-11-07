@@ -79,7 +79,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const configuration: ConfigurationType =
         await ConfigurationService.getConfigurationWithoutTemplates(parseInt(id), session.id);
       delete configuration.id;
-      delete configuration.product;
+      // Ne pas copier le champ product (legacy), utiliser products à la place
+      if (configuration.product) {
+        (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
+        delete (configuration as any).product;
+      }
       configuration.name = formData.get("configTitle") as string;
       await ConfigurationService.duplicateConfiguration(
         configuration,

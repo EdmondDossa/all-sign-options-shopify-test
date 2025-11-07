@@ -74,7 +74,21 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   }
 
   if (configuration) {
-    (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
+    // Récupérer les produits réellement associés depuis Shopify
+    const shopifyProducts = await ShopifyProductService.getProductsByConfiguration(
+      admin,
+      configuration.id
+    );
+    
+    // Utiliser les produits de Shopify s'ils existent, sinon utiliser ceux de la base de données
+    if (shopifyProducts && shopifyProducts.length > 0) {
+      (configuration as any).products = shopifyProducts;
+    } else {
+      // Fallback sur les produits de la base de données si aucun dans Shopify
+      // Le champ 'product' en DB contient le tableau products
+      (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
+    }
+    // Ne pas exposer le champ product (legacy) au frontend
     delete (configuration as any).product;
   }
 
@@ -95,7 +109,6 @@ export default function ConfigurationEdit() {
       description: "",
       icon: "",
       popupImg: "",
-      product: null,
       products: [],
     },
   );
@@ -164,21 +177,15 @@ export default function ConfigurationEdit() {
   const [demoName, setDemoName] = useState<any>('');
 
   const handleSubmit = () => {
-    console.log(demoId, "demoData id")
-    // submit(
-    //   { 
-    //     ...formData, 
-    //     product: JSON.stringify(formData.product),
-    //     materialType:materialType,
-    //     productType: productType,
-    //     demoId: parseInt(`${demoId}`)
-    //   },
-    //   { method: "POST" },
-    // );
+    // Log demoId seulement s'il existe
+    if (demoId !== null && demoId !== undefined && demoId !== '') {
+      console.log(demoId, "demoData id");
+    }
+    // Ancien code commenté - maintenant on utilise uniquement products
 
   const submitData: any = { 
     ...formData, 
-    product: JSON.stringify(formData.product),
+    products: JSON.stringify(formData.products || []),
     materialType: materialType,
     productType: productType
   };
@@ -1585,7 +1592,6 @@ const formSchema = z.object({
   productType: z.string().nullish().transform(stringTransform),
   materialType: z.string().nullish().transform(stringTransform),
   demoId: z.number().nullish().nullable(),
-  product: z.any().transform(jsonTransform),
   products: z.any().transform(jsonTransform),
 
 });
@@ -1612,51 +1618,107 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (id) {
     configuration.id = parseInt(id);
-    const oldConfiguration = await ConfigurationService.getConfiguration(
-      configuration.id,
-      session.id,
-    );
-    const oldConfigurationProductID = oldConfiguration.product
-      ? oldConfiguration.product.id
-      : undefined;
 
+    // Récupérer les anciens produits associés depuis Shopify
+    const oldShopifyProducts = await ShopifyProductService.getProductsByConfiguration(
+      admin,
+      configuration.id
+    );
+
+    // Normaliser les produits avant de sauvegarder en base de données
+    // S'assurer que configuration.products est toujours un tableau
+    let newProducts: any[] = [];
+    if (configuration.products) {
+      if (Array.isArray(configuration.products)) {
+        newProducts = configuration.products;
+      } else if (typeof configuration.products === 'string') {
+        try {
+          const parsed = JSON.parse(configuration.products);
+          newProducts = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          newProducts = [];
+        }
+      }
+    }
+    // Mettre à jour configuration.products avec la valeur normalisée
+    configuration.products = newProducts;
+
+    // Mettre à jour la configuration en base de données
     const configurationObject = await ConfigurationService.updateConfiguration(
       configuration,
       session.id,
     );
-    if (
-      configurationObject &&
-      configurationObject.product?.id &&
-      oldConfigurationProductID != configurationObject.product?.id
-    ) {
-      const metafieldId = await ShopifyProductService.getMetafieldID(
-        admin,
-        configuration?.product?.id,
-      );
-      await ShopifyProductService.update(
-        admin,
-        configurationObject.product.id,
-        configurationObject.id,
-        metafieldId,
-      );
+    
+    // Normaliser les IDs pour la comparaison (enlever les espaces, normaliser le format)
+    const normalizeId = (id: string) => String(id).trim();
+    
+    const newProductIds = new Set(newProducts.map((p: any) => normalizeId(p.id)));
+    const oldProductIds = new Set(oldShopifyProducts.map((p: any) => normalizeId(p.id)));
 
-      if (oldConfigurationProductID) {
-        const oldMetafieldId = await ShopifyProductService.getMetafieldID(
-          admin,
-          oldConfigurationProductID,
-        );
-        await ShopifyProductService.update(
-          admin,
-          oldConfigurationProductID,
-          0,
-          oldMetafieldId,
-        );
-      }
+    console.log("DEBUG - New products IDs:", Array.from(newProductIds));
+    console.log("DEBUG - Old products IDs:", Array.from(oldProductIds));
+
+    // Identifier les produits à ajouter (dans nouveaux mais pas dans anciens)
+    const productsToAdd = newProducts.filter((p: any) => !oldProductIds.has(normalizeId(p.id)));
+    
+    // Identifier les produits à supprimer (dans anciens mais pas dans nouveaux)
+    const productsToRemove = oldShopifyProducts.filter((p: any) => !newProductIds.has(normalizeId(p.id)));
+
+    console.log("DEBUG - Products to add:", productsToAdd);
+    console.log("DEBUG - Products to remove:", productsToRemove);
+
+    // Ajouter la configuration aux nouveaux produits dans Shopify
+    if (productsToAdd.length > 0) {
+      console.log("Action - Adding products to configuration:", productsToAdd);
+      await ShopifyProductService.updateMultipleProducts(
+        admin,
+        productsToAdd,
+        configurationObject.id
+      );
     }
+
+    // Retirer la configuration des produits supprimés dans Shopify
+    if (productsToRemove.length > 0) {
+      console.log("Action - Removing products from configuration:", productsToRemove);
+      const productIdsToRemove = productsToRemove.map((p: any) => p.id);
+      await ShopifyProductService.removeConfigurationFromProducts(
+        admin,
+        productIdsToRemove
+      );
+    }
+
+    // Si tous les produits ont été supprimés, s'assurer qu'aucun produit n'est associé
+    if (newProducts.length === 0 && oldShopifyProducts.length > 0) {
+      console.log("Action - All products removed, ensuring no products are associated");
+      const allProductIds = oldShopifyProducts.map((p: any) => p.id);
+      await ShopifyProductService.removeConfigurationFromProducts(
+        admin,
+        allProductIds
+      );
+    }
+
     return redirect(
-      `..${flashMessage("Configuration updated successfully")}`,
+      `/app/configuration${flashMessage("Configuration updated successfully")}`,
     );
   } else {
+    // Normaliser les produits avant de sauvegarder en base de données
+    // S'assurer que configuration.products est toujours un tableau
+    let newProducts: any[] = [];
+    if (configuration.products) {
+      if (Array.isArray(configuration.products)) {
+        newProducts = configuration.products;
+      } else if (typeof configuration.products === 'string') {
+        try {
+          const parsed = JSON.parse(configuration.products);
+          newProducts = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          newProducts = [];
+        }
+      }
+    }
+    // Mettre à jour configuration.products avec la valeur normalisée
+    configuration.products = newProducts;
+
     const configurationObject = await ConfigurationService.addConfiguration(
       configuration,
       session.id,
@@ -1668,9 +1730,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
     
     // Gérer les produits multiples
-    if (configurationObject && configuration.products && configuration.products.length > 0) {
-      console.log("Action - Creating new configuration with products:", configuration.products);
-      await ShopifyProductService.updateMultipleProducts(admin, configuration.products, configurationObject.id);
+    if (configurationObject && newProducts.length > 0) {
+      console.log("Action - Creating new configuration with products:", newProducts);
+      await ShopifyProductService.updateMultipleProducts(admin, newProducts, configurationObject.id);
     }
     
     return redirect(`/app/configuration/${configurationObject.id}/materials`)

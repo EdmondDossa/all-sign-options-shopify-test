@@ -22,7 +22,7 @@ import {
   ButtonGroup,
   Divider,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import PlusIcon from "~/components/icons/PlusIcon";
 import ImportIcon from "~/components/icons/ImportIcon";
 import ExportIcon from "~/components/icons/ExportIcon";
@@ -32,14 +32,14 @@ import { SearchIcon } from "@shopify/polaris-icons";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
 import { SettingIconBtn } from "~/components/buttons/SettingIconBtn";
-import {
-  PlusCircleIcon
-} from '@shopify/polaris-icons';
 import { authenticate } from "~/shopify.server";
 import TemplateService from "~/models/Template.service";
+import CategoryService from "~/models/Category.service";
+import TemplatePackService from "~/models/TemplatePack.service";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { fileUrl } from "~/utils/fileUrl";
+import { ComboxSelect } from "~/components/inputs/ComboxSelect";
 
 
 
@@ -50,7 +50,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     session.id,
   );
 
-  return json({ templates });
+  const categories = await CategoryService.getCategorys(session.id);
+
+  return json({ templates, categories });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -64,6 +66,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case "DELETE": {
       console.log("start deleting");
       await TemplateService.deleteTemplate(parseInt(id), session.id);
+      
+      // Check pack access after template deletion
+      await TemplatePackService.checkPackAccessAfterDeletion(session.id);
+      
       return json({
         ...jFlashMessage("Template deleted successfully"),
       });
@@ -81,8 +87,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function ConfigurationTemplates() {
   const  [searchTag,  setSearchTag] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const buttonRef = useRef<HTMLDivElement>(null);
   const submit = useSubmit();
-  let { templates } = useLoaderData<typeof loader>();
+  let { templates, categories } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
  
 
@@ -94,15 +104,25 @@ export default function ConfigurationTemplates() {
     value: any;
     image: string;
     basePrice: number|any;
+    categoryId: number | null;
   }> =templates?.map((item, index) => {
     return {
       label: item.name,
       value: `${item.id}`,
       image: item.prevImg,
-      basePrice: item.basePrice
+      basePrice: item.basePrice,
+      categoryId: item.categoryId
     };
   })||[];
 
+  // Filter by category first
+  if (selectedCategoryId !== null) {
+    data = data.filter((item) => {
+      return item.categoryId === selectedCategoryId;
+    });
+  }
+
+  // Then filter by search tag
   data = data.filter((item) => {
     return item.label.toLowerCase().includes(searchTag.toLowerCase());
   });
@@ -125,6 +145,9 @@ export default function ConfigurationTemplates() {
     navigate("export");
   };
 
+  const onHandlePacks = () => {
+    navigate("/app/templates/packs");
+  };
 
   const handeleDelete = (id: number) => {
     submit({ id: id }, { method: "DELETE" });
@@ -143,17 +166,43 @@ export default function ConfigurationTemplates() {
 
   return (
       <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
+        <style>{`
+          .add-packs-tooltip-fixed {
+            position: fixed !important;
+            z-index: 99999 !important;
+          }
+        `}</style>
         <Card>
-          <Box>
+          <div className="add-packs-tooltip-wrapper" style={{ overflow: "visible", position: "relative" }}>
+            <Box>
             <InlineStack gap="100" align="space-between" blockAlign="center">
               <Text as="h2" variant="headingMd">
                  Templates  list
             </Text>
             <InlineStack gap="100" align="space-between" blockAlign="center">
+              <Box minWidth="200px">
+                <ComboxSelect
+                  label="Filter by category"
+                  placeholder="All categories"
+                  selectedOption={selectedCategoryId !== null ? `${selectedCategoryId}` : "0"}
+                  data={[
+                    { label: "All categories", value: "0" },
+                    ...(categories?.map((category: any) => ({
+                      label: category.name,
+                      value: `${category.id}`,
+                    })) || [])
+                  ]}
+                  setSelectedOption={(value: any) => {
+                    setSelectedCategoryId(value === "0" ? null : parseInt(value));
+                  }}
+                  labelHidden={true}
+                />
+              </Box>
               <TextField
+                label="Search templates"
                 prefix={<Icon source={SearchIcon} />}
                 value={searchTag}
-                label="Search demo data"
+                placeholder="Search templates"
                 onChange={setSearchTag}
                 autoComplete="on"
                 labelHidden
@@ -167,42 +216,109 @@ export default function ConfigurationTemplates() {
                     <InlineStack gap="100">
                       <PlusIcon />
                       <span className="primary-btn-text">
-                        Add  
+                       Create Template  
                       </span>
                     </InlineStack>
                   </Box>
               </button>
-              {/* <button
-                  className="primary-btn"
+              <div 
+                ref={buttonRef}
+                style={{ position: "relative", display: "inline-block" }}
+                onMouseEnter={() => {
+                  if (buttonRef.current) {
+                    const rect = buttonRef.current.getBoundingClientRect();
+                    setTooltipPosition({
+                      top: rect.top - 8,
+                      left: rect.left + rect.width / 2,
+                    });
+                    setShowTooltip(true);
+                  }
+                }}
+                onMouseLeave={() => {
+                  setShowTooltip(false);
+                }}
+              >
+                <button
+                  className="primary-btn disabled-btn"
                   type="button"
-                  onClick={ ()=>{ onHandleImport() } }
+                  onClick={ ()=>{ onHandlePacks() } }
+                  disabled
                 >
                   <Box paddingInline="100">
                     <InlineStack gap="100">
-                      <ImportIcon />
+                      <PlusIcon />
                       <span className="primary-btn-text">
-                        Import  
+                        Add Packs  
                       </span>
                     </InlineStack>
                   </Box>
+                </button>
+              </div>
+              {showTooltip && tooltipPosition && (
+                <div
+                  className="add-packs-tooltip-fixed"
+                  style={{
+                    position: "fixed",
+                    top: `${tooltipPosition.top}px`,
+                    left: `${tooltipPosition.left}px`,
+                    transform: "translate(-50%, -100%)",
+                    backgroundColor: "#000000",
+                    color: "#ffffff",
+                    padding: "6px 12px",
+                    borderRadius: "4px",
+                    fontSize: "12px",
+                    whiteSpace: "nowrap",
+                    pointerEvents: "none",
+                    transition: "opacity 0.2s ease-in-out",
+                    marginBottom: "8px",
+                  }}
+                >
+                  Coming soon
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      borderLeft: "6px solid transparent",
+                      borderRight: "6px solid transparent",
+                      borderTop: "6px solid #000000",
+                    }}
+                  />
+                </div>
+              )}
+              <button
+                className="primary-btn"
+                type="button"
+                onClick={ ()=>{ onHandleImport() } }
+              >
+                <Box paddingInline="100">
+                  <InlineStack gap="100">
+                    <ImportIcon />
+                    <span className="primary-btn-text">
+                      Import  
+                    </span>
+                  </InlineStack>
+                </Box>
               </button>
               <button
-                  className="primary-btn"
-                  type="button"
-                  onClick={ ()=>{ onHandleExport() } }
-                >
-                  <Box paddingInline="100">
-                    <InlineStack gap="100">
-                      <ExportIcon />
-                      <span className="primary-btn-text">
-                        Export  
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button> */}
+                className="primary-btn"
+                type="button"
+                onClick={ ()=>{ onHandleExport() } }
+              >
+                <Box paddingInline="100">
+                  <InlineStack gap="100">
+                    <ExportIcon />
+                    <span className="primary-btn-text">
+                      Export  
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>
             </InlineStack>
             </InlineStack>
           </Box>
+          </div>
         </Card>
 
   

@@ -61,8 +61,11 @@ export default function TemplateEditComponent() {
   useHandleFlashMessage();
   let { configurations } = useLoaderData<typeof loader>();
 
+  // Initialize with first configuration if available
+  const firstConfigurationId = configurations && configurations.length > 0 ? configurations[0].id : 0;
+
   const [formData, setFormData] = useState({
-    configurationId: 0,
+    configurationId: firstConfigurationId,
     templates: [],
     exportAll: false
   });
