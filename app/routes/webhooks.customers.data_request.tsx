@@ -105,7 +105,7 @@ export async function action({ request }: ActionFunctionArgs) {
       icon: config.icon,
       popupImg: config.popupImg,
       data: config.data,
-      product: config.product
+      products: config.products || (Array.isArray(config.product) ? config.product : [])
     }));
 
     // Récupérer les templates

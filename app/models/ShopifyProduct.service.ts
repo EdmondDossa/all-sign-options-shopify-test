@@ -693,4 +693,51 @@ export class ShopifyProductService {
         return [];
       }
     }
+
+    /**
+     * Finds an available product (not associated with any configuration) to use as default
+     * @param admin - Shopify admin API client
+     * @returns Promise<{id: string, title: string} | null> - Returns first available product or null
+     */
+    static async findAvailableProduct(admin: any): Promise<{id: string, title: string} | null> {
+      try {
+        // Get first 10 products from the shop
+        const response = await admin.graphql(
+          `#graphql
+          query getAvailableProducts {
+            products(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  metafield(namespace: "allSignsOptionsAsoAso", key: "asoConfigurationId") {
+                    value
+                  }
+                }
+              }
+            }
+          }`
+        );
+
+        const data = await response.json();
+        const products = data.data.products.edges || [];
+        
+        // Find first product without metafield (not associated with any configuration)
+        for (const edge of products) {
+          const product = edge.node;
+          // If metafield is null or value is "0" or empty, product is available
+          if (!product.metafield || !product.metafield.value || product.metafield.value === "0") {
+            return {
+              id: product.id,
+              title: product.title
+            };
+          }
+        }
+        
+        return null; // No available product found
+      } catch (error) {
+        console.log("Error finding available product:", error);
+        return null;
+      }
+    }
 }

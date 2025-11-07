@@ -1175,7 +1175,7 @@ export default class ConfigurationService {
         },
         data: {
           ...configData,
-          product: products, // Save products array as product field
+          product: products, // Save products array in DB field 'product' (legacy column name)
         },
       });
     } catch (error) {
@@ -1215,7 +1215,7 @@ export default class ConfigurationService {
       return await prisma.configuration.create({
         data: {
           ...configData,
-          product: products, // Save products array as product field
+          product: products, // Save products array in DB field 'product' (legacy column name)
           materialType: materialType, // Save materialType
           productType: productType, // Save productType
           sessionId: sessionId,

@@ -22,7 +22,7 @@ import {
   ButtonGroup,
   Divider,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import PlusIcon from "~/components/icons/PlusIcon";
 import ImportIcon from "~/components/icons/ImportIcon";
 import ExportIcon from "~/components/icons/ExportIcon";
@@ -88,6 +88,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function ConfigurationTemplates() {
   const  [searchTag,  setSearchTag] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const buttonRef = useRef<HTMLDivElement>(null);
   const submit = useSubmit();
   let { templates, categories } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
@@ -163,8 +166,15 @@ export default function ConfigurationTemplates() {
 
   return (
       <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
+        <style>{`
+          .add-packs-tooltip-fixed {
+            position: fixed !important;
+            z-index: 99999 !important;
+          }
+        `}</style>
         <Card>
-          <Box>
+          <div className="add-packs-tooltip-wrapper" style={{ overflow: "visible", position: "relative" }}>
+            <Box>
             <InlineStack gap="100" align="space-between" blockAlign="center">
               <Text as="h2" variant="headingMd">
                  Templates  list
@@ -211,20 +221,72 @@ export default function ConfigurationTemplates() {
                     </InlineStack>
                   </Box>
               </button>
-              <button
-                className="primary-btn"
-                type="button"
-                onClick={ ()=>{ onHandlePacks() } }
+              <div 
+                ref={buttonRef}
+                style={{ position: "relative", display: "inline-block" }}
+                onMouseEnter={() => {
+                  if (buttonRef.current) {
+                    const rect = buttonRef.current.getBoundingClientRect();
+                    setTooltipPosition({
+                      top: rect.top - 8,
+                      left: rect.left + rect.width / 2,
+                    });
+                    setShowTooltip(true);
+                  }
+                }}
+                onMouseLeave={() => {
+                  setShowTooltip(false);
+                }}
               >
-                <Box paddingInline="100">
-                  <InlineStack gap="100">
-                    <PlusIcon />
-                    <span className="primary-btn-text">
-                      Add Packs  
-                    </span>
-                  </InlineStack>
-                </Box>
-              </button>
+                <button
+                  className="primary-btn disabled-btn"
+                  type="button"
+                  onClick={ ()=>{ onHandlePacks() } }
+                  disabled
+                >
+                  <Box paddingInline="100">
+                    <InlineStack gap="100">
+                      <PlusIcon />
+                      <span className="primary-btn-text">
+                        Add Packs  
+                      </span>
+                    </InlineStack>
+                  </Box>
+                </button>
+              </div>
+              {showTooltip && tooltipPosition && (
+                <div
+                  className="add-packs-tooltip-fixed"
+                  style={{
+                    position: "fixed",
+                    top: `${tooltipPosition.top}px`,
+                    left: `${tooltipPosition.left}px`,
+                    transform: "translate(-50%, -100%)",
+                    backgroundColor: "#000000",
+                    color: "#ffffff",
+                    padding: "6px 12px",
+                    borderRadius: "4px",
+                    fontSize: "12px",
+                    whiteSpace: "nowrap",
+                    pointerEvents: "none",
+                    transition: "opacity 0.2s ease-in-out",
+                    marginBottom: "8px",
+                  }}
+                >
+                  Coming soon
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      borderLeft: "6px solid transparent",
+                      borderRight: "6px solid transparent",
+                      borderTop: "6px solid #000000",
+                    }}
+                  />
+                </div>
+              )}
               <button
                 className="primary-btn"
                 type="button"
@@ -256,6 +318,7 @@ export default function ConfigurationTemplates() {
             </InlineStack>
             </InlineStack>
           </Box>
+          </div>
         </Card>
 
   

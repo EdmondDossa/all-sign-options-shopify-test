@@ -77,10 +77,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   // Check if already purchased
   if (pack.isPurchased && pack.hasAccess) {
     // Re-import if templates are missing
+    const { admin } = await authenticate.admin(request);
     const result = await TemplatePackService.importPackToShop(
       session.id,
       packId,
-      session.shop
+      session.shop,
+      admin
     );
 
     if (result.success) {
@@ -99,10 +101,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       await TemplatePackService.recordPurchase(session.id, packId, 0);
 
       // Import pack
+      const { admin } = await authenticate.admin(request);
       const result = await TemplatePackService.importPackToShop(
         session.id,
         packId,
-        session.shop
+        session.shop,
+        admin
       );
 
       if (result.success) {

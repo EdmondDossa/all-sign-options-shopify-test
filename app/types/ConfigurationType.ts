@@ -5,7 +5,6 @@
     icon: string;
      popupImg: string;
     data?: any;
-     product?: any;
      products?: Array<{id: string, title: string}>;
      templates?: any;
      materialType?: string;

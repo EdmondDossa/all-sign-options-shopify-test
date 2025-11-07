@@ -3,6 +3,7 @@ import TemplateService from "~/models/Template.service";
 import CategoryService from "~/models/Category.service";
 import ConfigurationService from "~/models/Configuration.service";
 import FontService from "~/models/Font.service";
+import { ShopifyProductService } from "~/models/ShopifyProduct.service";
 import { readFileSync, readdirSync, copyFileSync, existsSync, mkdirSync } from "fs";
 import * as path from "path";
 import { replaceUrlForImport } from "~/utils/import-file";
@@ -305,7 +306,8 @@ export default class TemplatePackService {
   static async importPackToShop(
     sessionId: string,
     packId: number,
-    shop: string
+    shop: string,
+    admin?: any
   ): Promise<{ success: boolean; message: string; templatesCount?: number }> {
     try {
       // Get pack info
@@ -487,6 +489,8 @@ export default class TemplatePackService {
           configMap.set(configData.id, targetConfiguration.id);
         } else {
           // Create new configuration
+          // IMPORTANT: Ne pas importer les produits du pack d'origine
+          // Le client devra associer ses propres produits après l'importation
           targetConfiguration = await ConfigurationService.addConfiguration(
             {
               name: `${configData.name} (Pack)`,
@@ -494,7 +498,7 @@ export default class TemplatePackService {
               icon: configData.icon || pack.icon || "",
               popupImg: configData.popupImg || pack.previewImg,
               data: configData.data || {},
-              product: configData.product,
+              products: [], // Toujours vide lors de l'importation - le client ajoutera ses propres produits
               materialType: configData.materialType,
               productType: configData.productType,
             },
@@ -521,11 +525,43 @@ export default class TemplatePackService {
             }
           }
 
-          // Update configuration with fonts
+          // S'assurer que products reste vide lors de la mise à jour
+          // targetConfiguration vient de la DB avec 'product', on doit le convertir en 'products'
+          if (!targetConfiguration.products) {
+            targetConfiguration.products = Array.isArray(targetConfiguration.product) 
+              ? targetConfiguration.product 
+              : [];
+          }
+          
+          // Essayer de trouver un produit disponible pour l'associer par défaut
+          let defaultProduct: {id: string, title: string} | null = null;
+          if (admin) {
+            defaultProduct = await ShopifyProductService.findAvailableProduct(admin);
+          }
+          
+          // Si un produit disponible est trouvé, l'associer, sinon laisser vide
+          if (defaultProduct) {
+            targetConfiguration.products = [defaultProduct];
+            console.log(`Import - Associating available product "${defaultProduct.title}" to configuration "${targetConfiguration.name}"`);
+          } else {
+            targetConfiguration.products = [];
+            console.log(`Import - No available product found for configuration "${targetConfiguration.name}", leaving empty`);
+          }
+
+          // Update configuration with fonts and products
           await ConfigurationService.updateConfiguration(
             targetConfiguration,
             sessionId
           );
+          
+          // Si un produit par défaut a été trouvé, l'associer dans Shopify
+          if (defaultProduct && admin) {
+            await ShopifyProductService.updateMultipleProducts(
+              admin,
+              [defaultProduct],
+              targetConfiguration.id
+            );
+          }
           
           configMap.set(configData.id, targetConfiguration.id);
         }
