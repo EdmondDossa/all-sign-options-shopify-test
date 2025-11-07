@@ -8,19 +8,19 @@ datasource db {
 }
 
 model Session {
-  id             String          @id
+  id             String            @id
   shop           String
   state          String
-  isOnline       Boolean         @default(false)
+  isOnline       Boolean           @default(false)
   scope          String?
   expires        DateTime?
   accessToken    String
   userId         BigInt?
-  isInitialized  Boolean         @default(false)
-  accountOwner   Boolean         @default(false)
-  collaborator   Boolean?        @default(false)
+  isInitialized  Boolean           @default(false)
+  accountOwner   Boolean           @default(false)
+  collaborator   Boolean?          @default(false)
   email          String?
-  emailVerified  Boolean?        @default(false)
+  emailVerified  Boolean?          @default(false)
   firstName      String?
   lastName       String?
   locale         String?
@@ -31,6 +31,7 @@ model Session {
   fonts          Font[]
   setting        Setting?
   templates      Template[]
+  purchasedPacks ShopTemplatePack[]
 }
 
 model Upload {
@@ -129,4 +130,39 @@ model Design {
   storage    String?
   zipFile    Json?
   session    Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model TemplatePack {
+  id          Int              @id @default(autoincrement())
+  name        String
+  slug        String           @unique
+  description String?
+  category    String           // Category name (e.g., "Noël", "Nouvel An")
+  price       Float
+  jsonFile    String           // Path to JSON file (e.g., "noel.json")
+  previewImg  String           // Preview image URL
+  icon        String?
+  isActive    Boolean          @default(true)
+  order       Int              @default(0)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  purchases   ShopTemplatePack[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model ShopTemplatePack {
+  id            Int          @id @default(autoincrement())
+  sessionId     String
+  packId        Int
+  purchasedAt   DateTime     @default(now())
+  purchasePrice Float
+  isActive      Boolean      @default(true)
+  session       Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  pack          TemplatePack @relation(fields: [packId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, packId])
+  @@index([sessionId])
+  @@index([packId])
 }
