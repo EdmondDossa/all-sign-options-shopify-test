@@ -627,6 +627,7 @@ img.aso-logo{
     flex-wrap: nowrap;
     gap: 6px;
     align-items: center;
+    padding: 0 8px;
   }
   
  

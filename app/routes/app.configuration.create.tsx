@@ -86,7 +86,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     } else {
       // Fallback sur les produits de la base de données si aucun dans Shopify
       // Le champ 'product' en DB contient le tableau products
-      (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
+    (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
     }
     // Ne pas exposer le champ product (legacy) au frontend
     delete (configuration as any).product;
@@ -1692,10 +1692,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       console.log("Action - All products removed, ensuring no products are associated");
       const allProductIds = oldShopifyProducts.map((p: any) => p.id);
       await ShopifyProductService.removeConfigurationFromProducts(
-        admin,
+          admin,
         allProductIds
-      );
-    }
+        );
+      }
 
     return redirect(
       `/app/configuration${flashMessage("Configuration updated successfully")}`,

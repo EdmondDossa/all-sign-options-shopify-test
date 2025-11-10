@@ -23,6 +23,8 @@ export const FileInput = ({
   path,
   handlePath,
   buttonTitle,
+  onBeforeOpen,
+  onAfterSelect,
 }: {
   title?: string;
   type?:  "image" | "icon" | "video" | "font" | "all" | "other";
@@ -31,6 +33,8 @@ export const FileInput = ({
   buttonTitle?: string;
   path: string;
   handlePath: Function;
+  onBeforeOpen?: () => void;
+  onAfterSelect?: () => void;
 }) => {
   return (
     <BlockStack gap="050">
@@ -42,15 +46,21 @@ export const FileInput = ({
             fileData={[path]}
             setFilesData={handlePath}
             title={title}
+            onBeforeOpen={onBeforeOpen}
+            onAfterSelect={onAfterSelect}
           >
-            <Button
-              icon={uploadIcon}
-              size="micro"
-              tone="success"
-              variant="primary"
+            <button
+              className="primary-btn"
+              type="button"
+              onClick={(e) => {
+                // Let the click bubble up to FileUploader's div
+                console.log("Button clicked in FileInput");
+              }}
             >
-              {buttonTitle || title || "Upload"}
-            </Button>
+              <div className="primary-btn-flex">
+                <span className="primary-btn-text">{buttonTitle || title || "Upload"}</span>
+              </div>
+            </button>
           </FileUploader>
           {!path ? (
             <Thumbnail alt="image" source={uploadIcon} size="small" />
