@@ -67,7 +67,8 @@ export default class MaterialAdvanceComponentService {
         materialComponent['options'] = materialComponents[id]['options'];
         configuration["data"]["materials"][materialId]["data"][id] = materialComponent;
         configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
-        return Promise.resolve(materialComponents);
+        // Retourner les données mises à jour depuis la configuration
+        return Promise.resolve(configuration["data"]["materials"][materialId]["data"]);
       }
       return Promise.resolve(null);
     } catch (error) {
@@ -87,9 +88,10 @@ export default class MaterialAdvanceComponentService {
       let configuration: any = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let materialComponents: MaterialAdvanceComponentType[]|null = configuration["data"]["materials"][materialId]["data"];
       if (Array.isArray(materialComponents) && materialComponents[id]) {
-        configuration["data"]["materials"][materialId]["data"] = materialComponents?.filter((curr,index)=> index!= id);
+        const updatedComponents = materialComponents?.filter((curr,index)=> index!= id);
+        configuration["data"]["materials"][materialId]["data"] = updatedComponents;
         configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
-        return Promise.resolve(materialComponents);
+        return Promise.resolve(updatedComponents);
       }
       return Promise.resolve(null);
     } catch (error) {
@@ -109,9 +111,10 @@ export default class MaterialAdvanceComponentService {
       let configuration: any = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let materialComponents: MaterialAdvanceComponentType[]|null = configuration["data"]["materials"][materialId]["data"];
       if (Array.isArray(materialComponents) && materialComponents[id]) {
-        configuration["data"]["materials"][materialId]["data"] = materialComponents.map((curr,index)=> index == id? {...curr, 'isDefault':true}: {...curr, 'isDefault':false});
+        const updatedComponents = materialComponents.map((curr,index)=> index == id? {...curr, 'isDefault':true}: {...curr, 'isDefault':false});
+        configuration["data"]["materials"][materialId]["data"] = updatedComponents;
         configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
-        return Promise.resolve(materialComponents);
+        return Promise.resolve(updatedComponents);
       }
       return Promise.resolve(null);
     } catch (error) {

@@ -10,6 +10,7 @@ import {
   useNavigation,
   useOutletContext,
   useParams,
+  useRevalidator,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -22,7 +23,7 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import NextLtrIcon from "~/components/icons/NextLtrIcon";
@@ -47,14 +48,16 @@ interface MaterialAdavanceProps {
   index: number;
   onClick: (id: boolean) => void;
   edit: boolean;
-  materialId: number | undefined
+  materialId: number | undefined;
+  onUpdate?: (components: MaterialAdvanceComponentType[] | null) => void;
 }
-export default function MaterialComponentCreate( { materialId, materialComponents, edit, index, onClick} :MaterialAdavanceProps) {
+export default function MaterialComponentCreate( { materialId, materialComponents, edit, index, onClick, onUpdate} :MaterialAdavanceProps) {
   const submit = useSubmit();
   const navigation = useNavigation();
   const params = useParams();
   const configId = params.configId;
   const fetcher = useFetcher() as any
+  const revalidator = useRevalidator();
   // const { materialComponents, material, configuration } = useOutletContext<{
   //   materialComponents: MaterialAdvanceComponentType[];
   //   material: MaterialAdvance;
@@ -63,6 +66,18 @@ export default function MaterialComponentCreate( { materialId, materialComponent
 
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
+
+  // Recharger les données après une soumission réussie
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data?.success) {
+      // Mettre à jour les composants avec les données retournées par l'API
+      if (fetcher.data?.data && onUpdate) {
+        onUpdate(fetcher.data.data);
+      }
+      revalidator.revalidate();
+      onClick(false);
+    }
+  }, [fetcher.state, fetcher.data, revalidator, onClick, onUpdate]);
   // const [searchParams] = useSearchParams();
   // const id = parseInt(searchParams.get("id") || "");
   const id = edit ? index : 0
@@ -109,11 +124,7 @@ export default function MaterialComponentCreate( { materialId, materialComponent
       method: "POST",
       action: "/api/advance-add-component-manager",
       encType: "application/json",
-    })
-
-    if(!isSubmitting){
-      onClick(false)
-    }
+    });
   };
 
   const navigate = useNavigate();
