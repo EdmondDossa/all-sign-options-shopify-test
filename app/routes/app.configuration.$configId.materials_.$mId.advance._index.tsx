@@ -103,17 +103,6 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
   };
 
   const handeleDefault = (id: number) => {
-    materialComponents = materialComponents.map((curr, index) => {
-      if (index === id) {
-        curr.isDefault = true;
-      } else {
-        curr.isDefault = false;
-      }
-      return curr;
-    });
-
-    // submit({ id: id }, { method: "PUT" });
-
     const requestBody: any = {
       operation: "set-default",
       configId: configId,
@@ -145,6 +134,13 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
     setActivePopoverId(-1)
     setEdit(false)
     setShowEditSection(true)
+  };
+
+  // Callback pour mettre à jour les composants après création/modification
+  const handleComponentsUpdate = (newComponents: MaterialAdvanceComponentType[] | null) => {
+    if (newComponents) {
+      setLocalMaterielComponents([...newComponents]);
+    }
   };
 
   const resourceName = {
@@ -229,6 +225,20 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
     setLocalMaterielComponents([...(materialComponents || [])])
   }, [materialId, materialComponents])
 
+  // Mettre à jour l'état local après suppression
+  useEffect(() => {
+    if (deleteFetcher.state === "idle" && deleteFetcher.data?.success && deleteFetcher.data?.data) {
+      setLocalMaterielComponents([...(deleteFetcher.data.data || [])]);
+    }
+  }, [deleteFetcher.state, deleteFetcher.data]);
+
+  // Mettre à jour l'état local après mise à jour par défaut
+  useEffect(() => {
+    if (setDafaultFetcher.state === "idle" && setDafaultFetcher.data?.success && setDafaultFetcher.data?.data) {
+      setLocalMaterielComponents([...(setDafaultFetcher.data.data || [])]);
+    }
+  }, [setDafaultFetcher.state, setDafaultFetcher.data]);
+
   return (
     <div>
       {!showEditSection && !showComponentSection &&
@@ -264,7 +274,7 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
                   <BlockStack gap="300">
                     <InlineStack gap="100" align="space-between">
                       <Text as="h2" variant="headingMd">
-                        List of componentss
+                        List of components
                       </Text>
                       <button
                         className="primary-btn"
@@ -287,7 +297,7 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
               </BoxBackground>
               <IndexTable
                 resourceName={resourceName}
-                itemCount={(materialComponents || []).length}
+                itemCount={(localMaterielComponents || []).length}
                 selectable={false}
                 headings={[
                   { title: "Title" },
@@ -304,7 +314,14 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
         </div>
       }
       {showEditSection && !showComponentSection &&
-        <MaterialComponentCreate materialId={materialId} materialComponents={materialComponents} edit={edit} index={currentComponentID} onClick={setShowEditSection} />
+        <MaterialComponentCreate 
+          materialId={materialId} 
+          materialComponents={localMaterielComponents} 
+          edit={edit} 
+          index={currentComponentID} 
+          onClick={setShowEditSection}
+          onUpdate={handleComponentsUpdate}
+        />
       }
 
       {showComponentSection &&

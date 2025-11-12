@@ -684,10 +684,11 @@ export class ShopifyProductService {
         );
 
         const data = await response.json();
-        return data.data.products.edges.map((edge: any) => ({
+        const edges = data.data?.products?.edges;
+        return edges ? edges.map((edge: any) => ({
           id: edge.node.id,
           title: edge.node.title
-        }));
+        })) : [];
       } catch (error) {
         console.log("Error getting products by configuration:", error);
         return [];
