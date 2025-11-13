@@ -669,26 +669,62 @@ export class ShopifyProductService {
      */
     static async getProductsByConfiguration(admin: any, configurationId: number) {
       try {
+        // Valider que configurationId est un nombre valide
+        if (!configurationId || isNaN(configurationId) || configurationId <= 0) {
+          console.log("Invalid configurationId:", configurationId);
+          return [];
+        }
+
+        const queryString = `metafield:allSignsOptionsAsoAso.asoConfigurationId:${configurationId}`;
+        
         const response = await admin.graphql(
           `#graphql
-          query getProductsByConfiguration {
-            products(first: 250, query: "metafield:allSignsOptionsAsoAso.asoConfigurationId:${configurationId}") {
+          query getProductsByConfiguration($query: String!) {
+            products(first: 250, query: $query) {
               edges {
                 node {
                   id
                   title
+                  metafield(namespace: "allSignsOptionsAsoAso", key: "asoConfigurationId") {
+                    value
+                  }
                 }
               }
             }
-          }`
+          }`,
+          {
+            variables: {
+              query: queryString
+            }
+          }
         );
 
         const data = await response.json();
+        
+        // Vérifier les erreurs GraphQL
+        if (data.errors) {
+          console.log("GraphQL errors getting products by configuration:", data.errors);
+          return [];
+        }
+
         const edges = data.data?.products?.edges;
-        return edges ? edges.map((edge: any) => ({
-          id: edge.node.id,
-          title: edge.node.title
-        })) : [];
+        if (!edges) {
+          return [];
+        }
+
+        // Filtrer et valider que chaque produit a bien le bon configurationId dans son metafield
+        const validProducts = edges
+          .filter((edge: any) => {
+            const metafieldValue = edge.node.metafield?.value;
+            // Vérifier que le metafield existe et correspond au configurationId
+            return metafieldValue && parseInt(metafieldValue) === configurationId;
+          })
+          .map((edge: any) => ({
+            id: edge.node.id,
+            title: edge.node.title
+          }));
+
+        return validProducts;
       } catch (error) {
         console.log("Error getting products by configuration:", error);
         return [];
