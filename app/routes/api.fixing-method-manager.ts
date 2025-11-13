@@ -110,14 +110,22 @@ export async function action({ request }: ActionFunctionArgs) {
         : requestData.mId) as string,
     );
     const fixingMethodId = parseInt(
-      (requestData.fixingMethodId !== undefined ? requestData.fixingMethodId : "-1") as string,
+      (requestData.fixingMethodId !== undefined
+        ? requestData.fixingMethodId
+        : "-1") as string,
     );
-
     console.log("=== API fixing-method-manager - Parsed values ===");
     console.log("operation:", requestData.operation);
     console.log("configId:", configId, "type:", typeof configId);
     console.log("materialId:", materialId, "type:", typeof materialId);
-    console.log("fixingMethodId:", fixingMethodId, "type:", typeof fixingMethodId);
+    console.log(
+      "fixingMethodId:",
+      fixingMethodId,
+      "type:",
+      typeof fixingMethodId,
+    );
+    console.log("fixingMethodData:", requestData.fixingMethodData);
+    console.log("fixingMethods:", requestData.fixingMethods);
 
     // Validation des IDs requis
     if (
@@ -125,6 +133,14 @@ export async function action({ request }: ActionFunctionArgs) {
       (requestData.operation !== "get-all" && isNaN(materialId))
     ) {
       console.log("ERROR: Invalid IDs");
+      console.log("configId:", requestData.configId, "-> parsed:", configId);
+      console.log(
+        "materialId:",
+        requestData.materialId,
+        "-> parsed:",
+        materialId,
+      );
+      console.log("mId:", requestData.mId);
       return json(
         {
           error: "Valid configId and materialId are required",
@@ -148,7 +164,9 @@ export async function action({ request }: ActionFunctionArgs) {
     // Router vers la bonne opération
     switch (requestData.operation) {
       case "get-all": {
-        console.log("API fixing-method-manager - Calling MaterialFixingMethodService.getAll");
+        console.log(
+          "API fixing-method-manager - Calling MaterialFixingMethodService.getAll",
+        );
         result = await MaterialFixingMethodService.getAll(
           session.id,
           configId,
@@ -166,13 +184,17 @@ export async function action({ request }: ActionFunctionArgs) {
           );
         }
 
-        console.log("API fixing-method-manager - Calling MaterialFixingMethodService.add");
-        result = await MaterialFixingMethodService.add(
-          configId,
-          session.id,
-          materialId,
-          requestData.fixingMethodData,
+        console.log(
+          "API fixing-method-manager - Calling MaterialFixingMethodService.add",
         );
+        for (const fixingMethodData of requestData.fixingMethodData) {
+          result = await MaterialFixingMethodService.add(
+            configId,
+            session.id,
+            materialId,
+            fixingMethodData,
+          );
+        }
         successMessage = "Fixing method added successfully";
         break;
       }
@@ -180,27 +202,40 @@ export async function action({ request }: ActionFunctionArgs) {
       case "update": {
         if (fixingMethodId === undefined || !requestData.fixingMethodData) {
           return json(
-            { error: "fixingMethodId and fixingMethodData are required for update operation" },
+            {
+              error:
+                "fixingMethodId and fixingMethodData are required for update operation",
+            },
             { status: 400 },
           );
         }
 
-        console.log("API fixing-method-manager - Calling MaterialFixingMethodService.update");
-        result = await MaterialFixingMethodService.update(
-          configId,
-          session.id,
-          materialId,
-          requestData.fixingMethodData,
-          fixingMethodId,
+        console.log(
+          "API fixing-method-manager - Calling MaterialFixingMethodService.update",
         );
+        for (const fixingMethodData of requestData.fixingMethodData) {
+          result = await MaterialFixingMethodService.update(
+            configId,
+            session.id,
+            materialId,
+            fixingMethodData,
+            fixingMethodId,
+          );
+        }
         successMessage = "Fixing method updated successfully";
         break;
       }
 
       case "bulk-update": {
-        if (!requestData.fixingMethods || !Array.isArray(requestData.fixingMethods)) {
+        if (
+          !requestData.fixingMethods ||
+          !Array.isArray(requestData.fixingMethods)
+        ) {
           return json(
-            { error: "fixingMethods array is required for bulk-update operation" },
+            {
+              error:
+                "fixingMethods array is required for bulk-update operation",
+            },
             { status: 400 },
           );
         }
@@ -226,7 +261,9 @@ export async function action({ request }: ActionFunctionArgs) {
           );
         }
 
-        console.log("API fixing-method-manager - Calling MaterialFixingMethodService.delete");
+        console.log(
+          "API fixing-method-manager - Calling MaterialFixingMethodService.delete",
+        );
         result = await MaterialFixingMethodService.delete(
           configId,
           session.id,
@@ -265,7 +302,10 @@ export async function action({ request }: ActionFunctionArgs) {
         );
     }
 
-    console.log(`API fixing-method-manager - ${requestData.operation} result:`, result);
+    console.log(
+      `API fixing-method-manager - ${requestData.operation} result:`,
+      result,
+    );
 
     return json({
       ...jFlashMessage(successMessage),

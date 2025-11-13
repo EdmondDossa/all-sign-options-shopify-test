@@ -74,20 +74,32 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   }
 
   if (configuration) {
-    // Récupérer les produits réellement associés depuis Shopify
+    // Récupérer les produits depuis la base de données (source principale)
+    const dbProducts = Array.isArray(configuration.product) ? configuration.product : [];
+    
+    // Récupérer les produits depuis Shopify pour vérification
     const shopifyProducts = await ShopifyProductService.getProductsByConfiguration(
       admin,
       configuration.id
     );
     
-    // Utiliser les produits de Shopify s'ils existent, sinon utiliser ceux de la base de données
-    if (shopifyProducts && shopifyProducts.length > 0) {
+    console.log("Loader - DB products count:", dbProducts.length);
+    console.log("Loader - Shopify products count:", shopifyProducts.length);
+    
+    // Utiliser les produits de la DB comme source principale
+    // Si la DB a des produits, les utiliser (même si Shopify n'en a qu'un)
+    if (dbProducts && dbProducts.length > 0) {
+      (configuration as any).products = dbProducts;
+      console.log("Loader - Using DB products:", dbProducts.length);
+    } else if (shopifyProducts && shopifyProducts.length > 0) {
+      // Fallback sur Shopify si la DB est vide
       (configuration as any).products = shopifyProducts;
+      console.log("Loader - Using Shopify products (fallback):", shopifyProducts.length);
     } else {
-      // Fallback sur les produits de la base de données si aucun dans Shopify
-      // Le champ 'product' en DB contient le tableau products
-      (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
+      (configuration as any).products = [];
+      console.log("Loader - No products found");
     }
+    
     // Ne pas exposer le champ product (legacy) au frontend
     delete (configuration as any).product;
   }
@@ -1718,6 +1730,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
     // Mettre à jour configuration.products avec la valeur normalisée
     configuration.products = newProducts;
+
+    console.log("Action - Creating configuration with products count:", newProducts.length);
+    console.log("Action - Products to save:", newProducts);
 
     const configurationObject = await ConfigurationService.addConfiguration(
       configuration,
