@@ -139,7 +139,200 @@ export default function ConfigurationEdit() {
     navigate("..");
   };
 
-  
+  let signageOption = {
+    name: "Signage",
+    type: "signage",
+    productCategories: [
+      {
+        name: "Signboard",
+        type: "signboard",
+        description: "Rigid panel / PVC/ Aluminum/ Plexiglass/ Wood/ Painted or stainless metal",
+        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
+        productGroups: [
+          {
+            name: "Bussiness & Office",
+            products: [
+              {
+                name: "Door signs",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Vinyl signs",
+                type: "",
+                demoData: "",
+                materialType: "simple"
+              },
+              {
+                name: "Plastic signs",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Stainless metal signs",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+            ]
+          },
+          {
+            name: "Retail & Outdoor",
+            products: [
+              {
+                name: "Acrylic signs",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Aluminum signs",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Brass signs",
+                type: "",
+                demoData: "",
+                materialType: "advanca"
+              },
+              {
+                name: "Wood signs",
+                type: "",
+                demoData: "",
+                materialType: "advanca"
+              },
+              
+            ]
+          },
+          {
+            name: "Specialized & Industrial",
+            products: [
+              {
+                name: "Letterbox signs",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },  
+              {
+                name: "Decals",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Vinyl lettering",
+                type: "",
+                demoData: "",
+                materialType: "simple"
+              },
+            ]
+          },
+        ]
+      },
+      {
+        name: "Banners",
+        type: "banner",
+        description: "PVC/ Mesh/ Double‑sided/ fabric, etc..",
+        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/222/#/",
+        productGroups: [
+          {
+            name: "Bussiness & Office",
+            products: [
+              {
+                name: "Roll up",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Double sided",
+                type: "",
+                demoData: "",
+                materialType: "simple"
+              }
+            ]
+          },
+          {
+            name: "Retail & Outdoor",
+            products: [
+              {
+                name: "Pvc banner",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Mesh banner",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              }
+              
+            ]
+          }
+        ]
+      },
+      {
+        name: "Stickers",
+        type: "sticker",
+        description: "Vinyl/ die-cut/ Self‑adhesive paper/ matte/ glossy/ UV‑resistant, etc..",
+        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/885/#/",
+        productGroups: [
+          {
+            name: "Bussiness & Office",
+            products: [
+              {
+                name: "Vynil sticher",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Die-cut",
+                type: "",
+                demoData: "",
+                materialType: "simple"
+              },
+              {
+                name: "Self adhesive",
+                type: "",
+                demoData: "",
+                materialType: "simple"
+              },
+            ]
+          },
+          {
+            name: "Retail & Outdoor",
+            products: [
+              {
+                name: "Matte sticker",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Glossy sticker",
+                type: "",
+                demoData: "",
+                materialType: "all"
+              },
+              {
+                name: "Holographic sticker",
+                type: "",
+                demoData: "",
+                materialType: "simple"
+              },
+              
+            ]
+          }
+        ]
+      },
+    ]
+  }
 
 
   const [step, setStep] = useState(configuration ? 4 : 0);
@@ -152,16 +345,29 @@ export default function ConfigurationEdit() {
   });
 
   // selection du type produit
-  const [productType, setProductType] = useState<string>('signboard');
-  const selectProductType = (type: string) => {
-    setProductType(type);
-    console.log(type, "product type");
+  const [productType, setProductType] = useState<any>(signageOption.productCategories[0]);
+  const selectProductType = (data: any) => {
+    setProductType(data);
+    // setProductGroup(productType?.productGroups[0])
+    console.log(data, "product type");
   };
 
-  const [productCategorie, setProductCategorie] = useState<string>('signage');
-  const selectProductCategorie = (type: string) => {
-    setProductCategorie(type);
-    console.log(type, "product categorie");
+  const [productGroup, setProductGroup] = useState<any>(productType?.productGroups[0]);
+
+
+  //selectionner le produit
+  const [productData, setProductData] = useState<any>();
+  const selectProductData = (data: any) => {
+    setProductData(data);
+    setMaterialType("")
+    console.log(data, "product");
+  };
+
+  //selectionner la catégorie
+  const [productCategorie, setProductCategorie] = useState<any>(signageOption);
+  const selectProductCategorie = (data: object) => {
+    setProductCategorie(data);
+    console.log(data, "product categorie");
   };
 
   // selection du type de materiel
@@ -333,15 +539,15 @@ export default function ConfigurationEdit() {
           <Box>
             <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-                Choose a product category
+                Select the signage domain
               </Text>
-              <p>Select a category to automatically load the right options (dimensions, print areas, materials, etc.)</p>
+              <p>Select a domain to automatically load the right options (categories, product, dimensions, print areas, materials, etc.)</p>
             </div>
 
             <Grid columns={{xs: 1, sm: 1, md: 3, lg: 3, xl: 3}}>
               <Grid.Cell>
                 <div 
-                  onClick={() => selectProductCategorie('signage')} 
+                  onClick={() => selectProductCategorie(signageOption)} 
                   style={{
                     display: "flex",
                     flexDirection: "column",
@@ -351,7 +557,7 @@ export default function ConfigurationEdit() {
                     color: 'black',
                     borderRadius: '20px',
                     border: '0.07em solid #BDBDBD',
-                    boxShadow: productCategorie === 'signage' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                    boxShadow: productCategorie.type === 'signage' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
                     transition: 'all 50ms',
                     overflow: "hidden"
                   }}
@@ -843,241 +1049,61 @@ export default function ConfigurationEdit() {
           <Box>
             <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-                Select product type
+               Select the type of {productCategorie.name}
               </Text>
-              <p>Now pick a subtype that best matches your product within <span style={{fontWeight: "600"}}>{productCategorie != 'signage' ? (productCategorie != 'apparel' ? "Goodies" : "Textile") : "Signs"}</span> </p>
+              <p>Now pick a subtype that best matches your product within <Badge tone="success" size="large">{productCategorie.name}</Badge> </p>
+              {/* <span style={{fontWeight: "700"}}>{productCategorie.name}</span> */}
             </div>
 
             <Grid columns={{xs: 1, sm: 2, md: 2, lg: 3, xl: 3}}>
-              <Grid.Cell>
-                <div 
-                  onClick={() => selectProductType('signboard')} 
-                  style={{
-                    cursor: 'pointer',
-                    // backgroundColor:  '#f1f1f1',
-                    backgroundColor:  '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '16px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: productType === 'signboard' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    padding: '16px',
-                    transition: 'all 50ms',
-                    height: '110px',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                      <div style={{padding: '0px'}}>
-                        <BlockStack gap="100">
-                          <p style={{fontSize: "16px", fontWeight: "600"}}>Signboard</p>
-                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161", textOverflow: 'ellipsis'}}>Rigid panel / PVC/ Aluminum/ Plexiglass/ Wood/ Painted or stainless metal <Link monochrome url="https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/" target="_blank">See more</Link> </p>                        
-                        </BlockStack>
+
+              {productCategorie.productCategories.map((categorie: any) => (
+                <Grid.Cell>
+                  <div 
+                    onClick={() => selectProductType(categorie)} 
+                    style={{
+                      cursor: 'pointer',
+                      // backgroundColor:  '#f1f1f1',
+                      backgroundColor:  '#F5F5F5',
+                      color: 'black',
+                      borderRadius: '16px',
+                      border: '0.07em solid #BDBDBD',
+                      boxShadow: productType.type === categorie.type ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                      padding: '16px',
+                      transition: 'all 50ms',
+                      height: '110px',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                      <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                        <div style={{padding: '0px'}}>
+                          <BlockStack gap="100">
+                            <p style={{fontSize: "16px", fontWeight: "600"}}>{categorie.name}</p>
+                            <p style={{fontSize: "14px", fontWeight: "400", color: "#616161", textOverflow: 'ellipsis'}}> {categorie.description} <Link monochrome url={categorie.demoLink} target="_blank">See more</Link> </p>                        
+                          </BlockStack>
+                        </div>
                       </div>
-                      {/* <div onClick={(e) => { e.stopPropagation() }}>
-                        <Button>View demos</Button>
-                      </div> */}
+
+                      <span 
+                        style={{
+                          width: "fit-content",
+                          height: "fit-content",
+                          display: "flex",
+                          padding: "5px",
+                          border: productType === 'signboard' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                          borderRadius: "10px"
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </span>
                     </div>
-
-                    <span 
-                      style={{
-                        width: "fit-content",
-                        height: "fit-content",
-                        display: "flex",
-                        padding: "5px",
-                        border: productType === 'signboard' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
                   </div>
-                </div>
-              </Grid.Cell>
+                </Grid.Cell>
+              ))}
 
-              <Grid.Cell>
-                <div 
-                  onClick={() => selectProductType('banner')} 
-                  style={{
-                    cursor: 'pointer',
-                    // backgroundColor:  '#f1f1f1',
-                    backgroundColor:  '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '16px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: productType === 'banner' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    padding: '16px',
-                    transition: 'all 50ms',
-                    height: '110px',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                      <div style={{padding: '0px'}}>
-                        <BlockStack gap="100">
-                          <p style={{fontSize: "16px", fontWeight: "600"}}>Banners</p>
-                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161", textOverflow: 'ellipsis'}}>PVC/ Mesh/ Double‑sided/ fabric, etc.. <Link monochrome url="https://demos.signsdesigner.us/aso-templates-page/asowp-templates/222/#/" target="_blank">See more</Link></p>
-                        </BlockStack>
-                      </div>                      
-                    </div>
-
-                    <span 
-                      style={{
-                        width: "fit-content",
-                        height: "fit-content",
-                        display: "flex",
-                        padding: "5px",
-                        border: productType === 'banner' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </Grid.Cell>
-
-              <Grid.Cell>
-                <div 
-                  onClick={() => selectProductType('sticker')} 
-                  style={{
-                    cursor: 'pointer',
-                    backgroundColor:  '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '16px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: productType === 'sticker' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    padding: '16px',
-                    transition: 'all 50ms',
-                    height: '110px',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                      <div style={{padding: '0px'}}>
-                        <BlockStack gap="100">
-                          <p style={{fontSize: "16px", fontWeight: "600"}}>Sticker</p>
-                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161", textOverflow: 'ellipsis'}}>Vinyl/ die-cut/ Self‑adhesive paper/ matte/ glossy/ UV‑resistant, etc.. <Link monochrome url="https://demos.signsdesigner.us/aso-templates-page/asowp-templates/885/#/" target="_blank">See more</Link></p>
-                        </BlockStack>
-                      </div>
-                      {/* <div onClick={(e) => { e.stopPropagation() }}>
-                        <Button>View demos</Button>
-                      </div> */}
-                    </div>
-
-                    <span 
-                      style={{
-                        width: "fit-content",
-                        height: "fit-content",
-                        display: "flex",
-                        padding: "5px",
-                        border: productType === 'sticker' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </Grid.Cell>
-
-              <Grid.Cell>
-                <div 
-                  // onClick={() => selectProductType('other')} 
-                  style={{
-                    cursor: 'pointer',
-                    backgroundColor:  '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '16px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: productType === 'other' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    padding: '16px',
-                    transition: 'all 50ms',
-                  }}
-                >
-                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                      <div style={{padding: '0px'}}>
-                        <BlockStack gap="100">
-                          <p style={{fontSize: "16px", fontWeight: "600"}}>Lettering Signs</p>
-                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>Neon and channel <Badge tone="info">Coming soon</Badge></p>
-                        </BlockStack>
-                      </div>
-                      {/* <div onClick={(e) => { e.stopPropagation() }}>
-                        <Button>View demos</Button>
-                      </div> */}
-                    </div>
-
-                    <span 
-                      style={{
-                        width: "fit-content",
-                        height: "fit-content",
-                        display: "flex",
-                        padding: "5px",
-                        border: productType === 'other' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </Grid.Cell>
-
-              <Grid.Cell>
-                <div 
-                  // onClick={() => selectProductType('lightbox')} 
-                  style={{
-                    cursor: 'pointer',
-                    backgroundColor:  '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '16px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: productType === 'lightbox' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    padding: '16px',
-                    transition: 'all 50ms',
-                  }}
-                >
-                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                      <div style={{padding: '0px'}}>
-                        <BlockStack gap="100">
-                          <p style={{fontSize: "16px", fontWeight: "600"}}>lightbox</p>
-                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>Backlit <Badge tone="info">Coming soon</Badge></p>
-                        </BlockStack>
-                      </div>
-                      {/* <div onClick={(e) => { e.stopPropagation() }}>
-                        <Button>View demos</Button>
-                      </div> */}
-                    </div>
-
-                    <span 
-                      style={{
-                        width: "fit-content",
-                        height: "fit-content",
-                        display: "flex",
-                        padding: "5px",
-                        border: productType === 'lightbox' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </Grid.Cell>
             </Grid>
 
           </Box>
@@ -1085,142 +1111,228 @@ export default function ConfigurationEdit() {
       case 2:
         return (
           <Box>
-            <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
+            <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-                Select material type
+                Select the product of {productType.name}
               </Text>
+              <p>Now pick a subtype that best matches your product within <Badge tone="success" size="large">{productType.name}</Badge> </p>
+              {/* <span style={{fontWeight: "700"}}>{productType.name}</span> */}
             </div>
 
-            <Grid columns={{xs: 2, sm: 2, md: 2, lg: 3, xl: 3}}>
-              <Grid.Cell>
+            <div style={{display: "flex", gap: "8px", paddingBottom: "15px"}}>
+              {productType.productGroups.map((productGrp: any) => (
                 <div 
-                  onClick={() => selectMaterialType('simple')} 
+                  onClick={() => setProductGroup(productGrp)} 
                   style={{
                     cursor: 'pointer',
                     // backgroundColor:  '#f1f1f1',
                     backgroundColor:  '#F5F5F5',
                     color: 'black',
-                    borderRadius: '16px',
+                    borderRadius: '14px',
                     border: '0.07em solid #BDBDBD',
-                    boxShadow: materialType === 'simple' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    padding: '16px',
+                    boxShadow: productGroup?.name === productGrp?.name ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                    paddingInline: '16px',
+                    paddingBlock: '6px',
                     transition: 'all 50ms',
                   }}
                 >
                   <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
                     <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
                       <div style={{padding: '0px'}}>
-                        <BlockStack gap="100">
-                          <p style={{fontSize: "16px", fontWeight: "600"}}>Simple</p>
-                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>All material options are customizable for the customer</p>
-                        </BlockStack>
+                          <p style={{fontSize: "14px", fontWeight: "600"}}>{productGrp.name}</p>
                       </div>
                     </div>
-
-                    <span 
-                      style={{
-                        width: "fit-content",
-                        height: "fit-content",
-                        display: "flex",
-                        padding: "5px",
-                        border: materialType === 'simple' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
                   </div>
                 </div>
-              </Grid.Cell>
+              ))}
+            </div>
 
-              <Grid.Cell>
-                <div 
-                  onClick={() => selectMaterialType('advance')} 
-                  style={{
-                    cursor: 'pointer',
-                    // backgroundColor:  '#f1f1f1',
-                    backgroundColor:  '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '16px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: materialType === 'advance' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    padding: '16px',
-                    transition: 'all 50ms',
-                  }}
-                >
-                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                      <div style={{padding: '0px'}}>
-                        <BlockStack gap="100">
-                          <p style={{fontSize: "16px", fontWeight: "600"}}>Advance</p>
-                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>Size, shape and background color have default preconfigured values </p>
-                        </BlockStack>
+            <Grid columns={{xs: 2, sm: 3, md: 4, lg: 5, xl: 5}}>
+              {productGroup.products.map((product: any) => (
+                <Grid.Cell>
+                  <div 
+                    onClick={() => selectProductData(product)} 
+                    style={{
+                      cursor: 'pointer',
+                      // backgroundColor:  '#f1f1f1',
+                      backgroundColor:  '#F5F5F5',
+                      color: 'black',
+                      borderRadius: '16px',
+                      border: '0.07em solid #BDBDBD',
+                      boxShadow: productData?.name === product?.name ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                      padding: '16px',
+                      transition: 'all 50ms',
+                    }}
+                  >
+                    <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                      <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                        <div style={{padding: '0px'}}>
+                          <BlockStack gap="100">
+                            <p style={{fontSize: "15px", fontWeight: "600"}}>{product.name}</p>
+                            {/* <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>All material options are customizable for the customer</p> */}
+                          </BlockStack>
+                        </div>
                       </div>
+
+                      <span 
+                        style={{
+                          width: "fit-content",
+                          height: "fit-content",
+                          display: "flex",
+                          padding: "5px",
+                          border: productData?.name === product?.name ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                          borderRadius: "10px"
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </span>
                     </div>
-
-                    <span 
-                      style={{
-                        width: "fit-content",
-                        height: "fit-content",
-                        display: "flex",
-                        padding: "5px",
-                        border: materialType === 'advance' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
                   </div>
-                </div>
-              </Grid.Cell>
-
-              <Grid.Cell>
-                <div 
-                  // onClick={() => selectMaterialType('layer')} 
-                  style={{
-                    cursor: 'pointer',
-                    // backgroundColor:  '#f1f1f1',
-                    backgroundColor:  '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '16px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: materialType === 'layer' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    padding: '16px',
-                    transition: 'all 50ms',
-                  }}
-                >
-                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                      <div style={{padding: '0px'}}>
-                        <BlockStack gap="100">
-                          <p style={{fontSize: "16px", fontWeight: "600"}}>Layers</p>
-                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>stack multiple layers that can be configured independently <Badge tone="info">Coming soon</Badge></p>
-                        </BlockStack>
-                      </div>
-                    </div>
-
-                    <span 
-                      style={{
-                        width: "fit-content",
-                        height: "fit-content",
-                        display: "flex",
-                        padding: "5px",
-                        border: materialType === 'layer' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </Grid.Cell>
+                </Grid.Cell>
+              ))}
             </Grid>
+
+            <div style={{display: productData != null ? "flex" : "none", flexDirection: "column", gap: "10px", paddingTop: "20px"}}>
+              <p style={{fontSize: "16px", fontWeight: "600"}}>Select the product material type</p>
+
+              <Grid columns={{xs: 2, sm: 2, md: 2, lg: 3, xl: 3}}>
+                {productData?.materialType != "advance" && 
+                  <Grid.Cell>
+                    <div 
+                      onClick={() => selectMaterialType('simple')} 
+                      style={{
+                        cursor: 'pointer',
+                        // backgroundColor:  '#f1f1f1',
+                        backgroundColor:  '#F5F5F5',
+                        color: 'black',
+                        borderRadius: '16px',
+                        border: '0.07em solid #BDBDBD',
+                        boxShadow: materialType === 'simple' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                        padding: '16px',
+                        transition: 'all 50ms',
+                      }}
+                    >
+                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                          <div style={{padding: '0px'}}>
+                            <BlockStack gap="100">
+                              <p style={{fontSize: "16px", fontWeight: "600"}}>Simple</p>
+                              <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>All material options are customizable for the customer</p>
+                            </BlockStack>
+                          </div>
+                        </div>
+
+                        <span 
+                          style={{
+                            width: "fit-content",
+                            height: "fit-content",
+                            display: "flex",
+                            padding: "5px",
+                            border: materialType === 'simple' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                            borderRadius: "10px"
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </Grid.Cell>
+                }
+                {productData?.materialType != "simple" && 
+                  <Grid.Cell>
+                    <div 
+                      onClick={() => selectMaterialType('advance')} 
+                      style={{
+                        cursor: 'pointer',
+                        // backgroundColor:  '#f1f1f1',
+                        backgroundColor:  '#F5F5F5',
+                        color: 'black',
+                        borderRadius: '16px',
+                        border: '0.07em solid #BDBDBD',
+                        boxShadow: materialType === 'advance' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                        padding: '16px',
+                        transition: 'all 50ms',
+                      }}
+                    >
+                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                          <div style={{padding: '0px'}}>
+                            <BlockStack gap="100">
+                              <p style={{fontSize: "16px", fontWeight: "600"}}>Advance</p>
+                              <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>Size, shape and background color have default preconfigured values </p>
+                            </BlockStack>
+                          </div>
+                        </div>
+
+                        <span 
+                          style={{
+                            width: "fit-content",
+                            height: "fit-content",
+                            display: "flex",
+                            padding: "5px",
+                            border: materialType === 'advance' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                            borderRadius: "10px"
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </Grid.Cell>
+                }
+
+                {productData?.materialType == "all" && 
+                  <Grid.Cell>
+                    <div 
+                      // onClick={() => selectMaterialType('layer')} 
+                      style={{
+                        cursor: 'pointer',
+                        // backgroundColor:  '#f1f1f1',
+                        backgroundColor:  '#F5F5F5',
+                        color: 'black',
+                        borderRadius: '16px',
+                        border: '0.07em solid #BDBDBD',
+                        boxShadow: materialType === 'layer' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                        padding: '16px',
+                        transition: 'all 50ms',
+                      }}
+                    >
+                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                          <div style={{padding: '0px'}}>
+                            <BlockStack gap="100">
+                              <p style={{fontSize: "16px", fontWeight: "600"}}>Layers</p>
+                              <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>stack multiple layers that can be configured independently <Badge tone="info">Coming soon</Badge></p>
+                            </BlockStack>
+                          </div>
+                        </div>
+
+                        <span 
+                          style={{
+                            width: "fit-content",
+                            height: "fit-content",
+                            display: "flex",
+                            padding: "5px",
+                            border: materialType === 'layer' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                            borderRadius: "10px"
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </Grid.Cell>
+                }
+              </Grid>
+            </div>
 
           </Box>
         );
@@ -1231,7 +1343,7 @@ export default function ConfigurationEdit() {
               <Text as="h2" variant="headingLg" fontWeight="bold">
                 Include demo data
               </Text>
-              <p>Decide whether to preload demo content. If enabled, choose a starting template for faster setup.</p>
+              <p>Decide whether to preload demo content for your <Badge tone="success" >{productData.name}</Badge> product sample  . If enabled, choose a starting template for faster setup.</p>
             </div>
 
             <div 
@@ -1381,8 +1493,9 @@ export default function ConfigurationEdit() {
               <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "8px", padding: '16px', backgroundColor:  '#F5F5F5', border: '1px solid #E0E0E0', borderRadius: '14px',}}>
                 <p style={{fontWeight: "700", paddingBottom: "10px"}}>Summary</p>
 
-                <p style={{color: "#757575"}}>Category: <span style={{color: "#424242", fontWeight: "600"}}> {productCategorie != 'signage' ? (productCategorie != 'apparel' ? "Goodies" : "Textile") : "Signs"} </span></p>
-                <p style={{color: "#757575"}}>Product type: <span style={{color: "#424242", fontWeight: "600"}}> {productType} </span></p>
+                <p style={{color: "#757575"}}>Domain: <span style={{color: "#424242", fontWeight: "600"}}> {productCategorie.name} </span></p>
+                <p style={{color: "#757575"}}>Categorie type: <span style={{color: "#424242", fontWeight: "600"}}> {productType.name} </span></p>
+                <p style={{color: "#757575"}}>Product sample: <span style={{color: "#424242", fontWeight: "600"}}> {productData.name} </span></p>
                 <p style={{color: "#757575"}}>Material type: <span style={{color: "#424242", fontWeight: "600"}}> {materialType} </span></p>
                 <p style={{color: "#757575"}}>Demo data: <span style={{color: "#424242", fontWeight: "600"}}> {validDemoData ? 'Yes' : 'No'} {validDemoData && demoName != "" ? `(${demoName})` : ''} </span></p>
 
@@ -1494,15 +1607,15 @@ export default function ConfigurationEdit() {
           <div style={{width: '100%', display: 'flex',justifyContent: 'space-between', padding: '25px 5px 0px 5px', gap: '10px'}}>
             <div style={{color: ' rgb(97, 97, 97)'}}>
               {step == 0 && (
-                <p> Tip: you will refine the type and the personalization level in the next steps. </p>
+                <p> Tip: you will refine the type of the selected domain and the personalization level in the next steps. </p>
               )}
 
               {step == 1 && (
-                <p> Tip: after choosing a subtype, you'll proceed to Level 3 (Simple / Advanced / Layers). </p>
+                <p> Tip: after choosing a type, you'll proceed to the selecting of a associated product sample and its options. </p>
               )}
 
               {step == 2 && (
-                <p> Tip: select a level and you can move on to Demo Data / Templates next. </p>
+                <p> Tip: select a product sample with its material option and you can move on to Demo Data / Templates next. </p>
               )}
 
               {step == 3 && (
