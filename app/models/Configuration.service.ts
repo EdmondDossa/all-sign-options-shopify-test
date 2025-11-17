@@ -1166,8 +1166,10 @@ export default class ConfigurationService {
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
-    const { id, products, templates, ...configData } = configuration;
+    const { id, products, templates, materialType, productType, ...configData } = configuration;
     try {
+      console.log("updateConfiguration - Saving materialType:", materialType);
+      console.log("updateConfiguration - Saving productType:", productType);
       return await prisma.configuration.update({
         where: {
           id: id,
@@ -1176,6 +1178,8 @@ export default class ConfigurationService {
         data: {
           ...configData,
           product: products, // Save products array in DB field 'product' (legacy column name)
+          materialType: materialType, // Explicitly preserve materialType
+          productType: productType, // Explicitly preserve productType
         },
       });
     } catch (error) {
@@ -1233,9 +1237,12 @@ export default class ConfigurationService {
     sessionId: string,
   ): Promise<any | null> {
     try {
+      const { id, products, templates, ...configData } = configuration;
+
       return await prisma.configuration.create({
         data: {
-          ...configuration,
+          ...configData,
+          product: products,
           sessionId: sessionId,
         },
       });

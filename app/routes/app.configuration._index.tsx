@@ -117,16 +117,6 @@ export default function Configuration() {
   const [configTitle, setConfigTitle] = useState<string>("");
 
   const navigate = useNavigate();
-
-  const [active, setActive] = useState(false);
-  const [activePopoverId, setActivePopoverId] = useState<string | null>(null);
-
-  const togglePopover = useCallback(() => setActive((active) => !active), []);
-
-  const handleAction = (action: string, id: string) => {
-    console.log(`Action "${action}" sur l'élément ID: ${id}`);
-    setActivePopoverId(null); // ferme le popover
-  };
   const onHandleConfigurationCreate = () => {
     navigate("/app/configuration/create");
   };
@@ -135,8 +125,9 @@ export default function Configuration() {
     submit({ id: id }, { method: "DELETE" });
   };
 
-  const handeleDuplicate = (id: number) => {
-    submit({ id: id, configTitle: configTitle }, { method: "POST" });
+  const handeleDuplicate = (id: number, name: string) => {
+    submit({ id: id, configTitle: `${name}-copy` }, { method: "POST" });
+
   };
 
   const handleUpdate = (id: number) => {
@@ -159,11 +150,23 @@ export default function Configuration() {
     plural: "Configurations",
   };
 
+
+  const [active, setActive] = useState(false);
+  const [activePopoverId, setActivePopoverId] = useState<string | null>(null);
+
+  const togglePopover = useCallback(() => setActive((active) => !active), []);
+
+  const handleAction = (action: string, id: string) => {
+    console.log(`Action "${action}" sur l’élément ID: ${id}`);
+    setActivePopoverId(null); // ferme le popover
+  };
+
+
+
   const rowMarkup = configurations.map(
     ({ id, name, description, icon, popupImg, materialType }, index) => {
       const isActive = activePopoverId === id;
       let materialTyp = 'simple'
-      console.log(materialType, "material type")
   
       return (
         <IndexTable.Row id={`${id}`} key={id} position={index} onClick={() => handleMaterials(id)}>
@@ -226,7 +229,7 @@ export default function Configuration() {
                   items={[
                     { content: 'Preview', icon: ViewIcon, onAction: () => handlePreviews(id) },
                     { content: 'Edit', icon: EditIcon, onAction: () => handleUpdate(id) },
-                    { content: 'Duplicate', icon: DuplicateIcon, onAction: () => handeleDuplicate(id) },
+                    { content: 'Duplicate', icon: DuplicateIcon, onAction: () => handeleDuplicate(id, name) },
                     { content: 'Delete', icon: DeleteIcon, onAction: () => handeleDelete(id), destructive: true, },
                   ]}
                 />

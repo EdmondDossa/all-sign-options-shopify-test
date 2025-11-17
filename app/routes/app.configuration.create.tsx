@@ -102,6 +102,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     
     // Ne pas exposer le champ product (legacy) au frontend
     delete (configuration as any).product;
+    
+    // Log pour vérifier que materialType est bien récupéré
+    console.log("Loader - Configuration materialType:", (configuration as any).materialType);
+    console.log("Loader - Configuration productType:", (configuration as any).productType);
   }
 
   return json({ configuration });
@@ -164,7 +168,10 @@ export default function ConfigurationEdit() {
   });
 
   // selection du type produit
-  const [productType, setProductType] = useState<string>('signboard');
+  // Initialiser avec la valeur de la configuration si elle existe, sinon 'signboard' par défaut
+  const [productType, setProductType] = useState<string>(
+    (configuration as any)?.productType || 'signboard'
+  );
   const selectProductType = (type: string) => {
     setProductType(type);
     console.log(type, "product type");
@@ -177,7 +184,10 @@ export default function ConfigurationEdit() {
   };
 
   // selection du type de materiel
-  const [materialType, setMaterialType] = useState<string>('simple');
+  // Initialiser avec la valeur de la configuration si elle existe, sinon 'simple' par défaut
+  const [materialType, setMaterialType] = useState<string>(
+    (configuration as any)?.materialType || 'simple'
+  );
   const selectMaterialType = (type: string) => {
     setMaterialType(type);
     console.log(type, "material type");
@@ -198,9 +208,13 @@ export default function ConfigurationEdit() {
   const submitData: any = { 
     ...formData, 
     products: JSON.stringify(formData.products || []),
+    // Toujours utiliser le materialType du state (initialisé depuis la config ou modifié par l'utilisateur)
     materialType: materialType,
     productType: productType
   };
+  
+  console.log("Submit - materialType:", materialType);
+  console.log("Submit - productType:", productType);
   
   // Ajouter demoId seulement s'il existe et est valide
   if (demoId !== null && demoId !== undefined && demoId !== '') {
