@@ -356,7 +356,7 @@ export default function ConfigurationEdit() {
 
 
   //selectionner le produit
-  const [productData, setProductData] = useState<any>();
+  const [productData, setProductData] = useState<any>(null);
   const selectProductData = (data: any) => {
     setProductData(data);
     setMaterialType("")
@@ -529,7 +529,12 @@ export default function ConfigurationEdit() {
 
 
   // navigation enter les steps
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
+  function nextStep(){
+    if((step != 2) || ((step == 2) && productData != null)){
+      setStep((prev) => Math.min(prev + 1, 4))
+    }
+  }
+
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 0));
 
   const renderStep = () => {
@@ -1644,7 +1649,7 @@ export default function ConfigurationEdit() {
                     borderRadius: '8px',
                     padding: '7px 10px',
                     fontWeight: '600',
-                    cursor: 'pointer',
+                    cursor: (step != 2) || ((step == 2) && productData != null) ? 'pointer' : 'not-allowed',
                     border: '1px',
                     // boxShadow: ' 0rem -0.0625rem 0rem 0rem #b5b5b5 inset, 0rem 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.1) inset, 0rem 0.03125rem 0rem 0.09375rem #FFF inset'
                   }}
