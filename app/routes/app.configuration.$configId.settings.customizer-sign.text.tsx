@@ -342,10 +342,9 @@ export default function ConfigSettingsGeneral() {
                     <ReactSwitchCustom
                       checked={formData.enableCustomColor}
                       setChecked={(value: any) => {
-                        formData.enableCustomColor = value;
                         handleInputChange(
                           "enableCustomColor",
-                          formData.enableCustomColor,
+                          value,
                         );
                       }}
                     />

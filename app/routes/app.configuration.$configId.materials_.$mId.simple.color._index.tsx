@@ -182,6 +182,16 @@ export default function MaterialColorIndex({
     }
   }, [bulkUpdateFetcher.data]);
 
+  useEffect(() => {
+    // Edit custom color fetcher
+    if (colorFetcher.data?.success && colorFetcher.data?.data) {
+      console.log("Edit custom color successful, updating form data");
+      setFormData({
+        ...colorFetcher.data.data
+      });
+    }
+  }, [colorFetcher.data]);
+
   const handeleDelete = (id: number) => {
     console.log("=== handeleDelete called with ID:", id, "===");
 
