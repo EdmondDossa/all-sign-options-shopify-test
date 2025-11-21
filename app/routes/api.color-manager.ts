@@ -274,9 +274,9 @@ export async function action({ request }: ActionFunctionArgs) {
         }
 
         console.log(
-          "API color-manager - Calling MaterialColorService.editCustomColor",
+          "API color-manager - Calling MaterialColorService.editCustom",
         );
-        result = await MaterialColorService.editCustomColor(
+        result = await MaterialColorService.editCustom(
           configId,
           session.id,
           materialId,

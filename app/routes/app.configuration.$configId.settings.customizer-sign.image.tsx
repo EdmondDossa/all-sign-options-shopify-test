@@ -123,7 +123,7 @@ export default function ConfigSettingsGeneral() {
 
 
   const [formData, setFormData] = useState<any>(
-    {
+    settingData || {
       "enableUploadImage": true,
       enableDownloadImage: true,
       colorsLabel:"Image Colors",
@@ -169,7 +169,6 @@ export default function ConfigSettingsGeneral() {
          "enableBlueify":false
       },
       "scenes": [],
-      ...((settingData?.cutlines) ? settingData : {})
     },
   );
 
@@ -363,10 +362,9 @@ export default function ConfigSettingsGeneral() {
                     <ReactSwitchCustom
                       checked={formData.enableCustomColor}
                       setChecked={(value: any) => {
-                        formData.enableCustomColor = value;
                         handleInputChange(
                           "enableCustomColor",
-                          formData.enableCustomColor,
+                          value,
                         );
                       }}
                     />
