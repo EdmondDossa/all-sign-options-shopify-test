@@ -29,7 +29,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { truncateText } from "~/utils/truncate-text";
 import { fileUrl } from "~/utils/fileUrl";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DeleteIcon, EditIcon, MenuHorizontalIcon } from "@shopify/polaris-icons";
 import MaterialComponentCreate from "./app.configuration.$configId.materials_.$mId.advance.$cId.edit";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
@@ -108,7 +108,7 @@ export default function MaterialAdvancedItemsIndex({materialOptions, materialId,
       optionId: id
     }
 
-    deleteFetcher.submit(requestBody, {
+    setDafaultFetcher.submit(requestBody, {
       method: "POST",
       action: "/api/advance-add-component-option-manager",
       encType: "application/json",
@@ -127,7 +127,28 @@ export default function MaterialAdvancedItemsIndex({materialOptions, materialId,
   };
 
   const [activePopoverId, setActivePopoverId] = useState<number | null>(null);
-  const rowMarkup = materialOptions?.map(
+  const [localMaterialOptions, setLocalMaterialOptions] = useState<MaterialAdvanceOptionType[] | undefined>(materialOptions);
+  
+  // Mettre à jour l'état local quand materialOptions change
+  useEffect(() => {
+    setLocalMaterialOptions(materialOptions);
+  }, [materialOptions]);
+
+  // Mettre à jour après suppression
+  useEffect(() => {
+    if (deleteFetcher.state === "idle" && deleteFetcher.data?.success && deleteFetcher.data?.data) {
+      setLocalMaterialOptions(deleteFetcher.data.data);
+    }
+  }, [deleteFetcher.state, deleteFetcher.data]);
+
+  // Mettre à jour après changement de défaut
+  useEffect(() => {
+    if (setDafaultFetcher.state === "idle" && setDafaultFetcher.data?.success && setDafaultFetcher.data?.data) {
+      setLocalMaterialOptions(setDafaultFetcher.data.data);
+    }
+  }, [setDafaultFetcher.state, setDafaultFetcher.data]);
+
+  const rowMarkup = localMaterialOptions?.map(
     ({ name, description, icon, image, additionalPrice, isDefault }, index) => {
       const isActive = activePopoverId === index;
       
@@ -242,7 +263,7 @@ export default function MaterialAdvancedItemsIndex({materialOptions, materialId,
             <IndexTable
               resourceName={resourceName}
               selectable={false}
-              itemCount={materialOptions ? materialOptions.length : 0}
+              itemCount={localMaterialOptions ? localMaterialOptions.length : 0}
               headings={[
                 { title: "Title" },
                 { title: "Desciption" },
@@ -279,7 +300,7 @@ export default function MaterialAdvancedItemsIndex({materialOptions, materialId,
           </Card>
         </div>
       ) : (
-        <MaterialComponentCreate materialId={materialId} componentId={componentId} materialOptions={materialOptions} manageShapes={manageShapes} manageFixingsMethods={manageFixingMethods} id={currentComponentID} onClick={setShowEditSection} edit={edit} />
+        <MaterialComponentCreate materialId={materialId} componentId={componentId} materialOptions={localMaterialOptions} manageShapes={manageShapes} manageFixingsMethods={manageFixingMethods} id={currentComponentID} onClick={setShowEditSection} edit={edit} refreshOptions={setLocalMaterialOptions} />
       )}
     </div>
   );

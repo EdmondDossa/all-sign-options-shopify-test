@@ -11,7 +11,7 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import {  useState } from "react";
+import {  useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
@@ -75,6 +75,7 @@ export default function MaterialAdditionalOptionCreate({ additionalOptionItems, 
   let isLoading = navigation.state == "loading";
   let isSubmitting = fetcher.state == "submitting";
   const colors = configColors ? configColors.map((configColor,index) => ({ label: configColor.name||'', value: `${index}` })) : [];
+  const hasProcessedResponse = useRef(false);
 
 
   const handleTitle= (value: string) =>
@@ -115,12 +116,29 @@ export default function MaterialAdditionalOptionCreate({ additionalOptionItems, 
       action: "/api/simple-additionnalOptionItems-manager",
       encType: "application/json",
     })
-
-    if(!isSubmitting){
-      console.log(fetcher)
-      onClick(false)
-    }
   };
+
+  // Gérer la réponse du fetcher après la soumission
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data && !hasProcessedResponse.current) {
+      if (fetcher.data.success && fetcher.data.data) {
+        // Marquer comme traité pour éviter les déclenchements multiples
+        hasProcessedResponse.current = true;
+        // Rafraîchir la liste avec les nouvelles données
+        refreshOptionItems(fetcher.data.data);
+        // Fermer le formulaire seulement après une sauvegarde réussie
+        onClick(false);
+      } else if (fetcher.data.error) {
+        // Gérer les erreurs si nécessaire
+        console.error("Error saving option:", fetcher.data.error);
+        hasProcessedResponse.current = true;
+      }
+    }
+    // Réinitialiser le flag quand on commence une nouvelle soumission
+    if (fetcher.state === "submitting") {
+      hasProcessedResponse.current = false;
+    }
+  }, [fetcher.state, fetcher.data, refreshOptionItems, onClick]);
 
   const navigate = useNavigate();
   const onBack = () => {
