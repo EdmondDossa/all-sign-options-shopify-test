@@ -21,7 +21,7 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
@@ -52,9 +52,10 @@ interface MaterialComponentProps {
   componentId: number | undefined,
   id: number;
   onClick: (id: boolean) => void;
-  edit: boolean
+  edit: boolean;
+  refreshOptions?: (options: MaterialAdvanceOptionType[] | undefined) => void;
 }
-export default function MaterialComponentCreate({ materialOptions, manageShapes, manageFixingsMethods, materialId, componentId, id, onClick, edit }: MaterialComponentProps) {
+export default function MaterialComponentCreate({ materialOptions, manageShapes, manageFixingsMethods, materialId, componentId, id, onClick, edit, refreshOptions }: MaterialComponentProps) {
   const navigate = useNavigate();
   const submit = useSubmit();
   const navigation = useNavigation();
@@ -102,6 +103,7 @@ export default function MaterialComponentCreate({ materialOptions, manageShapes,
 
   let isLoading = navigation.state == "loading";
   let isSubmitting = fetcher.state == "submitting";
+  const hasProcessedResponse = useRef(false);
 
   const handleName = (value: string) =>
     setFormData({ ...formData, name: value });
@@ -186,12 +188,31 @@ export default function MaterialComponentCreate({ materialOptions, manageShapes,
       action: "/api/advance-add-component-option-manager",
       encType: "application/json",
     })
-
-    if(!isSubmitting){
-      onClick(false)
-    }
-
   };
+
+  // Gérer la réponse du fetcher après la soumission
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data && !hasProcessedResponse.current) {
+      if (fetcher.data.success && fetcher.data.data) {
+        // Marquer comme traité pour éviter les déclenchements multiples
+        hasProcessedResponse.current = true;
+        // Rafraîchir la liste avec les nouvelles données
+        if (refreshOptions) {
+          refreshOptions(fetcher.data.data);
+        }
+        // Fermer le formulaire seulement après une sauvegarde réussie
+        onClick(false);
+      } else if (fetcher.data.error) {
+        // Gérer les erreurs si nécessaire
+        console.error("Error saving option:", fetcher.data.error);
+        hasProcessedResponse.current = true;
+      }
+    }
+    // Réinitialiser le flag quand on commence une nouvelle soumission
+    if (fetcher.state === "submitting") {
+      hasProcessedResponse.current = false;
+    }
+  }, [fetcher.state, fetcher.data, onClick, refreshOptions]);
 
   console.log("actionData", actionData);
 
