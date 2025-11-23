@@ -76,7 +76,12 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
 
   useHandleFlashMessage();
 
-  const handeleDelete = (id: number) => {
+  const handeleDelete = (id: number, e?: React.MouseEvent) => {
+    // Empêcher la propagation du clic
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     // submit({ id: id }, { method: "DELETE" });
 
     const requestBody: any = {
@@ -94,7 +99,12 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
   };
 
   const [currentComponentID, setCurrentComponentID] = useState<number>(0)
-  const handleUpdate = (id: number) => {
+  const handleUpdate = (id: number, e?: React.MouseEvent) => {
+    // Empêcher la propagation du clic
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     // submit({ id: id }, { method: "GET", action: "edit" });
     setActivePopoverId(-1)
     setCurrentComponentID(id)
@@ -158,7 +168,18 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
       const isActive = activePopoverId === index;
 
       return(
-        <IndexTable.Row id={`${index}`} key={`${index}`} position={index} onClick={() => onManageOption(index)}>
+        <IndexTable.Row 
+          id={`${index}`} 
+          key={`${index}`} 
+          position={index} 
+          onClick={(e) => {
+            // Ne pas déclencher si le Popover est ouvert ou si on clique sur un élément interactif
+            if (isActive || (e.target as HTMLElement).closest('[role="menu"]') || (e.target as HTMLElement).closest('button')) {
+              return;
+            }
+            onManageOption(index);
+          }}
+        >
           <IndexTable.Cell>
             <InlineStack blockAlign="center" gap="300" wrap={false}>
               <BorderCircleText
@@ -209,9 +230,31 @@ export default function MaterialAdvancedIndex({materialComponents, materialId, m
             >
               <ActionList 
                 items={[
-                  { content: 'Add option', icon: PlusCircleIcon, onAction: () => onManageOption(index) },
-                  { content: 'Edit', icon: EditIcon, onAction: () => handleUpdate(index) },
-                  { content: 'Delete', icon: DeleteIcon, onAction: () => handeleDelete(index), destructive: true, },
+                  { 
+                    content: 'Add option', 
+                    icon: PlusCircleIcon, 
+                    onAction: () => {
+                      setActivePopoverId(null);
+                      onManageOption(index);
+                    }
+                  },
+                  { 
+                    content: 'Edit', 
+                    icon: EditIcon, 
+                    onAction: () => {
+                      setActivePopoverId(null);
+                      handleUpdate(index);
+                    }
+                  },
+                  { 
+                    content: 'Delete', 
+                    icon: DeleteIcon, 
+                    onAction: () => {
+                      setActivePopoverId(null);
+                      handeleDelete(index);
+                    }, 
+                    destructive: true
+                  },
                 ]}
               />
             </Popover>

@@ -627,7 +627,54 @@ export default function Index() {
                               </Button>
                             }
                             {link.title == 'Get in touch' && 
-                              <Button onClick={() => Crisp.chat.open()} icon={link.icon}>
+                              <Button onClick={() => {
+                                const isCrispLoaded = () => {
+                                  return (window as any).$crisp && (window as any).$crisp.is;
+                                };
+                                
+                                const openChatWhenReady = (maxAttempts = 10, attempt = 0) => {
+                                  if (isCrispLoaded()) {
+                                    try {
+                                      Crisp.setHideOnAway(false);
+                                      
+                                      if (Crisp && Crisp.chat && typeof Crisp.chat.open === "function") {
+                                        Crisp.chat.open();
+                                      }
+                                      
+                                      if ((window as any).$crisp) {
+                                        (window as any).$crisp.push(["do", "chat:open"]);
+                                        (window as any).$crisp.push(["config", "hide:on:away", [false]]);
+                                        (window as any).$crisp.push(["do", "chat:show"]);
+                                      }
+                                      
+                                      if (!Crisp && !(window as any).$crisp) {
+                                        alert("Le service de chat n'est pas disponible. Veuillez rafraîchir la page.");
+                                        return;
+                                      }
+                                      
+                                      setTimeout(() => {
+                                        const crispWidget = document.querySelector('#crisp-chatbox') as HTMLElement;
+                                        if (crispWidget) {
+                                          crispWidget.setAttribute('data-force-show', 'true');
+                                          crispWidget.setAttribute('data-hidden', 'false');
+                                          crispWidget.style.display = 'block';
+                                          crispWidget.style.visibility = 'visible';
+                                          crispWidget.style.opacity = '1';
+                                          crispWidget.style.zIndex = '999999';
+                                        }
+                                      }, 100);
+                                    } catch (error) {
+                                      alert("Une erreur est survenue lors de l'ouverture du chat. Veuillez réessayer.");
+                                    }
+                                  } else if (attempt < maxAttempts - 1) {
+                                    setTimeout(() => openChatWhenReady(maxAttempts, attempt + 1), 200);
+                                  } else {
+                                    alert("Le service de chat n'est pas disponible. Veuillez rafraîchir la page.");
+                                  }
+                                };
+                                
+                                openChatWhenReady();
+                              }} icon={link.icon}>
                                 {link.title}
                               </Button>
                             }

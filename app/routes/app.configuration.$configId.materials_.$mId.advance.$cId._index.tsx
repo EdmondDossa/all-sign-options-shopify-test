@@ -16,7 +16,7 @@ import {
 
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { useFetcher, useNavigate, useOutletContext, useParams, useSubmit } from "@remix-run/react";
+import { useFetcher, useNavigate, useOutletContext, useParams, useRevalidator, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
@@ -29,7 +29,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { truncateText } from "~/utils/truncate-text";
 import { fileUrl } from "~/utils/fileUrl";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { DeleteIcon, EditIcon, MenuHorizontalIcon } from "@shopify/polaris-icons";
 import MaterialComponentCreate from "./app.configuration.$configId.materials_.$mId.advance.$cId.edit";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
@@ -53,6 +53,7 @@ export default function MaterialAdvancedItemsIndex({materialOptions, materialId,
   const configId = params.configId;
   const deleteFetcher = useFetcher() as any
   const setDafaultFetcher = useFetcher() as any
+  const revalidator = useRevalidator();
 
   // let { materialOptions } = useOutletContext<{
   //   materialOptions: MaterialAdvanceOptionType[];
@@ -61,6 +62,10 @@ export default function MaterialAdvancedItemsIndex({materialOptions, materialId,
   useHandleFlashMessage();
 
   const handeleDelete = (id: number) => {
+    // Optimistic update - supprimer immédiatement de l'UI
+    if (localMaterialOptions && localMaterialOptions[id]) {
+      setLocalMaterialOptions(localMaterialOptions.filter((_, index) => index !== id));
+    }
     // submit({ id: id }, { method: "DELETE" });
     const requestBody: any = {
       operation: "delete",
@@ -89,16 +94,16 @@ export default function MaterialAdvancedItemsIndex({materialOptions, materialId,
   };
 
   const handeleDefault = (id: number) => {
-    materialOptions = materialOptions?.map((curr, index) => {
-      if (index === id) {
-        curr.isDefault = true;
-      } else {
-        curr.isDefault = false;
-      }
-      return curr;
-    });
-
-    // submit({ id: id }, { method: "PUT" });
+    // Optimistic update - mettre à jour immédiatement l'UI
+    if (localMaterialOptions) {
+      setLocalMaterialOptions(
+        localMaterialOptions.map((curr, index) =>
+          index === id
+            ? { ...curr, isDefault: true }
+            : { ...curr, isDefault: false }
+        )
+      );
+    }
 
     const requestBody: any = {
       operation: "set-default",
@@ -128,23 +133,54 @@ export default function MaterialAdvancedItemsIndex({materialOptions, materialId,
 
   const [activePopoverId, setActivePopoverId] = useState<number | null>(null);
   const [localMaterialOptions, setLocalMaterialOptions] = useState<MaterialAdvanceOptionType[] | undefined>(materialOptions);
+  const hasProcessedDelete = useRef(false);
+  const hasProcessedDefault = useRef(false);
   
   // Mettre à jour l'état local quand materialOptions change
   useEffect(() => {
     setLocalMaterialOptions(materialOptions);
+    // Réinitialiser les flags quand les données changent depuis le loader
+    hasProcessedDelete.current = false;
+    hasProcessedDefault.current = false;
   }, [materialOptions]);
 
   // Mettre à jour après suppression
   useEffect(() => {
-    if (deleteFetcher.state === "idle" && deleteFetcher.data?.success && deleteFetcher.data?.data) {
-      setLocalMaterialOptions(deleteFetcher.data.data);
+    if (deleteFetcher.state === "idle" && deleteFetcher.data && !hasProcessedDelete.current) {
+      if (deleteFetcher.data.success && deleteFetcher.data.data) {
+        hasProcessedDelete.current = true;
+        // Mettre à jour avec les données du serveur (source de vérité)
+        setLocalMaterialOptions(deleteFetcher.data.data);
+        // Pas besoin de revalidate si on a déjà les données mises à jour
+      } else if (deleteFetcher.data.error) {
+        hasProcessedDelete.current = true;
+        // En cas d'erreur, recharger depuis le serveur pour restaurer l'état
+        revalidator.revalidate();
+      }
+    }
+    // Réinitialiser le flag quand on commence une nouvelle soumission
+    if (deleteFetcher.state === "submitting") {
+      hasProcessedDelete.current = false;
     }
   }, [deleteFetcher.state, deleteFetcher.data]);
 
   // Mettre à jour après changement de défaut
   useEffect(() => {
-    if (setDafaultFetcher.state === "idle" && setDafaultFetcher.data?.success && setDafaultFetcher.data?.data) {
-      setLocalMaterialOptions(setDafaultFetcher.data.data);
+    if (setDafaultFetcher.state === "idle" && setDafaultFetcher.data && !hasProcessedDefault.current) {
+      if (setDafaultFetcher.data.success && setDafaultFetcher.data.data) {
+        hasProcessedDefault.current = true;
+        // Mettre à jour avec les données du serveur (source de vérité)
+        setLocalMaterialOptions(setDafaultFetcher.data.data);
+        // Pas besoin de revalidate si on a déjà les données mises à jour
+      } else if (setDafaultFetcher.data.error) {
+        hasProcessedDefault.current = true;
+        // En cas d'erreur, recharger depuis le serveur pour restaurer l'état
+        revalidator.revalidate();
+      }
+    }
+    // Réinitialiser le flag quand on commence une nouvelle soumission
+    if (setDafaultFetcher.state === "submitting") {
+      hasProcessedDefault.current = false;
     }
   }, [setDafaultFetcher.state, setDafaultFetcher.data]);
 
