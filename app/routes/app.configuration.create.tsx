@@ -154,24 +154,28 @@ export default function ConfigurationEdit() {
             products: [
               {
                 name: "Door signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Vinyl signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "simple"
               },
               {
                 name: "Plastic signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Stainless metal signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
@@ -183,24 +187,28 @@ export default function ConfigurationEdit() {
             products: [
               {
                 name: "Acrylic signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Aluminum signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Brass signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "advanca"
               },
               {
                 name: "Wood signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "advanca"
@@ -213,18 +221,21 @@ export default function ConfigurationEdit() {
             products: [
               {
                 name: "Letterbox signs",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },  
               {
                 name: "Decals",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Vinyl lettering",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "simple"
@@ -244,12 +255,14 @@ export default function ConfigurationEdit() {
             products: [
               {
                 name: "Roll up",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Double sided",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "simple"
@@ -261,12 +274,14 @@ export default function ConfigurationEdit() {
             products: [
               {
                 name: "Pvc banner",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Mesh banner",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
@@ -286,19 +301,22 @@ export default function ConfigurationEdit() {
             name: "Bussiness & Office",
             products: [
               {
-                name: "Vynil sticher",
+                name: "Vynil sticker",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Die-cut",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "simple"
               },
               {
                 name: "Self adhesive",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "simple"
@@ -310,18 +328,21 @@ export default function ConfigurationEdit() {
             products: [
               {
                 name: "Matte sticker",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Glossy sticker",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "all"
               },
               {
                 name: "Holographic sticker",
+                description: "Office doors, meeting rooms, name plates",
                 type: "",
                 demoData: "",
                 materialType: "simple"
@@ -348,9 +369,10 @@ export default function ConfigurationEdit() {
   const [productType, setProductType] = useState<any>(signageOption.productCategories[0]);
   const selectProductType = (data: any) => {
     setProductType(data);
-    // setProductGroup(productType?.productGroups[0])
-    console.log(data, "product type");
-  };
+    if(data.productGroups.length > 0){
+      setProductGroup(data.productGroups[0])
+    }
+      };
 
   const [productGroup, setProductGroup] = useState<any>(productType?.productGroups[0]);
 
@@ -360,8 +382,9 @@ export default function ConfigurationEdit() {
   const selectProductData = (data: any) => {
     setProductData(data);
     setMaterialType("")
-    console.log(data, "product");
   };
+  // State pour la prévisualisation
+  const [previewProduct, setPreviewProduct] = useState<any>(null);
 
   //selectionner la catégorie
   const [productCategorie, setProductCategorie] = useState<any>(signageOption);
@@ -530,7 +553,7 @@ export default function ConfigurationEdit() {
 
   // navigation enter les steps
   function nextStep(){
-    if((step != 2) || ((step == 2) && productData != null)){
+    if((step != 1) || ((step == 1) && productData != null)){
       setStep((prev) => Math.min(prev + 1, 4))
     }
   }
@@ -1052,90 +1075,56 @@ export default function ConfigurationEdit() {
       case 1:
         return (
           <Box>
-            <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
+            <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-               Select the type of {productCategorie.name}
+               Select the type and the product sample of {productCategorie.name}
               </Text>
-              <p>Now pick a subtype that best matches your product within <Badge tone="success" size="large">{productCategorie.name}</Badge> </p>
+              <p>Choose the subtype that best matches your product within Signboard. You will fine-tune material behaviour in the next step.</p>
               {/* <span style={{fontWeight: "700"}}>{productCategorie.name}</span> */}
             </div>
 
-            <Grid columns={{xs: 1, sm: 2, md: 2, lg: 3, xl: 3}}>
 
+            <div style={{display: "flex", gap: "10px", paddingBottom: '20px'}}>
               {productCategorie.productCategories.map((categorie: any) => (
-                <Grid.Cell>
-                  <div 
-                    onClick={() => selectProductType(categorie)} 
-                    style={{
-                      cursor: 'pointer',
-                      // backgroundColor:  '#f1f1f1',
-                      backgroundColor:  '#F5F5F5',
-                      color: 'black',
-                      borderRadius: '16px',
-                      border: '0.07em solid #BDBDBD',
-                      boxShadow: productType.type === categorie.type ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                      padding: '16px',
-                      transition: 'all 50ms',
-                      height: '110px',
-                      overflow: 'hidden'
-                    }}
-                  >
-                    <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                      <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                        <div style={{padding: '0px'}}>
-                          <BlockStack gap="100">
-                            <p style={{fontSize: "16px", fontWeight: "600"}}>{categorie.name}</p>
-                            <p style={{fontSize: "14px", fontWeight: "400", color: "#616161", textOverflow: 'ellipsis'}}> {categorie.description} <Link monochrome url={categorie.demoLink} target="_blank">See more</Link> </p>                        
-                          </BlockStack>
-                        </div>
-                      </div>
-
-                      <span 
-                        style={{
-                          width: "fit-content",
-                          height: "fit-content",
-                          display: "flex",
-                          padding: "5px",
-                          border: productType === 'signboard' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                          borderRadius: "10px"
-                        }}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </Grid.Cell>
-              ))}
-
-            </Grid>
-
-          </Box>
-        );
-      case 2:
-        return (
-          <Box>
-            <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
-              <Text as="h2" variant="headingLg" fontWeight="bold">
-                Select the product of {productType.name}
-              </Text>
-              <p>Now pick a subtype that best matches your product within <Badge tone="success" size="large">{productType.name}</Badge> </p>
-              {/* <span style={{fontWeight: "700"}}>{productType.name}</span> */}
-            </div>
-
-            <div style={{display: "flex", gap: "8px", paddingBottom: "15px"}}>
-              {productType.productGroups.map((productGrp: any) => (
                 <div 
-                  onClick={() => setProductGroup(productGrp)} 
+                  onClick={() => selectProductType(categorie)} 
                   style={{
                     cursor: 'pointer',
                     // backgroundColor:  '#f1f1f1',
                     backgroundColor:  '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '14px',
+                    color: productType.type === categorie.type ? 'rgba(1, 100, 100, 0.8)' : '#424242',
+                    borderRadius: '16px',
                     border: '0.07em solid #BDBDBD',
-                    boxShadow: productGroup?.name === productGrp?.name ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                    boxShadow: productType.type === categorie.type ? '0px 0px 2px 2px rgba(1, 100, 100, 0.8)' : '',
+                    paddingInline: '16px',
+                    paddingBlock: '5px',
+                    transition: 'all 50ms',
+                    height: 'auto',
+                    overflow: 'hidden'
+                  }}
+                >
+                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                    <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+                      <div style={{padding: '0px'}}>
+                        <BlockStack gap="100">
+                          <p style={{fontSize: "16px", fontWeight: "600"}}>{categorie.name}</p>
+                        </BlockStack>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{display: "flex", gap: "8px", marginBottom: '20px', borderBottom: '1px solid #E0E0E0'}}>
+              {productType.productGroups.map((productGrp: any) => (
+                <div 
+                  onClick={() => {setProductGroup(productGrp), setProductData(null)}} 
+                  style={{
+                    cursor: 'pointer',
+                    backgroundColor: productGroup?.name === productGrp?.name ?  'rgba(1, 100, 100, 0.1)' : '',
+                    color: productGroup?.name === productGrp?.name ?  'rgba(1, 100, 100, 1)' : '#424242',
+                    borderBottom: productGroup?.name === productGrp?.name ? '0.09em solid rgba(1, 100, 100, 1)' : '0.07em solid #BDBDBD',
                     paddingInline: '16px',
                     paddingBlock: '6px',
                     transition: 'all 50ms',
@@ -1144,7 +1133,7 @@ export default function ConfigurationEdit() {
                   <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
                     <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
                       <div style={{padding: '0px'}}>
-                          <p style={{fontSize: "14px", fontWeight: "600"}}>{productGrp.name}</p>
+                          <p style={{fontSize: "14px", fontWeight: "500"}}>{productGrp.name}</p>
                       </div>
                     </div>
                   </div>
@@ -1152,7 +1141,7 @@ export default function ConfigurationEdit() {
               ))}
             </div>
 
-            <Grid columns={{xs: 2, sm: 3, md: 4, lg: 5, xl: 5}}>
+            <Grid columns={{xs: 2, sm: 3, md: 4, lg: 4, xl: 5}}>
               {productGroup.products.map((product: any) => (
                 <Grid.Cell>
                   <div 
@@ -1171,35 +1160,125 @@ export default function ConfigurationEdit() {
                   >
                     <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
                       <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                        <div style={{padding: '0px'}}>
+                        <div style={{padding: '0px', display: 'flex', justifyContent: 'space-between'}}>
                           <BlockStack gap="100">
-                            <p style={{fontSize: "15px", fontWeight: "600"}}>{product.name}</p>
+                            <p style={{fontSize: "14px", fontWeight: "600"}}>{product.name}</p>
                             {/* <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>All material options are customizable for the customer</p> */}
                           </BlockStack>
+                          
+                          <span 
+                            style={{
+                              display: productData?.name === product?.name ? "flex" : "none",
+                              width: "fit",
+                              background: "rgba(1, 100, 100, 0.2)", 
+                              color: "rgba(1, 100, 100, 0.8)", 
+                              fontSize: "10px", 
+                              borderRadius: "20px",
+                              padding: "0.5px 4px"
+                            }}
+                          >
+                            selected
+                          </span>
+                        </div>
+                        
+                        <p style={{color: "#757575", fontSize: "13px"}}>{product?.description}</p>
+
+                        <div style={{display: "flex", justifyContent: "space-between"}}>
+                          <p style={{color: "#9E9E9E", fontSize: "12px"}}>Click to select</p>
+
+
+                          {/* <span style={{color: "rgba(1, 100, 100, 0.8)", fontSize: "12px", fontWeight: "600"}}> Preview </span> */}
+                          <div 
+                            onClick={(e) => {
+                              e.stopPropagation(); // Empêche la sélection du produit
+                              setPreviewProduct(product);
+                            }}
+                            style={{
+                              cursor: "pointer",
+                              padding: "2px 6px",
+                              borderRadius: "4px",
+                              transition: "background 0.2s"
+                            }}
+                          >
+                             <span style={{color: "rgba(1, 100, 100, 0.8)", fontSize: "12px", fontWeight: "600"}}> Preview </span>
+                          </div>
                         </div>
                       </div>
-
-                      <span 
-                        style={{
-                          width: "fit-content",
-                          height: "fit-content",
-                          display: "flex",
-                          padding: "5px",
-                          border: productData?.name === product?.name ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                          borderRadius: "10px"
-                        }}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                        </svg>
-                      </span>
                     </div>
                   </div>
                 </Grid.Cell>
               ))}
             </Grid>
 
-            <div style={{display: productData != null ? "flex" : "none", flexDirection: "column", gap: "10px", paddingTop: "20px"}}>
+            {/* --- MODAL DE PREVIEW --- */}
+            {previewProduct && (
+              <Modal
+                open={!!previewProduct}
+                onClose={() => setPreviewProduct(null)}
+                title={previewProduct.name}
+                primaryAction={{
+                  content: 'Close',
+                  onAction: () => setPreviewProduct(null),
+                }}
+              >
+                <Modal.Section>
+                  <BlockStack gap="400">
+                    {/* Description */}
+                    <Text as="p" tone="subdued">
+                      {previewProduct.description}
+                    </Text>
+
+                    {/* Zone Visuelle (Mockup) */}
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '200px',
+                        backgroundColor: '#F0F4F8', // Bleu très clair comme sur l'image
+                        border: '1px dashed #B0BEC5', // Bordure pointillée
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#637381'
+                      }}
+                    >
+                       {/* Si vous avez une image réelle dans demoData, vous pouvez l'afficher ici */}
+                       {previewProduct.image ? (
+                          <img src={previewProduct.image} alt="" style={{maxHeight: '100%', maxWidth: '100%'}} />
+                       ) : (
+                          <Text as="span" variant="bodyMd">Product visual / mockup goes here</Text>
+                       )}
+                    </div>
+
+                    {/* Mode d'interaction suggéré */}
+                    <InlineStack gap="200" blockAlign="center">
+                      <Text as="span" tone="subdued">
+                        Suggested interaction mode for this product:
+                      </Text>
+                      <Text as="span" fontWeight="bold">
+                        {previewProduct.materialType === 'advance' ? 'Advanced' : 
+                         previewProduct.materialType === 'simple' ? 'Simple' : 
+                         'Standard'}
+                      </Text>
+                    </InlineStack>
+                  </BlockStack>
+                </Modal.Section>
+              </Modal>
+            )}
+
+          </Box>
+        );
+      case 2:
+        return (
+          <Box>
+            <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
+              <Text as="h2" variant="headingLg" fontWeight="bold">
+                Include demo data
+              </Text>
+              <p>Decide whether to preload demo content for your <Badge tone="success" >{productData.name}</Badge> product sample  . If enabled, choose a starting template for faster setup.</p>
+            </div>
+
+            <div style={{display: productData != null ? "flex" : "none", flexDirection: "column", gap: "10px", paddingBottom: "20px"}}>
               <p style={{fontSize: "16px", fontWeight: "600"}}>Select the product material type</p>
 
               <Grid columns={{xs: 2, sm: 2, md: 2, lg: 3, xl: 3}}>
@@ -1223,8 +1302,8 @@ export default function ConfigurationEdit() {
                         <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
                           <div style={{padding: '0px'}}>
                             <BlockStack gap="100">
-                              <p style={{fontSize: "16px", fontWeight: "600"}}>Simple</p>
-                              <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>All material options are customizable for the customer</p>
+                              <p style={{fontSize: "15px", fontWeight: "600"}}>Simple</p>
+                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>All material options are customizable for the customer</p>
                             </BlockStack>
                           </div>
                         </div>
@@ -1239,7 +1318,7 @@ export default function ConfigurationEdit() {
                             borderRadius: "10px"
                           }}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                           </svg>
                         </span>
@@ -1267,8 +1346,8 @@ export default function ConfigurationEdit() {
                         <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
                           <div style={{padding: '0px'}}>
                             <BlockStack gap="100">
-                              <p style={{fontSize: "16px", fontWeight: "600"}}>Advance</p>
-                              <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>Size, shape and background color have default preconfigured values </p>
+                              <p style={{fontSize: "15px", fontWeight: "600"}}>Advance</p>
+                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>Size, shape and background color have default preconfigured values </p>
                             </BlockStack>
                           </div>
                         </div>
@@ -1283,7 +1362,7 @@ export default function ConfigurationEdit() {
                             borderRadius: "10px"
                           }}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                           </svg>
                         </span>
@@ -1312,8 +1391,8 @@ export default function ConfigurationEdit() {
                         <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
                           <div style={{padding: '0px'}}>
                             <BlockStack gap="100">
-                              <p style={{fontSize: "16px", fontWeight: "600"}}>Layers</p>
-                              <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>stack multiple layers that can be configured independently <Badge tone="info">Coming soon</Badge></p>
+                              <p style={{fontSize: "15px", fontWeight: "600"}}>Layers</p>
+                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>stack multiple layers that can be configured independently <Badge tone="info">Coming soon</Badge></p>
                             </BlockStack>
                           </div>
                         </div>
@@ -1328,7 +1407,7 @@ export default function ConfigurationEdit() {
                             borderRadius: "10px"
                           }}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                           </svg>
                         </span>
@@ -1337,18 +1416,6 @@ export default function ConfigurationEdit() {
                   </Grid.Cell>
                 }
               </Grid>
-            </div>
-
-          </Box>
-        );
-      case 3:
-        return (
-          <Box>
-            <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
-              <Text as="h2" variant="headingLg" fontWeight="bold">
-                Include demo data
-              </Text>
-              <p>Decide whether to preload demo content for your <Badge tone="success" >{productData.name}</Badge> product sample  . If enabled, choose a starting template for faster setup.</p>
             </div>
 
             <div 
@@ -1439,7 +1506,7 @@ export default function ConfigurationEdit() {
             </Modal>
           </Box>
         );
-      case 4:
+      case 3:
         return (
           <div style={{display: "flex", gap: "10px"}}>
             <div style={{width: "70%", display: "flex", flexDirection: "column", gap: "12px"}}>
@@ -1544,7 +1611,7 @@ export default function ConfigurationEdit() {
             {!configuration && 
               <div>
                 <InlineStack>
-                  <p >Step {step + 1} of 5</p>
+                  <p >Step {step + 1} of 4</p>
                 </InlineStack>
 
                 <div style={{
@@ -1588,14 +1655,6 @@ export default function ConfigurationEdit() {
                     borderRadius: '8px',
                   }}></span>
 
-                  <span style={{
-                    display: 'flex',
-                    backgroundColor: step >= 4 ? 'rgba(1, 100, 100, 0.8)' : '#f1f1f1',
-                    width: '25%',
-                    padding: '2px',
-                    border: '1px solid rgba(1, 100, 100, 0.8)',
-                    borderRadius: '8px',
-                  }}></span>
 
                 </div>
               </div>
@@ -1616,15 +1675,11 @@ export default function ConfigurationEdit() {
               )}
 
               {step == 1 && (
-                <p> Tip: after choosing a type, you'll proceed to the selecting of a associated product sample and its options. </p>
+                <p> Tip: select a product sample. On the next step, you'll choose how customers can interact with the material (Simple, Advanced, Layers). </p>
               )}
 
               {step == 2 && (
-                <p> Tip: select a product sample with its material option and you can move on to Demo Data / Templates next. </p>
-              )}
-
-              {step == 3 && (
-                <p> Tip: selecting a template speeds up onboarding, but you can also start from scratch. </p>
+                <p> Tip: select a product sample with its material option and the to Demo Data / Templates next. </p>
               )}
             </div>
             
@@ -1649,7 +1704,7 @@ export default function ConfigurationEdit() {
                     borderRadius: '8px',
                     padding: '7px 10px',
                     fontWeight: '600',
-                    cursor: (step != 2) || ((step == 2) && productData != null) ? 'pointer' : 'not-allowed',
+                    cursor: (step != 1) || ((step == 1) && productData != null) ? 'pointer' : 'not-allowed',
                     border: '1px',
                     // boxShadow: ' 0rem -0.0625rem 0rem 0rem #b5b5b5 inset, 0rem 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.1) inset, 0rem 0.03125rem 0rem 0.09375rem #FFF inset'
                   }}
