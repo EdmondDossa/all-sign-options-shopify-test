@@ -86,9 +86,10 @@ export default class MaterialAdditionalOptionItemService {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let options: ConfigAdditionalOptionItem[]|null = configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'];
       if (Array.isArray(options) && options[id]) {
-        configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'] = options.filter((curr,index)=> index!= id);
+        const filteredOptions = options.filter((curr,index)=> index!= id);
+        configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'] = filteredOptions;
         configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
-        return Promise.resolve(options);
+        return Promise.resolve(filteredOptions);
       }
       return Promise.resolve(null);
     } catch (error) {
@@ -110,13 +111,14 @@ export default class MaterialAdditionalOptionItemService {
       let configuration: ConfigurationType = await ConfigurationService.getConfiguration(configurationId, sessionId);
       let options: ConfigAdditionalOptionItem[]|null = configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'];
       if (Array.isArray(options) && options[id]) {
-        configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'] = options.map((curr, index) =>
+        const updatedOptions = options.map((curr, index) =>
         index == id
           ? { ...curr, isDefault: true }
           : { ...curr, isDefault: false },
       );
+        configuration["data"]["materials"][materialId]["data"]["additionalOptions"][additionalId]['options'] = updatedOptions;
         configuration =  await ConfigurationService.updateConfiguration(configuration,sessionId)
-        return Promise.resolve(options);
+        return Promise.resolve(updatedOptions);
       }
       return Promise.resolve(null);
     } catch (error) {

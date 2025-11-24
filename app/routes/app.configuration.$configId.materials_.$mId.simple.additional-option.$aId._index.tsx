@@ -22,6 +22,7 @@ import {
   useNavigate,
   useOutletContext,
   useParams,
+  useRevalidator,
   useSubmit,
 } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
@@ -37,7 +38,7 @@ import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { fileUrl } from "~/utils/fileUrl";
 
 import MaterialAdditionalOptionCreate from "./app.configuration.$configId.materials_.$mId.simple.additional-option.$aId.edit";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import RayStartArrowIcon from "~/components/icons/RayStartArrowIcon";
 import { DeleteIcon, EditIcon, MenuHorizontalIcon } from "@shopify/polaris-icons";
 
@@ -56,6 +57,7 @@ export default function MaterialAdditionalOptionsIndex({ additionalOptionItems, 
   const navigate = useNavigate();
   const deleteFetcher = useFetcher<any>();
   const setDefaultFetcher = useFetcher<any>();
+  const revalidator = useRevalidator();
   const params = useParams();
   const configId = params.configId;
 
@@ -66,7 +68,10 @@ export default function MaterialAdditionalOptionsIndex({ additionalOptionItems, 
   useHandleFlashMessage();
 
   const handeleDelete = (index: number) => {
-    // submit({ id: id }, { method: "DELETE" });
+    // Optimistic update - supprimer immédiatement de l'UI
+    if (localOptionItems && localOptionItems[index]) {
+      setLocalOptionItems(localOptionItems.filter((_, i) => i !== index));
+    }
 
     const requestBody: any = {
       operation: "delete",
@@ -84,16 +89,17 @@ export default function MaterialAdditionalOptionsIndex({ additionalOptionItems, 
   };
 
   const handeleDefault = (index: number) => {
-    additionalOptionItems = additionalOptionItems.map((curr, index) => {
-      if (index === id) {
-        curr.isDefault = true;
-      } else {
-        curr.isDefault = false;
-      }
-      return curr;
-    });
+    // Optimistic update - mettre à jour immédiatement l'UI
+    if (localOptionItems) {
+      setLocalOptionItems(
+        localOptionItems.map((curr, i) =>
+          i === index
+            ? { ...curr, isDefault: true }
+            : { ...curr, isDefault: false }
+        )
+      );
+    }
 
-    // submit({ id: id }, { method: "PUT" });
     const requestBody: any = {
       operation: "set-default",
       configId: configId,
@@ -135,6 +141,8 @@ export default function MaterialAdditionalOptionsIndex({ additionalOptionItems, 
 
   const [activePopoverId, setActivePopoverId] = useState<number | null>(null);
   const [localOptionItems, setLocalOptionItems] = useState<ConfigAdditionalOptionItem[]>(additionalOptionItems)
+  const hasProcessedDelete = useRef(false);
+  const hasProcessedDefault = useRef(false);
   const rowMarkup = localOptionItems?.map(
     ( { title, description, icon, additionalPrice, isDefault }, index) => {
       const isActive = activePopoverId === index;
@@ -205,7 +213,50 @@ export default function MaterialAdditionalOptionsIndex({ additionalOptionItems, 
     setLocalOptionItems([
       ...additionalOptionItems
     ])
+    // Réinitialiser les flags quand les données changent depuis le loader
+    hasProcessedDelete.current = false;
+    hasProcessedDefault.current = false;
   }, [additionalOptionItems, materialId, id])
+
+  // Mettre à jour après suppression
+  useEffect(() => {
+    if (deleteFetcher.state === "idle" && deleteFetcher.data && !hasProcessedDelete.current) {
+      if (deleteFetcher.data.success && deleteFetcher.data.data) {
+        hasProcessedDelete.current = true;
+        // Mettre à jour avec les données du serveur (source de vérité)
+        setLocalOptionItems(deleteFetcher.data.data);
+        // Pas besoin de revalidate si on a déjà les données mises à jour
+      } else if (deleteFetcher.data.error) {
+        hasProcessedDelete.current = true;
+        // En cas d'erreur, recharger depuis le serveur pour restaurer l'état
+        revalidator.revalidate();
+      }
+    }
+    // Réinitialiser le flag quand on commence une nouvelle soumission
+    if (deleteFetcher.state === "submitting") {
+      hasProcessedDelete.current = false;
+    }
+  }, [deleteFetcher.state, deleteFetcher.data]);
+
+  // Mettre à jour après changement de défaut
+  useEffect(() => {
+    if (setDefaultFetcher.state === "idle" && setDefaultFetcher.data && !hasProcessedDefault.current) {
+      if (setDefaultFetcher.data.success && setDefaultFetcher.data.data) {
+        hasProcessedDefault.current = true;
+        // Mettre à jour avec les données du serveur (source de vérité)
+        setLocalOptionItems(setDefaultFetcher.data.data);
+        // Pas besoin de revalidate si on a déjà les données mises à jour
+      } else if (setDefaultFetcher.data.error) {
+        hasProcessedDefault.current = true;
+        // En cas d'erreur, recharger depuis le serveur pour restaurer l'état
+        revalidator.revalidate();
+      }
+    }
+    // Réinitialiser le flag quand on commence une nouvelle soumission
+    if (setDefaultFetcher.state === "submitting") {
+      hasProcessedDefault.current = false;
+    }
+  }, [setDefaultFetcher.state, setDefaultFetcher.data]);
   return (
     <div>
       { !showEditSection &&

@@ -500,6 +500,21 @@ img.aso-logo{
 .image-fit{
     width: -webkit-fill-available;
     width: -moz-available;
+}
+
+/* Styles pour forcer l'affichage du widget Crisp */
+#crisp-chatbox[data-force-show="true"],
+#crisp-chatbox[data-hidden="false"] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 999999 !important;
+}
+
+/* S'assurer que le widget Crisp est toujours visible quand il est ouvert */
+#crisp-chatbox:not([data-hidden="true"]) {
+    display: block !important;
+}
     height: 250px;
     object-fit: cover;
     border-radius: 5px ;
