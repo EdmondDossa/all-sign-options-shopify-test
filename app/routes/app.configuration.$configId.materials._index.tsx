@@ -353,7 +353,7 @@ export default function MaterialIndex() {
       <div
         style={{
           display: "flex",
-          height: "94.5%",
+          height: "100%",
           padding: "10px",
           backgroundColor: "transparent",
         }}
@@ -426,7 +426,7 @@ export default function MaterialIndex() {
           </div>
 
           {/* <div className="material_contents"> */}
-          <div className="" style={{paddingTop: selectedMaterialType != "simple" ? "52px" : "45px"}}>
+          <div className="" style={{paddingTop: selectedMaterialType != "simple" ? "48px" : "45px"}}>
             {selectedMaterialType != "simple" && 
               <Card>
                 <InlineStack>
