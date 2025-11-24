@@ -139,221 +139,473 @@ export default function ConfigurationEdit() {
     navigate("..");
   };
 
-  let signageOption = {
+  // let signageOption = {
+  //   name: "Signage",
+  //   type: "signage",
+  //   productCategories: [
+  //     {
+  //       name: "Signboard",
+  //       type: "signboard",
+  //       description: "Rigid panel / PVC/ Aluminum/ Plexiglass/ Wood/ Painted or stainless metal",
+  //       demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
+  //       productGroups: [
+  //         {
+  //           name: "Bussiness & Office",
+  //           products: [
+  //             {
+  //               name: "Door signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Vinyl signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+  //             {
+  //               name: "Plastic signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Stainless metal signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //           ]
+  //         },
+  //         {
+  //           name: "Retail & Outdoor",
+  //           products: [
+  //             {
+  //               name: "Acrylic signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Aluminum signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Brass signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "advanca"
+  //             },
+  //             {
+  //               name: "Wood signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "advanca"
+  //             },
+              
+  //           ]
+  //         },
+  //         {
+  //           name: "Specialized & Industrial",
+  //           products: [
+  //             {
+  //               name: "Letterbox signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },  
+  //             {
+  //               name: "Decals",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Vinyl lettering",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+  //           ]
+  //         },
+  //       ]
+  //     },
+  //     {
+  //       name: "Banners",
+  //       type: "banner",
+  //       description: "PVC/ Mesh/ Double‑sided/ fabric, etc..",
+  //       demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/222/#/",
+  //       productGroups: [
+  //         {
+  //           name: "Bussiness & Office",
+  //           products: [
+  //             {
+  //               name: "Roll up",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Double sided",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             }
+  //           ]
+  //         },
+  //         {
+  //           name: "Retail & Outdoor",
+  //           products: [
+  //             {
+  //               name: "Pvc banner",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Mesh banner",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             }
+              
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       name: "Stickers",
+  //       type: "sticker",
+  //       description: "Vinyl/ die-cut/ Self‑adhesive paper/ matte/ glossy/ UV‑resistant, etc..",
+  //       demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/885/#/",
+  //       productGroups: [
+  //         {
+  //           name: "Bussiness & Office",
+  //           products: [
+  //             {
+  //               name: "Vynil sticker",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Die-cut",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+  //             {
+  //               name: "Self adhesive",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+  //           ]
+  //         },
+  //         {
+  //           name: "Retail & Outdoor",
+  //           products: [
+  //             {
+  //               name: "Matte sticker",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Glossy sticker",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Holographic sticker",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+              
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //   ]
+  // }
+
+   let signageOption = {
     name: "Signage",
-    type: "signage",
-    productCategories: [
+    type: "signage", 
+   productCategories: [
+  {
+    name: "Signboard",
+    type: "signboard",
+    description: "Rigid panels (PVC, Alu, Wood, Acrylic) for permanent display.",
+    demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
+    productGroups: [
       {
-        name: "Signboard",
-        type: "signboard",
-        description: "Rigid panel / PVC/ Aluminum/ Plexiglass/ Wood/ Painted or stainless metal",
-        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
-        productGroups: [
+        name: "Business & Office",
+        products: [
           {
-            name: "Bussiness & Office",
-            products: [
-              {
-                name: "Door signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Vinyl signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "simple"
-              },
-              {
-                name: "Plastic signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Stainless metal signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-            ]
+            name: "Door signs",
+            description: "Identify rooms and offices professionally.",
+            type: "door-sign",
+            demoData: "",
+            materialType: "all"
           },
           {
-            name: "Retail & Outdoor",
-            products: [
-              {
-                name: "Acrylic signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Aluminum signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Brass signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "advanca"
-              },
-              {
-                name: "Wood signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "advanca"
-              },
-              
-            ]
+            name: "Name badges",
+            description: "Personalized staff IDs (magnetic or pin).",
+            type: "name-badge",
+            demoData: "",
+            materialType: "simple"
           },
           {
-            name: "Specialized & Industrial",
-            products: [
-              {
-                name: "Letterbox signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },  
-              {
-                name: "Decals",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Vinyl lettering",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "simple"
-              },
-            ]
-          },
-        ]
-      },
-      {
-        name: "Banners",
-        type: "banner",
-        description: "PVC/ Mesh/ Double‑sided/ fabric, etc..",
-        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/222/#/",
-        productGroups: [
-          {
-            name: "Bussiness & Office",
-            products: [
-              {
-                name: "Roll up",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Double sided",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "simple"
-              }
-            ]
+            name: "Acrylic signs",
+            description: "Modern, glass-look finish for elegant displays.",
+            type: "acrylic-sign",
+            demoData: "",
+            materialType: "advanced"
           },
           {
-            name: "Retail & Outdoor",
-            products: [
-              {
-                name: "Pvc banner",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Mesh banner",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              }
-              
-            ]
+            name: "Brass signs",
+            description: "Prestigious, timeless plaques for professionals.",
+            type: "brass-sign",
+            demoData: "",
+            materialType: "advanced"
+          },
+          {
+            name: "Stainless metal signs",
+            description: "Durable, rust-proof industrial look.",
+            type: "stainless-sign",
+            demoData: "",
+            materialType: "advanced"
+          },
+          {
+            name: "Aluminum signs",
+            description: "Lightweight, rust-free outdoor standard.",
+            type: "aluminum-sign",
+            demoData: "",
+            materialType: "all"
+          },
+          {
+            name: "Restroom signs",
+            description: "Clear facility identification and guidance.",
+            type: "restroom-sign",
+            demoData: "",
+            materialType: "all"
           }
         ]
       },
       {
-        name: "Stickers",
-        type: "sticker",
-        description: "Vinyl/ die-cut/ Self‑adhesive paper/ matte/ glossy/ UV‑resistant, etc..",
-        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/885/#/",
-        productGroups: [
+        name: "Retail & Outdoor",
+        products: [
           {
-            name: "Bussiness & Office",
-            products: [
-              {
-                name: "Vynil sticker",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Die-cut",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "simple"
-              },
-              {
-                name: "Self adhesive",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "simple"
-              },
-            ]
+            name: "Wood signs",
+            description: "Rustic, natural look for authentic branding.",
+            type: "wood-sign",
+            demoData: "",
+            materialType: "advanced"
           },
           {
-            name: "Retail & Outdoor",
-            products: [
-              {
-                name: "Matte sticker",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Glossy sticker",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Holographic sticker",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "simple"
-              },
-              
-            ]
+            name: "Magnetic signs",
+            description: "Removable branding for any vehicle.",
+            type: "magnetic-sign",
+            demoData: "",
+            materialType: "simple"
+          },
+          {
+            name: "Double-sided signs",
+            description: "Projecting signs visible from both directions.",
+            type: "double-sided-sign",
+            demoData: "",
+            materialType: "advanced"
+          },
+          {
+            name: "House signs",
+            description: "Custom address plaques for curb appeal.",
+            type: "house-sign",
+            demoData: "",
+            materialType: "all"
+          },
+          {
+            name: "Gate signs",
+            description: "Attachable signs for gates and fences.",
+            type: "gate-sign",
+            demoData: "",
+            materialType: "all"
+          },
+          {
+            name: "Parking signs",
+            description: "Designate spaces and control parking.",
+            type: "parking-sign",
+            demoData: "",
+            materialType: "all"
           }
         ]
       },
+      {
+        name: "Specialized & Industrial",
+        products: [
+          {
+            name: "Plastic signs",
+            description: "Cost-effective, versatile rigid foam panels.",
+            type: "plastic-sign",
+            demoData: "",
+            materialType: "all"
+          },
+          {
+            name: "Warning signs",
+            description: "High-visibility safety and hazard alerts.",
+            type: "warning-sign",
+            demoData: "",
+            materialType: "all"
+          },
+          {
+            name: "Reflective signs",
+            description: "Night-visible traffic and safety signage.",
+            type: "reflective-sign",
+            demoData: "",
+            materialType: "advanced"
+          },
+          {
+            name: "Construction signs",
+            description: "Site safety and permit display boards.",
+            type: "construction-sign",
+            demoData: "",
+            materialType: "all"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Banners",
+    type: "banner",
+    description: "Flexible large-format printing for events and promos.",
+    demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
+    productGroups: [
+      {
+        name: "Business & Office",
+        products: [
+          {
+            name: "Roll-ups",
+            description: "Portable, retractable stands for events.",
+            type: "roll-up",
+            demoData: "",
+            materialType: "simple"
+          }
+        ]
+      },
+      {
+        name: "Retail & Outdoor",
+        products: [
+          {
+            name: "Banners",
+            description: "Durable vinyl with grommets for outdoor use.",
+            type: "vinyl-banner",
+            demoData: "",
+            materialType: "all"
+          },
+          {
+            name: "Posters",
+            description: "High-res paper prints for indoor display.",
+            type: "poster",
+            demoData: "",
+            materialType: "simple"
+          }
+        ]
+      },
+      {
+        name: "Specialized & Industrial",
+        products: []
+      }
+    ]
+  },
+  {
+    name: "Stickers",
+    type: "sticker",
+    description: "Adhesive vinyls and decals for smooth surfaces.",
+    demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
+    productGroups: [
+      {
+        name: "Retail & Outdoor",
+        products: [
+          {
+            name: "Vinyl lettering",
+            description: "Cut-out text with no background.",
+            type: "vinyl-lettering",
+            demoData: "",
+            materialType: "simple"
+          },
+          {
+            name: "Decals",
+            description: "Custom-shaped stickers for branding.",
+            type: "decal",
+            demoData: "",
+            materialType: "simple"
+          },
+          {
+            name: "Car signs (Adhesive)",
+            description: "Permanent vehicle graphics and branding.",
+            type: "car-sticker",
+            demoData: "",
+            materialType: "advanced"
+          },
+          {
+            name: "Boat signs",
+            description: "Marine-grade, salt-resistant vinyl.",
+            type: "boat-sign",
+            demoData: "",
+            materialType: "advanced"
+          }
+        ]
+      },
+      {
+        name: "Specialized & Industrial",
+        products: [
+          {
+            name: "Labels",
+            description: "Stickers for packaging and organization.",
+            type: "label",
+            demoData: "",
+            materialType: "simple"
+          },
+          {
+            name: "Cable labels",
+            description: "Tags for wire and cable identification.",
+            type: "cable-label",
+            demoData: "",
+            materialType: "simple"
+          }
+        ]
+      }
     ]
   }
+]
+}
 
 
   const [step, setStep] = useState(configuration ? 4 : 0);
