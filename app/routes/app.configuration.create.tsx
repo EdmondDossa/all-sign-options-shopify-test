@@ -390,9 +390,9 @@ export default function ConfigurationEdit() {
                 materialType: "advanced"
               },
               {
-                name: "Labels and plates",
-                description: "Small information or identification plates.",
-                type: "brass-sign",
+                name: "Double-sided signs",
+                description: "Hanging or projecting double-sided panels.",
+                type: "double-sided-sign",
                 demoData: "",
                 materialType: "advanced"
               }
@@ -416,13 +416,6 @@ export default function ConfigurationEdit() {
                 materialType: "simple"
               },
               {
-                name: "Double-sided signs",
-                description: "Hanging or projecting double-sided panels.",
-                type: "double-sided-sign",
-                demoData: "",
-                materialType: "advanced"
-              },
-              {
                 name: "House signs",
                 description: "Outdoor house numbers and name plaques.",
                 type: "house-sign",
@@ -433,13 +426,6 @@ export default function ConfigurationEdit() {
                 name: "Plastic signs",
                 description: "PVC / Eco board signs for shops and events.",
                 type: "gate-sign",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Contour-cut signs",
-                description: "Shaped signs following the logo outline.",
-                type: "parking-sign",
                 demoData: "",
                 materialType: "all"
               }
@@ -462,13 +448,21 @@ export default function ConfigurationEdit() {
                 demoData: "",
                 materialType: "all"
               },
+              ,
               {
-                name: "Cable tags",
-                description: "Technical labels and cable identification tags.",
-                type: "reflective-sign",
+                name: "Labels and plates",
+                description: "Small information or identification plates.",
+                type: "brass-sign",
                 demoData: "",
                 materialType: "advanced"
               }
+              // {
+              //   name: "Cable tags",
+              //   description: "Technical labels and cable identification tags.",
+              //   type: "reflective-sign",
+              //   demoData: "",
+              //   materialType: "advanced"
+              // }
             ]
           }
         ]
@@ -483,21 +477,21 @@ export default function ConfigurationEdit() {
             name: "Standard banners",
             products: [
               {
-                name: "Vinyl / PVC banners",
+                name: "Banners signs",
                 description: "Standard promotional banners (indoor / outdoor).",
                 type: "roll-up",
                 demoData: "",
                 materialType: "simple"
               },
+              // {
+              //   name: "Mesh / Facric banners",
+              //   description: "Wind-proof or textile banners for façades and events.",
+              //   type: "roll-up",
+              //   demoData: "",
+              //   materialType: "simple"
+              // },
               {
-                name: "Mesh / Facric banners",
-                description: "Wind-proof or textile banners for façades and events.",
-                type: "roll-up",
-                demoData: "",
-                materialType: "simple"
-              },
-              {
-                name: "Poster",
+                name: "Posters",
                 description: "Large format posters used like lightweight banners.",
                 type: "roll-up",
                 demoData: "",
@@ -515,13 +509,13 @@ export default function ConfigurationEdit() {
                 demoData: "",
                 materialType: "all"
               },
-              {
-                name: "X-banner",
-                description: "X-frame banners for events and exhibitions.",
-                type: "poster",
-                demoData: "",
-                materialType: "simple"
-              }
+              // {
+              //   name: "X-banner",
+              //   description: "X-frame banners for events and exhibitions.",
+              //   type: "poster",
+              //   demoData: "",
+              //   materialType: "simple"
+              // }
             ]
           }
         ]
@@ -561,20 +555,20 @@ export default function ConfigurationEdit() {
                 demoData: "",
                 materialType: "simple"
               },
-              {
-                name: "Sheet of stickers",
-                description: "Multiple designs on a single sticker sheet.",
-                type: "cable-label",
-                demoData: "",
-                materialType: "simple"
-              },
-              {
-                name: "Transparent / decal sticker",
-                description: "Clear stickers for glass, bottles, or packaging.",
-                type: "cable-label",
-                demoData: "",
-                materialType: "simple"
-              },
+              // {
+              //   name: "Sheet of stickers",
+              //   description: "Multiple designs on a single sticker sheet.",
+              //   type: "cable-label",
+              //   demoData: "",
+              //   materialType: "simple"
+              // },
+              // {
+              //   name: "Transparent / decal sticker",
+              //   description: "Clear stickers for glass, bottles, or packaging.",
+              //   type: "cable-label",
+              //   demoData: "",
+              //   materialType: "simple"
+              // },
               {
                 name: "Floor / wall stickers",
                 description: "Non-slip or large surface stickers for floors and walls.",
@@ -666,10 +660,39 @@ export default function ConfigurationEdit() {
 
   const allowDemoData = (statut: boolean) => {
     setValidDemoData(statut);
-    if(statut == true){
-      setShowDemoData(true)
-    }
-    console.log(statut, "demo data");
+    // if(statut == true){
+    //   setShowDemoData(true)
+    // }
+
+    let plan = "pro"
+
+    let data: Array<{
+      label: string;
+      value: any;
+      description: string;
+      image: string;
+      hide: boolean;
+    }> = configurationDemoData.map((item, index) => {
+      return {
+        label: item.name,
+        value: `${index}`,
+        description: item.description,
+        image: item.icon,
+        hide: !PRICING_PLANS.STARTER_RULES.materialTypes.includes(item.data.materials[0].type) && plan == PRICING_PLANS.STARTER ? true : false,
+      };
+    });
+
+    data = data.filter((item) => {
+      return item.label === productData.name;
+    });
+
+
+    setDemoId(data[0].value);
+    setDemoName(data[0].label)  
+    // setSelectData(demoData.value);
+    // handleDemoId(demoData.value, demoData.label)
+
+    console.log(statut, "demo data", data);
   };
   // modal de selection de demo data associé
   const [showDemoData, setShowDemoData] = useState(false);
