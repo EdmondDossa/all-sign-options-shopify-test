@@ -52,21 +52,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -447,7 +433,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/engraving.svg",
                     name : "Standard",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -887,21 +873,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -2104,21 +2076,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -2499,7 +2457,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/engraving.svg",
                     name : "Standard",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -2967,21 +2925,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -4134,21 +4078,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -4998,21 +4928,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -6435,21 +6351,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -7623,21 +7525,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -8018,7 +7906,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/engraving.svg",
                     name : "Plastic",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "Engraved",
                     data : {
                         sizes : {
@@ -8565,7 +8453,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Laquered aluminium",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -9147,7 +9035,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Anodized aluminium",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -9538,21 +9426,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -10254,21 +10128,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -11395,21 +11255,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -13884,21 +13730,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -15472,21 +15304,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -16861,21 +16679,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -17256,7 +17060,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/engraving.svg",
                     name : "Engraving",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "Text and image are engraved with laser on two layer laminate plastic",
                     data : {
                         sizes : {
@@ -17906,7 +17710,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/form_pvc.svg",
                     name : "Foam PVC",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "Text and image are manufatured with a UV-printer",
                     data : {
                         sizes : {
@@ -18606,21 +18410,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -19001,7 +18791,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/engraving.svg",
                     name : "Engraving",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -19434,7 +19224,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/engraving.svg",
                     name : "Laser etching",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -19785,21 +19575,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -20914,21 +20690,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -21309,7 +21071,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/engraving.svg",
                     name : "Engraving",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "Text and image are engraved with laser on two layer laminate plastic",
                     data : {
                         sizes : {
@@ -21872,7 +21634,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Aluminium",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -22436,7 +22198,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Acrylic",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -23069,21 +22831,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         }
                     },
                     text : {
-                        selectedFonts : [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12
-                        ],
+                        selectedFonts : [],
                         colorsLabel : "Texts Colors",
                         colors : [
                             {
@@ -23464,7 +23212,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/engraving.svg",
                     name : "Engraving",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "Text and image are engraved with laser on two layer laminate plastic",
                     data : {
                         sizes : {
@@ -24114,7 +23862,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/plastic-signs/form_pvc.svg",
                     name : "Foam PVC",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "Text and image are manufatured with a UV-printer",
                     data : {
                         sizes : {
@@ -24764,7 +24512,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Aluminium",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -25335,7 +25083,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Acrylic",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -25934,7 +25682,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Vinyl lettering",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -26333,7 +26081,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Vinyl",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {
@@ -26962,7 +26710,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Wood",
                     type : "simple",
-                    popupImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
+                    popImg : "<div><h4>Engraving / Foam PVC / Solid PET (PVC free)</h4><img src='https://cdn.skyltmax.se/vite/assets/laser-6173c70e.png' alt='' class='mb-4'><h5>Engraving</h5><p class='paragraph-sm'>Text and motifs are engraved by laser onto a durable multi-layer plastic (acrylic). The engraving ensures that the colour of the bottom plastic layer is visible and forms the text. Engraved signs are available in thicknesses of 0.8 or 1.6 mm.</p><img src='https://cdn.skyltmax.se/vite/assets/print-15b7b58d.png' alt='' class='mb-4'><h5>Foam PVC</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer. The material is suitable for indoor use for trade fairs, name badges, information signs, etc. Our foam PVC plastic signs are 3 mm thick and have a minimum size of 70x30 mm and a maximum size of 1000x1000 mm. In other words, a slightly smaller maximum size than solid PET plastic signs.</p><img src='https://cdn.skyltmax.se/vite/assets/solid_plastic-47f03aac.jpg' alt='' class='mb-4'><h5>Solid PET (PVC free)</h5><p class='paragraph-sm'>Text and motifs are created using colour printing in a UV printer on recyclable material. The material is for both indoor and outdoor use. A strong, lightweight, durable and recyclable material. It is often used for house number signs, pram signs, hotel signs, etc. Our solid PET plastic signs are 2 mm thick and have a minimum size of 70x30 mm and a maximum size of 2000x1200 mm.</p></div>",
                     description : "",
                     data : {
                         sizes : {

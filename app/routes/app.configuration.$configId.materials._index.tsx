@@ -125,7 +125,7 @@ export default function MaterialIndex() {
     configuration: ConfigurationType;
   }>();
 
-  console.log(materialType, "materialType", configuration)
+  console.log(materials, materialType, "materialType", configuration)
 
   const [selectedMaterialIndex, setSelectedMaterialIndex] = useState<number>(0);
   const [selectedMaterial, setSelectedMaterial] = useState<

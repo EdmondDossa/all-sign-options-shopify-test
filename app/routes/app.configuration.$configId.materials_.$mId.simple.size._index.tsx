@@ -768,7 +768,7 @@ export default function MaterialSizeIndex({materialId, customSize, allSizes, thi
                                   Price per Surface
                                 </Text>
                                 <ReactSwitchCustom
-                                  checked={formData.customSize.pricings.type=="unit"}
+                                  checked={formData.customSize.pricings?.type=="unit"}
                                   setChecked={(value: boolean) => {
                                     if(value){
                                       formData.customSize.pricings.type = "unit";
@@ -782,7 +782,7 @@ export default function MaterialSizeIndex({materialId, customSize, allSizes, thi
                                   Price per interval of surface
                                 </Text>
                                 <ReactSwitchCustom
-                                  checked={formData.customSize.pricings.type=="range"}
+                                  checked={formData.customSize.pricings?.type=="range"}
                                   setChecked={(value: boolean) => {
                                     if(value){
                                       formData.customSize.pricings.type = "range";
@@ -793,7 +793,7 @@ export default function MaterialSizeIndex({materialId, customSize, allSizes, thi
                               </InlineStack>
                             </InlineStack>
                           <Grid gap={{ lg: "10px" }}>
-                          { formData.customSize.pricings.type == "range" && <Grid.Cell
+                          { formData.customSize.pricings?.type == "range" && <Grid.Cell
                                   columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
                                 >
                                   <Box paddingBlock="600">
@@ -840,7 +840,7 @@ export default function MaterialSizeIndex({materialId, customSize, allSizes, thi
                                   </Box>
                                   
                               </Grid.Cell>}
-                            { formData.customSize.pricings.type == "range" && formData.customSize.pricings?.range?.map(
+                            { formData.customSize.pricings?.type == "range" && formData.customSize.pricings?.range?.map(
                               (pricing: any, index: number) => (
                                 <Grid.Cell
                                   columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
@@ -990,7 +990,7 @@ export default function MaterialSizeIndex({materialId, customSize, allSizes, thi
                               ),
                             )}
 
-                              { formData.customSize.pricings.type == "unit" && <Grid.Cell
+                              { formData.customSize.pricings?.type == "unit" && <Grid.Cell
                                   columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}
                                 >
 
@@ -1099,7 +1099,7 @@ export default function MaterialSizeIndex({materialId, customSize, allSizes, thi
 
 
                           </Grid>
-                          {!pricingErrors?.length && formData.customSize.pricings.type == "range"  && (
+                          {!pricingErrors?.length && formData.customSize.pricings?.type == "range"  && (
                             <Box width="300px">
                               <BiAddBtn
                                 title="Add pricing"
