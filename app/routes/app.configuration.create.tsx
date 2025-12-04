@@ -59,6 +59,8 @@ import {  fontData } from "~/models/demoData";
 import { getPlan } from "~/utils/pricing-server.server";
 import { MultiProductSelectField } from "~/components/inputs/MultiProductSelectField";
 
+import { ArrowLeftIcon, ArrowRightIcon } from "@shopify/polaris-icons"; 
+import { useMemo, useEffect } from "react"; // Ajoutez useMemo et useEffect si ce n'est pas déjà fait
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -370,10 +372,11 @@ export default function ConfigurationEdit() {
             products: [
               {
                 name: "Door signs",
+                image: ["https://skyltmax-shrine.s3-accelerate.amazonaws.com/production/extraimage/file/webp-5e025cdbbcf013a4c2487d1d77e293e8.webp", "https://skyltmax-shrine.s3-accelerate.amazonaws.com/production/extraimage/file/webp-2db865ed2e7ffeee786a51c5959b60f1.webp"],
                 description: "Office doors, meeting rooms, name plates.",
                 type: "door-sign",
                 demoData: "",
-                materialType: "all"
+                materialType: "simple"
               },
               {
                 name: "Name badges",
@@ -381,20 +384,21 @@ export default function ConfigurationEdit() {
                 type: "name-badge",
                 demoData: "",
                 materialType: "simple"
+                // materialType: "all"
               },
               {
                 name: "Acrylic signs",
                 description: "Premium plexiglass plates for offices.",
                 type: "acrylic-sign",
                 demoData: "",
-                materialType: "advanced"
+                materialType: "simple"
               },
               {
                 name: "Double-sided signs",
                 description: "Hanging or projecting double-sided panels.",
                 type: "double-sided-sign",
                 demoData: "",
-                materialType: "advanced"
+                materialType: "simple"
               }
             ]
           },
@@ -406,7 +410,7 @@ export default function ConfigurationEdit() {
                 description: "Decorative wood boards for cafés & shops.",
                 type: "wood-sign",
                 demoData: "",
-                materialType: "advanced"
+                materialType: "simple"
               },
               {
                 name: "Magnetic signs",
@@ -420,14 +424,16 @@ export default function ConfigurationEdit() {
                 description: "Outdoor house numbers and name plaques.",
                 type: "house-sign",
                 demoData: "",
-                materialType: "all"
+                materialType: "simple"
+                // materialType: "all",
               },
               {
                 name: "Plastic signs",
                 description: "PVC / Eco board signs for shops and events.",
                 type: "gate-sign",
                 demoData: "",
-                materialType: "all"
+                materialType: "simple",
+                // materialType: "all"
               }
             ]
           },
@@ -439,14 +445,15 @@ export default function ConfigurationEdit() {
                 description: "Engraved brass plates for professionals.",
                 type: "plastic-sign",
                 demoData: "",
-                materialType: "all"
+                materialType: "advance"
               },
               {
                 name: "Stainless steel signs",
                 description: "Durable plates for factories & technical areas.",
                 type: "warning-sign",
                 demoData: "",
-                materialType: "all"
+                materialType: "advance",
+                // materialType: "all"
               },
               ,
               {
@@ -454,7 +461,7 @@ export default function ConfigurationEdit() {
                 description: "Small information or identification plates.",
                 type: "brass-sign",
                 demoData: "",
-                materialType: "advanced"
+                materialType: "simple"
               }
               // {
               //   name: "Cable tags",
@@ -507,7 +514,8 @@ export default function ConfigurationEdit() {
                 description: "Roll-up banners with cassette and stand.",
                 type: "vinyl-banner",
                 demoData: "",
-                materialType: "all"
+                materialType: "simple",
+                // materialType: "all",
               },
               // {
               //   name: "X-banner",
@@ -611,8 +619,58 @@ export default function ConfigurationEdit() {
     setProductData(data);
     setMaterialType("")
   };
+
+
   // State pour la prévisualisation
   const [previewProduct, setPreviewProduct] = useState<any>(null);
+
+  // État pour l'index de l'image dans la modale
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Remplacez 'previewProduct' par votre variable réelle, si elle est définie ici
+  // const [previewProduct, setPreviewProduct] = useState(null); // Exemple si vous définissez l'état ici
+
+  // Préparation des URLs d'images (pour gérer le string ou le tableau)
+  const imageUrls = useMemo(() => {
+    if (!previewProduct?.image) return [];
+
+    // S'assurer que image est un tableau même si c'est un seul string
+    const image = previewProduct.image;
+    
+    if (typeof image === 'string') {
+        return [image];
+    } else if (Array.isArray(image)) {
+        return image.filter(url => typeof url === 'string');
+    }
+    return [];
+  }, [previewProduct]);
+
+  // Réinitialiser l'index lorsque le produit change ou la modale s'ouvre/ferme
+  useEffect(() => {
+      // S'assure que l'index est valide et le remet à 0 si la liste d'images change
+      if (currentImageIndex >= imageUrls.length) {
+          setCurrentImageIndex(0);
+      }
+      // Réinitialise à 0 si la modale se ferme (previewProduct est null)
+      if (!previewProduct) {
+          setCurrentImageIndex(0);
+      }
+  }, [previewProduct, imageUrls.length]);
+
+
+  const handleNextImage = useCallback(() => {
+    setCurrentImageIndex(prevIndex => (prevIndex + 1) % imageUrls.length);
+  }, [imageUrls.length]);
+
+
+  const handlePreviousImage = useCallback(() => {
+    setCurrentImageIndex(prevIndex => (prevIndex - 1 + imageUrls.length) % imageUrls.length);
+  }, [imageUrls.length]);
+
+
+
+
+
 
   //selectionner la catégorie
   const [productCategorie, setProductCategorie] = useState<any>(signageOption);
@@ -1399,7 +1457,7 @@ export default function ConfigurationEdit() {
               ))}
             </div>
 
-            <Grid columns={{xs: 2, sm: 3, md: 3, lg: 4, xl: 4}}>
+            <Grid columns={{xs: 2, sm: 3, md: 3, lg: 3, xl: 4}}>
               {productGroup.products.map((product: any) => (
                 <Grid.Cell>
                   <div 
@@ -1450,6 +1508,7 @@ export default function ConfigurationEdit() {
                             onClick={(e) => {
                               e.stopPropagation(); // Empêche la sélection du produit
                               setPreviewProduct(product);
+                              console.log("preview", product)
                             }}
                             style={{
                               cursor: "pointer",
@@ -1478,43 +1537,76 @@ export default function ConfigurationEdit() {
                   content: 'Close',
                   onAction: () => setPreviewProduct(null),
                 }}
-              >
+                secondaryActions={[
+                  {
+                    content: 'Select',
+                    onAction: () =>  selectProductData(previewProduct),
+                  },
+                ]}
+                    >
                 <Modal.Section>
-                  <BlockStack gap="400">
-                    {/* Description */}
+                  <BlockStack gap="200">
                     <Text as="p" tone="subdued">
                       {previewProduct.description}
                     </Text>
+                     
+                    <div style={{position: "relative", display: "flex", width: "100%", height: "100%"}}>
+                      <span style={{position: "absolute", top: "50%", left: "1%", translate: '0% -50%'}}>
+                        <Button
+                            icon={<Icon source={ArrowLeftIcon} />}
+                            onClick={handlePreviousImage}
+                            disabled={imageUrls.length <= 1} // Désactivé s'il y a 0 ou 1 image
+                        />
 
-                    {/* Zone Visuelle (Mockup) */}
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '200px',
-                        backgroundColor: '#F0F4F8', // Bleu très clair comme sur l'image
-                        border: '1px dashed #B0BEC5', // Bordure pointillée
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#637381'
-                      }}
-                    >
-                       {/* Si vous avez une image réelle dans demoData, vous pouvez l'afficher ici */}
-                       {previewProduct.image ? (
-                          <img src={previewProduct.image} alt="" style={{maxHeight: '100%', maxWidth: '100%'}} />
-                       ) : (
-                          <Text as="span" variant="bodyMd">Product visual / mockup goes here</Text>
-                       )}
+                      </span>
+
+                      <div
+                          style={{
+                              width: '100%',
+                              height: '200px',
+                              backgroundColor: '#F0F4F8',
+                              border: '1px dashed #B0BEC5',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#637381',
+                              overflow: 'hidden',
+                          }}
+                      >
+                          {/* Affichage de l'image COURANTE */}
+                          {imageUrls.length > 0 ? (
+                              <img
+                                  src={imageUrls[currentImageIndex]}
+                                  alt={`Aperçu ${currentImageIndex + 1}`}
+                                  style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                              />
+                          ) : (
+                              <Text as="span" variant="bodyMd">No image available</Text>
+                          )}
+                      </div>
+                      
+                      <span style={{position: "absolute", top: "50%", right: "1%", translate: '0% -50%'}}>
+                        <Button
+                            icon={<Icon source={ArrowRightIcon} />}
+                            onClick={handleNextImage}
+                            disabled={imageUrls.length <= 1} // Désactivé s'il y a 0 ou 1 image
+                        />
+                      </span>
                     </div>
+                    
+                    {imageUrls.length > 1 && (
+                        <Text alignment="center" tone="subdued" as="p" variant="bodySm">
+                            {`${currentImageIndex + 1} / ${imageUrls.length}`}
+                        </Text>
+                    )}
 
-                    {/* Mode d'interaction suggéré */}
                     <InlineStack gap="200" blockAlign="center">
                       <Text as="span" tone="subdued">
                         Suggested interaction mode for this product:
                       </Text>
                       <Text as="span" fontWeight="bold">
-                        {previewProduct.materialType === 'advance' ? 'Advanced' : 
+                        {previewProduct.materialType === 'advance' ? 'Avancé' : 
                          previewProduct.materialType === 'simple' ? 'Simple' : 
                          'Standard'}
                       </Text>
@@ -1522,7 +1614,7 @@ export default function ConfigurationEdit() {
                   </BlockStack>
                 </Modal.Section>
               </Modal>
-            )}
+            )}            
 
           </Box>
         );
@@ -1963,7 +2055,7 @@ export default function ConfigurationEdit() {
                     borderRadius: '8px',
                     padding: '7px 10px',
                     fontWeight: '600',
-                    cursor: (step != 1) || ((step == 1) && productData != null) ? 'pointer' : 'not-allowed',
+                    cursor: ( (step != 1 && step != 2) || (step == 1 && productData != null) || (step == 2 && materialType != "") ) ? 'pointer' : 'not-allowed',
                     border: '1px',
                     // boxShadow: ' 0rem -0.0625rem 0rem 0rem #b5b5b5 inset, 0rem 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.1) inset, 0rem 0.03125rem 0rem 0.09375rem #FFF inset'
                   }}

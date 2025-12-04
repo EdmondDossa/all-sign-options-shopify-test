@@ -1254,7 +1254,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Standard",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "",
                     data : {
                         sizes : {
@@ -3306,7 +3306,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/roll-up-signs/standard.svg",
                     name : "Standard",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "PET polyester film free from PVC Opaque with grey back 100% curl-free 220 µ thick",
                     data : {
                         sizes : {
@@ -3667,7 +3667,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/roll-up-signs/eco.svg",
                     name : "ECO",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "Polyester weave (free from PVC). Fire classification as per B-s1,dO 100% opaque 300 µ thick",
                     data : {
                         sizes : {
@@ -4444,7 +4444,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     name : "Standard",
                     description : "",
                     icon : "",
-                    popupImg : "",
+                    popImg : "",
                     type : "simple",
                     data : {
                         sizes : {
@@ -5294,7 +5294,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     name : "Standard",
                     description : "",
                     icon : "",
-                    popupImg : "",
+                    popImg : "",
                     type : "simple",
                     data : {
                         sizes : {
@@ -5746,7 +5746,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     name : "Fabric",
                     description : "",
                     icon : "",
-                    popupImg : "",
+                    popImg : "",
                     type : "simple",
                     data : {
                         sizes : {
@@ -6198,7 +6198,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     name : "Mesh",
                     description : "",
                     icon : "",
-                    popupImg : "",
+                    popImg : "",
                     type : "simple",
                     data : {
                         sizes : {
@@ -6250,7 +6250,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     name : "Vinyl",
                     description : "",
                     icon : "",
-                    popupImg : "",
+                    popImg : "",
                     type : "simple",
                     data : {
                         sizes : {
@@ -6732,7 +6732,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Brass",
                     type : "advance",
-                    popupImg : "",
+                    popImg : "",
                     isDefault : true,
                     description : "",
                     data : [
@@ -9807,7 +9807,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Stainless steel",
                     type : "advance",
-                    popupImg : "",
+                    popImg : "",
                     description : "",
                     isDefault : true,
                     data : [
@@ -10509,7 +10509,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Magnetic",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "",
                     data : {
                         sizes : {
@@ -11636,7 +11636,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/double-sided/aluminium.png",
                     name : "Aluminium",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "Double-sided aluminium composite (Gobond) consist of a sandwich layer with a surface layer of aluminium and a polyethylene core.",
                     data : {
                         sizes : {
@@ -12383,7 +12383,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/double-sided/plastic.png",
                     name : "Plastic",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "Foam PVC Forex). Light, flexible material.",
                     data : {
                         sizes : {
@@ -13039,7 +13039,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/double-sided/eco_board.png",
                     name : "Cardboard with wood fibre core",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "Quality carboard (pressed board) with a wood fibre core. A light weight, stable and rigid material perfect for hanging",
                     data : {
                         sizes : {
@@ -14111,7 +14111,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/wood-signs/wood_birch.png",
                     name : "Birch",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "",
                     data : {
                         sizes : {
@@ -14683,7 +14683,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "https://signsdesigner.us/app/demos/wood-signs/wood_oak.png",
                     name : "Oak",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "",
                     data : {
                         sizes : {
@@ -15685,7 +15685,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Aluminium",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "",
                     data : {
                         sizes : {
@@ -19956,7 +19956,7 @@ export const configurationDemoData: ConfigurationType[] = [
                     icon : "",
                     name : "Acrylic",
                     type : "simple",
-                    popupImg : "",
+                    popImg : "",
                     description : "Acrylic and aluminium back plate",
                     data : {
                         sizes : {
