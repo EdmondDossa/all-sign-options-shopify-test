@@ -47,24 +47,55 @@ import { PRICING_PLANS } from "~/utils/pricing";
 import { DeleteIcon, DuplicateIcon, EditIcon, MenuHorizontalIcon, ViewIcon } from "@shopify/polaris-icons";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
 
+// export const loader = async ({ request }: LoaderFunctionArgs) => {
+//   const { session } = await authenticate.admin(request);
+//   const url = new URL(request.url);
+
+//   // --- LOGIQUE PAGINATION ---
+//   const page = parseInt(url.searchParams.get("page") || "1", 10);
+//   const limit = 6; // Nombre d'éléments par page
+
+//   // Récupération de TOUTES les configs (Attention : pour de très gros volumes, il faudrait paginer en SQL)
+//   const allConfigurations: any = await ConfigurationService.getConfigurations(session.id);
+
+//   const startIndex = (page - 1) * limit;
+//   const endIndex = startIndex + limit;
+  
+//   // Découpage pour la page actuelle
+//   const paginatedConfigurations = allConfigurations?.slice(startIndex, endIndex);
+
+//   const hasNextPage = endIndex < allConfigurations?.length;
+//   const hasPreviousPage = page > 1;
+
+//   return json({ 
+//     configurations: paginatedConfigurations,
+//     page,
+//     hasNextPage,
+//     hasPreviousPage,
+//     totalCount: allConfigurations.length // Utile si vous voulez afficher "X sur Y"
+//   });
+// };
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const url = new URL(request.url);
 
   // --- LOGIQUE PAGINATION ---
   const page = parseInt(url.searchParams.get("page") || "1", 10);
-  const limit = 6; // Nombre d'éléments par page
+  const limit = 8
 
-  // Récupération de TOUTES les configs (Attention : pour de très gros volumes, il faudrait paginer en SQL)
-  const allConfigurations: any = await ConfigurationService.getConfigurations(session.id);
+  const result: any = await ConfigurationService.getConfigurations(session.id);
+  
+  const allConfigurations = Array.isArray(result) ? result : [];
+
+  allConfigurations.sort((a: any, b: any) => b.id - a.id);
 
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
   
-  // Découpage pour la page actuelle
-  const paginatedConfigurations = allConfigurations?.slice(startIndex, endIndex);
+  const paginatedConfigurations = allConfigurations.slice(startIndex, endIndex);
 
-  const hasNextPage = endIndex < allConfigurations?.length;
+  const hasNextPage = endIndex < allConfigurations.length;
   const hasPreviousPage = page > 1;
 
   return json({ 
@@ -72,7 +103,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     page,
     hasNextPage,
     hasPreviousPage,
-    totalCount: allConfigurations.length // Utile si vous voulez afficher "X sur Y"
+    totalCount: allConfigurations.length
   });
 };
 

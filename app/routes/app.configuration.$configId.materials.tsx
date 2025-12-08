@@ -66,7 +66,7 @@ export default function Materiels() {
         </Box>
       </BoxBackground> */}
 
-      <Outlet context={{ materials: materials , plan, manageFixingMethods, manageShapes, manageBorders}} />
+      <Outlet context={{ materials: materials , plan, manageFixingMethods, manageShapes, manageBorders, materialType: configuration?.materialType}} />
       {/* {console.log(materials)} */}
     </Page>
   );

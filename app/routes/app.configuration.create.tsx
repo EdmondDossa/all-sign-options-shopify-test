@@ -59,6 +59,8 @@ import {  fontData } from "~/models/demoData";
 import { getPlan } from "~/utils/pricing-server.server";
 import { MultiProductSelectField } from "~/components/inputs/MultiProductSelectField";
 
+import { ArrowLeftIcon, ArrowRightIcon } from "@shopify/polaris-icons"; 
+import { useMemo, useEffect } from "react"; // Ajoutez useMemo et useEffect si ce n'est pas déjà fait
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -139,154 +141,389 @@ export default function ConfigurationEdit() {
     navigate("..");
   };
 
-  let signageOption = {
+  // let signageOption = {
+  //   name: "Signage",
+  //   type: "signage",
+  //   productCategories: [
+  //     {
+  //       name: "Signboard",
+  //       type: "signboard",
+  //       description: "Rigid panel / PVC/ Aluminum/ Plexiglass/ Wood/ Painted or stainless metal",
+  //       demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
+  //       productGroups: [
+  //         {
+  //           name: "Bussiness & Office",
+  //           products: [
+  //             {
+  //               name: "Door signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Vinyl signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+  //             {
+  //               name: "Plastic signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Stainless metal signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //           ]
+  //         },
+  //         {
+  //           name: "Retail & Outdoor",
+  //           products: [
+  //             {
+  //               name: "Acrylic signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Aluminum signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Brass signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "advanca"
+  //             },
+  //             {
+  //               name: "Wood signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "advanca"
+  //             },
+              
+  //           ]
+  //         },
+  //         {
+  //           name: "Specialized & Industrial",
+  //           products: [
+  //             {
+  //               name: "Letterbox signs",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },  
+  //             {
+  //               name: "Decals",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Vinyl lettering",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+  //           ]
+  //         },
+  //       ]
+  //     },
+  //     {
+  //       name: "Banners",
+  //       type: "banner",
+  //       description: "PVC/ Mesh/ Double‑sided/ fabric, etc..",
+  //       demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/222/#/",
+  //       productGroups: [
+  //         {
+  //           name: "Bussiness & Office",
+  //           products: [
+  //             {
+  //               name: "Roll up",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Double sided",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             }
+  //           ]
+  //         },
+  //         {
+  //           name: "Retail & Outdoor",
+  //           products: [
+  //             {
+  //               name: "Pvc banner",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Mesh banner",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             }
+              
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       name: "Stickers",
+  //       type: "sticker",
+  //       description: "Vinyl/ die-cut/ Self‑adhesive paper/ matte/ glossy/ UV‑resistant, etc..",
+  //       demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/885/#/",
+  //       productGroups: [
+  //         {
+  //           name: "Bussiness & Office",
+  //           products: [
+  //             {
+  //               name: "Vynil sticker",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Die-cut",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+  //             {
+  //               name: "Self adhesive",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+  //           ]
+  //         },
+  //         {
+  //           name: "Retail & Outdoor",
+  //           products: [
+  //             {
+  //               name: "Matte sticker",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Glossy sticker",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "all"
+  //             },
+  //             {
+  //               name: "Holographic sticker",
+  //               description: "Office doors, meeting rooms, name plates",
+  //               type: "",
+  //               demoData: "",
+  //               materialType: "simple"
+  //             },
+              
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //   ]
+  // }
+
+   let signageOption = {
     name: "Signage",
-    type: "signage",
+    type: "signage", 
     productCategories: [
       {
         name: "Signboard",
         type: "signboard",
-        description: "Rigid panel / PVC/ Aluminum/ Plexiglass/ Wood/ Painted or stainless metal",
+        description: "Rigid panels (PVC, Alu, Wood, Acrylic) for permanent display.",
         demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
         productGroups: [
           {
-            name: "Bussiness & Office",
+            name: "Business & Office",
             products: [
               {
                 name: "Door signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Vinyl signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                image: ["https://skyltmax-shrine.s3-accelerate.amazonaws.com/production/extraimage/file/webp-5e025cdbbcf013a4c2487d1d77e293e8.webp", "https://skyltmax-shrine.s3-accelerate.amazonaws.com/production/extraimage/file/webp-2db865ed2e7ffeee786a51c5959b60f1.webp"],
+                description: "Office doors, meeting rooms, name plates.",
+                type: "door-sign",
                 demoData: "",
                 materialType: "simple"
               },
               {
-                name: "Plastic signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Name badges",
+                description: "Name tags for staff and reception.",
+                type: "name-badge",
                 demoData: "",
-                materialType: "all"
+                materialType: "simple"
+                // materialType: "all"
               },
               {
-                name: "Stainless metal signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Acrylic signs",
+                description: "Premium plexiglass plates for offices.",
+                type: "acrylic-sign",
                 demoData: "",
-                materialType: "all"
+                materialType: "simple"
               },
+              {
+                name: "Double-sided signs",
+                description: "Hanging or projecting double-sided panels.",
+                type: "double-sided-sign",
+                demoData: "",
+                materialType: "simple"
+              }
             ]
           },
           {
             name: "Retail & Outdoor",
             products: [
               {
-                name: "Acrylic signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Aluminum signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Brass signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "advanca"
-              },
-              {
                 name: "Wood signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                description: "Decorative wood boards for cafés & shops.",
+                type: "wood-sign",
                 demoData: "",
-                materialType: "advanca"
+                materialType: "simple"
               },
-              
+              {
+                name: "Magnetic signs",
+                description: "Removable magnetic panels for vehicles.",
+                type: "magnetic-sign",
+                demoData: "",
+                materialType: "simple"
+              },
+              {
+                name: "House signs",
+                description: "Outdoor house numbers and name plaques.",
+                type: "house-sign",
+                demoData: "",
+                materialType: "simple"
+                // materialType: "all",
+              },
+              {
+                name: "Plastic signs",
+                description: "PVC / Eco board signs for shops and events.",
+                type: "gate-sign",
+                demoData: "",
+                materialType: "simple",
+                // materialType: "all"
+              }
             ]
           },
           {
             name: "Specialized & Industrial",
             products: [
               {
-                name: "Letterbox signs",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Brass signs",
+                description: "Engraved brass plates for professionals.",
+                type: "plastic-sign",
                 demoData: "",
-                materialType: "all"
-              },  
-              {
-                name: "Decals",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
+                materialType: "advance"
               },
               {
-                name: "Vinyl lettering",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Stainless steel signs",
+                description: "Durable plates for factories & technical areas.",
+                type: "warning-sign",
+                demoData: "",
+                materialType: "advance",
+                // materialType: "all"
+              },
+              ,
+              {
+                name: "Labels and plates",
+                description: "Small information or identification plates.",
+                type: "brass-sign",
                 demoData: "",
                 materialType: "simple"
-              },
+              }
+              // {
+              //   name: "Cable tags",
+              //   description: "Technical labels and cable identification tags.",
+              //   type: "reflective-sign",
+              //   demoData: "",
+              //   materialType: "advanced"
+              // }
             ]
-          },
+          }
         ]
       },
       {
         name: "Banners",
         type: "banner",
-        description: "PVC/ Mesh/ Double‑sided/ fabric, etc..",
-        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/222/#/",
+        description: "Flexible large-format printing for events and promos.",
+        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
         productGroups: [
           {
-            name: "Bussiness & Office",
+            name: "Standard banners",
             products: [
               {
-                name: "Roll up",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Double sided",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Banners signs",
+                description: "Standard promotional banners (indoor / outdoor).",
+                type: "roll-up",
                 demoData: "",
                 materialType: "simple"
-              }
+              },
+              // {
+              //   name: "Mesh / Facric banners",
+              //   description: "Wind-proof or textile banners for façades and events.",
+              //   type: "roll-up",
+              //   demoData: "",
+              //   materialType: "simple"
+              // },
+              {
+                name: "Posters",
+                description: "Large format posters used like lightweight banners.",
+                type: "roll-up",
+                demoData: "",
+                materialType: "simple"
+              },
             ]
           },
           {
-            name: "Retail & Outdoor",
+            name: "With structure",
             products: [
               {
-                name: "Pvc banner",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Pull-up banners",
+                description: "Roll-up banners with cassette and stand.",
+                type: "vinyl-banner",
                 demoData: "",
-                materialType: "all"
+                materialType: "simple",
+                // materialType: "all",
               },
-              {
-                name: "Mesh banner",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              }
-              
+              // {
+              //   name: "X-banner",
+              //   description: "X-frame banners for events and exhibitions.",
+              //   type: "poster",
+              //   demoData: "",
+              //   materialType: "simple"
+              // }
             ]
           }
         ]
@@ -294,64 +531,63 @@ export default function ConfigurationEdit() {
       {
         name: "Stickers",
         type: "sticker",
-        description: "Vinyl/ die-cut/ Self‑adhesive paper/ matte/ glossy/ UV‑resistant, etc..",
-        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/885/#/",
+        description: "Adhesive vinyls and decals for smooth surfaces.",
+        demoLink: "https://demos.signsdesigner.us/aso-templates-page/asowp-templates/196/#/",
         productGroups: [
           {
-            name: "Bussiness & Office",
+            name: "General stickers",
             products: [
               {
-                name: "Vynil sticker",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Die-cut",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Vinyl lettering",
+                description: "Cut vinyl text for windows, doors, or walls",
+                type: "vinyl-lettering",
                 demoData: "",
                 materialType: "simple"
               },
               {
-                name: "Self adhesive",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Decals",
+                description: "Printed decals for logos, products, or branding.",
+                type: "decal",
                 demoData: "",
                 materialType: "simple"
-              },
+              }
             ]
           },
           {
-            name: "Retail & Outdoor",
+            name: "Cut & special use",
             products: [
               {
-                name: "Matte sticker",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Glossy sticker",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
-                demoData: "",
-                materialType: "all"
-              },
-              {
-                name: "Holographic sticker",
-                description: "Office doors, meeting rooms, name plates",
-                type: "",
+                name: "Contour-cut / die-cut",
+                description: "Stickers following the exact shape of the design.",
+                type: "label",
                 demoData: "",
                 materialType: "simple"
               },
-              
+              // {
+              //   name: "Sheet of stickers",
+              //   description: "Multiple designs on a single sticker sheet.",
+              //   type: "cable-label",
+              //   demoData: "",
+              //   materialType: "simple"
+              // },
+              // {
+              //   name: "Transparent / decal sticker",
+              //   description: "Clear stickers for glass, bottles, or packaging.",
+              //   type: "cable-label",
+              //   demoData: "",
+              //   materialType: "simple"
+              // },
+              {
+                name: "Floor / wall stickers",
+                description: "Non-slip or large surface stickers for floors and walls.",
+                type: "cable-label",
+                demoData: "",
+                materialType: "simple"
+              },
             ]
           }
         ]
-      },
+      }
     ]
   }
 
@@ -383,8 +619,58 @@ export default function ConfigurationEdit() {
     setProductData(data);
     setMaterialType("")
   };
+
+
   // State pour la prévisualisation
   const [previewProduct, setPreviewProduct] = useState<any>(null);
+
+  // État pour l'index de l'image dans la modale
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Remplacez 'previewProduct' par votre variable réelle, si elle est définie ici
+  // const [previewProduct, setPreviewProduct] = useState(null); // Exemple si vous définissez l'état ici
+
+  // Préparation des URLs d'images (pour gérer le string ou le tableau)
+  const imageUrls = useMemo(() => {
+    if (!previewProduct?.image) return [];
+
+    // S'assurer que image est un tableau même si c'est un seul string
+    const image = previewProduct.image;
+    
+    if (typeof image === 'string') {
+        return [image];
+    } else if (Array.isArray(image)) {
+        return image.filter(url => typeof url === 'string');
+    }
+    return [];
+  }, [previewProduct]);
+
+  // Réinitialiser l'index lorsque le produit change ou la modale s'ouvre/ferme
+  useEffect(() => {
+      // S'assure que l'index est valide et le remet à 0 si la liste d'images change
+      if (currentImageIndex >= imageUrls.length) {
+          setCurrentImageIndex(0);
+      }
+      // Réinitialise à 0 si la modale se ferme (previewProduct est null)
+      if (!previewProduct) {
+          setCurrentImageIndex(0);
+      }
+  }, [previewProduct, imageUrls.length]);
+
+
+  const handleNextImage = useCallback(() => {
+    setCurrentImageIndex(prevIndex => (prevIndex + 1) % imageUrls.length);
+  }, [imageUrls.length]);
+
+
+  const handlePreviousImage = useCallback(() => {
+    setCurrentImageIndex(prevIndex => (prevIndex - 1 + imageUrls.length) % imageUrls.length);
+  }, [imageUrls.length]);
+
+
+
+
+
 
   //selectionner la catégorie
   const [productCategorie, setProductCategorie] = useState<any>(signageOption);
@@ -432,10 +718,39 @@ export default function ConfigurationEdit() {
 
   const allowDemoData = (statut: boolean) => {
     setValidDemoData(statut);
-    if(statut == true){
-      setShowDemoData(true)
-    }
-    console.log(statut, "demo data");
+    // if(statut == true){
+    //   setShowDemoData(true)
+    // }
+
+    let plan = "pro"
+
+    let data: Array<{
+      label: string;
+      value: any;
+      description: string;
+      image: string;
+      hide: boolean;
+    }> = configurationDemoData.map((item, index) => {
+      return {
+        label: item.name,
+        value: `${index}`,
+        description: item.description,
+        image: item.icon,
+        hide: !PRICING_PLANS.STARTER_RULES.materialTypes.includes(item.data.materials[0].type) && plan == PRICING_PLANS.STARTER ? true : false,
+      };
+    });
+
+    data = data.filter((item) => {
+      return item.label === productData.name;
+    });
+
+
+    setDemoId(data[0].value);
+    setDemoName(data[0].label)  
+    // setSelectData(demoData.value);
+    // handleDemoId(demoData.value, demoData.label)
+
+    console.log(statut, "demo data", data);
   };
   // modal de selection de demo data associé
   const [showDemoData, setShowDemoData] = useState(false);
@@ -567,9 +882,9 @@ export default function ConfigurationEdit() {
           <Box>
             <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-                Select the signage domain
+                Select the signage domain <Badge tone="success" size="large" >{productCategorie.name}</Badge> 
               </Text>
-              <p>Select a domain to automatically load the right options (categories, product, dimensions, print areas, materials, etc.)</p>
+              <p>Select a domain so we can prepare the matching product types for your next step.</p>
             </div>
 
             <Grid columns={{xs: 1, sm: 1, md: 3, lg: 3, xl: 3}}>
@@ -663,8 +978,22 @@ export default function ConfigurationEdit() {
                       </span>
                     </InlineStack>
                     <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-                      <p style={{color: "#424242", fontWeight: "normal"}} >This category covers various products such as: </p>
+                      <p style={{color: "#424242", fontWeight: "normal"}} >This domain covers various products such as:</p>
                       <div style={{display: "flex", gap: "5px"}}>
+                        <span 
+                          style={{                            
+                            display: "flex",
+                            width: "fit",
+                            background: "#E0F2F1", 
+                            color: "#424242", 
+                            fontSize: "11.5px", 
+                            borderRadius: "20px",
+                            padding: "1px 8px",
+                            border: "2px solid #E0E0E0"
+                          }}
+                        >
+                          Signboard
+                        </span>
                         <span 
                           style={{                            
                             display: "flex",
@@ -692,20 +1021,6 @@ export default function ConfigurationEdit() {
                           }}
                         >
                           Sticker
-                        </span>
-                        <span 
-                          style={{                            
-                            display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
-                          }}
-                        >
-                          Lightbox
                         </span>
                       </div>
                     </div>
@@ -827,7 +1142,7 @@ export default function ConfigurationEdit() {
                       <Badge tone="info">Coming soon</Badge>
                     </InlineStack>
                     <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-                      <p style={{color: "#424242", fontWeight: "normal"}} >This category covers various products such as: </p>
+                      <p style={{color: "#424242", fontWeight: "normal"}} >This domain covers various products such as: </p>
                       <div style={{display: "flex", gap: "5px"}}>
                         <span 
                           style={{                            
@@ -994,7 +1309,7 @@ export default function ConfigurationEdit() {
                       <Badge tone="info">Coming soon</Badge>
                     </InlineStack>
                     <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-                      <p style={{color: "#424242", fontWeight: "normal"}} >This category covers various products such as: </p>
+                      <p style={{color: "#424242", fontWeight: "normal"}} >This domain covers various products such as: </p>
                       <div style={{display: "flex", gap: "5px"}}>
                         <span 
                           style={{                            
@@ -1077,7 +1392,8 @@ export default function ConfigurationEdit() {
           <Box>
             <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-               Select the type and the product sample of {productCategorie.name}
+               {/* Select the type and the product sample of {productCategorie.name}  */}
+                What product would you like to sell? <Badge tone="success" size="large" >{productCategorie.name}</Badge> <Badge tone="success" size="large" >{productType.name}</Badge> 
               </Text>
               <p>Choose the subtype that best matches your product within Signboard. You will fine-tune material behaviour in the next step.</p>
               {/* <span style={{fontWeight: "700"}}>{productCategorie.name}</span> */}
@@ -1141,7 +1457,7 @@ export default function ConfigurationEdit() {
               ))}
             </div>
 
-            <Grid columns={{xs: 2, sm: 3, md: 4, lg: 4, xl: 5}}>
+            <Grid columns={{xs: 2, sm: 3, md: 3, lg: 3, xl: 4}}>
               {productGroup.products.map((product: any) => (
                 <Grid.Cell>
                   <div 
@@ -1181,10 +1497,10 @@ export default function ConfigurationEdit() {
                           </span>
                         </div>
                         
-                        <p style={{color: "#757575", fontSize: "13px"}}>{product?.description}</p>
+                        <p style={{color: "#757575", fontSize: "12px"}}>{product?.description}</p>
 
                         <div style={{display: "flex", justifyContent: "space-between"}}>
-                          <p style={{color: "#9E9E9E", fontSize: "12px"}}>Click to select</p>
+                          <p style={{color: "#9E9E9E", fontSize: "11px"}}>Click to select</p>
 
 
                           {/* <span style={{color: "rgba(1, 100, 100, 0.8)", fontSize: "12px", fontWeight: "600"}}> Preview </span> */}
@@ -1192,6 +1508,7 @@ export default function ConfigurationEdit() {
                             onClick={(e) => {
                               e.stopPropagation(); // Empêche la sélection du produit
                               setPreviewProduct(product);
+                              console.log("preview", product)
                             }}
                             style={{
                               cursor: "pointer",
@@ -1220,43 +1537,76 @@ export default function ConfigurationEdit() {
                   content: 'Close',
                   onAction: () => setPreviewProduct(null),
                 }}
-              >
+                secondaryActions={[
+                  {
+                    content: 'Select',
+                    onAction: () =>  selectProductData(previewProduct),
+                  },
+                ]}
+                    >
                 <Modal.Section>
-                  <BlockStack gap="400">
-                    {/* Description */}
+                  <BlockStack gap="200">
                     <Text as="p" tone="subdued">
                       {previewProduct.description}
                     </Text>
+                     
+                    <div style={{position: "relative", display: "flex", width: "100%", height: "100%"}}>
+                      <span style={{position: "absolute", top: "50%", left: "1%", translate: '0% -50%'}}>
+                        <Button
+                            icon={<Icon source={ArrowLeftIcon} />}
+                            onClick={handlePreviousImage}
+                            disabled={imageUrls.length <= 1} // Désactivé s'il y a 0 ou 1 image
+                        />
 
-                    {/* Zone Visuelle (Mockup) */}
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '200px',
-                        backgroundColor: '#F0F4F8', // Bleu très clair comme sur l'image
-                        border: '1px dashed #B0BEC5', // Bordure pointillée
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#637381'
-                      }}
-                    >
-                       {/* Si vous avez une image réelle dans demoData, vous pouvez l'afficher ici */}
-                       {previewProduct.image ? (
-                          <img src={previewProduct.image} alt="" style={{maxHeight: '100%', maxWidth: '100%'}} />
-                       ) : (
-                          <Text as="span" variant="bodyMd">Product visual / mockup goes here</Text>
-                       )}
+                      </span>
+
+                      <div
+                          style={{
+                              width: '100%',
+                              height: '200px',
+                              backgroundColor: '#F0F4F8',
+                              border: '1px dashed #B0BEC5',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#637381',
+                              overflow: 'hidden',
+                          }}
+                      >
+                          {/* Affichage de l'image COURANTE */}
+                          {imageUrls.length > 0 ? (
+                              <img
+                                  src={imageUrls[currentImageIndex]}
+                                  alt={`Aperçu ${currentImageIndex + 1}`}
+                                  style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                              />
+                          ) : (
+                              <Text as="span" variant="bodyMd">No image available</Text>
+                          )}
+                      </div>
+                      
+                      <span style={{position: "absolute", top: "50%", right: "1%", translate: '0% -50%'}}>
+                        <Button
+                            icon={<Icon source={ArrowRightIcon} />}
+                            onClick={handleNextImage}
+                            disabled={imageUrls.length <= 1} // Désactivé s'il y a 0 ou 1 image
+                        />
+                      </span>
                     </div>
+                    
+                    {imageUrls.length > 1 && (
+                        <Text alignment="center" tone="subdued" as="p" variant="bodySm">
+                            {`${currentImageIndex + 1} / ${imageUrls.length}`}
+                        </Text>
+                    )}
 
-                    {/* Mode d'interaction suggéré */}
                     <InlineStack gap="200" blockAlign="center">
                       <Text as="span" tone="subdued">
                         Suggested interaction mode for this product:
                       </Text>
                       <Text as="span" fontWeight="bold">
-                        {previewProduct.materialType === 'advance' ? 'Advanced' : 
+                        {previewProduct.materialType === 'advance' ? 'Avancé' : 
                          previewProduct.materialType === 'simple' ? 'Simple' : 
                          'Standard'}
                       </Text>
@@ -1264,158 +1614,19 @@ export default function ConfigurationEdit() {
                   </BlockStack>
                 </Modal.Section>
               </Modal>
-            )}
+            )}            
 
           </Box>
         );
       case 2:
         return (
           <Box>
-            <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
+            <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-                Include demo data
+                Add product template for fast setup <Badge tone="success" size="large" >{productCategorie.name}</Badge> <Badge tone="success" size="large" >{productType.name}</Badge> <Badge tone="success" size="large" >{productData.name}</Badge>
               </Text>
-              <p>Decide whether to preload demo content for your <Badge tone="success" >{productData.name}</Badge> product sample  . If enabled, choose a starting template for faster setup.</p>
-            </div>
-
-            <div style={{display: productData != null ? "flex" : "none", flexDirection: "column", gap: "10px", paddingBottom: "20px"}}>
-              <p style={{fontSize: "16px", fontWeight: "600"}}>Select the product material type</p>
-
-              <Grid columns={{xs: 2, sm: 2, md: 2, lg: 3, xl: 3}}>
-                {productData?.materialType != "advance" && 
-                  <Grid.Cell>
-                    <div 
-                      onClick={() => selectMaterialType('simple')} 
-                      style={{
-                        cursor: 'pointer',
-                        // backgroundColor:  '#f1f1f1',
-                        backgroundColor:  '#F5F5F5',
-                        color: 'black',
-                        borderRadius: '16px',
-                        border: '0.07em solid #BDBDBD',
-                        boxShadow: materialType === 'simple' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                        padding: '16px',
-                        transition: 'all 50ms',
-                      }}
-                    >
-                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                          <div style={{padding: '0px'}}>
-                            <BlockStack gap="100">
-                              <p style={{fontSize: "15px", fontWeight: "600"}}>Simple</p>
-                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>All material options are customizable for the customer</p>
-                            </BlockStack>
-                          </div>
-                        </div>
-
-                        <span 
-                          style={{
-                            width: "fit-content",
-                            height: "fit-content",
-                            display: "flex",
-                            padding: "5px",
-                            border: materialType === 'simple' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                            borderRadius: "10px"
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </Grid.Cell>
-                }
-                {productData?.materialType != "simple" && 
-                  <Grid.Cell>
-                    <div 
-                      onClick={() => selectMaterialType('advance')} 
-                      style={{
-                        cursor: 'pointer',
-                        // backgroundColor:  '#f1f1f1',
-                        backgroundColor:  '#F5F5F5',
-                        color: 'black',
-                        borderRadius: '16px',
-                        border: '0.07em solid #BDBDBD',
-                        boxShadow: materialType === 'advance' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                        padding: '16px',
-                        transition: 'all 50ms',
-                      }}
-                    >
-                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                          <div style={{padding: '0px'}}>
-                            <BlockStack gap="100">
-                              <p style={{fontSize: "15px", fontWeight: "600"}}>Advance</p>
-                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>Size, shape and background color have default preconfigured values </p>
-                            </BlockStack>
-                          </div>
-                        </div>
-
-                        <span 
-                          style={{
-                            width: "fit-content",
-                            height: "fit-content",
-                            display: "flex",
-                            padding: "5px",
-                            border: materialType === 'advance' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                            borderRadius: "10px"
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </Grid.Cell>
-                }
-
-                {productData?.materialType == "all" && 
-                  <Grid.Cell>
-                    <div 
-                      // onClick={() => selectMaterialType('layer')} 
-                      style={{
-                        cursor: 'pointer',
-                        // backgroundColor:  '#f1f1f1',
-                        backgroundColor:  '#F5F5F5',
-                        color: 'black',
-                        borderRadius: '16px',
-                        border: '0.07em solid #BDBDBD',
-                        boxShadow: materialType === 'layer' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                        padding: '16px',
-                        transition: 'all 50ms',
-                      }}
-                    >
-                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                          <div style={{padding: '0px'}}>
-                            <BlockStack gap="100">
-                              <p style={{fontSize: "15px", fontWeight: "600"}}>Layers</p>
-                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>stack multiple layers that can be configured independently <Badge tone="info">Coming soon</Badge></p>
-                            </BlockStack>
-                          </div>
-                        </div>
-
-                        <span 
-                          style={{
-                            width: "fit-content",
-                            height: "fit-content",
-                            display: "flex",
-                            padding: "5px",
-                            border: materialType === 'layer' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                            borderRadius: "10px"
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </Grid.Cell>
-                }
-              </Grid>
+              <p>Choose a starter template whose demo content matches your product.</p>
+              {/* <p>Decide whether to preload demo content for your <Badge tone="success" >{productData.name}</Badge> product sample  . If enabled, choose a starting template for faster setup.</p> */}
             </div>
 
             <div 
@@ -1483,8 +1694,148 @@ export default function ConfigurationEdit() {
             </div>
 
             { (validDemoData && demoName != "") && <div style={{paddingTop: '15px'}}>
-              <p>Demo dat selected: <span style={{fontSize: "14px", fontWeight: "600"}}> {demoName} </span></p>
+              <p>Demo data selected: <span style={{fontSize: "14px", fontWeight: "600"}}> {demoName} </span></p>
             </div>}
+
+            <div style={{display: productData != null ? "flex" : "none", flexDirection: "column", gap: "10px", paddingTop: "20px"}}>
+              <p style={{fontSize: "16px", fontWeight: "600"}}>Select how user can customize your product</p>
+
+              <Grid columns={{xs: 2, sm: 2, md: 2, lg: 3, xl: 3}}>
+                {productData?.materialType != "advance" && 
+                  <Grid.Cell>
+                    <div 
+                      onClick={() => selectMaterialType('simple')} 
+                      style={{
+                        cursor: 'pointer',
+                        // backgroundColor:  '#f1f1f1',
+                        backgroundColor:  '#F5F5F5',
+                        color: 'black',
+                        borderRadius: '16px',
+                        border: '0.07em solid #BDBDBD',
+                        boxShadow: materialType === 'simple' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                        padding: '16px',
+                        transition: 'all 50ms',
+                      }}
+                    >
+                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                          <div style={{padding: '0px'}}>
+                            <BlockStack gap="100">
+                              <p style={{fontSize: "15px", fontWeight: "600"}}>Simple</p>
+                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can control the all option of the product like shape, size, color, etc…</p>
+                            </BlockStack>
+                          </div>
+                        </div>
+
+                        <span 
+                          style={{
+                            width: "fit-content",
+                            height: "fit-content",
+                            display: "flex",
+                            padding: "5px",
+                            border: materialType === 'simple' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                            borderRadius: "10px"
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </Grid.Cell>
+                }
+                {productData?.materialType != "simple" && 
+                  <Grid.Cell>
+                    <div 
+                      onClick={() => selectMaterialType('advance')} 
+                      style={{
+                        cursor: 'pointer',
+                        // backgroundColor:  '#f1f1f1',
+                        backgroundColor:  '#F5F5F5',
+                        color: 'black',
+                        borderRadius: '16px',
+                        border: '0.07em solid #BDBDBD',
+                        boxShadow: materialType === 'advance' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                        padding: '16px',
+                        transition: 'all 50ms',
+                      }}
+                    >
+                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                          <div style={{padding: '0px'}}>
+                            <BlockStack gap="100">
+                              <p style={{fontSize: "15px", fontWeight: "600"}}>Advance</p>
+                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can add text and image, not control the shape, size, color  of the product  </p>
+                            </BlockStack>
+                          </div>
+                        </div>
+
+                        <span 
+                          style={{
+                            width: "fit-content",
+                            height: "fit-content",
+                            display: "flex",
+                            padding: "5px",
+                            border: materialType === 'advance' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                            borderRadius: "10px"
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </Grid.Cell>
+                }
+
+                {productData?.materialType == "all" && 
+                  <Grid.Cell>
+                    <div 
+                      // onClick={() => selectMaterialType('layer')} 
+                      style={{
+                        cursor: 'pointer',
+                        // backgroundColor:  '#f1f1f1',
+                        backgroundColor:  '#F5F5F5',
+                        color: 'black',
+                        borderRadius: '16px',
+                        border: '0.07em solid #BDBDBD',
+                        boxShadow: materialType === 'layer' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                        padding: '16px',
+                        transition: 'all 50ms',
+                      }}
+                    >
+                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                          <div style={{padding: '0px'}}>
+                            <BlockStack gap="100">
+                              <p style={{fontSize: "15px", fontWeight: "600"}}>Layers</p>
+                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can control some part of the product <Badge tone="info">Coming soon</Badge></p>
+                            </BlockStack>
+                          </div>
+                        </div>
+
+                        <span 
+                          style={{
+                            width: "fit-content",
+                            height: "fit-content",
+                            display: "flex",
+                            padding: "5px",
+                            border: materialType === 'layer' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                            borderRadius: "10px"
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </Grid.Cell>
+                }
+              </Grid>
+            </div>
 
             <Modal
               size="large"
@@ -1671,11 +2022,11 @@ export default function ConfigurationEdit() {
           <div style={{width: '100%', display: 'flex',justifyContent: 'space-between', padding: '25px 5px 0px 5px', gap: '10px'}}>
             <div style={{color: ' rgb(97, 97, 97)'}}>
               {step == 0 && (
-                <p> Tip: you will refine the type of the selected domain and the personalization level in the next steps. </p>
+                <p>  Tip: The next steps will let you pick the product type and how customers can personalize it. </p>
               )}
 
               {step == 1 && (
-                <p> Tip: select a product sample. On the next step, you'll choose how customers can interact with the material (Simple, Advanced, Layers). </p>
+                <p> Tip: You’ll configure the demo content and the user interaction mode in the next step. </p>
               )}
 
               {step == 2 && (
@@ -1695,7 +2046,7 @@ export default function ConfigurationEdit() {
                 </Button>
               )}
               
-              {step < 4 ? (
+              {step < 3 ? (
                 <button 
                   onClick={nextStep} 
                   style={{
@@ -1704,7 +2055,7 @@ export default function ConfigurationEdit() {
                     borderRadius: '8px',
                     padding: '7px 10px',
                     fontWeight: '600',
-                    cursor: (step != 1) || ((step == 1) && productData != null) ? 'pointer' : 'not-allowed',
+                    cursor: ( (step != 1 && step != 2) || (step == 1 && productData != null) || (step == 2 && materialType != "") ) ? 'pointer' : 'not-allowed',
                     border: '1px',
                     // boxShadow: ' 0rem -0.0625rem 0rem 0rem #b5b5b5 inset, 0rem 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.1) inset, 0rem 0.03125rem 0rem 0.09375rem #FFF inset'
                   }}
