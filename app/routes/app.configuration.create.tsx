@@ -372,7 +372,7 @@ export default function ConfigurationEdit() {
             products: [
               {
                 name: "Door signs",
-                image: ["https://skyltmax-shrine.s3-accelerate.amazonaws.com/production/extraimage/file/webp-5e025cdbbcf013a4c2487d1d77e293e8.webp", "https://skyltmax-shrine.s3-accelerate.amazonaws.com/production/extraimage/file/webp-2db865ed2e7ffeee786a51c5959b60f1.webp"],
+                image: ["https://signsdesigner.us/app/aso_products_preview/door_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/door_signs/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/door_signs/image_3.webp"],
                 description: "Office doors, meeting rooms, name plates.",
                 type: "door-sign",
                 demoData: "",
@@ -381,6 +381,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Name badges",
                 description: "Name tags for staff and reception.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/name_badges/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/name_badges/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/name_badges/image_3.webp", "https://signsdesigner.us/app/aso_products_preview/name_badges/image_4.webp"],
                 type: "name-badge",
                 demoData: "",
                 materialType: "simple"
@@ -389,6 +390,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Acrylic signs",
                 description: "Premium plexiglass plates for offices.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/acrylic_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/acrylic_signs/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/acrylic_signs/image_3.webp", "https://signsdesigner.us/app/aso_products_preview/acrylic_signs/image_4.webp"],
                 type: "acrylic-sign",
                 demoData: "",
                 materialType: "simple"
@@ -396,6 +398,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Double-sided signs",
                 description: "Hanging or projecting double-sided panels.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/double_sided_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/double_sided_signs/image_2.webp"],
                 type: "double-sided-sign",
                 demoData: "",
                 materialType: "simple"
@@ -408,6 +411,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Wood signs",
                 description: "Decorative wood boards for cafés & shops.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/wood_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/wood_signs/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/wood_signs/image_3.webp"],
                 type: "wood-sign",
                 demoData: "",
                 materialType: "simple"
@@ -415,6 +419,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Magnetic signs",
                 description: "Removable magnetic panels for vehicles.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/magnetic_signs/image_1.webp"],
                 type: "magnetic-sign",
                 demoData: "",
                 materialType: "simple"
@@ -422,6 +427,7 @@ export default function ConfigurationEdit() {
               {
                 name: "House signs",
                 description: "Outdoor house numbers and name plaques.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/house_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/house_signs/image_2.webp"],
                 type: "house-sign",
                 demoData: "",
                 materialType: "simple"
@@ -430,6 +436,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Plastic signs",
                 description: "PVC / Eco board signs for shops and events.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/plastic_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/plastic_signs/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/plastic_signs/image_3.webp", "https://signsdesigner.us/app/aso_products_preview/plastic_signs/image_4.webp", "https://signsdesigner.us/app/aso_products_preview/plastic_signs/image_5.webp"],
                 type: "gate-sign",
                 demoData: "",
                 materialType: "simple",
@@ -443,6 +450,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Brass signs",
                 description: "Engraved brass plates for professionals.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/brass_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/brass_signs/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/brass_signs/image_3.webp"],
                 type: "plastic-sign",
                 demoData: "",
                 materialType: "advance"
@@ -450,6 +458,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Stainless steel signs",
                 description: "Durable plates for factories & technical areas.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/stainless_steel_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/stainless_steel_signs/image_2.webp"],
                 type: "warning-sign",
                 demoData: "",
                 materialType: "advance",
@@ -459,6 +468,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Labels and plates",
                 description: "Small information or identification plates.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/name_badges/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/name_badges/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/name_badges/image_3.webp", "https://signsdesigner.us/app/aso_products_preview/name_badges/image_4.webp"],
                 type: "brass-sign",
                 demoData: "",
                 materialType: "simple"
@@ -486,6 +496,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Banners signs",
                 description: "Standard promotional banners (indoor / outdoor).",
+                image: ["https://signsdesigner.us/app/aso_products_preview/banners_signs/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/banners_signs/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/banners_signs/image_3.webp", "https://signsdesigner.us/app/aso_products_preview/banners_signs/image_4.webp"],
                 type: "roll-up",
                 demoData: "",
                 materialType: "simple"
@@ -500,6 +511,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Posters",
                 description: "Large format posters used like lightweight banners.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/posters/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/posters/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/posters/image_3.webp"],
                 type: "roll-up",
                 demoData: "",
                 materialType: "simple"
@@ -512,6 +524,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Pull-up banners",
                 description: "Roll-up banners with cassette and stand.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/pull-up_banners/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/pull-up_banners/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/pull-up_banners/image_3.webp"],
                 type: "vinyl-banner",
                 demoData: "",
                 materialType: "simple",
@@ -540,6 +553,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Vinyl lettering",
                 description: "Cut vinyl text for windows, doors, or walls",
+                image: ["https://signsdesigner.us/app/aso_products_preview/vinyl_lettering/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/vinyl_lettering/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/vinyl_lettering/image_3.webp"],
                 type: "vinyl-lettering",
                 demoData: "",
                 materialType: "simple"
@@ -547,6 +561,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Decals",
                 description: "Printed decals for logos, products, or branding.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/decals/image_1.webp"],
                 type: "decal",
                 demoData: "",
                 materialType: "simple"
@@ -559,6 +574,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Contour-cut / die-cut",
                 description: "Stickers following the exact shape of the design.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/contour-cut/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/contour-cut/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/contour-cut/image_3.webp"],
                 type: "label",
                 demoData: "",
                 materialType: "simple"
@@ -580,6 +596,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Floor / wall stickers",
                 description: "Non-slip or large surface stickers for floors and walls.",
+                image: ["https://signsdesigner.us/app/aso_products_preview/floor_decals/image_1.webp"],
                 type: "cable-label",
                 demoData: "",
                 materialType: "simple"
@@ -617,7 +634,8 @@ export default function ConfigurationEdit() {
   const [productData, setProductData] = useState<any>(null);
   const selectProductData = (data: any) => {
     setProductData(data);
-    setMaterialType("")
+    // setMaterialType("")
+    setMaterialType(data.materialType)
   };
 
 
