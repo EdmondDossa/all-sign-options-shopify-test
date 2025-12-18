@@ -368,7 +368,21 @@ export default function MaterialIndex() {
           }}
         >
           {/* <div className="material_sidebar"> */}
-          <div className="">
+          <div className="" style={{position: "relative"}}>
+
+            {/* barre de même couleur que le fond des page spour cacher le déffiloement des section à l'arrière */}
+            <div style={{
+              backgroundColor: "#F1F1F1", 
+              height: "40px",
+              position: "fixed",
+              left: "50%",
+              transform: "translateX(-50%)",
+              top: "30px",
+              width:"100%", 
+              zIndex: "10"
+              }}>
+
+            </div>
 
             <div 
               style={{
@@ -389,6 +403,7 @@ export default function MaterialIndex() {
                 zIndex: "20"
               }}
             >
+
               <div
                 style={{
                   paddingBlock: "6px",

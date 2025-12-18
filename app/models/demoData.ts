@@ -6203,45 +6203,445 @@ export const configurationDemoData: ConfigurationType[] = [
                     data : {
                         sizes : {
                             customSize : {
-                                active : false,
+                                active : true,
                                 width : {
                                     label : "Width",
-                                    min : 0,
-                                    max : 0
+                                    min : 39.4,
+                                    max : 236.2
                                 },
                                 height : {
                                     label : "Height",
-                                    min : 0,
-                                    max : 0
+                                    min : 19.7,
+                                    max : 60.6
+                                },
+                                pricings : {
+                                    type : "unit",
+                                    unit : {
+                                        basePrice : 0,
+                                        surface : 0,
+                                        charPrice : 0
+                                    },
+                                    range : [],
+                                    rangePricingPerUnit : false
                                 }
                             },
                             thickness : {
                                 active : false,
                                 values : []
                             },
-                            allSizes : []
+                            allSizes : [
+                                {
+                                    isDefault : true,
+                                    label : "40x20",
+                                    width : 40,
+                                    height : 20,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "39x39",
+                                    width : 39,
+                                    height : 39,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "59x20",
+                                    width : 59,
+                                    height : 20,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "59x39",
+                                    width : 59,
+                                    height : 39,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "79x20",
+                                    width : 79,
+                                    height : 20,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "79x39",
+                                    width : 79,
+                                    height : 39,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "98x39",
+                                    width : 98,
+                                    height : 39,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "118x49",
+                                    width : 118,
+                                    height : 49,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "138x49",
+                                    width : 138,
+                                    height : 49,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "157x49",
+                                    width : 157,
+                                    height : 49,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                }
+                            ]
                         },
                         borders : {
                             settings : {
-                                colors : [],
+                                colors : [
+                                    {
+                                        name : "White",
+                                        codeHex : "#ffffff",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Black",
+                                        codeHex : "#000000",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Blue",
+                                        codeHex : "#1c4fa0",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Red",
+                                        codeHex : "#d81313",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Green",
+                                        codeHex : "#298d1c",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Yellow",
+                                        codeHex : "#f0e919",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Gray",
+                                        codeHex : "#8a8a8a",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Pink",
+                                        codeHex : "#ff70c3",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Purple",
+                                        codeHex : "#5c1ea9",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Orange",
+                                        codeHex : "#eb5505",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Brown",
+                                        codeHex : "#ad5105",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    }
+                                ],
                                 enableBorderWidth : true,
                                 enableBorderColor : true
                             },
-                            allBorders : []
+                            allBorders : [
+                                {
+                                    manageBorderId : 0,
+                                    additionalPrice : 0,
+                                    excludeSizes : [],
+                                    excludeShapes : [],
+                                    isDefault : true
+                                },
+                                {
+                                    isDefault : false,
+                                    manageBorderId : 1,
+                                    additionalPrice : 10,
+                                    excludeSizes : [],
+                                    excludeShapes : []
+                                }
+                            ]
                         },
-                        shapes : [],
+                        shapes : [
+                            {
+                                isDefault : true,
+                                shapeId : 1,
+                                additionalPrice : 0,
+                                enablePricingBySurface : false,
+                                surface : 0,
+                                shapeSize : {
+                                    small : 20,
+                                    medium : 40,
+                                    large : 60
+                                }
+                            }
+                        ],
                         textImages : {
                             enableText : true,
                             enableImage : true
                         },
-                        fixingMethods : [],
+                        fixingMethods : [
+                            {
+                                isDefault : true,
+                                fixingMethodId : 17,
+                                excludeSizes : [],
+                                excludeShapes : [],
+                                additionalPrice : 0
+                            }
+                        ],
                         colors : {
                             customColors : {
                                 active : true,
                                 label : "Custom Colors",
                                 prevImg : ""
                             },
-                            allColors : []
+                            allColors : [
+                                {
+                                    isDefault : true,
+                                    name : "White",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#ffffff",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Black",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#000000",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Blue",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#1a52ad",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Red",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#d91717",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Green",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#1fa339",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Yellow",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#f1ea13",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Gray",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#7d7d7d",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Pink",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#d855c0",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Purple",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#8135c0",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Orange",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#ea7406",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Brown",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#884902",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                }
+                            ]
                         },
                         additionalOptions : []
                     }
@@ -6255,49 +6655,449 @@ export const configurationDemoData: ConfigurationType[] = [
                     data : {
                         sizes : {
                             customSize : {
-                                active : false,
+                                active : true,
                                 width : {
                                     label : "Width",
-                                    min : 0,
-                                    max : 0
+                                    min : 39.4,
+                                    max : 236.2
                                 },
                                 height : {
                                     label : "Height",
-                                    min : 0,
-                                    max : 0
+                                    min : 19.7,
+                                    max : 60.6
+                                },
+                                pricings : {
+                                    type : "unit",
+                                    unit : {
+                                        basePrice : 0,
+                                        surface : 0,
+                                        charPrice : 0
+                                    },
+                                    range : [],
+                                    rangePricingPerUnit : false
                                 }
                             },
                             thickness : {
                                 active : false,
                                 values : []
                             },
-                            allSizes : []
+                            allSizes : [
+                                {
+                                    isDefault : true,
+                                    label : "40x20",
+                                    width : 40,
+                                    height : 20,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "39x39",
+                                    width : 39,
+                                    height : 39,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "59x20",
+                                    width : 59,
+                                    height : 20,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "59x39",
+                                    width : 59,
+                                    height : 39,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "79x20",
+                                    width : 79,
+                                    height : 20,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "79x39",
+                                    width : 79,
+                                    height : 39,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "98x39",
+                                    width : 98,
+                                    height : 39,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "118x49",
+                                    width : 118,
+                                    height : 49,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "138x49",
+                                    width : 138,
+                                    height : 49,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    label : "157x49",
+                                    width : 157,
+                                    height : 49,
+                                    startPriceAtChar : 1,
+                                    textNumber : 0,
+                                    maxTextChar : -1,
+                                    minCharText : 0,
+                                    charPrice : 0,
+                                    basePrice : 0
+                                }
+                            ]
                         },
                         borders : {
                             settings : {
-                                colors : [],
+                                colors : [
+                                    {
+                                        name : "White",
+                                        codeHex : "#ffffff",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Black",
+                                        codeHex : "#000000",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Blue",
+                                        codeHex : "#1c4fa0",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Red",
+                                        codeHex : "#d81313",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Green",
+                                        codeHex : "#298d1c",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Yellow",
+                                        codeHex : "#f0e919",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Gray",
+                                        codeHex : "#8a8a8a",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Pink",
+                                        codeHex : "#ff70c3",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Purple",
+                                        codeHex : "#5c1ea9",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Orange",
+                                        codeHex : "#eb5505",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    },
+                                    {
+                                        name : "Brown",
+                                        codeHex : "#ad5105",
+                                        additionalPrice : 0,
+                                        prevImg : ""
+                                    }
+                                ],
                                 enableBorderWidth : true,
                                 enableBorderColor : true
                             },
-                            allBorders : []
+                            allBorders : [
+                                {
+                                    manageBorderId : 0,
+                                    additionalPrice : 0,
+                                    excludeSizes : [],
+                                    excludeShapes : [],
+                                    isDefault : true
+                                },
+                                {
+                                    isDefault : false,
+                                    manageBorderId : 1,
+                                    additionalPrice : 10,
+                                    excludeSizes : [],
+                                    excludeShapes : []
+                                }
+                            ]
                         },
-                        shapes : [],
+                        shapes : [
+                            {
+                                isDefault : true,
+                                shapeId : 1,
+                                additionalPrice : 0,
+                                enablePricingBySurface : false,
+                                surface : 0,
+                                shapeSize : {
+                                    small : 20,
+                                    medium : 40,
+                                    large : 60
+                                }
+                            }
+                        ],
                         textImages : {
                             enableText : true,
                             enableImage : true
                         },
-                        fixingMethods : [],
+                        fixingMethods : [
+                            {
+                                isDefault : true,
+                                fixingMethodId : 17,
+                                excludeSizes : [],
+                                excludeShapes : [],
+                                additionalPrice : 0
+                            }
+                        ],
                         colors : {
                             customColors : {
                                 active : true,
                                 label : "Custom Colors",
                                 prevImg : ""
                             },
-                            allColors : []
+                            allColors : [
+                                {
+                                    isDefault : true,
+                                    name : "White",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#ffffff",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Black",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#000000",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Blue",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#1a52ad",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Red",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#d91717",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Green",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#1fa339",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Yellow",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#f1ea13",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Gray",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#7d7d7d",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Pink",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#d855c0",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Purple",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#8135c0",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Orange",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#ea7406",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                },
+                                {
+                                    isDefault : false,
+                                    name : "Brown",
+                                    textColor : {
+                                        active : false,
+                                        codeHex : "#000000"
+                                    },
+                                    pattern : {
+                                        active : false,
+                                        codeHex : "#884902",
+                                        url : ""
+                                    },
+                                    prevImg : "",
+                                    additionalPrice : 0
+                                }
+                            ]
                         },
                         additionalOptions : []
                     }
-                }
+                },
             ]
         }
     },
