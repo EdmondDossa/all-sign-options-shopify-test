@@ -66,7 +66,8 @@ function App() {
 
   return (
     // The AdminBlock component provides an API for setting the title of the Block extension wrapper.
-    <AdminBlock title="ALL SIGNS OPTIONS 2">
+    // <AdminBlock title="ALL SIGNS OPTIONS 2">
+    <AdminBlock title="ALL SIGNS CUSTOMIZER">
       <BlockStack gap="small small">
         <InlineStack blockAlignment="end">
 
