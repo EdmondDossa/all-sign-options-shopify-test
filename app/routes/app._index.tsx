@@ -52,12 +52,18 @@ import { AlertCircleIcon } from "@shopify/polaris-icons";
 import ConfigurationService from "~/models/Configuration.service";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { Crisp } from "crisp-sdk-web";
+import { ShopifyProductService } from "~/models/ShopifyProduct.service";
+import { ShopifyOrderService } from "~/models/ShopifyOrder.service";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   let templateUrl = "";
   let configurationUrl = "";
   let configurations;
+  let productsCreated = 0;
+  let ordersCount = 0;
+  let conversionRate = 0;
+
   try {
     const shop = await ShopifyShopService.getShop(admin);
     
@@ -65,6 +71,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       configurationUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-options"}&target=newAppsSection`;
 
     configurations = await ConfigurationService.getConfigurations(session.id);
+    
+    // Calculate dashboard metrics
+    try {
+      productsCreated = await ShopifyProductService.countProductsCreated(admin);
+      ordersCount = await ShopifyOrderService.countOrdersWithAsoProducts(admin);
+      
+      // Calculate conversion rate: (Orders / Products Created) * 100
+      if (productsCreated > 0) {
+        conversionRate = Math.round((ordersCount / productsCreated) * 100);
+      }
+    } catch (error) {
+      console.log("error calculating dashboard metrics", error);
+    }
     // console.log("log log", LATEST_API_VERSION);
   } catch (error) {
     console.log("error getting shop  domain", error);
@@ -74,11 +93,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     templateUrl,
     configurationUrl,
     configurations,
+    productsCreated,
+    ordersCount,
+    conversionRate,
   });
 };
 
 export default function Index() {
-  const { templateUrl, configurationUrl, configurations } =
+  const { templateUrl, configurationUrl, configurations, productsCreated, ordersCount, conversionRate } =
     useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
@@ -233,19 +255,19 @@ export default function Index() {
                 <InlineStack gap="800">
                   <Box>
                     <Text as="h2" variant="heading2xl">
-                      0
+                      {productsCreated}
                     </Text>
                     <Text as="p">Products Created</Text>
                   </Box>
                   <Box>
                     <Text as="h2" variant="heading2xl">
-                      0%
+                      {conversionRate}%
                     </Text>
                     <Text as="p">Conversion Rate</Text>
                   </Box>
                   <Box>
                     <Text as="h2" variant="heading2xl">
-                      0
+                      {ordersCount}
                     </Text>
                     <Text as="p">Orders</Text>
                   </Box>
