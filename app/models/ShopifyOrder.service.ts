@@ -93,8 +93,11 @@ export class ShopifyOrderService{
             let hasNextPage = true;
             let cursor: string | null = null;
             const processedOrderIds = new Set<string>();
+            let pageCount = 0;
+            const MAX_PAGES = 5; // Limit to prevent infinite loops (orders can be very numerous)
 
-            while (hasNextPage) {
+            while (hasNextPage && pageCount < MAX_PAGES) {
+                pageCount++;
                 const response = await admin.graphql(
                     `#graphql
                     query countOrdersWithAsoProducts($cursor: String) {
@@ -163,6 +166,10 @@ export class ShopifyOrderService{
 
                 hasNextPage = data.data?.orders?.pageInfo?.hasNextPage || false;
                 cursor = data.data?.orders?.pageInfo?.endCursor || null;
+            }
+
+            if (pageCount >= MAX_PAGES) {
+                console.log(`⚠️ Reached max pages limit (${MAX_PAGES}) for orders count. Total counted: ${totalCount}`);
             }
 
             return totalCount;

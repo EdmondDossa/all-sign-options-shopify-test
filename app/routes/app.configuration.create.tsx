@@ -76,22 +76,55 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   }
 
   if (configuration) {
-    // Récupérer les produits réellement associés depuis Shopify
-    const shopifyProducts = await ShopifyProductService.getProductsByConfiguration(
-      admin,
-      configuration.id
-    );
+    // Source de vérité principale : les produits stockés en base de données (sélectionnés lors de la création)
+    const dbProducts = Array.isArray(configuration.product) ? configuration.product : [];
     
-    // Utiliser les produits de Shopify s'ils existent, sinon utiliser ceux de la base de données
-    if (shopifyProducts && shopifyProducts.length > 0) {
-      (configuration as any).products = shopifyProducts;
-    } else {
-      // Fallback sur les produits de la base de données si aucun dans Shopify
-      // Le champ 'product' en DB contient le tableau products
-    (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
+    // Vérifier dans Shopify si les produits de la DB existent toujours et récupérer leurs titres à jour
+    let finalProducts = dbProducts;
+    
+    if (dbProducts.length > 0) {
+      try {
+        // Pour chaque produit de la DB, vérifier qu'il existe toujours dans Shopify et récupérer son titre
+        const verifiedProducts = await Promise.all(
+          dbProducts.map(async (product: any) => {
+            try {
+              // Si le produit a déjà un id et un title, on le garde tel quel
+              if (product && product.id && product.title) {
+                return product;
+              }
+              
+              // Sinon, essayer de récupérer depuis Shopify
+              // Si product est un string (ID), on peut essayer de récupérer le produit
+              if (typeof product === 'string' || (product && product.id)) {
+                const productId = typeof product === 'string' ? product : product.id;
+                // Note: On garde le produit tel quel car on ne peut pas facilement récupérer le titre ici
+                // Le titre sera mis à jour lors de la sélection dans le picker
+                return { id: productId, title: product.title || 'Product' };
+              }
+              
+              return product;
+            } catch (error) {
+              console.log("Error verifying product:", error);
+              return product;
+            }
+          })
+        );
+        
+        finalProducts = verifiedProducts.filter((p: any) => p !== null && p !== undefined);
+      } catch (error) {
+        console.log("Error verifying products from Shopify:", error);
+        // En cas d'erreur, utiliser les produits de la DB tels quels
+        finalProducts = dbProducts;
+      }
     }
+    
+    (configuration as any).products = finalProducts;
+    
     // Ne pas exposer le champ product (legacy) au frontend
     delete (configuration as any).product;
+    
+    console.log("Loader - DB products:", dbProducts);
+    console.log("Loader - Final configuration.products:", finalProducts);
   }
 
   return json({ configuration });
@@ -114,6 +147,23 @@ export default function ConfigurationEdit() {
       products: [],
     },
   );
+
+  // Mettre à jour formData quand la configuration change (important pour l'édition)
+  useEffect(() => {
+    if (configuration) {
+      const configData = configuration as ConfigurationType;
+      const products = configData.products || [];
+      console.log("useEffect - Configuration products:", products);
+      setFormData({
+        name: configData.name || "",
+        description: configData.description || "",
+        icon: configData.icon || "",
+        popupImg: configData.popupImg || "",
+        products: products,
+      });
+      console.log("useEffect - formData.products set to:", products);
+    }
+  }, [configuration]);
 
 
 
@@ -609,7 +659,7 @@ export default function ConfigurationEdit() {
   }
 
 
-  const [step, setStep] = useState(configuration ? 4 : 0);
+  const [step, setStep] = useState(configuration ? 3 : 0);
 
   const [formDatas, setFormDatas] = useState({
     name: '',
@@ -619,7 +669,7 @@ export default function ConfigurationEdit() {
   });
 
   // selection du type produit
-  const [productType, setProductType] = useState<any>(signageOption.productCategories[0]);
+  const [productType, setProductType] = useState<any>(configuration ? null : (signageOption.productCategories[0] || null));
   const selectProductType = (data: any) => {
     setProductType(data);
     if(data.productGroups.length > 0){
@@ -691,7 +741,7 @@ export default function ConfigurationEdit() {
 
 
   //selectionner la catégorie
-  const [productCategorie, setProductCategorie] = useState<any>(signageOption);
+  const [productCategorie, setProductCategorie] = useState<any>(configuration ? null : signageOption);
   const selectProductCategorie = (data: object) => {
     setProductCategorie(data);
     console.log(data, "product categorie");
@@ -1898,8 +1948,8 @@ export default function ConfigurationEdit() {
                   onChange={handleDescription}
                   autoComplete="on"
                   error={
-                    actionData?.errors?.description
-                      ? actionData.errors.description[0]
+                    actionData?.errors && typeof actionData.errors === 'object' && 'description' in actionData.errors
+                      ? (actionData.errors as Record<string, string[] | null>).description?.[0] || ""
                       : ""
                   }
                 />
@@ -1908,7 +1958,9 @@ export default function ConfigurationEdit() {
               <div style={{display: "flex", flexDirection: "column", gap: "8px", padding: '16px', backgroundColor:  '#F5F5F5', border: '1px solid #E0E0E0', borderRadius: '14px',}}>
                 <FileInput
                     error={
-                      actionData?.errors?.icon ? actionData.errors.icon[0] : ""
+                      actionData?.errors && typeof actionData.errors === 'object' && 'icon' in actionData.errors
+                        ? (actionData.errors as Record<string, string[] | null>).icon?.[0] || ""
+                        : ""
                     }
                     title="Upload image"
                     path={formData.icon}
@@ -1934,9 +1986,15 @@ export default function ConfigurationEdit() {
               <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "8px", padding: '16px', backgroundColor:  '#F5F5F5', border: '1px solid #E0E0E0', borderRadius: '14px',}}>
                 <p style={{fontWeight: "700", paddingBottom: "10px"}}>Summary</p>
 
-                <p style={{color: "#757575"}}>Domain: <span style={{color: "#424242", fontWeight: "600"}}> {productCategorie.name} </span></p>
-                <p style={{color: "#757575"}}>Categorie type: <span style={{color: "#424242", fontWeight: "600"}}> {productType.name} </span></p>
-                <p style={{color: "#757575"}}>Product sample: <span style={{color: "#424242", fontWeight: "600"}}> {productData.name} </span></p>
+                {productCategorie?.name && (
+                  <p style={{color: "#757575"}}>Domain: <span style={{color: "#424242", fontWeight: "600"}}> {productCategorie.name} </span></p>
+                )}
+                {productType?.name && (
+                  <p style={{color: "#757575"}}>Categorie type: <span style={{color: "#424242", fontWeight: "600"}}> {productType.name} </span></p>
+                )}
+                {productData?.name && (
+                  <p style={{color: "#757575"}}>Product sample: <span style={{color: "#424242", fontWeight: "600"}}> {productData.name} </span></p>
+                )}
                 <p style={{color: "#757575"}}>Material type: <span style={{color: "#424242", fontWeight: "600"}}> {materialType} </span></p>
                 <p style={{color: "#757575"}}>Demo data: <span style={{color: "#424242", fontWeight: "600"}}> {validDemoData ? 'Yes' : 'No'} {validDemoData && demoName != "" ? `(${demoName})` : ''} </span></p>
 
@@ -2277,7 +2335,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       await ShopifyProductService.updateMultipleProducts(admin, newProducts, configurationObject.id);
     }
     
-    return redirect(`/app/configuration/${configurationObject.id}/materials`)
+    // S'assurer que l'ID est un nombre valide avant la redirection
+    const configId = Number(configurationObject?.id);
+    if (!configId || isNaN(configId)) {
+      console.error("Invalid configuration ID:", configurationObject?.id);
+      return json({ status: false, message: "Failed to create configuration", errors: {} });
+    }
+    
+    return redirect(`/app/configuration/${configId}/materials`)
   }
 };
 

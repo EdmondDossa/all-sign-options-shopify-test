@@ -751,8 +751,11 @@ export class ShopifyProductService {
         let totalCount = 0;
         let hasNextPage = true;
         let cursor: string | null = null;
+        let pageCount = 0;
+        const MAX_PAGES = 10; // Limit to prevent infinite loops
 
-        while (hasNextPage) {
+        while (hasNextPage && pageCount < MAX_PAGES) {
+          pageCount++;
           const response = await admin.graphql(
             `#graphql
             query countProductsCreated($cursor: String) {
@@ -797,6 +800,10 @@ export class ShopifyProductService {
 
           hasNextPage = data.data?.products?.pageInfo?.hasNextPage || false;
           cursor = data.data?.products?.pageInfo?.endCursor || null;
+        }
+
+        if (pageCount >= MAX_PAGES) {
+          console.log(`⚠️ Reached max pages limit (${MAX_PAGES}) for products count. Total counted: ${totalCount}`);
         }
 
         return totalCount;
