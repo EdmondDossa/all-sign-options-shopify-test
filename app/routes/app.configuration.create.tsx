@@ -1461,7 +1461,7 @@ export default function ConfigurationEdit() {
             <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
                {/* Select the type and the product sample of {productCategorie.name}  */}
-                What product would you like to sell? <Badge tone="success" size="large" >{productCategorie.name}</Badge> <Badge tone="success" size="large" >{productType.name}</Badge> 
+                What product would you like to sell? <Badge size="large" >{productCategorie.name}</Badge> <Badge tone="success" size="large" >{productType.name}</Badge> 
               </Text>
               <p>Choose the subtype that best matches your product within Signboard. You will fine-tune material behaviour in the next step.</p>
               {/* <span style={{fontWeight: "700"}}>{productCategorie.name}</span> */}
@@ -1691,7 +1691,7 @@ export default function ConfigurationEdit() {
           <Box>
             <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-                Add product template for fast setup <Badge tone="success" size="large" >{productCategorie.name}</Badge> <Badge tone="success" size="large" >{productType.name}</Badge> <Badge tone="success" size="large" >{productData.name}</Badge>
+                Add product template for fast setup <Badge size="large" >{productCategorie.name}</Badge> <Badge size="large" >{productType.name}</Badge> <Badge tone="success" size="large" >{productData.name}</Badge>
               </Text>
               <p>Choose a starter template whose demo content matches your product.</p>
               {/* <p>Decide whether to preload demo content for your <Badge tone="success" >{productData.name}</Badge> product sample  . If enabled, choose a starting template for faster setup.</p> */}
