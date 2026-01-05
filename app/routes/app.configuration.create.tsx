@@ -14,6 +14,7 @@ import {
   Link,
   Modal,
   Page,
+  Spinner,
   Text,
   TextField,
   Thumbnail,
@@ -724,6 +725,17 @@ export default function ConfigurationEdit() {
           setCurrentImageIndex(0);
       }
   }, [previewProduct, imageUrls.length]);
+
+  const [isImageLoading, setIsImageLoading] = useState(true);
+
+  // Réinitialiser le loading quand on change d'image ou de produit
+  useEffect(() => {
+    setIsImageLoading(true);
+  }, [currentImageIndex, previewProduct]);
+
+  const handleImageLoad = () => {
+    setIsImageLoading(false);
+  };
 
 
   const handleNextImage = useCallback(() => {
@@ -1644,11 +1656,14 @@ export default function ConfigurationEdit() {
                       >
                           {/* Affichage de l'image COURANTE */}
                           {imageUrls.length > 0 ? (
+                            <>
+                              {isImageLoading && <Spinner accessibilityLabel="Loading image" size="large" />}
                               <img
                                   src={imageUrls[currentImageIndex]}
                                   alt={`Aperçu ${currentImageIndex + 1}`}
                                   style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                               />
+                            </>
                           ) : (
                               <Text as="span" variant="bodyMd">No image available</Text>
                           )}
