@@ -1646,22 +1646,29 @@ export default function ConfigurationEdit() {
 
                       <div
                           style={{
-                              width: '100%',
-                              height: '200px',
-                              backgroundColor: '#F0F4F8',
-                              border: '1px dashed #B0BEC5',
-                              borderRadius: '8px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              color: '#637381',
-                              overflow: 'hidden',
+                            width: '100%',
+                            height: '200px',
+                            backgroundColor: '#F0F4F8',
+                            border: '1px dashed #B0BEC5',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#637381',
+                            overflow: 'hidden',
                           }}
                       >
                           {/* Affichage de l'image COURANTE */}
                           {imageUrls.length > 0 ? (
                             <>
-                              {isImageLoading && <Spinner accessibilityLabel="Loading image" size="small" />}
+                              <div style={{
+                                position: 'absolute',
+                                top: '50%',
+                                translate: 'var(--tw-translate-x) -50%, -50% var(--tw-translate-y)',
+                                left: '50%',
+                              }}>
+                                {isImageLoading && <Spinner accessibilityLabel="Loading image" size="small" />}
+                              </div>
                               <img
                                   src={imageUrls[currentImageIndex]}
                                   onLoad={handleImageLoad}
