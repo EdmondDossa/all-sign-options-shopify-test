@@ -951,6 +951,10 @@ export default function ConfigurationEdit() {
     if((step != 1) || ((step == 1) && productData != null)){
       setStep((prev) => Math.min(prev + 1, 4))
     }
+
+    if(step == 1){
+      allowDemoData(true)
+    }
   }
 
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 0));
