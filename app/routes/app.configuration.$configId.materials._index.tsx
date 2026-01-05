@@ -49,10 +49,12 @@ import MaterialAdvancedIndex from "./app.configuration.$configId.materials_.$mId
 import {
   DeleteIcon,
   EditIcon,
+  HideIcon,
   MenuHorizontalIcon,
 } from "@shopify/polaris-icons";
 import { BorderType, FixingMethodType, ShapeType } from "~/types/SettingsType";
 import MaterialAdvanceComponentService from "~/models/MaterialAdvanceComponent.service";
+import { number } from "zod";
 
 // export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 //   const { session, admin, billing } = await authenticate.admin(request);
@@ -117,6 +119,10 @@ export default function MaterialIndex() {
   const handleUpdate = (id: number) => {
     submit({ id: id }, { method: "GET", action: "edit" });
   };
+
+  const handleHideMaterial = (id: number) => {
+    //logique pour ajouter ou changer le statut visible du matériel d'une configuration
+  }
 
   const handleEdit = () => {
     navigate("edit");
@@ -289,6 +295,11 @@ export default function MaterialIndex() {
                     onAction: () => handleUpdate(index),
                   },
                   // { content: 'Duplicate', icon: DuplicateIcon, onAction: () => handeleDuplicate(index) },
+                  {
+                    content: "Hide",
+                    icon: HideIcon,
+                    onAction: () => handleHideMaterial(index),
+                  },
                   {
                     content: "Delete",
                     icon: DeleteIcon,
