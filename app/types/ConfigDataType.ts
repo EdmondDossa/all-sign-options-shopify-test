@@ -193,6 +193,7 @@ export interface MaterialAdvanceComponentType{
 }
   
  export interface MaterialAdvance{
+    active?: boolean;
     name: string;
     description: string;
     icon: string;
@@ -206,6 +207,7 @@ export interface MaterialAdvanceComponentType{
  }
   
 export interface MaterialType{
+  active?: boolean;
   name: string;
   description: string;
   icon: string;

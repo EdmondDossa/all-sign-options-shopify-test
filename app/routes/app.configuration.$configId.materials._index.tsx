@@ -51,6 +51,7 @@ import {
   EditIcon,
   HideIcon,
   MenuHorizontalIcon,
+  ViewIcon,
 } from "@shopify/polaris-icons";
 import { BorderType, FixingMethodType, ShapeType } from "~/types/SettingsType";
 import MaterialAdvanceComponentService from "~/models/MaterialAdvanceComponent.service";
@@ -121,8 +122,13 @@ export default function MaterialIndex() {
   };
 
   const handleHideMaterial = (id: number) => {
-    //logique pour ajouter ou changer le statut visible du matériel d'une configuration
-  }
+    const material = materials[id];
+    
+    const currentStatus = material.active ?? true;
+    const newStatus = !currentStatus;
+
+    submit( { id: id, active: newStatus }, { method: "PATCH" } );
+  };
 
   const handleEdit = () => {
     navigate("edit");
@@ -131,7 +137,7 @@ export default function MaterialIndex() {
     configuration: ConfigurationType;
   }>();
 
-  console.log(materials, materialType, "materialType", configuration)
+  // console.log(materials, materialType, "materialType", configuration)
 
   const [selectedMaterialIndex, setSelectedMaterialIndex] = useState<number>(0);
   const [selectedMaterial, setSelectedMaterial] = useState<
@@ -249,8 +255,9 @@ export default function MaterialIndex() {
   const [localMaterials, setLocalMaterials] = useState(materials);
   // const togglePopover = useCallback(() => setActive((active) => !active), []);
   const listMarkup = localMaterials?.map(
-    ({ name, description, icon, popImg, type }, index) => {
+    ({ name, description, icon, popImg, type, active }, index) => {
       const isActive = activePopoverId === index;
+      const isVisible = active ?? true; // Valeur par défaut true
 
       return (
 
@@ -296,8 +303,9 @@ export default function MaterialIndex() {
                   },
                   // { content: 'Duplicate', icon: DuplicateIcon, onAction: () => handeleDuplicate(index) },
                   {
-                    content: "Hide",
-                    icon: HideIcon,
+                    // AJOUT : Logique conditionnelle pour le texte et l'icône
+                    content: isVisible ? "Hide" : "Show",
+                    icon: isVisible ? HideIcon : ViewIcon, // Importez ViewIcon de @shopify/polaris-icons
                     onAction: () => handleHideMaterial(index),
                   },
                   {
@@ -537,6 +545,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         ...jFlashMessage("Configuration deleting is completed successfully"),
       });
       break;
+    }
+
+    case "PATCH": {
+      // On récupère le statut envoyé depuis le formulaire
+      // "true" devient true, tout le reste devient false
+      const active = formData.get("active") === "true"; 
+      
+      await MaterialService.changeStatus(configId, session.id, parseInt(id), active);
+      
+      return json({
+        ...jFlashMessage("Material status updated successfully"),
+      });
     }
 
     default:

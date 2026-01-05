@@ -79,7 +79,7 @@ export default function SimpleMateriels(props: MaterielsProps) {
 
   const [selectedTab, setSelectedTab] = useState<string>("size");
   const renderTabContent = () => {
-    console.log(selectedTab, "tab", material)
+    // console.log(selectedTab, "tab", material)
     switch (selectedTab) {
       case "size":
         return <MaterialSizes refreshMaterial={props.refreshMaterial} materialId={materialIndex} configuration={configuration} plan={plan} customSize={material?.data.sizes.customSize} allSizes={material?.data.sizes.allSizes} thickness={material?.data.sizes.thickness}/>;
