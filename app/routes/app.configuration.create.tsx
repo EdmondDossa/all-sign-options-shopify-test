@@ -1661,9 +1661,10 @@ export default function ConfigurationEdit() {
                           {/* Affichage de l'image COURANTE */}
                           {imageUrls.length > 0 ? (
                             <>
-                              {isImageLoading && <Spinner accessibilityLabel="Loading image" size="large" />}
+                              {isImageLoading && <Spinner accessibilityLabel="Loading image" size="small" />}
                               <img
                                   src={imageUrls[currentImageIndex]}
+                                  onLoad={handleImageLoad}
                                   alt={`Aperçu ${currentImageIndex + 1}`}
                                   style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                               />
