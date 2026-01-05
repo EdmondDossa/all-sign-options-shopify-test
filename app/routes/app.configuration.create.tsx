@@ -624,7 +624,7 @@ export default function ConfigurationEdit() {
               {
                 name: "Contour-cut / die-cut",
                 description: "Stickers following the exact shape of the design.",
-                image: ["https://signsdesigner.us/app/aso_products_preview/contour-cut/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/contour-cut/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/contour-cut/image_3.webp"],
+                image: ["https://signsdesigner.us/app/aso_products_preview/contour-cut/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/contour-cut/image_2webp", "https://signsdesigner.us/app/aso_products_preview/contour-cut/image_3.webp"],
                 type: "label",
                 demoData: "",
                 materialType: "simple"
