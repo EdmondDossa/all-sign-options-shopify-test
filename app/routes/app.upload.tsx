@@ -28,7 +28,7 @@ import {
   Thumbnail,
 } from "@shopify/polaris";
 import { useCallback, useEffect, useId, useState } from "react";
-import { Modal, TitleBar } from "@shopify/app-bridge-react";
+import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { FileIcon, TextFontIcon, PlayCircleIcon , SearchIcon} from "@shopify/polaris-icons";
 import { useFetcher } from "@remix-run/react";
 import { fileUrl, getShopPath } from "~/utils/fileUrl";
@@ -72,11 +72,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
   
 
-  let returnFiles = files.map((file) => ({
-    name: file.name,
-    url: `https://${shop}/apps/aso-proxy/uploads/${getShopPath(session.id)}/files/${file.name}`,
-    createdAt: Date.now(),
-  }));
+  let returnFiles = files.map((file) => {
+    // Encode the filename to handle special characters (spaces, parentheses, etc.)
+    const encodedFileName = encodeURIComponent(file.name);
+    return {
+      name: file.name,
+      url: `https://${shop}/apps/aso-proxy/uploads/${getShopPath(session.id)}/files/${encodedFileName}`,
+      createdAt: Date.now(),
+    };
+  });
 
   let upload = await prisma.upload.findUnique({
     where: { shop: shop },
@@ -132,6 +136,8 @@ export const FileUploader = ({
   multiple,
   title,
   type,
+  onBeforeOpen,
+  onAfterSelect,
 }: {
   title?: string;
   type?: "image" | "video" | "font" | "icon" |"other" | "all";
@@ -139,12 +145,15 @@ export const FileUploader = ({
   setFilesData?: any;
   fileData?: string[];
   children?: React.ReactNode;
+  onBeforeOpen?: () => void;
+  onAfterSelect?: () => void;
   }) => {
  
   if (!type) {
     type = "image";
   }
   const id = useId();
+  const shopify = useAppBridge();
 
   const [fileType, setFileType] = useState(type || "image");
   const [searchTag, setSearchTag] = useState("");
@@ -215,6 +224,13 @@ export const FileUploader = ({
     console.log("select files: ", selectedFiles);
     shopify.modal.hide(id);
     setIsOpen(false);
+    
+    // Call onAfterSelect callback to reopen parent modal if provided
+    if (onAfterSelect) {
+      setTimeout(() => {
+        onAfterSelect();
+      }, 200);
+    }
   };
 
   const handleCancelSelectedFiles = () => {
@@ -293,15 +309,49 @@ export const FileUploader = ({
   return (
     <>
       <div
-        onClick={() => {
-          fileFetcher.submit(null, { method: "GET", action: "/app/upload" });
-          shopify.modal.show(id);
+        onClick={async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log("FileUploader clicked, shopify:", shopify, "id:", id);
+          try {
+            // Call onBeforeOpen callback to close parent modal if provided
+            if (onBeforeOpen) {
+              onBeforeOpen();
+              // Wait for parent modal to close
+              await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            fileFetcher.submit(null, { method: "GET", action: "/app/upload" });
+            // Use requestAnimationFrame to ensure the modal is rendered before showing
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                try {
+                  shopify.modal.show(id);
+                  console.log("Modal show called with id:", id);
+                } catch (error) {
+                  console.error("Error showing modal:", error);
+                  // Try again after a short delay
+                  setTimeout(() => {
+                    try {
+                      shopify.modal.show(id);
+                      console.log("Modal show called (retry)");
+                    } catch (retryError) {
+                      console.error("Error showing modal (retry):", retryError);
+                    }
+                  }, 300);
+                }
+              });
+            });
+          } catch (error) {
+            console.error("Error opening modal:", error);
+          }
           // setIsOpen(true);
         }}
+        style={{ cursor: "pointer" }}
       >
         {children || <div> Upload file</div>}
       </div>
-      <Modal variant="large" id={`${id}`}>
+      <Modal variant="large" id={id} data-modal-id={id}>
         <Box overflowY="clip">
           <InlineStack wrap={false}>
             <Box
@@ -379,6 +429,7 @@ export const FileUploader = ({
                         filesFilter.map((file, index) => {
                           return (
                             <Grid.Cell
+                              key={`file-${index}-${file.url}`}
                               columnSpan={{ xs: 3, sm: 2, md: 1, lg: 1, xl: 1 }}
                             >
 

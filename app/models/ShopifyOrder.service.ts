@@ -80,6 +80,103 @@ export class ShopifyOrderService{
             console.log("error on getting order", error);
             return null;
         }
-    }  
+    }
+
+    /**
+     * Counts all orders that contain at least one product created by the app
+     * @param admin - Shopify admin API client
+     * @returns Promise<number> - Returns the total count of orders with ASO products
+     */
+    static async countOrdersWithAsoProducts(admin: any): Promise<number> {
+        try {
+            let totalCount = 0;
+            let hasNextPage = true;
+            let cursor: string | null = null;
+            const processedOrderIds = new Set<string>();
+            let pageCount = 0;
+            const MAX_PAGES = 5; // Limit to prevent infinite loops (orders can be very numerous)
+
+            while (hasNextPage && pageCount < MAX_PAGES) {
+                pageCount++;
+                const response = await admin.graphql(
+                    `#graphql
+                    query countOrdersWithAsoProducts($cursor: String) {
+                        orders(first: 250, after: $cursor) {
+                            edges {
+                                node {
+                                    id
+                                    name
+                                    lineItems(first: 250) {
+                                        nodes {
+                                            product {
+                                                id
+                                                metafield(namespace: "allSignsOptionsAsoAso", key: "asoConfigurationId") {
+                                                    value
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            pageInfo {
+                                hasNextPage
+                                endCursor
+                            }
+                        }
+                    }`,
+                    {
+                        variables: {
+                            cursor: cursor
+                        }
+                    }
+                );
+
+                const data = await response.json();
+                
+                if (data.errors) {
+                    console.log("GraphQL errors:", data.errors);
+                    break;
+                }
+
+                const orders = data.data?.orders?.edges || [];
+                
+                // Check each order to see if it contains at least one ASO product
+                for (const edge of orders) {
+                    const order = edge.node;
+                    const orderId = order.id;
+                    
+                    // Skip if we've already processed this order
+                    if (processedOrderIds.has(orderId)) {
+                        continue;
+                    }
+                    
+                    processedOrderIds.add(orderId);
+                    
+                    // Check if any line item has a product with the ASO metafield
+                    const lineItems = order.lineItems?.nodes || [];
+                    const hasAsoProduct = lineItems.some((item: any) => {
+                        const metafield = item.product?.metafield;
+                        return metafield && metafield.value && metafield.value !== "0";
+                    });
+                    
+                    if (hasAsoProduct) {
+                        totalCount++;
+                    }
+                }
+
+                hasNextPage = data.data?.orders?.pageInfo?.hasNextPage || false;
+                cursor = data.data?.orders?.pageInfo?.endCursor || null;
+            }
+
+            if (pageCount >= MAX_PAGES) {
+                console.log(`⚠️ Reached max pages limit (${MAX_PAGES}) for orders count. Total counted: ${totalCount}`);
+            }
+
+            return totalCount;
+        } catch (error) {
+            console.log("Error counting orders with ASO products:", error);
+            return 0;
+        }
+    }
 
 }

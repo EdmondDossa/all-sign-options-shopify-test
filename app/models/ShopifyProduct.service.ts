@@ -777,4 +777,76 @@ export class ShopifyProductService {
         return null;
       }
     }
+
+    /**
+     * Counts all products created by the app (products with asoConfigurationId metafield)
+     * @param admin - Shopify admin API client
+     * @returns Promise<number> - Returns the total count of products created by the app
+     */
+    static async countProductsCreated(admin: any): Promise<number> {
+      try {
+        let totalCount = 0;
+        let hasNextPage = true;
+        let cursor: string | null = null;
+        let pageCount = 0;
+        const MAX_PAGES = 10; // Limit to prevent infinite loops
+
+        while (hasNextPage && pageCount < MAX_PAGES) {
+          pageCount++;
+          const response = await admin.graphql(
+            `#graphql
+            query countProductsCreated($cursor: String) {
+              products(first: 250, query: "product_type:all-signs-options-product", after: $cursor) {
+                edges {
+                  node {
+                    id
+                    metafield(namespace: "allSignsOptionsAsoAso", key: "asoConfigurationId") {
+                      value
+                    }
+                  }
+                }
+                pageInfo {
+                  hasNextPage
+                  endCursor
+                }
+              }
+            }`,
+            {
+              variables: {
+                cursor: cursor
+              }
+            }
+          );
+
+          const data = await response.json();
+          
+          if (data.errors) {
+            console.log("GraphQL errors:", data.errors);
+            break;
+          }
+
+          const products = data.data?.products?.edges || [];
+          
+          // Count products that have the metafield with a valid value (not null, not "0", not empty)
+          const validProducts = products.filter((edge: any) => {
+            const metafield = edge.node.metafield;
+            return metafield && metafield.value && metafield.value !== "0";
+          });
+          
+          totalCount += validProducts.length;
+
+          hasNextPage = data.data?.products?.pageInfo?.hasNextPage || false;
+          cursor = data.data?.products?.pageInfo?.endCursor || null;
+        }
+
+        if (pageCount >= MAX_PAGES) {
+          console.log(`⚠️ Reached max pages limit (${MAX_PAGES}) for products count. Total counted: ${totalCount}`);
+        }
+
+        return totalCount;
+      } catch (error) {
+        console.log("Error counting products created:", error);
+        return 0;
+      }
+    }
 }

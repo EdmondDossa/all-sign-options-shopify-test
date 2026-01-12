@@ -15,6 +15,7 @@ import {
   Popover,
   Select,
   Text,
+  Pagination, // <--- Nouvel import
 } from "@shopify/polaris";
 import { useCallback, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
@@ -45,19 +46,69 @@ import { ConfigurationType } from "~/types/ConfigurationType";
 import { PRICING_PLANS } from "~/utils/pricing";
 import { DeleteIcon, DuplicateIcon, EditIcon, MenuHorizontalIcon, ViewIcon } from "@shopify/polaris-icons";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
-// import {LATEST_API_VERSION} from "@shopify/shopify-app-remix/server";
+
+// export const loader = async ({ request }: LoaderFunctionArgs) => {
+//   const { session } = await authenticate.admin(request);
+//   const url = new URL(request.url);
+
+//   // --- LOGIQUE PAGINATION ---
+//   const page = parseInt(url.searchParams.get("page") || "1", 10);
+//   const limit = 6; // Nombre d'éléments par page
+
+//   // Récupération de TOUTES les configs (Attention : pour de très gros volumes, il faudrait paginer en SQL)
+//   const allConfigurations: any = await ConfigurationService.getConfigurations(session.id);
+
+//   const startIndex = (page - 1) * limit;
+//   const endIndex = startIndex + limit;
+  
+//   // Découpage pour la page actuelle
+//   const paginatedConfigurations = allConfigurations?.slice(startIndex, endIndex);
+
+//   const hasNextPage = endIndex < allConfigurations?.length;
+//   const hasPreviousPage = page > 1;
+
+//   return json({ 
+//     configurations: paginatedConfigurations,
+//     page,
+//     hasNextPage,
+//     hasPreviousPage,
+//     totalCount: allConfigurations.length // Utile si vous voulez afficher "X sur Y"
+//   });
+// };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
+  const url = new URL(request.url);
 
-  const configurations = await ConfigurationService.getConfigurations(session.id);
-  // console.log("log log", LATEST_API_VERSION);
+  // --- LOGIQUE PAGINATION ---
+  const page = parseInt(url.searchParams.get("page") || "1", 10);
+  const limit = 8
 
-  return json({ configurations });
+  const result: any = await ConfigurationService.getConfigurations(session.id);
+  
+  const allConfigurations = Array.isArray(result) ? result : [];
+
+  allConfigurations.sort((a: any, b: any) => b.id - a.id);
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  
+  const paginatedConfigurations = allConfigurations.slice(startIndex, endIndex);
+
+  const hasNextPage = endIndex < allConfigurations.length;
+  const hasPreviousPage = page > 1;
+
+  return json({ 
+    configurations: paginatedConfigurations,
+    page,
+    hasNextPage,
+    hasPreviousPage,
+    totalCount: allConfigurations.length
+  });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
 
   const formData = await request.formData();
   const id = formData.get("id") as string;
@@ -67,16 +118,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   switch (method) {
     case "DELETE": {
       await ConfigurationService.deleteConfiguration(parseInt(id), session.id);
-
-   
       return redirect(
         `${flashMessage("Configuration deleted successfully")}`,
       );
-      break;
     }
 
     case "POST": {
-      const configuration: ConfigurationType =
+      const configuration: ConfigurationType | any =
         await ConfigurationService.getConfigurationWithoutTemplates(parseInt(id), session.id);
       delete configuration.id;
       // Ne pas copier le champ product (legacy), utiliser products à la place
@@ -93,7 +141,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return redirect(
         `${flashMessage("Configuration duplicated successfully")}`,
       );
-      break;
     }
 
     default:
@@ -103,20 +150,46 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return null;
 };
 
-// This example is for guidance purposes. Copying it will come with caveats.
 export default function Configuration() {
   const submit = useSubmit();
-  let { configurations } = useLoaderData<typeof loader>();
+  
+  // Récupération des données étendues du loader
+  let { configurations, page, hasNextPage, hasPreviousPage } = useLoaderData<typeof loader>();
+  
   let { plan } = useOutletContext<{ plan: string }>();
   
+  // Gestion du plan Starter (Limitation visuelle)
   if (plan == PRICING_PLANS.STARTER) {
+    // Note: Si on est en starter, on limite l'affichage même si la pagination en renvoie plus
     configurations = configurations?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)||[];
   }
+
   useHandleFlashMessage();
 
   const [configTitle, setConfigTitle] = useState<string>("");
 
   const navigate = useNavigate();
+
+  const [active, setActive] = useState(false);
+  const [activePopoverId, setActivePopoverId] = useState<string | null>(null);
+
+  const togglePopover = useCallback(() => setActive((active) => !active), []);
+
+  // --- GESTION NAVIGATION PAGINATION ---
+  const handleNextPage = () => {
+    navigate(`?page=${page + 1}`);
+  };
+
+  const handlePreviousPage = () => {
+    navigate(`?page=${page - 1}`);
+  };
+  // -------------------------------------
+
+  const handleAction = (action: string, id: string) => {
+    console.log(`Action "${action}" sur l'élément ID: ${id}`);
+    setActivePopoverId(null);
+  };
+  
   const onHandleConfigurationCreate = () => {
     navigate("/app/configuration/create");
   };
@@ -151,20 +224,8 @@ export default function Configuration() {
   };
 
 
-  const [active, setActive] = useState(false);
-  const [activePopoverId, setActivePopoverId] = useState<string | null>(null);
-
-  const togglePopover = useCallback(() => setActive((active) => !active), []);
-
-  const handleAction = (action: string, id: string) => {
-    console.log(`Action "${action}" sur l’élément ID: ${id}`);
-    setActivePopoverId(null); // ferme le popover
-  };
-
-
-
   const rowMarkup = configurations.map(
-    ({ id, name, description, icon, popupImg, materialType }, index) => {
+    ({ id, name, description, icon, popupImg, materialType }: any, index: number) => {
       const isActive = activePopoverId === id;
       let materialTyp = 'simple'
   
@@ -240,6 +301,7 @@ export default function Configuration() {
       );
     }
   );
+
   return (
     <Page fullWidth>
       <Card>
@@ -248,7 +310,7 @@ export default function Configuration() {
             Configurations list
           </Text>
 
-          { !(plan == PRICING_PLANS.STARTER && configurations?.length>=PRICING_PLANS.STARTER_RULES.configurations)  &&
+          { !(plan == PRICING_PLANS.STARTER && configurations?.length >= PRICING_PLANS.STARTER_RULES.configurations) &&
             <InlineStack align="end">
               <button
                 className="primary-btn"
@@ -270,7 +332,7 @@ export default function Configuration() {
         </InlineStack>
       </Card>
       
-      <div  style={{margin:"10px 0px "}}>
+      <div style={{margin:"10px 0px "}}>
         <Card>
           <IndexTable
             resourceName={resourceName}
@@ -286,10 +348,25 @@ export default function Configuration() {
           >
             {rowMarkup}
           </IndexTable>
-          <Divider borderWidth="050" />
+          
+          {/* --- COMPOSANT PAGINATION --- */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            padding: '16px',
+            borderTop: '1px solid var(--p-color-border-secondary)' 
+          }}>
+            <Pagination
+              hasPrevious={hasPreviousPage}
+              onPrevious={handlePreviousPage}
+              hasNext={hasNextPage}
+              onNext={handleNextPage}
+            />
+          </div>
+          {/* ----------------------------- */}
+          
         </Card>
       </div>
     </Page>
   );
 }
-

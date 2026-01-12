@@ -113,11 +113,22 @@ export async function action({ request }: ActionFunctionArgs) {
       (requestData.fixingMethodId !== undefined
         ? requestData.fixingMethodId
         : "-1") as string,
+      (requestData.fixingMethodId !== undefined
+        ? requestData.fixingMethodId
+        : "-1") as string,
     );
     console.log("=== API fixing-method-manager - Parsed values ===");
     console.log("operation:", requestData.operation);
     console.log("configId:", configId, "type:", typeof configId);
     console.log("materialId:", materialId, "type:", typeof materialId);
+    console.log(
+      "fixingMethodId:",
+      fixingMethodId,
+      "type:",
+      typeof fixingMethodId,
+    );
+    console.log("fixingMethodData:", requestData.fixingMethodData);
+    console.log("fixingMethods:", requestData.fixingMethods);
     console.log(
       "fixingMethodId:",
       fixingMethodId,
@@ -133,6 +144,14 @@ export async function action({ request }: ActionFunctionArgs) {
       (requestData.operation !== "get-all" && isNaN(materialId))
     ) {
       console.log("ERROR: Invalid IDs");
+      console.log("configId:", requestData.configId, "-> parsed:", configId);
+      console.log(
+        "materialId:",
+        requestData.materialId,
+        "-> parsed:",
+        materialId,
+      );
+      console.log("mId:", requestData.mId);
       console.log("configId:", requestData.configId, "-> parsed:", configId);
       console.log(
         "materialId:",
@@ -167,6 +186,9 @@ export async function action({ request }: ActionFunctionArgs) {
         console.log(
           "API fixing-method-manager - Calling MaterialFixingMethodService.getAll",
         );
+        console.log(
+          "API fixing-method-manager - Calling MaterialFixingMethodService.getAll",
+        );
         result = await MaterialFixingMethodService.getAll(
           session.id,
           configId,
@@ -185,7 +207,7 @@ export async function action({ request }: ActionFunctionArgs) {
         }
 
         console.log(
-          "API fixing-method-manager - Calling MaterialFixingMethodService.add",
+          "API fixing-method-manager - Calling MaterialFixingMethodService.add", requestData
         );
         for (const fixingMethodData of requestData.fixingMethodData) {
           result = await MaterialFixingMethodService.add(

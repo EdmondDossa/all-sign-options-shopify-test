@@ -8,19 +8,19 @@ datasource db {
 }
 
 model Session {
-  id             String            @id
+  id             String             @id
   shop           String
   state          String
-  isOnline       Boolean           @default(false)
+  isOnline       Boolean            @default(false)
   scope          String?
   expires        DateTime?
   accessToken    String
   userId         BigInt?
-  isInitialized  Boolean           @default(false)
-  accountOwner   Boolean           @default(false)
-  collaborator   Boolean?          @default(false)
+  isInitialized  Boolean            @default(false)
+  accountOwner   Boolean            @default(false)
+  collaborator   Boolean?           @default(false)
   email          String?
-  emailVerified  Boolean?          @default(false)
+  emailVerified  Boolean?           @default(false)
   firstName      String?
   lastName       String?
   locale         String?
@@ -30,8 +30,8 @@ model Session {
   Design         Design[]
   fonts          Font[]
   setting        Setting?
-  templates      Template[]
   purchasedPacks ShopTemplatePack[]
+  templates      Template[]
 }
 
 model Upload {
@@ -133,19 +133,19 @@ model Design {
 }
 
 model TemplatePack {
-  id          Int              @id @default(autoincrement())
+  id          Int                @id @default(autoincrement())
   name        String
-  slug        String           @unique
+  slug        String             @unique
   description String?
-  category    String           // Category name (e.g., "Noël", "Nouvel An")
+  category    String
   price       Float
-  jsonFile    String           // Path to JSON file (e.g., "noel.json")
-  previewImg  String           // Preview image URL
+  jsonFile    String
+  previewImg  String
   icon        String?
-  isActive    Boolean          @default(true)
-  order       Int              @default(0)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  isActive    Boolean            @default(true)
+  order       Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
   purchases   ShopTemplatePack[]
 
   @@index([slug])
@@ -153,14 +153,16 @@ model TemplatePack {
 }
 
 model ShopTemplatePack {
-  id            Int          @id @default(autoincrement())
-  sessionId     String
-  packId        Int
-  purchasedAt   DateTime     @default(now())
-  purchasePrice Float
-  isActive      Boolean      @default(true)
-  session       Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  pack          TemplatePack @relation(fields: [packId], references: [id], onDelete: Cascade)
+  id              Int          @id @default(autoincrement())
+  sessionId       String
+  packId          Int
+  purchasedAt     DateTime     @default(now())
+  purchasePrice   Float
+  isActive        Boolean      @default(true)
+  purchaseStatus  String?
+  shopifyChargeId String?
+  pack            TemplatePack @relation(fields: [packId], references: [id], onDelete: Cascade)
+  session         Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@unique([sessionId, packId])
   @@index([sessionId])

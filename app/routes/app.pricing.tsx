@@ -161,7 +161,7 @@ export default function PricingPage() {
     <Page>
       <ui-title-bar title="Pricing" />
       <CalloutCard
-          title="Subscription to all signs options"
+          title="Subscription to all signs customizer"
           // illustration=""
           illustration="/aso_logo.png"
           primaryAction={plan !="free"?{

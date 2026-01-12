@@ -178,4 +178,43 @@ export default class MaterialService {
       return Promise.resolve(null);
     }
   }
+
+  static async changeStatus(
+    configurationId: number,
+    sessionId: string,
+    id: number,
+    newStatus: boolean
+  ): Promise<Material[] | null> {
+    try {
+      // 1. Récupérer la configuration
+      let configuration: any = await ConfigurationService.getConfiguration(
+        configurationId,
+        sessionId,
+      );
+      
+      // 2. Récupérer la liste des matériaux
+      let materials: Material[] = configuration["data"]["materials"] ?? [];
+      
+      // 3. Vérifier si le matériel existe à cet index
+      if (Array.isArray(materials) && materials[id]) {
+        // 4. Mettre à jour la propriété 'active'
+        // Assurez-vous d'avoir ajouté 'active?: boolean' dans votre type Material
+        materials[id].active = newStatus;
+
+        // 5. Mettre à jour la configuration
+        configuration["data"]["materials"] = materials;
+        
+        configuration = await ConfigurationService.updateConfiguration(
+          configuration,
+          sessionId,
+        );
+        
+        return Promise.resolve(materials);
+      }
+      return Promise.resolve(null);
+    } catch (error) {
+      console.error("Error updating material status:", error);
+      return Promise.resolve(null);
+    }
+  }
 }
