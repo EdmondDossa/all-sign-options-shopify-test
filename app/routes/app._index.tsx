@@ -52,12 +52,18 @@ import { AlertCircleIcon } from "@shopify/polaris-icons";
 import ConfigurationService from "~/models/Configuration.service";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { Crisp } from "crisp-sdk-web";
+import { ShopifyProductService } from "~/models/ShopifyProduct.service";
+import { ShopifyOrderService } from "~/models/ShopifyOrder.service";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   let templateUrl = "";
   let configurationUrl = "";
   let configurations;
+  let productsCreated = 0;
+  let ordersCount = 0;
+  let conversionRate = 0;
+
   try {
     const shop = await ShopifyShopService.getShop(admin);
     
@@ -65,6 +71,47 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       configurationUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=${"product"}&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/${"all-signs-options"}&target=newAppsSection`;
 
     configurations = await ConfigurationService.getConfigurations(session.id);
+    
+    // Calculate dashboard metrics (non-blocking, with timeout protection)
+    try {
+      console.log("📊 Calculating dashboard metrics...");
+      
+      // Set a timeout of 10 seconds for metrics calculation
+      const metricsPromise = Promise.all([
+        ShopifyProductService.countProductsCreated(admin),
+        ShopifyOrderService.countOrdersWithAsoProducts(admin)
+      ]);
+      
+      const timeoutPromise = new Promise<[number, number]>((_, reject) => 
+        setTimeout(() => reject(new Error("Metrics calculation timeout")), 10000)
+      );
+      
+      try {
+        const [productsResult, ordersResult] = await Promise.race([
+          metricsPromise,
+          timeoutPromise
+        ]);
+        
+        productsCreated = productsResult || 0;
+        ordersCount = ordersResult || 0;
+        
+        // Calculate conversion rate: (Orders / Products Created) * 100
+        if (productsCreated > 0) {
+          conversionRate = Math.round((ordersCount / productsCreated) * 100);
+        }
+        
+        console.log(`✅ Products Created: ${productsCreated}`);
+        console.log(`✅ Orders Count: ${ordersCount}`);
+        console.log(`✅ Conversion Rate: ${conversionRate}%`);
+      } catch (timeoutError) {
+        // Timeout occurred, use default values
+        console.log("⚠️ Metrics calculation timed out, using default values");
+      }
+    } catch (error) {
+      // Don't fail the entire page load if metrics fail
+      console.log("⚠️ Error calculating dashboard metrics (non-critical):", error);
+      // Keep default values (0, 0, 0)
+    }
     // console.log("log log", LATEST_API_VERSION);
   } catch (error) {
     console.log("error getting shop  domain", error);
@@ -74,11 +121,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     templateUrl,
     configurationUrl,
     configurations,
+    productsCreated,
+    ordersCount,
+    conversionRate,
   });
 };
 
 export default function Index() {
-  const { templateUrl, configurationUrl, configurations } =
+  const { templateUrl, configurationUrl, configurations, productsCreated, ordersCount, conversionRate } =
     useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
@@ -233,19 +283,19 @@ export default function Index() {
                 <InlineStack gap="800">
                   <Box>
                     <Text as="h2" variant="heading2xl">
-                      0
+                      {productsCreated}
                     </Text>
                     <Text as="p">Products Created</Text>
                   </Box>
                   <Box>
                     <Text as="h2" variant="heading2xl">
-                      0%
+                      {conversionRate}%
                     </Text>
                     <Text as="p">Conversion Rate</Text>
                   </Box>
                   <Box>
                     <Text as="h2" variant="heading2xl">
-                      0
+                      {ordersCount}
                     </Text>
                     <Text as="p">Orders</Text>
                   </Box>

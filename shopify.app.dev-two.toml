@@ -4,20 +4,30 @@ client_id = "62c19e186a7ae5690b3c3bbcdad0fae6"
 name = "all-signs-options-two"
 application_url = "https://all-signs-options-preview.vercel.app"
 embedded = true
+handle = "all-signs-options-two"
 
 [build]
 automatically_update_urls_on_dev = true
 dev_store_url = "local-aso-dev-two.myshopify.com"
+include_config_on_deploy = false
+
+[webhooks]
+api_version = "2025-04"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,read_products,read_publications,read_themes,write_products,write_publications"
 
 [auth]
-redirect_urls = ["https://all-signs-options-preview.vercel.app/auth/callback", "https://all-signs-options-preview.vercel.app/auth/shopify/callback", "https://all-signs-options-preview.vercel.app/api/auth/callback"]
-
-[webhooks]
-api_version = "2025-04"
+redirect_urls = [
+  "https://all-signs-options-preview.vercel.app/auth/callback",
+  "https://all-signs-options-preview.vercel.app/auth/shopify/callback",
+  "https://all-signs-options-preview.vercel.app/api/auth/callback"
+]
 
 [app_proxy]
 url = "https://all-signs-options-preview.vercel.app"
