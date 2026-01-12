@@ -81,7 +81,7 @@ export async function sendUploadMail(
   );
 
   const options: any = {
-    from: `"All Signs Options Support" <support@signsdesigner.us>`,
+    from: `"All Signs Customizer Support" <support@signsdesigner.us>`,
     to: email,
     subject,
     html: emailHtml,

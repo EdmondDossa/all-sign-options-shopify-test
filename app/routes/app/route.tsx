@@ -231,7 +231,7 @@ const HeaderTopMenu = () => {
         }
         {/* <img className="aso-logo"
           src={'/aso_logo.png'}
-          alt={"All signs options"}
+          alt={"All Signs Customizer"}
         /> */}
         {/* <div className="version-style">
           V{version}
