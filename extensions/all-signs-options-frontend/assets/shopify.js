@@ -8,9 +8,8 @@ var asoTemplateId = urlParams.get('aso-template-id');
 
 
 if(asoTemplateId){
-  if(asoConfigurationId==undefined){
-    var asoConfigurationId = paramAsoConfigurationId;
-  }else{
+  // Ne remplacer asoConfigurationId que s'il n'existe pas déjà
+  if(!asoConfigurationId && paramAsoConfigurationId){
     asoConfigurationId = paramAsoConfigurationId;
   }
 }

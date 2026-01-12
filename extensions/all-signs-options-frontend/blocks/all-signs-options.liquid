@@ -8,16 +8,11 @@
   var asoConfigurationId = "{{asoConfigurationId}}";
   var asoProductId = "{{asoProductId}}";
   var asoRegularPrice ="{{ asoProduct.price | money_without_currency }}";
-  
-  // --- AJOUT : Récupération des polices du thème pour l'app Vue ---
-  window.asoThemeFonts = {
-    body: getComputedStyle(document.documentElement).getPropertyValue('--font-body-family') || 'inherit',
-    heading: getComputedStyle(document.documentElement).getPropertyValue('--font-heading-family') || 'inherit'
-  };
 
   {% if asoConfigurationId == null or asoConfigurationId == "" %}
     {% if request.design_mode == false %}
     if(!(new URLSearchParams(window.location.search)).get('aso-template-id')){
+    
       document.write('<style>.shopify-app-wrapper{display: none !important;}<\/style>');
     }
    {% endif %} 
@@ -25,6 +20,7 @@
 </script>
 
 {% if block.settings.useModal %}
+  <!-- Boutons pour ouvrir les modals -->
   <div class="aso-modal-buttons-container">
     {% if block.settings.design_button_enabled and asoConfigurationId %}
       <button id="asoDesignBtn" class="aso-modal-button aso-design-button" type="button" 
@@ -46,6 +42,7 @@
     {% endif %}
   </div>
 
+  <!-- Modal pour le configurateur -->
   <div id="aso-design-modal" class="aso-modal" style="display: none;"> 
     <div class="aso-modal-content">
       <div class="aso-modal-header">
@@ -53,7 +50,7 @@
         <button class="aso-modal-close" onclick="closeDesignModal()">&times;</button>
       </div>
       <div class="aso-modal-body">
-        <div class="shopify-app-wrapper">
+        <div class="shopify-app-wrapper"  >
           <div class="aso-app" id="app">
             {% render 'loader' %}
           </div>
@@ -68,11 +65,13 @@
     </div>
   </div>
 
+  <!-- Modal pour l'upload -->
   {% render 'uploads-modal' %}
+
+  <!-- Modal pour voir les fichiers uploadés -->
   {% render 'view-uploads-modal' %}
-  
 {% else %}
-  <div class="shopify-app-wrapper">
+  <div class="shopify-app-wrapper"  >
     <div class="aso-app" id="app">
       {% render 'loader' %}
     </div>
@@ -87,14 +86,6 @@
 
 
 {% render 'style' %}
-<style>
-  #aso-design-modal, .aso-app {
-    font-family: var(--font-body-family), sans-serif !important;
-  }
-  #aso-design-modal h2, .aso-app h1, .aso-app h2 {
-    font-family: var(--font-heading-family), serif !important;
-  }
-</style>
 
 <!-- Affichage normal du configurateur -->
 {% if block.settings.useIframe == false %}
@@ -103,37 +94,39 @@
   <script defer src="{{'shopify.js'|asset_url}}"></script>
   <script defer src="{{'fabric.min.js'|asset_url}}"></script>
   <script defer id="design-js" type="module"  src="{{'index.js' |asset_url }}"></script>
-{% else %}
+
+{% else %} 
 
   <script>
     const iframeBaseUrl = '/apps/aso-proxy/assets-preview/aso-iframe.html';
-    
-    // MODIFICATION : On ajoute themeFont à l'URL de l'iframe 
-    const themeFontParam = encodeURIComponent(window.asoThemeFonts.body);
-    const iframeUrl = `${iframeBaseUrl}?asoProductId=${encodeURIComponent(asoProductId)}&asoCurrency=${encodeURIComponent(asoCurrency)}&asoPriceFormat=${encodeURIComponent(asoPriceFormat)}&asoRegularPrice=${encodeURIComponent(asoRegularPrice)}&asoCurrency_pos=${encodeURIComponent(asoCurrency_pos)}&asoThousandSep=${encodeURIComponent(asoThousandSep)}&asoDecimalSep=${encodeURIComponent(asoDecimalSep)}&asoConfigurationId=${encodeURIComponent(asoConfigurationId)}&themeFont=${themeFontParam}`;
+    const iframeUrl = `${iframeBaseUrl}?asoProductId=${encodeURIComponent(asoProductId)}&asoCurrency=${encodeURIComponent(asoCurrency)}&asoPriceFormat=${encodeURIComponent(asoPriceFormat)}&asoRegularPrice=${encodeURIComponent(asoRegularPrice)}&asoCurrency_pos=${encodeURIComponent(asoCurrency_pos)}&asoThousandSep=${encodeURIComponent(asoThousandSep)}&asoDecimalSep=${encodeURIComponent(asoDecimalSep)}&asoConfigurationId=${encodeURIComponent(asoConfigurationId)}`;
 
     function createIframe(targetDiv) {
       const iframe = document.createElement('iframe');
       iframe.src = iframeUrl;
-      iframe.width = '100%'; [cite: 14]
+      iframe.width = '100%';
       iframe.height = '100%';
       iframe.style.border = 'none';
-      iframe.setAttribute('name', 'ASOIframe'); [cite: 14]
+      iframe.setAttribute('name', 'ASOIframe');
+
       if (targetDiv) {
         targetDiv.innerHTML = '';
-        targetDiv.appendChild(iframe); [cite: 15]
+        targetDiv.appendChild(iframe);
       }
     }
 
+    // Créer l'iframe pour l'affichage direct (quand useModal est false)
     {% if block.settings.useModal == false %}
       const targetDiv = document.querySelector('.aso-app');
-      createIframe(targetDiv); [cite: 17]
+      createIframe(targetDiv);
     {% endif %}
 
+    // Fonction pour créer l'iframe dans le modal (quand useModal est true)
     window.createIframeInModal = function() {
       const modalTargetDiv = document.querySelector('#aso-design-modal .aso-app');
-      createIframe(modalTargetDiv); [cite: 18]
+      createIframe(modalTargetDiv);
     };
+        
   </script>
 
 {% endif %}
@@ -142,10 +135,12 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
       const modals = document.querySelectorAll('.aso-modal');
-      modals.forEach(function(modal) {
-          modal.remove();
-          document.body.appendChild(modal); [cite: 19]
-      });
+          
+          modals.forEach(function(modal) {
+              // Remove from current parent and append to body
+              modal.remove();
+              document.body.appendChild(modal);
+          });
   });
 </script>
 {% endif %}
@@ -541,22 +536,15 @@
         "id": "useIframe",
         "type": "checkbox",
         "label": "Use iframe to show configuration",
-        "default": false,
+        "default": true,
         "info": "Enable this if you experience template compatibility issues."
       },
       {
         "id": "useModal",
         "type": "checkbox",
         "label": "Use modal interface",
-        "default": false,
+        "default": true,
         "info": "Enable this to show buttons that open modals instead of displaying the configurator directly."
-      },
-      {
-        "type": "product",
-        "id": "product",
-        "label": "Product with configuration",
-        "autofill": true,
-        "info": "Select a product that has been assigned to a configuration, but on the product details page, the configuration of the current product is displayed only if available"
       },
       {
         "type": "header",
@@ -595,7 +583,7 @@
         "id": "upload_button_enabled",
         "type": "checkbox",
         "label": "Enable  Upload Button",
-        "default": true,
+        "default": false,
         "info": "This  option  allow to show the upload button"
       },
       {
@@ -624,7 +612,7 @@
         "id": "view_uploads_button_enabled",
         "type": "checkbox",
         "label": "Enable View Uploads Button",
-        "default": true,
+        "default": false,
         "info": "This option allows to show the view uploads button"
       },
       {
@@ -647,4 +635,4 @@
       }
   ]
 }
-{% endschema %} 
+{% endschema %}
