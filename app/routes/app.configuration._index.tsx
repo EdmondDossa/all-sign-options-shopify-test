@@ -224,18 +224,6 @@ export default function Configuration() {
   };
 
 
-  const [active, setActive] = useState(false);
-  const [activePopoverId, setActivePopoverId] = useState<string | null>(null);
-
-  const togglePopover = useCallback(() => setActive((active) => !active), []);
-
-  const handleAction = (action: string, id: string) => {
-    console.log(`Action "${action}" sur l’élément ID: ${id}`);
-    setActivePopoverId(null); // ferme le popover
-  };
-
-
-
   const rowMarkup = configurations.map(
     ({ id, name, description, icon, popupImg, materialType }: any, index: number) => {
       const isActive = activePopoverId === id;
