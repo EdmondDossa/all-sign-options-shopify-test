@@ -95,6 +95,7 @@ export interface ConfigSize {
     excludeSizes: number[];
     excludeShapes: number[];
     isDefault?: boolean;
+    isVisible?: boolean;
   }
   
 export interface ConfigColor {

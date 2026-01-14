@@ -29,6 +29,7 @@ export default class MaterialFixingMethodService {
     fixingMethod: ConfigFixingMethod,
   ): Promise<ConfigFixingMethod[] | null> {
     fixingMethod.isDefault = false;
+    fixingMethod.isVisible = fixingMethod.isVisible !== undefined ? fixingMethod.isVisible : true;
 
     try {
       let configuration: ConfigurationType =
