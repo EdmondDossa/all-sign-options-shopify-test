@@ -89,11 +89,10 @@
 
 <!-- Affichage normal du configurateur -->
 {% if block.settings.useIframe == false %}
-
   <link rel="stylesheet"  href="{{'index.css' |asset_url }}">
-  <script defer src="{{'shopify.js'|asset_url}}"></script>
-  <script defer src="{{'fabric.min.js'|asset_url}}"></script>
-  <script defer id="design-js" type="module"  src="{{'index.js' |asset_url }}"></script>
+  <script src="{{'shopify.js'|asset_url}}"></script>
+  <script src="{{'fabric.min.js'|asset_url}}"></script>
+  <script id="design-js" type="module"  src="{{'index.js' |asset_url }}"></script>
 
 {% else %} 
 

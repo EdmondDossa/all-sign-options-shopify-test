@@ -9,95 +9,90 @@ import { replaceDomainUrl } from "~/utils/fileUrlServer.server";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-    console.log("API configurations called with params:", params);
-    let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
-    let admin: any = null;
-    let session: any = null;
-    if (!asoAccessToken) {
-        ({ admin, session } = await authenticate.public.appProxy(request));
-    }
-
-    if (!admin || !session) {
-        try {
-            session = await prisma.session.findFirst({ where: { accessToken: request.headers.get("Aso-Access-Token") || "" } });
-        if (!session) {
-          return json({ error: "Session not found" });
-        } 
-        }catch (error) {
-          return json({ error: "Session not found" , allerros: error });
-        }
-    }
-
-   
-    let sessionId = session.id;
-
-   
-    
-
-    let plan: string = "";
-    
-
+    console.log('🔥 API configurations called - START');
     try {
-        if (admin) {
-            plan = await getPlanProxy(admin, session.shop);
-           
-        }else{
-            plan = await getPlanProxyPublic(session.shop, session.accessToken);
+        console.log("API configurations called with params:", params);
+        let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
+        let admin: any = null;
+        let session: any = null;
+        
+        if (!asoAccessToken) {
+            ({ admin, session } = await authenticate.public.appProxy(request));
         }
-    } catch (error) {
-       plan = "free"; 
-    }
 
+        if (!admin || !session) {
+            try {
+                session = await prisma.session.findFirst({ where: { accessToken: asoAccessToken } });
+            if (!session) {
+              return json({ error: "Session not found" });
+            } 
+            }catch (error) {
+              return json({ error: "Session not found", details: error });
+            }
+        }
 
-    let configs = await ConfigurationService.getConfigurations(sessionId, true);
+        let sessionId = session.id;
+        let plan: string = "";
+        
+        try {
+            if (admin) {
+                plan = await getPlanProxy(admin, session.shop);
+            } else {
+                plan = await getPlanProxyPublic(session.shop, session.accessToken);
+            }
+        } catch (error) {
+           plan = "free"; 
+        }
 
-    let config = null;
+        let configs = await ConfigurationService.getConfigurations(sessionId, true);
 
-    if (!configs) {
-        return json(null);
-    }
+        let config = null;
 
-    config = configs?.find((curr: any) => curr.id == params.id)
+        if (!configs) {
+            return json(null);
+        }
 
-    // Debug log to check materialType and productType
-    console.log("API configurations - Config found:", {
-        id: config?.id,
-        materialType: config?.materialType,
-        productType: config?.productType,
-        name: config?.name
-    });
-    
-    if (plan == PRICING_PLANS.STARTER) {
-        configs = configs?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)
         config = configs?.find((curr: any) => curr.id == params.id)
-    } 
 
-    
+        // Debug log to check materialType and productType
+        console.log("API configurations - Config found:", {
+            id: config?.id,
+            materialType: config?.materialType,
+            productType: config?.productType,
+            name: config?.name
+        });
+        
+        if (plan == PRICING_PLANS.STARTER) {
+            configs = configs?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)
+            config = configs?.find((curr: any) => curr.id == params.id)
+        } 
 
-    if (plan == PRICING_PLANS.STARTER) {
-        config = configFilter(config);
+        if (plan == PRICING_PLANS.STARTER) {
+            config = configFilter(config);
+        }
+
+        config = await replaceDomainUrl(config, admin);
+
+        // Ajouter materialType et productType dans l'objet data pour le configurateur frontend
+        if (config && config.data) {
+            config.data.materialType = config.materialType;
+            config.data.productType = config.productType;
+        }
+
+        // S'assurer que materialType et productType sont bien présents au niveau racine ET dans data
+        console.log("API configurations - Final config before return:", {
+            id: config?.id,
+            materialType: config?.materialType,
+            productType: config?.productType,
+            dataMaterialType: config?.data?.materialType,
+            dataProductType: config?.data?.productType,
+            hasData: !!config?.data
+        });
+
+        return json(config);
+
+    } catch (error) {
+        console.error('Error in configurations API:', error);
+        return json({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
     }
-
-
-    config = await replaceDomainUrl(config, admin);
-
-    // Ajouter materialType et productType dans l'objet data pour le configurateur frontend
-    if (config && config.data) {
-        config.data.materialType = config.materialType;
-        config.data.productType = config.productType;
-    }
-
-    // S'assurer que materialType et productType sont bien présents au niveau racine ET dans data
-    console.log("API configurations - Final config before return:", {
-        id: config?.id,
-        materialType: config?.materialType,
-        productType: config?.productType,
-        dataMaterialType: config?.data?.materialType,
-        dataProductType: config?.data?.productType,
-        hasData: !!config?.data
-    });
-
-    return json(config );
-
 };
-  
