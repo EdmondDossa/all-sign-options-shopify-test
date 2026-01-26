@@ -31,11 +31,51 @@ export default class SettingService {
 
       if (!setting) {
         setting = await SettingService.addSetting(sessionId);
+      } else {
+        // Vérifier si les nouvelles méthodes de fixation existent, sinon les ajouter
+        setting = await SettingService.updateSettingWithNewFixingMethods(sessionId, setting);
       }
       return setting;
     } catch (error) {
       console.error("Error adding font:", error);
       return Promise.resolve(null);
+    }
+  }
+
+  static async updateSettingWithNewFixingMethods(sessionId: string, setting: any): Promise<any> {
+    try {
+      const currentData = setting.data as any;
+      const defaultData = data(""); // Passer une chaîne vide pour l'argument shop
+      
+      // Vérifier si les nouvelles méthodes existent dans les settings actuels
+      const currentFixingMethods = currentData.fixingMethods || [];
+      const defaultFixingMethods = defaultData.fixingMethods || [];
+      
+      // Ajouter les nouvelles méthodes qui n'existent pas
+      const newFixingMethods = defaultFixingMethods.filter((defaultMethod: any) => 
+        !currentFixingMethods.some((currentMethod: any) => currentMethod.type === defaultMethod.type)
+      );
+      
+      if (newFixingMethods.length > 0) {
+        const updatedData = {
+          ...currentData,
+          fixingMethods: [...currentFixingMethods, ...newFixingMethods]
+        };
+        
+        setting = await prisma.setting.update({
+          where: {
+            sessionId: sessionId,
+          },
+          data: {
+            data: updatedData,
+          },
+        });
+      }
+      
+      return setting;
+    } catch (error) {
+      console.error("Error updating fixing methods:", error);
+      return setting;
     }
   }
 }
@@ -261,6 +301,27 @@ const data = (shop: string) => {
         icon:url + "/assets/images/fixing-methodes/ic_fixmethod_roll_up.svg",
         popImg: "",
         type: "roll-up",
+      },
+      {
+        name: "Invisible Standoffs",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_invisible_standoff.svg",
+        popImg: "",
+        type: "invisible-standoff",
+      },
+      {
+        name: "Hidden Mounts",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_hidden_mount.svg",
+        popImg: "",
+        type: "hidden-mount",
+      },
+      {
+        name: "Pins",
+        description: "",
+        icon:url + "/assets/images/fixing-methodes/ic_fixmethod_pins.svg",
+        popImg: "",
+        type: "pins",
       },
     ],
     borders: [

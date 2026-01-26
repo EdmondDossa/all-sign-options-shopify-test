@@ -14,9 +14,10 @@ const  uploadSetting =  {
   }
 }
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { admin, session } = await authenticate.public.appProxy(request);
+  console.log(' API configuration-upload called - START');
+  try {
+    const { admin, session } = await authenticate.public.appProxy(request);
  
-  
     if(!params.id){
       return uploadSetting;
     }
@@ -24,5 +25,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     let config = await ConfigurationService.getConfigurationWithoutTemplates(parseInt(`${params.id}`) , session?.id as string);
 
     return config?.data?.settings?.generals?.upload || uploadSetting;
+  } catch (error) {
+    console.error('Error in configuration-upload API:', error);
+    return json({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
+  }
 };
-  

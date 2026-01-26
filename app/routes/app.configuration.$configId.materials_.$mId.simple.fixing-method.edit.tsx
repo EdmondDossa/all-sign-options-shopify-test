@@ -100,6 +100,7 @@ export default function MaterialFixingMethodEdit({ manageFixingMethods, fixingMe
               excludeSizes: [],
               excludeShapes: [],
               isDefault: false,
+              isVisible: true,
             },
           ],
         },
@@ -121,6 +122,7 @@ export default function MaterialFixingMethodEdit({ manageFixingMethods, fixingMe
         ),
         additionalPrice: 0,
         isDefault: false,
+        isVisible: true,
         excludeSizes: [],
         excludeShapes: [],
       });
@@ -384,6 +386,7 @@ const formSchema = z.object({
           excludeShapes: z.number().array(),
           excludeSizes: z.number().array(),
           isDefault: z.boolean().optional(),
+          isVisible: z.boolean().optional(),
         })
         .array(),
     ),

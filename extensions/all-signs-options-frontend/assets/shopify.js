@@ -64,6 +64,7 @@ async function getAsoManagesData() {
     
   
     try {
+      console.log('Calling manages-data API at:', shopifyProxyURL + 'manages-data');
       const response = await fetch(`${shopifyProxyURL}manages-data`, {
         method: 'GET',
         headers: {
@@ -108,13 +109,14 @@ async function aso_confiurator_dataFunction(){
      document.querySelector(".aso-app-not-found").style.display = "flex";
   }
 
-  if (currentConfig) {
+  if (currentConfig && managesData) {
     managesData.fonts = managesData.fonts.filter(font => currentConfig.data.settings.customizerSign.text.selectedFonts?.includes(font.id)) ?? [];
     managesData.cliparts = managesData.cliparts.filter(clipart => currentConfig.data.settings.customizerSign.images.enableClipart?.selectClipartGroups?.includes(clipart.id));
   }
   defaultStyle( `${window.location.origin}/${window.Shopify?.routes?.root?.replace("/",'')}apps/aso-proxy`);
    //  to add  font and custom css to  page
-   managesData.fonts?.forEach(font => {
+   if (managesData && managesData.fonts) {
+     managesData.fonts?.forEach(font => {
     let style = document.createElement('style');
     style.textContent = `
           
@@ -126,6 +128,7 @@ async function aso_confiurator_dataFunction(){
       `; 
     document.body.appendChild(style);
   });
+  }
   try {
     currentConfig['data']['settings']['themeColors']['customCss'] && addStylesToBody(currentConfig['data']['settings']['themeColors']['customCss']);
   } catch (error) {

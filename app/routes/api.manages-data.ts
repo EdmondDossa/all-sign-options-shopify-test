@@ -12,22 +12,24 @@ import prisma from "~/db.server";
 import { replaceDomainUrl } from "~/utils/fileUrlServer.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
-  let admin: any = null;
-  let session: any = null;
-  if (!asoAccessToken) {
-      ({ admin, session } = await authenticate.public.appProxy(request));
-  }
-
-  if (!admin) {
-    try {
-      session = await prisma.session.findFirst({ where: { accessToken: asoAccessToken } }) ;
-      if (!session) {
-        return json({ error: "Session not found" });
-      }
-    } catch (error) {
-      return json({ error: "Session not found" , allerros: error });
+  console.log('🔥 API manages-data called - START');
+  try {
+    let asoAccessToken = request.headers.get("Aso-Access-Token") || "" ;
+    let admin: any = null;
+    let session: any = null;
+    if (!asoAccessToken) {
+        ({ admin, session } = await authenticate.public.appProxy(request));
     }
+
+    if (!admin) {
+      try {
+        session = await prisma.session.findFirst({ where: { accessToken: asoAccessToken } }) ;
+        if (!session) {
+          return json({ error: "Session not found" });
+        }
+      } catch (error) {
+        return json({ error: "Session not found" , allerros: error });
+      }
        
   }
   
@@ -71,4 +73,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   data = await replaceDomainUrl(data, admin);
   return json(data);
 
+  } catch (error) {
+    console.error('Error in manages-data API:', error);
+    return json({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
+  }
 };
