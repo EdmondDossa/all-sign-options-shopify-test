@@ -105,8 +105,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       await ShopifyProductService.publish(admin, product.id)
     const recapsPath = assignShopDesignPath(session.id, `recaps/${product.variants.edges[0].node.legacyResourceId}.json`)
     
-    if (!updateOrCreateJsonData(recapsPath, data.option.recaps)) {
-      return null;
+    const recapsSaved = updateOrCreateJsonData(recapsPath, data.option.recaps);
+    if (!recapsSaved) {
+      console.warn("[add-cart-variant] updateOrCreateJsonData failed for path:", recapsPath, "- continuing to create variant");
     }
 
       const variant = await ShopifyProductService.updateVariant(
@@ -115,9 +116,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             product.variants.edges[0].node.id,
             optionName,
             data.price,
-            {recapsPath:recapsPath}
+            { recapsPath: recapsSaved ? recapsPath : undefined }
       )
       
+    if (!variant || !variant.variantId) {
+      console.error("[add-cart-variant] updateVariant returned no variant:", variant);
+      return json({ status: false, message: "Failed to create variant", error: "variant_creation_failed" });
+    }
     return json(variant);
   } catch (error) {
     console.log("error  on getting add cart", error);
