@@ -165,7 +165,7 @@ export default function Index() {
   ];
 
   const usefulLinks = [
-    { title: "Browse Demos", icon: ViewIcon, url: "https://all-signs-options.myshopify.com/password" },
+    { title: "Request a feature", icon: ViewIcon, url: "https://aso.sleekplan.app/" },
     { title: "Learning Center", icon: PhoneIcon, url: "https://docs.signsdesigner.us/docs/aso-wp-documentation/" },
     // { title: 'Manufacturers', icon: StoreIcon },
     { title: "Pricing", icon: BillIcon, url: "/pricing" },
@@ -522,7 +522,7 @@ export default function Index() {
                       </Text>
                           </BlockStack>
                         </div>
-                        <Button onClick={() => window.open("https://docs.signsdesigner.us/docs/aso-wp-documentation/", "_blank")}>View docs</Button>
+                        <Button onClick={() => window.open("https://docs.signsdesigner.us/docs/aso-app-documentations/", "_blank")}>View docs</Button>
                       </Card>
                     </InlineStack>
                   </Box>
@@ -650,19 +650,14 @@ export default function Index() {
                       <BlockStack gap="200">
                         {usefulLinks.map((link, index) => (
                           <Box key={index} width="fit-content">
-                            {(link.title == 'Browse Demos') && 
-                              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                <Button
-                                  icon={link.icon}
-                                  onClick={() => window.open(`${link.url}`, "_blank")}
-                                >
-                                  {link.title}
-                                </Button>
-                                <span style={{ fontSize: "14px", color: "#555" }}>
-                                  The password to access to demo is: <strong>aso</strong>
-                                </span>
-                              </div>
-                            }
+                            {(link.title == 'Request a feature') && (
+                              <Button
+                                icon={link.icon}
+                                onClick={() => window.open(`${link.url}`, "_blank")}
+                              >
+                                {link.title}
+                              </Button>
+                            )}
                             {link.title == 'Learning Center' && (
                               <Button
                                 icon={link.icon}

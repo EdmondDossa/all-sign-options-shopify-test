@@ -132,6 +132,11 @@ model Design {
   session    Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
+enum TemplatePackType {
+  PACK
+  TEMPLATE
+}
+
 model TemplatePack {
   id          Int                @id @default(autoincrement())
   name        String
@@ -144,12 +149,15 @@ model TemplatePack {
   icon        String?
   isActive    Boolean            @default(true)
   order       Int                @default(0)
+  type        TemplatePackType   @default(PACK)
+  templateIds Json?              // Array of template IDs for packs, single ID for individual templates
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
   purchases   ShopTemplatePack[]
 
   @@index([slug])
   @@index([isActive])
+  @@index([type])
 }
 
 model ShopTemplatePack {

@@ -15,8 +15,9 @@ export default class ConfigSettingsService {
   static async get(sessionId: string, configurationId: number,setting:string, settingItem:string): Promise<any| null> {
     try {
       let configuration: any = await ConfigurationService.getConfiguration(configurationId, sessionId);
-      let settingData  = configuration["data"]["settings"][setting][settingItem];
-      return settingData;
+      if (!configuration?.data?.settings?.[setting]) return null;
+      const settingData = configuration.data.settings[setting][settingItem];
+      return settingData ?? null;
     } catch (error) {
       return Promise.resolve(null);
     }

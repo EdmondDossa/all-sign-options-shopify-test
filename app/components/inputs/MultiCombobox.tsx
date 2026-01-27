@@ -14,11 +14,13 @@ export const MultiCombobox = ({
     placeholder: string;
     helpText?: string;
     labelHidden?: boolean;
-    data: Array<{ label: string; value: any }>;
-    selectedOptions: any[];
+    data?: Array<{ label: string; value: any }>;
+    selectedOptions?: any[];
     setSelectedOptions:Function;
   }) => {
-    const deselectedOptions = useMemo(() => data, []);
+    const safeData = data ?? [];
+    const safeSelectedOptions = selectedOptions ?? [];
+    const deselectedOptions = useMemo(() => safeData, [safeData]);
   
     const [inputValue, setInputValue] = useState("");
     const [options, setOptions] = useState(deselectedOptions);
@@ -48,31 +50,31 @@ export const MultiCombobox = ({
   
     const updateSelection = useCallback(
       (selected: string) => {
-        if (selectedOptions.includes(selected+"")) {
+        if (safeSelectedOptions.includes(selected+"")) {
           setSelectedOptions(
-            selectedOptions.filter((option) => option != selected),
+            safeSelectedOptions.filter((option) => option != selected),
           );
         } else {
-          setSelectedOptions([...selectedOptions, selected]);
+          setSelectedOptions([...safeSelectedOptions, selected]);
         }
-  
+
         updateText("");
       },
-      [selectedOptions, updateText],
+      [safeSelectedOptions, setSelectedOptions, updateText],
     );
-  
+
     const removeTag = useCallback(
       (tag: string) => () => {
-        const options = [...selectedOptions];
+        const options = [...safeSelectedOptions];
         options.splice(options.indexOf(tag), 1);
         setSelectedOptions(options);
       },
-      [selectedOptions],
+      [safeSelectedOptions, setSelectedOptions],
     );
-  
-    const tagsMarkup = selectedOptions.map((option) => (
+
+    const tagsMarkup = safeSelectedOptions.map((option) => (
       <Tag key={`option-${option}`} onRemove={removeTag(option)}>
-        {data.find((current) => current.value == option)?.label}
+        {safeData.find((current) => current.value == option)?.label}
       </Tag>
     ));
   
@@ -85,7 +87,7 @@ export const MultiCombobox = ({
               <Listbox.Option
                 key={`${value}`}
                 value={value}
-                selected={selectedOptions.includes(value)}
+                selected={safeSelectedOptions.includes(value)}
                 accessibilityLabel={label}
               >
                 {label}

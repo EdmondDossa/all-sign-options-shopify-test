@@ -215,6 +215,19 @@
     // Récupérer le form d'ajout au panier
     const productForm = document.querySelector('form[action="/cart/add"]');
 
+    // Ouvrir automatiquement le modal si aso-template-id est présent dans l'URL
+    // Cela permet d'ouvrir le configurateur directement quand on clique sur "customize" depuis le template embed
+    const urlParams = new URLSearchParams(window.location.search);
+    const asoTemplateId = urlParams.get('aso-template-id');
+    const designModal = document.getElementById('aso-design-modal');
+    if (asoTemplateId && designModal) {
+      // Attendre un peu pour que le configurateur soit initialisé
+      setTimeout(function() {
+        lockProductForm(true);
+        openDesignModal();
+      }, 500);
+    }
+
     // Binder proprement les boutons
     document.getElementById('asoDesignBtn')?.addEventListener('click', (e) => {
       e.preventDefault();
@@ -307,7 +320,7 @@
       console.log('[ASO] Making API call to /apps/aso-proxy/api/add-cart-variant');
       console.log('[ASO] Request data:', data);
       
-      let response = await fetch('/apps/aso-proxy/api/add-cart-variant', {
+      let response = await fetch((window.Shopify?.routes?.root || '/') + 'apps/aso-proxy/api/add-cart-variant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -382,63 +395,78 @@
       if (event.data && event.data.type === 'ADD_TO_CART_CHECKOUT') {
         const formData = event.data.payload;
         console.log('[ASO] ADD_TO_CART_CHECKOUT payload:', formData);
-        console.log('[ASO] asoCreateVariantAndAddToCart available:', !!window.asoCreateVariantAndAddToCart);
         
-        // Vérifier que les données nécessaires sont présentes
-        if (!formData.price || !formData.option) {
-          console.error('[ASO] Missing required data in payload:', formData);
-          console.log('[ASO] Available variables:', { asoProductId, asoRegularPrice });
-          
-          // Si on a un ID de variante, rediriger directement vers le checkout
-          if (formData.id && formData.id !== 'undefined') {
-            console.log('[ASO] Using variant ID for direct checkout redirect:', formData.id);
-            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity || 1}`;
-          } else {
-            console.log('[ASO] Fallback to direct checkout redirect with product ID');
-            document.location = window.location.origin + `/cart/${formData.id || asoProductId}:${formData.quantity || 1}`;
+        if (formData.id && formData.id !== 'undefined') {
+          const variantId = parseInt(String(formData.id).replace(/^gid:\/\/shopify\/ProductVariant\//, ''), 10) || formData.id;
+          const quantity = parseInt(formData.quantity, 10) || 1;
+          try {
+            const root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+            const addRes = await fetch(root + 'cart/add.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ items: [{ id: variantId, quantity: quantity }] })
+            });
+            if (addRes.ok) {
+              const cartRes = await fetch(root + 'cart.js');
+              const cartData = cartRes.ok ? await cartRes.json() : null;
+              const checkoutUrl = cartData && typeof getAsoCheckoutUrl === 'function' ? await getAsoCheckoutUrl(cartData.token) : null;
+              if (checkoutUrl) {
+                document.location = checkoutUrl;
+              } else {
+                document.location = window.location.origin + '/cart';
+              }
+            } else {
+              document.location = window.location.origin + '/cart/' + variantId + ':' + quantity;
+            }
+          } catch (e) {
+            document.location = window.location.origin + '/cart/' + variantId + ':' + quantity;
           }
-        } else {
-          // Utiliser la fonction qui crée la variante avec les propriétés
-          if (window.asoCreateVariantAndAddToCart) {
-            console.log('[ASO] Calling asoCreateVariantAndAddToCart with checkout=true');
-            await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId || asoProductId, formData.regularPrice || asoRegularPrice, true);
-          } else {
-            console.log('[ASO] Fallback to direct cart redirect');
-            // Fallback vers l'ancienne méthode
-            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}`;
-          }
+          return;
+        }
+        if (formData.price != null && formData.option && window.asoCreateVariantAndAddToCart) {
+          await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId || asoProductId, formData.regularPrice || asoRegularPrice, true);
         }
       }
 
       if (event.data && event.data.type === 'ADD_TO_CART') {
         const formData = event.data.payload;
         console.log('[ASO] ADD_TO_CART payload:', formData);
-        console.log('[ASO] asoCreateVariantAndAddToCart available:', !!window.asoCreateVariantAndAddToCart);
         
-        // Vérifier que les données nécessaires sont présentes
-        if (!formData.price || !formData.option) {
-          console.error('[ASO] Missing required data in payload:', formData);
-          console.log('[ASO] Available variables:', { asoProductId, asoRegularPrice });
-          
-          // Si on a un ID de variante, rediriger directement vers le panier
-          if (formData.id && formData.id !== 'undefined') {
-            console.log('[ASO] Using variant ID for direct cart redirect:', formData.id);
-            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity || 1}?storefront=true`;
-          } else {
-            console.log('[ASO] Fallback to direct cart redirect with product ID');
-            document.location = window.location.origin + `/cart/${formData.id || asoProductId}:${formData.quantity || 1}?storefront=true`;
+        // Cas 1 : on a déjà un variantId (créé par l'iframe) → ajouter au panier via l'API puis rediriger
+        if (formData.id && formData.id !== 'undefined') {
+          const variantId = parseInt(String(formData.id).replace(/^gid:\/\/shopify\/ProductVariant\//, ''), 10) || formData.id;
+          const quantity = parseInt(formData.quantity, 10) || 1;
+          console.log('[ASO] Adding variant to cart via API:', { variantId, quantity });
+          try {
+            const root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+            const addRes = await fetch(root + 'cart/add.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ items: [{ id: variantId, quantity: quantity }] })
+            });
+            const addJson = await addRes.json().catch(function() { return null; });
+            if (addRes.ok) {
+              console.log('[ASO] Item added, redirecting to cart');
+              document.location = window.location.origin + '/cart';
+            } else {
+              console.error('[ASO] Cart add failed:', addRes.status, addJson);
+              document.location = window.location.origin + '/cart/' + variantId + ':' + quantity;
+            }
+          } catch (e) {
+            console.error('[ASO] Cart add request failed:', e);
+            document.location = window.location.origin + '/cart/' + variantId + ':' + quantity;
           }
-        } else {
-          // Utiliser la fonction qui crée la variante avec les propriétés
-          if (window.asoCreateVariantAndAddToCart) {
-            console.log('[ASO] Calling asoCreateVariantAndAddToCart with checkout=false');
-            await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId || asoProductId, formData.regularPrice || asoRegularPrice, false);
-          } else {
-            console.log('[ASO] Fallback to direct cart redirect');
-            // Fallback vers l'ancienne méthode
-            document.location = window.location.origin + `/cart/${formData.id}:${formData.quantity}?storefront=true`;
-          }
+          return;
         }
+        
+        // Cas 2 : on a price + option → créer la variante puis ajouter (asoCreateVariantAndAddToCart gère le postMessage)
+        if (formData.price != null && formData.option && window.asoCreateVariantAndAddToCart) {
+          console.log('[ASO] Calling asoCreateVariantAndAddToCart with checkout=false');
+          await window.asoCreateVariantAndAddToCart(formData.price, formData.option, formData.productId || asoProductId, formData.regularPrice || asoRegularPrice, false);
+          return;
+        }
+        
+        console.warn('[ASO] ADD_TO_CART payload missing id or (price+option):', formData);
       }
 
       if (event.data && event.data.type ===  'UPLOAD_ON_FINISH') {

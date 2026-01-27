@@ -4,7 +4,7 @@ import CategoryService from "~/models/Category.service";
 import ConfigurationService from "~/models/Configuration.service";
 import FontService from "~/models/Font.service";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
-import { readFileSync, readdirSync, copyFileSync, existsSync, mkdirSync } from "fs";
+import { readFileSync, readdirSync, copyFileSync, existsSync, mkdirSync, writeFileSync } from "fs";
 import * as path from "path";
 import { replaceUrlForImport } from "~/utils/import-file";
 import { getShopPath } from "~/utils/fileUrl";
@@ -23,18 +23,29 @@ export interface TemplatePackType {
   order?: number;
 }
 
+export enum TemplatePackTypeEnum {
+  PACK = "PACK",
+  TEMPLATE = "TEMPLATE",
+}
+
 export default class TemplatePackService {
   /**
-   * Get all active template packs
+   * Get all active template packs (or templates) - can filter by type
    */
-  static async getAllPacks(sessionId?: string): Promise<any[]> {
+  static async getAllPacks(sessionId?: string, type?: "PACK" | "TEMPLATE"): Promise<any[]> {
     try {
+      const where: any = {
+        isActive: true,
+      };
+      
+      if (type) {
+        where.type = type;
+      }
+
       const packs = await prisma.templatePack.findMany({
-        where: {
-          isActive: true,
-        },
+        where,
         orderBy: {
-          order: "asc",
+          createdAt: "desc",
         },
       });
 
@@ -297,6 +308,138 @@ export default class TemplatePackService {
     } catch (error) {
       console.error("Error recording pack purchase:", error);
       return null;
+    }
+  }
+
+  /**
+   * Record a pack purchase with charge ID and status (for pending payments)
+   */
+  static async recordPurchaseWithCharge(
+    sessionId: string,
+    packId: number,
+    price: number,
+    shopifyChargeId: string | null,
+    status: string
+  ): Promise<any | null> {
+    try {
+      // Check if already purchased
+      const existing = await prisma.shopTemplatePack.findUnique({
+        where: {
+          sessionId_packId: {
+            sessionId: sessionId,
+            packId: packId,
+          },
+        },
+      });
+
+      if (existing) {
+        // Update existing purchase
+        return await prisma.shopTemplatePack.update({
+          where: { id: existing.id },
+          data: {
+            purchasedAt: new Date(),
+            purchasePrice: price,
+            shopifyChargeId: shopifyChargeId,
+            purchaseStatus: status,
+            isActive: status === "active" || status === "accepted",
+          },
+        });
+      }
+
+      // Create new purchase
+      return await prisma.shopTemplatePack.create({
+        data: {
+          sessionId: sessionId,
+          packId: packId,
+          purchasePrice: price,
+          shopifyChargeId: shopifyChargeId,
+          purchaseStatus: status,
+          isActive: status === "active" || status === "accepted",
+        },
+      });
+    } catch (error) {
+      console.error("Error recording pack purchase with charge:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Finalize purchase after payment confirmation (called from webhook)
+   * Returns purchase info for the webhook to handle import
+   */
+  static async finalizePurchase(
+    shopifyChargeId: string,
+    status: string,
+    admin?: any
+  ): Promise<{ success: boolean; message: string; purchase?: any; shouldImport?: boolean }> {
+    try {
+      // Find purchase by charge ID
+      const purchase = await prisma.shopTemplatePack.findFirst({
+        where: {
+          shopifyChargeId: shopifyChargeId,
+        },
+        include: {
+          pack: true,
+          session: true,
+        },
+      });
+
+      if (!purchase) {
+        return {
+          success: false,
+          message: `Purchase not found for charge ID: ${shopifyChargeId}`,
+        };
+      }
+
+      // Update purchase status
+      const isActive = status === "active" || status === "accepted";
+      const updatedPurchase = await prisma.shopTemplatePack.update({
+        where: { id: purchase.id },
+        data: {
+          purchaseStatus: status,
+          isActive: isActive,
+        },
+      });
+
+      // If payment is accepted and admin is provided, import the pack
+      if (isActive && admin && purchase.session) {
+        const importResult = await this.importPackToShop(
+          purchase.sessionId,
+          purchase.packId,
+          purchase.session.shop,
+          admin
+        );
+
+        if (importResult.success) {
+          return {
+            success: true,
+            message: `Pack "${purchase.pack.name}" purchased and imported successfully! ${importResult.templatesCount} templates added.`,
+            purchase: updatedPurchase,
+            shouldImport: false, // Already imported
+          };
+        } else {
+          return {
+            success: false,
+            message: `Payment confirmed but import failed: ${importResult.message}`,
+            purchase: updatedPurchase,
+            shouldImport: false,
+          };
+        }
+      }
+
+      // Return info that import should be done (if admin not provided, webhook will handle it)
+      return {
+        success: true,
+        message: `Purchase status updated to: ${status}`,
+        purchase: updatedPurchase,
+        shouldImport: isActive && !admin,
+      };
+    } catch (error: any) {
+      console.error("Error finalizing purchase:", error);
+      return {
+        success: false,
+        message: error.message || "Error finalizing purchase",
+      };
     }
   }
 
@@ -850,6 +993,278 @@ export default class TemplatePackService {
       }
     } catch (error) {
       console.error("Error checking pack access after deletion:", error);
+    }
+  }
+
+  /**
+   * Get all templates from a session for selection
+   */
+  static async getTemplatesForSelection(sessionId: string): Promise<any[]> {
+    try {
+      const templates = await prisma.template.findMany({
+        where: {
+          sessionId: sessionId,
+        },
+        include: {
+          category: true,
+          configuration: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        orderBy: [
+          { category: { name: "asc" } },
+          { name: "asc" },
+        ],
+      });
+
+      return templates.map((template) => ({
+        id: template.id,
+        name: template.name,
+        prevImg: template.prevImg,
+        realImg: template.realImg,
+        basePrice: template.basePrice,
+        categoryName: template.category?.name || "Uncategorized",
+        configurationName: template.configuration.name,
+        configurationId: template.configurationId,
+      }));
+    } catch (error) {
+      console.error("Error retrieving templates for selection:", error);
+      return [];
+    }
+  }
+
+  /**
+   * Export selected templates as pack or individual template
+   */
+  static async exportSelectedTemplates(
+    sessionId: string,
+    templateIds: number[],
+    type: "PACK" | "TEMPLATE",
+    packName?: string
+  ): Promise<{ success: boolean; message: string; jsonFile?: string }> {
+    try {
+      if (templateIds.length === 0) {
+        return { success: false, message: "No templates selected" };
+      }
+
+      // Get templates with full data
+      const templates = await prisma.template.findMany({
+        where: {
+          id: { in: templateIds },
+          sessionId: sessionId,
+        },
+        include: {
+          category: true,
+          configuration: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              icon: true,
+              popupImg: true,
+              sessionId: true,
+              data: true,
+              product: true, // product is a Json field, not a relation
+              materialType: true,
+              productType: true,
+            },
+          },
+        },
+      });
+
+      if (templates.length === 0) {
+        return { success: false, message: "No templates found" };
+      }
+
+      // Get session for uploadsPrefix
+      const session = await prisma.session.findUnique({
+        where: { id: sessionId },
+      });
+
+      if (!session) {
+        return { success: false, message: "Session not found" };
+      }
+
+      const uploadsPrefix = getShopPath(session.shop);
+
+      // Group templates by configuration
+      const templatesByConfig: Record<number, any[]> = {};
+      templates.forEach((template) => {
+        if (!templatesByConfig[template.configurationId]) {
+          templatesByConfig[template.configurationId] = [];
+        }
+        templatesByConfig[template.configurationId].push({
+          id: template.id,
+          name: template.name,
+          basePrice: template.basePrice,
+          prevImg: template.prevImg,
+          realImg: template.realImg,
+          enabledAddToCart: template.enabledAddToCart,
+          recaps: template.recaps,
+          data: template.data,
+          enabledAutoImgUpdate: template.enabledAutoImgUpdate,
+          configurationId: template.configurationId,
+        });
+      });
+
+      // Get all unique configurations
+      const configurationIds = Object.keys(templatesByConfig).map(Number);
+      const configurations = await prisma.configuration.findMany({
+        where: {
+          id: { in: configurationIds },
+          sessionId: sessionId,
+        },
+      });
+
+      // Get fonts for all configurations
+      const allFontsMap = new Map();
+      const configurationsForExport = [];
+
+      // Helper function to get fonts for a configuration
+      const getFontsForConfiguration = async (configuration: any) => {
+        const allFonts = await prisma.font.findMany({
+          where: { sessionId: sessionId },
+        });
+
+        if (!allFonts || allFonts.length === 0) {
+          return [];
+        }
+
+        const selectedFontIds = configuration?.data?.settings?.customizerSign?.text?.selectedFonts || [];
+        return allFonts.filter((font) => 
+          selectedFontIds.find((id: number) => id === font.id)
+        );
+      };
+
+      for (const config of configurations) {
+        const configTemplates = templatesByConfig[config.id] || [];
+        
+        // Get fonts for this configuration
+        const configFonts = await getFontsForConfiguration(config);
+        configFonts.forEach((font) => {
+          if (!allFontsMap.has(font.id)) {
+            allFontsMap.set(font.id, {
+              id: font.id,
+              label: font.label,
+              url: font.url,
+              isGoogleFont: font.isGoogleFont,
+            });
+          }
+        });
+
+        configurationsForExport.push({
+          id: config.id,
+          name: config.name,
+          description: config.description,
+          icon: config.icon,
+          popupImg: config.popupImg,
+          sessionId: config.sessionId,
+          data: config.data,
+          product: config.product,
+          materialType: config.materialType,
+          productType: config.productType,
+          templates: configTemplates,
+        });
+      }
+
+      // Determine category name
+      const categories = new Set(templates.map((t) => t.category?.name || "Uncategorized"));
+      const categoryName = categories.size === 1 
+        ? Array.from(categories)[0] 
+        : "Mixed";
+
+      // Create export structure
+      let exportData: any = {
+        category: {
+          id: templates[0]?.categoryId || 0,
+          name: categoryName,
+        },
+        configurations: configurationsForExport,
+        fonts: Array.from(allFontsMap.values()),
+        uploadsPrefix: uploadsPrefix,
+      };
+
+      // Replace URLs for export compatibility
+      exportData = replaceUrlForImport(exportData, "apps/aso-proxy", uploadsPrefix);
+
+      // Generate filename
+      const sanitizeFileName = (name: string) => {
+        return name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "");
+      };
+
+      let fileName: string;
+      if (type === "TEMPLATE" && templates.length === 1) {
+        fileName = `${sanitizeFileName(templates[0].name)}.json`;
+      } else {
+        const name = packName || `pack_${categoryName.toLowerCase()}`;
+        fileName = `${sanitizeFileName(name)}.json`;
+      }
+
+      // Save JSON file
+      const targetJsonDir = path.join(process.cwd(), "public", "template-packs", "json");
+      if (!existsSync(targetJsonDir)) {
+        mkdirSync(targetJsonDir, { recursive: true });
+      }
+
+      const targetJsonPath = path.join(targetJsonDir, fileName);
+      const jsonContent = JSON.stringify(exportData, null, 2);
+      writeFileSync(targetJsonPath, jsonContent, "utf8");
+
+      // Create or update TemplatePack entry
+      const slug = sanitizeFileName(packName || templates[0]?.name || fileName.replace(".json", ""));
+      const previewImg = templates[0]?.prevImg || templates[0]?.realImg || "/aso_logo.png";
+
+      const packData = {
+        name: type === "TEMPLATE" && templates.length === 1
+          ? templates[0].name
+          : packName || `Pack ${categoryName}`,
+        slug: slug,
+        description: type === "TEMPLATE" 
+          ? `Template: ${templates[0].name}`
+          : `Pack containing ${templates.length} template(s)`,
+        category: categoryName,
+        price: 0, // Default price, can be updated in admin
+        jsonFile: fileName,
+        previewImg: previewImg,
+        isActive: true,
+        type: type,
+        templateIds: templateIds,
+      };
+
+      const existingPack = await prisma.templatePack.findUnique({
+        where: { slug },
+      });
+
+      if (existingPack) {
+        await prisma.templatePack.update({
+          where: { slug },
+          data: packData,
+        });
+      } else {
+        await prisma.templatePack.create({
+          data: packData,
+        });
+      }
+
+      return {
+        success: true,
+        message: type === "TEMPLATE"
+          ? `Template "${templates[0].name}" exported successfully`
+          : `Pack with ${templates.length} template(s) exported successfully`,
+        jsonFile: fileName,
+      };
+    } catch (error: any) {
+      console.error("Error exporting selected templates:", error);
+      return {
+        success: false,
+        message: error.message || "Error exporting templates",
+      };
     }
   }
 }
