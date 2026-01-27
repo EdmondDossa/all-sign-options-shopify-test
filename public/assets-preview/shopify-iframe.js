@@ -421,8 +421,11 @@ async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
 
 
  async function addTemplateToCartShopify(template){
-   if (template?.configuration?.product?.id) {
-     await asoCreateVariantAndAddToCart(  template.data.cartData.custom_price,{recaps: template.data.cartData}, template?.configuration?.product?.id.split('/').pop(),template.basePrice)
+   var productRef = template?.configuration?.product;
+   var productId = Array.isArray(productRef) ? (productRef[0]?.id) : (productRef?.id);
+   if (productId && template?.data?.cartData) {
+     var numericId = String(productId).split('/').pop();
+     await asoCreateVariantAndAddToCart(template.data.cartData.custom_price, {recaps: template.data.cartData}, numericId, template.basePrice);
    }
  };
 
