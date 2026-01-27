@@ -342,6 +342,7 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
     }
 
     asoAddproductToCart(responseData.variantId, 1, redirectToCheckOut);
+    return { success: true, variantId: responseData.variantId };
     
   } catch (error) {
     console.error('[ASO] Error in asoCreateVariantAndAddToCart:', error);
@@ -417,7 +418,13 @@ function addStylesToBody(cssRules) {
 }
 
 async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
-    await asoCreateVariantAndAddToCart( cart_data.recaps.custom_price, cart_data,asoProductId, asoRegularPrice , redirectToCheckOut);
+    try {
+        const result = await asoCreateVariantAndAddToCart( cart_data.recaps.custom_price, cart_data, asoProductId, asoRegularPrice , redirectToCheckOut);
+        return (result != null && result.success) ? result : { success: false, message: result && result.message ? result.message : 'Upload on finish or invalid response' };
+    } catch (err) {
+        console.error('[ASO] add_to_cart_shopify error:', err);
+        return { success: false, message: (err && err.message) ? err.message : 'Add to cart failed' };
+    }
 };
 
 
