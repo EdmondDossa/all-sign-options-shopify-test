@@ -16,7 +16,10 @@ if (window.name=="ASOIframe") {
   var asoConfigurationId = urlFrameParams.get('asoConfigurationId');
 }
 
-if(asoTemplateId){
+if(asoTemplateId && paramAsoConfigurationId){
+  // Si on a un template-id dans l'URL, on doit utiliser le config-id de l'URL
+  // même si asoConfigurationId est déjà défini (car il pourrait être vide ou incorrect)
+  // Cela permet de charger le configurateur même si le produit n'a pas de metafield asoConfigurationId
   if(asoConfigurationId==undefined){
     var asoConfigurationId = paramAsoConfigurationId;
   }else{

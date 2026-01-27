@@ -271,7 +271,7 @@ const initialData = {
           selectClipartGroups: [1],
         },
         fileUploadScript: {
-          uploadMaxWidth: 1000,
+          uploadMaxWidth: 200,
           uploadMinWidth: 10,
           customWithGraphical: false,
           allowedUploadsExtentions: ["png"],

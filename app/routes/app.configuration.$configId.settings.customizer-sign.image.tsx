@@ -14,7 +14,7 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form,  useActionData, useLoaderData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
@@ -43,6 +43,114 @@ import { FileUploader } from "./app.upload";
 import { DeleteIcon } from "@shopify/polaris-icons";
 
 const settingParams: [string, string] = ["customizerSign", "images"];
+
+const DEFAULT_IMAGE_SETTINGS = {
+  enableUploadImage: true,
+  enableDownloadImage: true,
+  colorsLabel: "Image Colors",
+  colorsPrevImg: "",
+  colors: [] as Array<{ name: string; codeHex: string }>,
+  enableCustomColor: true,
+  fileUploadScript: {
+    customWithGraphical: false,
+    uploadMinWidth: 100,
+    uploadMaxWidth: 200,
+    allowedUploadsExtentions: ["png"] as string[],
+  },
+  selectedCutline: "none" as string,
+  cutlines: {
+    first: { borderSize: 4, color: "#FFF10E" },
+    second: {
+      color: "#5EEC92",
+      size: 10,
+      borderColor: "#4A65F9",
+      borderSize: 4,
+    },
+  },
+  enableClipart: {
+    active: true,
+    selectClipartGroups: [1],
+  },
+  filter: {
+    active: true,
+    enableGreyscale: false,
+    enableOpacity: true,
+    enableEmbross: true,
+    enableBlur: true,
+    enableSepia: true,
+    enableSharpen: true,
+    enableGreenify: false,
+    enablePinkify: false,
+    enableOrangeify: false,
+    enableBlueify: false,
+  },
+  scenes: [] as string[],
+};
+
+function mergeWithDefaults(loaded: any): typeof DEFAULT_IMAGE_SETTINGS {
+  if (!loaded || typeof loaded !== "object") return { ...DEFAULT_IMAGE_SETTINGS };
+  return {
+    enableUploadImage: loaded.enableUploadImage ?? DEFAULT_IMAGE_SETTINGS.enableUploadImage,
+    enableDownloadImage: loaded.enableDownloadImage ?? DEFAULT_IMAGE_SETTINGS.enableDownloadImage,
+    colorsLabel: loaded.colorsLabel ?? DEFAULT_IMAGE_SETTINGS.colorsLabel,
+    colorsPrevImg: loaded.colorsPrevImg ?? DEFAULT_IMAGE_SETTINGS.colorsPrevImg,
+    colors: Array.isArray(loaded.colors) ? loaded.colors : DEFAULT_IMAGE_SETTINGS.colors,
+    enableCustomColor: loaded.enableCustomColor ?? DEFAULT_IMAGE_SETTINGS.enableCustomColor,
+    fileUploadScript: {
+      customWithGraphical: loaded.fileUploadScript?.customWithGraphical ?? DEFAULT_IMAGE_SETTINGS.fileUploadScript.customWithGraphical,
+      uploadMinWidth: loaded.fileUploadScript?.uploadMinWidth ?? DEFAULT_IMAGE_SETTINGS.fileUploadScript.uploadMinWidth,
+      uploadMaxWidth: (() => {
+        const v = loaded.fileUploadScript?.uploadMaxWidth;
+        if (v == null) return DEFAULT_IMAGE_SETTINGS.fileUploadScript.uploadMaxWidth;
+        if (v === 100) return 200;
+        return v;
+      })(),
+      allowedUploadsExtentions: Array.isArray(loaded.fileUploadScript?.allowedUploadsExtentions)
+        ? loaded.fileUploadScript.allowedUploadsExtentions
+        : DEFAULT_IMAGE_SETTINGS.fileUploadScript.allowedUploadsExtentions,
+    },
+    selectedCutline: loaded.selectedCutline ?? DEFAULT_IMAGE_SETTINGS.selectedCutline,
+    cutlines: loaded.cutlines && typeof loaded.cutlines === "object"
+      ? {
+          first: {
+            borderSize: loaded.cutlines.first?.borderSize ?? DEFAULT_IMAGE_SETTINGS.cutlines.first.borderSize,
+            color: loaded.cutlines.first?.color ?? DEFAULT_IMAGE_SETTINGS.cutlines.first.color,
+          },
+          second: {
+            color: loaded.cutlines.second?.color ?? DEFAULT_IMAGE_SETTINGS.cutlines.second.color,
+            size: loaded.cutlines.second?.size ?? DEFAULT_IMAGE_SETTINGS.cutlines.second.size,
+            borderColor: loaded.cutlines.second?.borderColor ?? DEFAULT_IMAGE_SETTINGS.cutlines.second.borderColor,
+            borderSize: loaded.cutlines.second?.borderSize ?? DEFAULT_IMAGE_SETTINGS.cutlines.second.borderSize,
+          },
+        }
+      : DEFAULT_IMAGE_SETTINGS.cutlines,
+    enableClipart: loaded.enableClipart && typeof loaded.enableClipart === "object"
+      ? {
+          active: loaded.enableClipart.active ?? DEFAULT_IMAGE_SETTINGS.enableClipart.active,
+          selectClipartGroups: Array.isArray(loaded.enableClipart.selectClipartGroups)
+            ? loaded.enableClipart.selectClipartGroups
+            : DEFAULT_IMAGE_SETTINGS.enableClipart.selectClipartGroups,
+        }
+      : DEFAULT_IMAGE_SETTINGS.enableClipart,
+    filter: loaded.filter && typeof loaded.filter === "object"
+      ? {
+          active: loaded.filter.active ?? DEFAULT_IMAGE_SETTINGS.filter.active,
+          enableGreyscale: loaded.filter.enableGreyscale ?? DEFAULT_IMAGE_SETTINGS.filter.enableGreyscale,
+          enableOpacity: loaded.filter.enableOpacity ?? DEFAULT_IMAGE_SETTINGS.filter.enableOpacity,
+          enableEmbross: loaded.filter.enableEmbross ?? DEFAULT_IMAGE_SETTINGS.filter.enableEmbross,
+          enableBlur: loaded.filter.enableBlur ?? DEFAULT_IMAGE_SETTINGS.filter.enableBlur,
+          enableSepia: loaded.filter.enableSepia ?? DEFAULT_IMAGE_SETTINGS.filter.enableSepia,
+          enableSharpen: loaded.filter.enableSharpen ?? DEFAULT_IMAGE_SETTINGS.filter.enableSharpen,
+          enableGreenify: loaded.filter.enableGreenify ?? DEFAULT_IMAGE_SETTINGS.filter.enableGreenify,
+          enablePinkify: loaded.filter.enablePinkify ?? DEFAULT_IMAGE_SETTINGS.filter.enablePinkify,
+          enableOrangeify: loaded.filter.enableOrangeify ?? DEFAULT_IMAGE_SETTINGS.filter.enableOrangeify,
+          enableBlueify: loaded.filter.enableBlueify ?? DEFAULT_IMAGE_SETTINGS.filter.enableBlueify,
+        }
+      : DEFAULT_IMAGE_SETTINGS.filter,
+    scenes: Array.isArray(loaded.scenes) ? loaded.scenes : DEFAULT_IMAGE_SETTINGS.scenes,
+  };
+}
+
 const formSchema = z.object({
   enableDownloadImage: z.any().transform(booleanTransform).pipe(z.boolean()),    
   enableUploadImage: z.any().transform(booleanTransform).pipe(z.boolean()),    
@@ -122,55 +230,13 @@ export default function ConfigSettingsGeneral() {
   let isSubmitting = navigation.state == "submitting";
 
 
-  const [formData, setFormData] = useState<any>(
-    settingData || {
-      "enableUploadImage": true,
-      enableDownloadImage: true,
-      colorsLabel:"Image Colors",
-      colorsPrevImg:"",
-      colors: [],
-      enableCustomColor: true,
-      "fileUploadScript":{
-         "customWithGraphical":false,
-         "uploadMinWidth":100,
-         "uploadMaxWidth":100,
-         "allowedUploadsExtentions":["png"]
-      },
-      selectedCutline:'none',
-      "cutlines": {
-        first: {
-          borderSize: 4,
-          color: '#FFF10E'
-        },
-        second: {
-          color: '#5EEC92',
-          size: 10,
-          borderColor: '#4A65F9',
-          borderSize: 4
-        }
-      },
-      "enableClipart":{
-         "active":true,
-         "selectClipartGroups":[
-            1
-         ]
-      },
-      "filter":{
-         "active":true,
-         "enableGreyscale":false,
-         "enableOpacity":true,
-         "enableEmbross":true,
-         "enableBlur":true,
-         "enableSepia":true,
-         "enableSharpen":true,
-         "enableGreenify":false,
-         "enablePinkify":false,
-         "enableOrangeify":false,
-         "enableBlueify":false
-      },
-      "scenes": [],
-    },
+  const [formData, setFormData] = useState<typeof DEFAULT_IMAGE_SETTINGS>(() =>
+    mergeWithDefaults(settingData)
   );
+
+  useEffect(() => {
+    setFormData(mergeWithDefaults(settingData));
+  }, [settingData]);
 
   const handleInputChange = (inputName: string, value: any) => {
     setFormData((prevData: any) => ({
@@ -184,17 +250,21 @@ export default function ConfigSettingsGeneral() {
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const data = {
-      ...formData,
-      colors: JSON.stringify(formData.colors),
-      fileUploadScript: JSON.stringify(formData.fileUploadScript),
-      cutlines: JSON.stringify(formData.cutlines),
-      enableClipart: JSON.stringify(formData.enableClipart),
-      filter: JSON.stringify(formData.filter),
-      scenes: JSON.stringify(formData.scenes)
-    };
+    const fd = new FormData();
+    fd.append("enableDownloadImage", String(formData.enableDownloadImage));
+    fd.append("enableUploadImage", String(formData.enableUploadImage));
+    fd.append("colorsLabel", formData.colorsLabel);
+    fd.append("colorsPrevImg", formData.colorsPrevImg);
+    fd.append("colors", JSON.stringify(formData.colors));
+    fd.append("enableCustomColor", String(formData.enableCustomColor));
+    fd.append("fileUploadScript", JSON.stringify(formData.fileUploadScript));
+    fd.append("selectedCutline", formData.selectedCutline);
+    fd.append("cutlines", JSON.stringify(formData.cutlines));
+    fd.append("enableClipart", JSON.stringify(formData.enableClipart));
+    fd.append("filter", JSON.stringify(formData.filter));
+    fd.append("scenes", JSON.stringify(formData.scenes));
 
-    submit(data, { method: "POST" });
+    submit(fd, { method: "POST" });
   };
 
   let { manageClipartGroups , plan} = useOutletContext<{
@@ -239,14 +309,11 @@ export default function ConfigSettingsGeneral() {
   }
 
   const handleSceneChange = (values: string[]) => {
-
     setFormData({
       ...formData,
-      scenes: values
+      scenes: values,
     });
-
-    console.log(formData);
-  }
+  };
   
   
 
@@ -404,10 +471,10 @@ export default function ConfigSettingsGeneral() {
                 <TextField
                     size="medium"
                     label="Upload min width (px)"
-                    value={formData.fileUploadScript.uploadMinWidth}
+                    value={String(formData.fileUploadScript.uploadMinWidth)}
                     onChange={(value) => {
-                      formData.fileUploadScript.uploadMinWidth = value
-                    handleInputChange("fileUploadScript", formData.fileUploadScript )
+                      formData.fileUploadScript.uploadMinWidth = Number(value) || 0;
+                      handleInputChange("fileUploadScript", formData.fileUploadScript);
                     }}
                     error={getError(actionData, "fileUploadScript.uploadMinWidth")} 
                   autoComplete="off"
@@ -417,10 +484,10 @@ export default function ConfigSettingsGeneral() {
                 <TextField
                     size="medium"
                     label="Upload Max width (px)"
-                    value={formData.fileUploadScript.uploadMaxWidth}
+                    value={String(formData.fileUploadScript.uploadMaxWidth)}
                     onChange={(value) => {
-                      formData.fileUploadScript.uploadMaxWidth = value
-                    handleInputChange("fileUploadScript", formData.fileUploadScript )
+                      formData.fileUploadScript.uploadMaxWidth = Number(value) || 0;
+                      handleInputChange("fileUploadScript", formData.fileUploadScript);
                     }}
                     error={getError(actionData, "fileUploadScript.uploadMaxWidth")} 
                   autoComplete="off"
@@ -432,7 +499,7 @@ export default function ConfigSettingsGeneral() {
                        label="Select allow extension"
                        placeholder="select  extension"
                        data={options}
-                       selectedOptions={formData.fileUploadScript.allowedUploadsExtentions}
+                       selectedOptions={formData.fileUploadScript?.allowedUploadsExtentions ?? []}
                        setSelectedOptions={(value: any) => {
                          if (Array.isArray(value)) {
                            formData.fileUploadScript.allowedUploadsExtentions = value;
@@ -454,7 +521,7 @@ export default function ConfigSettingsGeneral() {
                        label="Select clipart  group"
                        placeholder="Search clipart group"
                        data={clipartGroups}
-                       selectedOptions={formData.enableClipart.selectClipartGroups?.map((curr:any)=>`${curr}`)}
+                       selectedOptions={formData.enableClipart.selectClipartGroups?.map((curr:any)=>`${curr}`) ?? []}
                        setSelectedOptions={(value: any) => {
                          if (Array.isArray(value)) {
                            formData.enableClipart.selectClipartGroups = value.map((curr) => parseInt(curr));
@@ -494,8 +561,8 @@ export default function ConfigSettingsGeneral() {
                             type="number"
                             value={formData.cutlines.first.borderSize.toString()}
                             onChange={(value) => {
-                              formData.cutlines.first.borderSize = value;
-                              handleInputChange("cutlines", formData.cutlines );
+                              formData.cutlines.first.borderSize = Number(value) || 0;
+                              handleInputChange("cutlines", formData.cutlines);
                             }}
                             autoComplete="off"
                             suffix="px"
@@ -535,8 +602,8 @@ export default function ConfigSettingsGeneral() {
                             type="number"
                             value={formData.cutlines.second.size.toString()}
                             onChange={(value) => {
-                              formData.cutlines.second.size  = value;
-                              handleInputChange("cutlines", formData.cutlines )
+                              formData.cutlines.second.size = Number(value) || 0;
+                              handleInputChange("cutlines", formData.cutlines);
                             }}
                             autoComplete="off"
                             suffix="px"
@@ -562,8 +629,8 @@ export default function ConfigSettingsGeneral() {
                             type="number"
                             value={formData.cutlines.second.borderSize.toString()}
                             onChange={(value) => {
-                              formData.cutlines.second.borderSize = value;
-                              handleInputChange("cutlines", formData.cutlines )
+                              formData.cutlines.second.borderSize = Number(value) || 0;
+                              handleInputChange("cutlines", formData.cutlines);
                             }}
                             autoComplete="off"
                             suffix="px"
@@ -600,54 +667,54 @@ export default function ConfigSettingsGeneral() {
                   { formData.filter.active &&  <InlineStack  gap="800" blockAlign="start"> 
                       <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Greyscale"
                       status={formData.filter.enableGreyscale}
-                      toggleStatus={(value) => {
-                        formData.filter.enableGreyscale = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableGreyscale = value;
+                        handleInputChange("filter", formData.filter);
                       }}><WaterOpacitySvg />  </ActivatabaleItem>
                       <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Greenify" status={formData.filter.enableGreenify}
-                      toggleStatus={(value) => {
-                        formData.filter.enableGreenify = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableGreenify = value;
+                        handleInputChange("filter", formData.filter);
                       }}><WaterOpacitySvg />  </ActivatabaleItem>
                     <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Pinkify" status={formData.filter.enablePinkify}
-                      toggleStatus={(value) => {
-                        formData.filter.enablePinkify = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enablePinkify = value;
+                        handleInputChange("filter", formData.filter);
                       }}><WaterOpacitySvg />  </ActivatabaleItem>
                     <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Orangeify" status={formData.filter.enableOrangeify}
-                      toggleStatus={(value) => {
-                        formData.filter.enableOrangeify = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableOrangeify = value;
+                        handleInputChange("filter", formData.filter);
                       }}><WaterOpacitySvg />  </ActivatabaleItem>
                     <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Blueify" status={formData.filter.enableBlueify}
-                      toggleStatus={(value) => {
-                        formData.filter.enableBlueify = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableBlueify = value;
+                        handleInputChange("filter", formData.filter);
                       }}><WaterOpacitySvg />  </ActivatabaleItem>
                     <ActivatabaleItem fillIcon={true}  noTrokeIcon={true} title="Opacity" status={formData.filter.enableOpacity}
-                      toggleStatus={(value) => {
-                        formData.filter.enableOpacity = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableOpacity = value;
+                        handleInputChange("filter", formData.filter);
                       }}><WaterOpacitySvg/>  </ActivatabaleItem>
                     <ActivatabaleItem fillIcon={true}   noTrokeIcon={true} title="Blur" status={formData.filter.enableBlur}
-                      toggleStatus={(value) => {
-                        formData.filter.enableBlur = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableBlur = value;
+                        handleInputChange("filter", formData.filter);
                       }}><BlurSvg/>  </ActivatabaleItem>
                     <ActivatabaleItem fillIcon={true} noTrokeIcon={true} title="Sepia" status={formData.filter.enableSepia}
-                      toggleStatus={(value) => {
-                        formData.filter.enableSepia = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableSepia = value;
+                        handleInputChange("filter", formData.filter);
                       }}><SharpenSvg/>  </ActivatabaleItem>
                     <ActivatabaleItem title="sharpen" status={formData.filter.enableSharpen}
-                      toggleStatus={(value) => {
-                        formData.filter.enableSharpen = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableSharpen = value;
+                        handleInputChange("filter", formData.filter);
                       }}><SharpenSvg/>  </ActivatabaleItem>
                     <ActivatabaleItem title="Emboss" status={formData.filter.enableEmbross}
-                      toggleStatus={(value) => {
-                        formData.filter.enableEmbross = value
-                      handleInputChange("filter", formData.filter )
+                      toggleStatus={(value: boolean) => {
+                        formData.filter.enableEmbross = value;
+                        handleInputChange("filter", formData.filter);
                       }}><EmbossSvg />  </ActivatabaleItem>
                     </InlineStack>}
                   </BlockStack>

@@ -1,4 +1,5 @@
-import { useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
+import { useLoaderData, useNavigate, useSubmit, useActionData } from "@remix-run/react";
+import { useEffect } from "react";
 import { LoaderFunctionArgs, ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import TemplatePackService from "~/models/TemplatePack.service";
@@ -46,11 +47,66 @@ const getImageUrl = (url: string | null | undefined): string => {
 };
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { session } = await authenticate.admin(request);
+  const { session, admin } = await authenticate.admin(request);
   const packId = parseInt(params.packId || "0");
 
   if (!packId) {
     throw new Response("Pack not found", { status: 404 });
+  }
+
+  // Check if this is a return from payment (has charge_id in query params)
+  const url = new URL(request.url);
+  const chargeId = url.searchParams.get("charge_id");
+  
+  if (chargeId) {
+    // This is a return from payment approval - check status and finalize
+    try {
+      const chargeIdGid = `gid://shopify/AppPurchaseOneTime/${chargeId}`;
+      const query = `
+        query getAppPurchaseOneTime($id: ID!) {
+          node(id: $id) {
+            ... on AppPurchaseOneTime {
+              id
+              name
+              status
+              test
+              price {
+                amount
+                currencyCode
+              }
+            }
+          }
+        }
+      `;
+
+      const response = await admin.graphql(query, {
+        variables: { id: chargeIdGid },
+      });
+
+      const data = await response.json();
+
+      if (!data.errors && data.data?.node) {
+        const charge = data.data.node;
+        const status = charge.status;
+
+        // Finalize the purchase
+        const result = await TemplatePackService.finalizePurchase(
+          chargeIdGid,
+          status,
+          admin
+        );
+
+        if (result.success && (status === "active" || status === "accepted")) {
+          // Payment successful - redirect to templates page
+          return redirect(
+            `/app/templates/main${flashMessage(result.message || "Pack purchased and imported successfully!")}`
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error checking payment status:", error);
+      // Continue to show pack page if error
+    }
   }
 
   const pack = await TemplatePackService.getPack(packId, session.id);
@@ -155,16 +211,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   // For paid packs, use one-time payment
-  // For one-time payment, we'll use a GraphQL mutation
-  // This will be handled via a custom billing request
+  // Create one-time charge using GraphQL mutation
   try {
-    // Create one-time charge using GraphQL
+    const { admin } = await authenticate.admin(request);
+    
+    // Build return URL - same route, Shopify will redirect here after approval
+    const appUrl = process.env.SHOPIFY_APP_URL || "";
+    const baseUrl = appUrl.replace(/\/$/, "");
+    const returnUrl = `${baseUrl}/app/templates/packs/${packId}`;
+    
+    console.log("Return URL for payment:", returnUrl);
+
     const mutation = `
-      mutation appPurchaseOneTimeCreate($name: String!, $price: MoneyInput!, $test: Boolean!) {
+      mutation appPurchaseOneTimeCreate($name: String!, $price: MoneyInput!, $test: Boolean!, $returnUrl: URL!) {
         appPurchaseOneTimeCreate(
           name: $name
           price: $price
           test: $test
+          returnUrl: $returnUrl
         ) {
           appPurchaseOneTime {
             id
@@ -188,33 +252,69 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const variables = {
       name: pack.name,
       price: {
-        amount: pack.price,
+        amount: pack.price.toFixed(2), // Ensure 2 decimal places for Shopify
         currencyCode: "USD",
       },
-      test: process.env.IS_TEST === "true",
+      test: process.env.IS_TEST === "true" || false,
+      returnUrl: returnUrl,
     };
 
-    // Store pack purchase info temporarily (we'll verify via webhook)
-    // For now, we'll proceed with the purchase and import immediately
-    // In production, you should verify payment via webhook first
+    // Execute the GraphQL mutation
+    const response = await admin.graphql(mutation, {
+      variables,
+    });
 
-    // Record purchase
-    await TemplatePackService.recordPurchase(session.id, packId, pack.price);
+    const data = await response.json();
 
-    // Import pack
-    const result = await TemplatePackService.importPackToShop(
+    // Check for GraphQL errors
+    if (data.errors) {
+      console.error("GraphQL errors:", data.errors);
+      return json(
+        { error: data.errors[0]?.message || "Error creating payment charge" },
+        { status: 500 }
+      );
+    }
+
+    // Check for user errors from the mutation
+    if (data.data?.appPurchaseOneTimeCreate?.userErrors?.length > 0) {
+      const userError = data.data.appPurchaseOneTimeCreate.userErrors[0];
+      console.error("User errors:", userError);
+      return json(
+        { error: userError.message || "Error creating payment charge" },
+        { status: 400 }
+      );
+    }
+
+    const purchaseData = data.data?.appPurchaseOneTimeCreate;
+    if (!purchaseData) {
+      return json(
+        { error: "No data returned from payment creation" },
+        { status: 500 }
+      );
+    }
+
+    const confirmationUrl = purchaseData.confirmationUrl;
+    const chargeId = purchaseData.appPurchaseOneTime?.id;
+
+    if (!confirmationUrl) {
+      return json(
+        { error: "No confirmation URL returned from payment creation" },
+        { status: 500 }
+      );
+    }
+
+    // Store purchase with pending status and charge ID
+    // This will be updated to "active" when payment is confirmed via returnUrl
+    await TemplatePackService.recordPurchaseWithCharge(
       session.id,
       packId,
-      session.shop
+      pack.price,
+      chargeId || null,
+      "pending"
     );
 
-    if (result.success) {
-      return redirect(
-        `/app/templates/main${flashMessage(`Pack "${pack.name}" purchased and imported successfully! ${result.templatesCount} templates added.`)}`
-      );
-    } else {
-      return json({ error: result.message }, { status: 400 });
-    }
+    // Return confirmation URL to client for redirect (can't use server redirect for external URLs in embedded app)
+    return json({ confirmationUrl, success: true });
   } catch (error: any) {
     console.error("Error processing pack purchase:", error);
     return json(
@@ -226,8 +326,21 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function TemplatePackDetail() {
   const { pack, templateCount, templates } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const navigate = useNavigate();
   const submit = useSubmit();
+
+  // Handle redirect to confirmation URL after purchase
+  useEffect(() => {
+    if (actionData?.confirmationUrl) {
+      // Use window.top to break out of iframe for external redirect
+      if (window.top) {
+        window.top.location.href = actionData.confirmationUrl;
+      } else {
+        window.location.href = actionData.confirmationUrl;
+      }
+    }
+  }, [actionData]);
 
   const handlePurchase = () => {
     submit({}, { method: "POST" });
@@ -269,6 +382,22 @@ export default function TemplatePackDetail() {
           </div>
         </div>
       </div>
+
+      {/* Error message display */}
+      {actionData?.error && (
+        <div
+          style={{
+            backgroundColor: "#FEE2E2",
+            border: "1px solid #FCA5A5",
+            borderRadius: "8px",
+            padding: "12px 16px",
+            marginBottom: "16px",
+            color: "#991B1B",
+          }}
+        >
+          <strong>Erreur:</strong> {actionData.error}
+        </div>
+      )}
 
       <SpacingBackground width="100%" height="auto" margin="16px 0px">
         <div

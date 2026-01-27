@@ -203,17 +203,28 @@ export default function AdminTemplatePacks() {
           <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "bold" }}>
             Template Packs Management
           </h2>
-          <button
-            className="primary-btn"
-            type="button"
-            onClick={() => {
-              submit({ action: "import" }, { method: "POST" });
-            }}
-          >
-            <div style={{ padding: "0 16px" }}>
-              <span className="primary-btn-text">Import Packs from Scripts</span>
-            </div>
-          </button>
+          <div style={{ display: "flex", gap: "12px" }}>
+            <button
+              className="back-large-btn"
+              type="button"
+              onClick={() => navigate("/app/admin/templates/export")}
+            >
+              <div style={{ padding: "0 16px" }}>
+                <span>Export Templates</span>
+              </div>
+            </button>
+            <button
+              className="primary-btn"
+              type="button"
+              onClick={() => {
+                submit({ action: "import" }, { method: "POST" });
+              }}
+            >
+              <div style={{ padding: "0 16px" }}>
+                <span className="primary-btn-text">Import Packs from Scripts</span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 

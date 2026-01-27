@@ -215,6 +215,19 @@
     // Récupérer le form d'ajout au panier
     const productForm = document.querySelector('form[action="/cart/add"]');
 
+    // Ouvrir automatiquement le modal si aso-template-id est présent dans l'URL
+    // Cela permet d'ouvrir le configurateur directement quand on clique sur "customize" depuis le template embed
+    const urlParams = new URLSearchParams(window.location.search);
+    const asoTemplateId = urlParams.get('aso-template-id');
+    const designModal = document.getElementById('aso-design-modal');
+    if (asoTemplateId && designModal) {
+      // Attendre un peu pour que le configurateur soit initialisé
+      setTimeout(function() {
+        lockProductForm(true);
+        openDesignModal();
+      }, 500);
+    }
+
     // Binder proprement les boutons
     document.getElementById('asoDesignBtn')?.addEventListener('click', (e) => {
       e.preventDefault();

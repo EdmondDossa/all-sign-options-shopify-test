@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
@@ -44,18 +45,26 @@ const getImageUrl = (url: string | null | undefined): string => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
-  const packs = await TemplatePackService.getAllPacks(session.id);
+  const url = new URL(request.url);
+  const type = url.searchParams.get("type") as "PACK" | "TEMPLATE" | null;
+  
+  // Get packs and templates separately
+  const packs = await TemplatePackService.getAllPacks(session.id, "PACK");
+  const templates = await TemplatePackService.getAllPacks(session.id, "TEMPLATE");
 
-  return json({ packs });
+  return json({ packs, templates, activeType: type || "PACK" });
 };
 
 export default function TemplatePacksGallery() {
-  const { packs } = useLoaderData<typeof loader>();
+  const { packs, templates, activeType } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
+  const [currentTab, setCurrentTab] = useState<"PACK" | "TEMPLATE">(activeType);
 
   const handlePackClick = (packId: number) => {
     navigate(`/app/templates/packs/${packId}`);
   };
+
+  const displayItems = currentTab === "PACK" ? packs : templates;
 
   return (
     <div style={{ width: "100%", height: "auto", padding: "10px 0px" }}>
@@ -75,7 +84,7 @@ export default function TemplatePacksGallery() {
           }}
         >
           <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "bold" }}>
-            Template Packs
+            Template Marketplace
           </h2>
           <button
             className="primary-btn"
@@ -89,8 +98,53 @@ export default function TemplatePacksGallery() {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div
+        style={{
+          backgroundColor: "white",
+          borderRadius: "8px",
+          padding: "16px",
+          marginBottom: "16px",
+        }}
+      >
+        <div style={{ display: "flex", gap: "8px", borderBottom: "2px solid #E5E7EB" }}>
+          <button
+            type="button"
+            onClick={() => setCurrentTab("PACK")}
+            style={{
+              padding: "12px 24px",
+              border: "none",
+              background: "none",
+              borderBottom: currentTab === "PACK" ? "2px solid #3B82F6" : "2px solid transparent",
+              color: currentTab === "PACK" ? "#3B82F6" : "#6B7280",
+              fontWeight: currentTab === "PACK" ? "600" : "400",
+              cursor: "pointer",
+              marginBottom: "-2px",
+            }}
+          >
+            Packs ({packs.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentTab("TEMPLATE")}
+            style={{
+              padding: "12px 24px",
+              border: "none",
+              background: "none",
+              borderBottom: currentTab === "TEMPLATE" ? "2px solid #3B82F6" : "2px solid transparent",
+              color: currentTab === "TEMPLATE" ? "#3B82F6" : "#6B7280",
+              fontWeight: currentTab === "TEMPLATE" ? "600" : "400",
+              cursor: "pointer",
+              marginBottom: "-2px",
+            }}
+          >
+            Individual Templates ({templates.length})
+          </button>
+        </div>
+      </div>
+
       <SpacingBackground width="100%" height="auto" margin="16px 0px">
-        {packs.length === 0 ? (
+        {displayItems.length === 0 ? (
           <div
             style={{
               textAlign: "center",
@@ -104,10 +158,10 @@ export default function TemplatePacksGallery() {
               style={{ maxWidth: "200px", marginBottom: "20px" }}
             />
             <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "10px" }}>
-              No template packs available
+              No {currentTab === "PACK" ? "template packs" : "templates"} available
             </h3>
             <p style={{ marginBottom: "20px", color: "#6B7280" }}>
-              There are no template packs available at the moment.
+              There are no {currentTab === "PACK" ? "template packs" : "individual templates"} available at the moment.
             </p>
             <button
               className="primary-btn"
@@ -129,7 +183,7 @@ export default function TemplatePacksGallery() {
                 gap: "24px",
               }}
             >
-              {packs.map((pack: any) => (
+              {displayItems.map((pack: any) => (
                 <SpacingBackground
                   key={pack.id}
                   backgroundColor="#FFFFFF"
