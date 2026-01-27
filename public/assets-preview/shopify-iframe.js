@@ -310,7 +310,8 @@ async function asoCreateVariantAndAddToCart(price, option, asoProductID=asoProdu
     console.log('[ASO] Making API call to /apps/aso-proxy/api/add-cart-variant');
     console.log('[ASO] Request data:', data);
     
-    let response = await fetch('/apps/aso-proxy/api/add-cart-variant', {
+    var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || (window.parent && window.parent.Shopify && window.parent.Shopify.routes && window.parent.Shopify.routes.root) || '/';
+    let response = await fetch(root + 'apps/aso-proxy/api/add-cart-variant', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -423,9 +424,10 @@ async function add_to_cart_shopify( cart_data,  redirectToCheckOut){
  async function addTemplateToCartShopify(template){
    var productRef = template?.configuration?.product;
    var productId = Array.isArray(productRef) ? (productRef[0]?.id) : (productRef?.id);
-   if (productId && template?.data?.cartData) {
+   var cartData = template?.data?.data?.cartData || template?.data?.cartData;
+   if (productId && cartData) {
      var numericId = String(productId).split('/').pop();
-     await asoCreateVariantAndAddToCart(template.data.cartData.custom_price, {recaps: template.data.cartData}, numericId, template.basePrice);
+     await asoCreateVariantAndAddToCart(cartData.custom_price, {recaps: cartData}, numericId, template.basePrice);
    }
  };
 

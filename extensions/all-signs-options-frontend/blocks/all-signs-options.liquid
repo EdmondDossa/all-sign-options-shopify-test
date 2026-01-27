@@ -320,7 +320,7 @@
       console.log('[ASO] Making API call to /apps/aso-proxy/api/add-cart-variant');
       console.log('[ASO] Request data:', data);
       
-      let response = await fetch('/apps/aso-proxy/api/add-cart-variant', {
+      let response = await fetch((window.Shopify?.routes?.root || '/') + 'apps/aso-proxy/api/add-cart-variant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
