@@ -224,8 +224,28 @@
       }
       templateDiv.innerHTML = newContainer.innerHTML;
       templateUl.innerHTML = newContainerUl.innerHTML; 
-   
 
+      // Ouvrir le configurateur sans recharger : au clic sur Customize, si on est déjà sur la même page, empêcher la nav et ouvrir le modal
+      var asoContainer = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }}');
+      if (asoContainer && !asoContainer.hasAttribute('data-aso-customize-bound')) {
+        asoContainer.setAttribute('data-aso-customize-bound', '1');
+        asoContainer.addEventListener('click', function(ev) {
+          var customizeLink = ev.target.closest('.asoTemplateItemCustomize');
+          if (!customizeLink) return;
+          var designModal = document.getElementById('aso-design-modal');
+          if (!designModal) return;
+          try {
+            var linkUrl = new URL(customizeLink.href, window.location.origin);
+            if (linkUrl.pathname === window.location.pathname) {
+              ev.preventDefault();
+              ev.stopPropagation();
+              history.replaceState(null, '', linkUrl.pathname + linkUrl.search);
+              if (typeof lockProductForm === 'function') lockProductForm(true);
+              if (typeof openDesignModal === 'function') openDesignModal();
+            }
+          } catch (err) { }
+        });
+      }
 
     
   }).catch((error) =>{
