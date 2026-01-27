@@ -5,7 +5,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { parseWithZod } from '@conform-to/zod';
 import { jsonTransform } from '~/utils/transfomerZod';
 import { uploadBase64, fileBuffer, calculateImagePlacement } from '~/utils/uploadBase64';
-import { assignShopDesignPath, getShopProxyUrlWithSlash } from '~/utils/fileUrl';
+import { assignShopDesignPath } from '~/utils/fileUrl';
 import { updateOrCreateJsonData } from '~/utils/jsonHandler';
 
 
@@ -84,21 +84,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }
     }
     let designImage = "";
-    const recaps = data?.option?.recaps ?? {};
-    if (recaps.faces?.face1 && recaps.designImages?.face1?.[0]) {
-      designImage = uploadBase64(recaps.designImages.face1[0].format, recaps.designImages.face1[0].url, session.id);
-    } else if (recaps.designImages?.[0]) {
-      designImage = uploadBase64(recaps.designImages[0].format, recaps.designImages[0].url, session.id);
-    } else if (recaps.printImage) {
-      const print = Array.isArray(recaps.printImage) ? recaps.printImage[0] : recaps.printImage;
-      const url = typeof print === "string" ? print : (print?.url ?? (print as { face1?: string })?.face1 ?? "");
-      const format = typeof url === "string" && url.startsWith("data:image/svg") ? "svg" : "png";
-      if (url) designImage = uploadBase64(format, url, session.id);
+    if (data?.option?.recaps?.faces?.face1) {
+      designImage = uploadBase64(data.option.recaps.designImages.face1[0].format, data.option.recaps.designImages.face1[0].url, session.id)
+    } else {
+      designImage = uploadBase64(data.option.recaps.designImages[0].format, data.option.recaps.designImages[0].url, session.id)
     }
-    const shopDomain = (session as { shop?: string }).shop ?? (session as { id?: string }).id ?? "";
-    const imageUrl = designImage
-      ? (shopDomain ? getShopProxyUrlWithSlash(shopDomain) + designImage : `${process.env.SHOPIFY_APP_URL}/${designImage}`)
-      : "";
+
+
 
     const product = await ShopifyProductService.create(
       data.option.recaps.configuration?.id,
@@ -106,7 +98,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       `${data.option.recaps.configuration?.name}`
       ,
       optionName,
-      imageUrl,
+      `${process.env.SHOPIFY_APP_URL}/${designImage}`,
       optionName
     )
 

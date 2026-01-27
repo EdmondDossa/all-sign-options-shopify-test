@@ -6,13 +6,10 @@ export class ShopifyProductService {
     admin: any,
     name: string,
     description: string,
-    image: string | undefined | null,
+    image: string,
     optionName?: string
   ) {
     try {
-      const media = image
-        ? [{ alt: name, mediaContentType: "IMAGE" as const, originalSource: image }]
-        : [];
       const response = await admin.graphql(
         `#graphql
                 mutation populateProduct($product: ProductCreateInput!, $media: [CreateMediaInput!]) {
@@ -64,7 +61,13 @@ export class ShopifyProductService {
                 },
               ],
             },
-            media,
+            media: [
+              {
+                alt: name,
+                mediaContentType: "IMAGE",
+                originalSource: image,
+              },
+            ],
           },
         },
       );
