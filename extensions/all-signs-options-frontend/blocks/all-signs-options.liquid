@@ -19,6 +19,7 @@
   {% endif %}
 </script>
 
+<div id="aso-block-wrapper-{{ block.id }}" class="aso-block-wrapper">
 {% if block.settings.useModal %}
   <!-- Boutons pour ouvrir les modals -->
   <div class="aso-modal-buttons-container">
@@ -552,7 +553,99 @@
   })
 </script>
 
+{% if block.settings.embed_after_product_info %}
+<script>
+  (function() {
+    // Fonction pour déplacer le bloc après la section "Informations sur le produit"
+    function embedAfterProductInfo() {
+      const blockWrapper = document.getElementById('aso-block-wrapper-{{ block.id }}');
+      if (!blockWrapper) return;
 
+      // Sélecteurs possibles pour la section "Informations sur le produit"
+      // Ces sélecteurs couvrent les thèmes Shopify les plus courants
+      const productInfoSelectors = [
+        '[id*="product-info"]',
+        '[id*="ProductInfo"]',
+        '.product__info',
+        '.product-info',
+        '[class*="product-info"]',
+        '[class*="ProductInfo"]',
+        '.product-form',
+        '[data-product-form]',
+        'form[action*="/cart/add"]',
+        '.product-single__meta',
+        '.product__details',
+        '[id*="product-details"]'
+      ];
+
+      let productInfoSection = null;
+      
+      // Chercher la section "Informations sur le produit"
+      for (const selector of productInfoSelectors) {
+        const elements = document.querySelectorAll(selector);
+        for (const el of elements) {
+          // Vérifier que l'élément est bien dans la page produit
+          if (el.closest('main') || el.closest('[role="main"]') || el.closest('.main-content')) {
+            productInfoSection = el;
+            break;
+          }
+        }
+        if (productInfoSection) break;
+      }
+
+      // Si on trouve la section, déplacer le bloc juste après
+      if (productInfoSection) {
+        // Vérifier si le bloc n'est pas déjà déplacé
+        if (blockWrapper.parentElement !== productInfoSection.parentElement || 
+            blockWrapper.previousElementSibling !== productInfoSection) {
+          
+          // Trouver le parent commun ou le parent de la section produit
+          const parent = productInfoSection.parentElement;
+          
+          // Insérer le bloc après la section produit
+          if (parent) {
+            parent.insertBefore(blockWrapper, productInfoSection.nextSibling);
+          } else {
+            productInfoSection.insertAdjacentElement('afterend', blockWrapper);
+          }
+          
+          console.log('[ASO] Bloc déplacé après la section "Informations sur le produit"');
+        }
+      } else {
+        console.warn('[ASO] Section "Informations sur le produit" non trouvée. Le bloc reste à sa position d\'origine.');
+      }
+    }
+
+    // Exécuter au chargement du DOM
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', embedAfterProductInfo);
+    } else {
+      embedAfterProductInfo();
+    }
+
+    // Réessayer après un court délai pour les pages dynamiques
+    setTimeout(embedAfterProductInfo, 500);
+    
+    // Observer les changements du DOM pour les thèmes dynamiques
+    if (typeof MutationObserver !== 'undefined') {
+      const observer = new MutationObserver(function(mutations) {
+        const blockWrapper = document.getElementById('aso-block-wrapper-{{ block.id }}');
+        if (blockWrapper && !blockWrapper.hasAttribute('data-aso-embedded')) {
+          embedAfterProductInfo();
+          blockWrapper.setAttribute('data-aso-embedded', 'true');
+        }
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    }
+  })();
+</script>
+{% endif %}
+
+</div>
 
 {% schema %} 
 {
@@ -572,6 +665,13 @@
         "label": "Use modal interface",
         "default": true,
         "info": "Enable this to show buttons that open modals instead of displaying the configurator directly."
+      },
+      {
+        "id": "embed_after_product_info",
+        "type": "checkbox",
+        "label": "Embed after Product Information section",
+        "default": false,
+        "info": "When enabled, the block will be automatically moved to appear right after the 'Product Information' section on the product page."
       },
       {
         "type": "header",
