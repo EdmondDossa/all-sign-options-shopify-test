@@ -122,11 +122,15 @@ export async function syncTemplatesBlockOnProductTemplate(
         const insertAt = configuratorIndex + 1;
         if (templateBlockIndex === -1) {
           const newBlockId = generateBlockId();
-          (blocks as Record<string, unknown>)[newBlockId] = {
-            type: "@app",
-            app_block_id: `${extensionId}/all-signs-option-template`,
-            settings: {},
-          };
+          const configurator = configuratorBlock as { type?: string; app_block_id?: string; settings?: Record<string, unknown> };
+          const templateBlockPayload: Record<string, unknown> = { settings: {} };
+          if (configurator.app_block_id != null && configurator.app_block_id !== "") {
+            templateBlockPayload.type = "@app";
+            templateBlockPayload.app_block_id = `${extensionId}/all-signs-option-template`;
+          } else {
+            templateBlockPayload.type = `${extensionId}/all-signs-option-template`;
+          }
+          (blocks as Record<string, unknown>)[newBlockId] = templateBlockPayload;
           blockOrder.splice(insertAt, 0, newBlockId);
           orderChanged = true;
         } else {
@@ -207,7 +211,7 @@ export async function syncTemplatesBlockOnProductTemplate(
 
     return {
       ok: true,
-      message: `Theme updated. Sections modified: ${sectionsModified.join(", ")}`,
+      message: `Theme updated (sections: ${sectionsModified.join(", ")}). If you don't see the Templates block in the editor, close the Customize window and reopen it, and make sure you're editing the published (current) theme.`,
       updated: true,
       sectionsModified,
     };
