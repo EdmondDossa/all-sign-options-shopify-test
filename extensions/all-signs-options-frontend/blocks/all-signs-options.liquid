@@ -85,6 +85,59 @@
   </div>
 {% endif %}
 
+{% if block.settings.embed_template_below %}
+  <div class="aso-embed-template-below" style="margin-top: 1.5rem;">
+    <button type="button" id="aso-open-templates-modal-btn-{{ block.id }}" class="aso-modal-button" style="background-color: {{ block.settings.embed_template_button_color | default: '#667eea' }}; color: {{ block.settings.embed_template_button_text_color | default: '#ffffff' }};">
+      {{ block.settings.embed_template_button_text | default: "View templates" }}
+    </button>
+    <div id="aso-templates-modal-{{ block.id }}" class="aso-modal" style="display: none;">
+      <div class="aso-modal-content">
+        <div class="aso-modal-header">
+          <h2>{{ block.settings.embed_template_button_text | default: "View templates" }}</h2>
+          <button type="button" class="aso-modal-close" onclick="closeAsoTemplatesModal{{ block.id | replace: '-', '_' }}()">&times;</button>
+        </div>
+        <div class="aso-modal-body">
+          {% render 'template-list',
+            aso_template_id: block.id,
+            text_all: block.settings.embed_template_text_all | default: "All templates",
+            text_template_not_found: block.settings.embed_template_text_not_found | default: "No design template is available",
+            text_add_to_cart: block.settings.embed_template_text_add_to_cart | default: "Add to cart",
+            text_customize: block.settings.embed_template_text_customize | default: "Customize",
+            aso_configuration_id: asoConfigurationId,
+            aso_design_page_url: product.url,
+            colour_bg_add_to_cart: block.settings.embed_template_colour_bg_add_to_cart | default: "#122f81",
+            colour_bg_customize: block.settings.embed_template_colour_bg_customize | default: "#febd52",
+            colour_text_add_to_cart: block.settings.embed_template_colour_text_add_to_cart | default: "#FFFFFF",
+            colour_text_customize: block.settings.embed_template_colour_text_customize | default: "#FFFFFF"
+          %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      function openAsoTemplatesModal{{ block.id | replace: '-', '_' }}() {
+        var modal = document.getElementById('aso-templates-modal-{{ block.id }}');
+        if (modal) { modal.style.display = 'block'; document.body.style.overflow = 'hidden'; document.body.classList.add('aso-modal-open'); }
+      }
+      window.closeAsoTemplatesModal{{ block.id | replace: '-', '_' }} = function() {
+        var modal = document.getElementById('aso-templates-modal-{{ block.id }}');
+        if (modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; document.body.classList.remove('aso-modal-open'); }
+        if (typeof lockProductForm === 'function') lockProductForm(false);
+      };
+      document.addEventListener('DOMContentLoaded', function() {
+        var btn = document.getElementById('aso-open-templates-modal-btn-{{ block.id }}');
+        var modal = document.getElementById('aso-templates-modal-{{ block.id }}');
+        if (btn) btn.addEventListener('click', function(e) { e.preventDefault(); if (typeof lockProductForm === 'function') lockProductForm(true); openAsoTemplatesModal{{ block.id | replace: '-', '_' }}(); });
+        if (modal) {
+          modal.addEventListener('click', function(ev) { if (ev.target === modal) window.closeAsoTemplatesModal{{ block.id | replace: '-', '_' }}(); });
+          modal.remove();
+          document.body.appendChild(modal);
+        }
+      });
+    })();
+  </script>
+{% endif %}
 
 {% render 'style' %}
 
@@ -672,6 +725,83 @@
         "label": "Embed after Product Information section",
         "default": false,
         "info": "When enabled, the block will be automatically moved to appear right after the 'Product Information' section on the product page."
+      },
+      {
+        "id": "embed_template_below",
+        "type": "checkbox",
+        "label": "Embed template list below this block",
+        "default": false,
+        "info": "When enabled, a button and modal with the template list will appear right below this block. Clicking the button opens a modal with templates."
+      },
+      {
+        "type": "header",
+        "content": "Embedded template (when enabled above)"
+      },
+      {
+        "id": "embed_template_button_text",
+        "type": "text",
+        "label": "Template button text",
+        "default": "View templates"
+      },
+      {
+        "id": "embed_template_button_color",
+        "type": "color",
+        "label": "Template button background color",
+        "default": "#667eea"
+      },
+      {
+        "id": "embed_template_button_text_color",
+        "type": "color",
+        "label": "Template button text color",
+        "default": "#ffffff"
+      },
+      {
+        "id": "embed_template_text_all",
+        "type": "text",
+        "label": "All templates label",
+        "default": "All templates"
+      },
+      {
+        "id": "embed_template_text_not_found",
+        "type": "text",
+        "label": "No templates message",
+        "default": "No design template is available"
+      },
+      {
+        "id": "embed_template_text_add_to_cart",
+        "type": "text",
+        "label": "Add to cart text",
+        "default": "Add to cart"
+      },
+      {
+        "id": "embed_template_text_customize",
+        "type": "text",
+        "label": "Customize text",
+        "default": "Customize"
+      },
+      {
+        "id": "embed_template_colour_bg_add_to_cart",
+        "type": "color",
+        "label": "Add to cart button background",
+        "default": "#122f81"
+      },
+      {
+        "id": "embed_template_colour_bg_customize",
+        "type": "color",
+        "label": "Customize button background",
+        "default": "#febd52"
+      },
+      {
+        "id": "embed_template_colour_text_add_to_cart",
+        "type": "color",
+        "label": "Add to cart button text color",
+        "default": "#FFFFFF"
+      },
+      {
+        "id": "embed_template_colour_text_customize",
+        "type": "color",
+        "label": "Customize button text color",
+        "default": "#FFFFFF"
       },
       {
         "type": "header",

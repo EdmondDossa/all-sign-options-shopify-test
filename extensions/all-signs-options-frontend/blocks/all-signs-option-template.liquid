@@ -1,647 +1,152 @@
+{% assign aso_design_page_url = block.settings.asoDesignPageUrl %}
+{% if product %}{% assign aso_design_page_url = product.url %}{% endif %}
 
-{% assign aso_aso_shopify_id = "now" | date: "%N" | modulo: 1000 | plus: 0 %}
-
-<div id="aso_aso_shopify_id{{ aso_aso_shopify_id }}" class="aso_aso_shopify"  style="min-height: 200px; margin-bottom: 2rem;">
-    <div id="asoTemplateCategories">
-      <ul class="aso-categories" id="asoTemplateUl">
-        <li id="asoTemplateCategory" class="asoTemplateLi asoTemplateLiItem aso-active" data-id=""  onclick="toggleActive(this)"> {{ block.settings.text_all }} </li>
-      </ul>
-    </div>
-    <div id="asoTemplate" class="aso-template-container">
-        <div class="asoTemplateItem" id="asoTemplateItemModel">
-            <div class="aso-template-image-container">
-                <div class="aso-template-image-wrapper">
-                  <img class=" asoTemplateItemImg " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
-                  <img class="asoTemplateItemRealImg  " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
-                </div>
-            </div>
-            <div class="aso-template-details-container">
-                <h5 class="asoTemplateItemName"> template  name </h5>
-                <div class="aso-template-size asoTemplateItemSize">  template size </div>
-                <div><span class="asoTemplateItemPrice">Price</span> <span class="asoTemplateItemTextAfter">  after price</span> </div>
-                <div class="asoTemplateItemBtnWrapper">
-                    <button  class="asoTemplateItemAddToCart">
-                      <svg class="notAddingTocart" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                      </svg>
-                      <svg class="addingTocart" style="display: none;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" height="12" width="12">
-                          <circle cx="50" cy="50" r="32" stroke-width="8" stroke="currentColor" stroke-dasharray="50.26548245743669 50.26548245743669" fill="none" stroke-linecap="round">
-                          <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform>
-                          </circle>
-                      </svg>
-                      <span> {{ block.settings.text_add_to_cart }}</span>
-                    </button>
-                 
-
-                    <a href="{% if product %}{{ product.url }}{% else %}{{ block.settings.asoDesignPageUrl }}{% endif %}"  class="asoTemplateItemCustomize">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-                        </svg>
-                        <span> {{ block.settings.text_customize }}</span>
-                    </a>
-                </div>
-
-            </div>
+{% if block.settings.use_modal_interface %}
+  <div class="aso-template-block-modal-wrapper">
+    <button type="button" id="aso-open-template-list-modal-{{ block.id }}" class="aso-modal-button aso-template-list-button" style="background-color: {{ block.settings.template_modal_button_color | default: '#febd52' }}; color: {{ block.settings.template_modal_button_text_color | default: '#ffffff' }};">
+      {{ block.settings.template_modal_button_text | default: "View templates" }}
+    </button>
+    <div id="aso-template-list-modal-{{ block.id }}" class="aso-modal" style="display: none;">
+      <div class="aso-modal-content">
+        <div class="aso-modal-header">
+          <h2>{{ block.settings.template_modal_button_text | default: "View templates" }}</h2>
+          <button type="button" class="aso-modal-close" onclick="closeAsoTemplateListModal{{ block.id | replace: '-', '_' }}()">&times;</button>
         </div>
-    </div>
-    <div id="aso-templates-loader">
-      <div class="aso-grid-container">
-          <div style="display: flex; flex-direction: column; height: 100%;">
-              <div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1); width: 100%; height: 100%;">
-              </div>
-          </div>
-          <div style="display: flex; flex-direction: column; height: 100%;">
-              <div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1);width: 100%;height: 100%;">
-              </div>
-          </div>
-          <div style="display: flex; flex-direction: column; height: 100%;">
-              <div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1); width: 100%; height: 100%;">
-              </div>
-          </div>
+        <div class="aso-modal-body">
+          {% render 'template-list',
+            aso_template_id: block.id,
+            text_all: block.settings.text_all,
+            text_template_not_found: block.settings.text_template_not_found,
+            text_add_to_cart: block.settings.text_add_to_cart,
+            text_customize: block.settings.text_customize,
+            aso_configuration_id: block.settings.aso_configuration_id,
+            aso_design_page_url: aso_design_page_url,
+            colour_bg_add_to_cart: block.settings.colour_bg_add_to_cart,
+            colour_bg_customize: block.settings.colour_bg_customize,
+            colour_text_add_to_cart: block.settings.colour_text_add_to_cart,
+            colour_text_customize: block.settings.colour_text_customize
+          %}
+        </div>
       </div>
     </div>
-    <div class="not-found-wrapper" style="display:none;">
-        <div class="centered-message">
-          {{  block.settings.text_template_not_found }}
-      </div>
-    </div>
-    
-</div>
-
-<script>
-  if (typeof addTemplateToCartShopify === 'undefined') {
-    if (typeof asoConfigurationId === 'undefined') { var asoConfigurationId = ""; }
-    if (typeof asoProductId === 'undefined') { var asoProductId = ""; }
-    var asoCurrency = "{{cart.currency.symbol}}";
-    var asoPriceFormat ="{{shop.money_format}}";
-    var asoRegularPrice ="";
-    var asoFormattedPrice ="{{ 123456| money_without_currency }}";
-    var asoCurrency_pos = asoPriceFormat[0] == asoCurrency ? "left" : "right";
-    var asoThousandSep = asoFormattedPrice[1]=="2"?"":asoFormattedPrice[1];
-    var asoDecimalSep = asoFormattedPrice[4]=="5"?".":asoFormattedPrice[4];
-    var asoCartUrl = "{{ routes.cart_url }}";
-    document.write('<script src="{{ 'shopify.js' | asset_url }}"><\/script>');
-  }
-</script>
-
-
-
-<script>
-
-  var aso_configuration_id = "{{ block.settings.aso_configuration_id }}";
-  var asoPriceFormatTemplate ="{{shop.money_format}}";
-
-
-  async function getAsotemplates() {
-      
-    
-      try {
-        const response = await fetch(`${window.Shopify.routes.root}apps/aso-proxy/api/templates`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-    
-        if (!response.ok) {
-          throw new Error(`ASO Proxy configuration fetch failed with status: ${response.status}`);
+  </div>
+  <script>
+    (function() {
+      function openAsoTemplateListModal{{ block.id | replace: '-', '_' }}() {
+        var modal = document.getElementById('aso-template-list-modal-{{ block.id }}');
+        if (modal) { modal.style.display = 'block'; document.body.style.overflow = 'hidden'; document.body.classList.add('aso-modal-open'); }
+      }
+      window.closeAsoTemplateListModal{{ block.id | replace: '-', '_' }} = function() {
+        var modal = document.getElementById('aso-template-list-modal-{{ block.id }}');
+        if (modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; document.body.classList.remove('aso-modal-open'); }
+        if (typeof lockProductForm === 'function') lockProductForm(false);
+      };
+      document.addEventListener('DOMContentLoaded', function() {
+        var btn = document.getElementById('aso-open-template-list-modal-{{ block.id }}');
+        var modal = document.getElementById('aso-template-list-modal-{{ block.id }}');
+        if (btn) btn.addEventListener('click', function(e) { e.preventDefault(); if (typeof lockProductForm === 'function') lockProductForm(true); openAsoTemplateListModal{{ block.id | replace: '-', '_' }}(); });
+        if (modal) {
+          modal.addEventListener('click', function(ev) { if (ev.target === modal) window.closeAsoTemplateListModal{{ block.id | replace: '-', '_' }}(); });
+          modal.remove();
+          document.body.appendChild(modal);
         }
-    
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('Error fetching ASO Proxy configuration:', error);
-        // Handle the error appropriately in your application (e.g., display an error message to the user)
-        return null; // Or throw an error if necemmmssuhhh ssscurrentConfig.data.settings.theme.skin
-      }
-  }
-
-
-  async function getAsoTemplate(id) {
-      
-    
-      try {
-        const response = await fetch(`${window.Shopify.routes.root}apps/aso-proxy/api/templates/${id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-    
-        if (!response.ok) {
-          throw new Error(`ASO Proxy configuration fetch failed with status: ${response.status}`);
-        }
-    
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('Error fetching ASO Proxy configuration:', error);
-        // Handle the error appropriately in your application (e.g., display an error message to the user)
-        return null; // Or throw an error if necemmmssuhhh ssscurrentConfig.data.settings.theme.skin
-      }
-  }
-
-  var asoTemplateData = []
-
-
-
-
-  document.addEventListener('DOMContentLoaded', function(){
-      getAsotemplates().then(templates=>{
-      const contentHtml ="";
-      console.log("template dtata", templates)
-
-
-      const templateDiv = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #asoTemplate');
-      const templateItem = templateDiv.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .asoTemplateItem');
-
-      const templateUl = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #asoTemplateUl');
-      const templateLiItem = templateUl.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .asoTemplateLiItem'); 
-
-      // Créer un nouveau div pour contenir les éléments clonés
-      const newContainer = document.createElement('div');
-      const newContainerUl = document.createElement('ul');
-
-      const categories = []; 
-
-  // Pour chaque élément dans templates
-      templates?.filter(template=>(aso_configuration_id=="0" || template.configurationId==aso_configuration_id ) ).forEach(template => {
-          // Cloner l'élément template
-          if(!template.recaps){
-            return false;
-          }
-          const clone = templateItem.cloneNode(true);
-          if (templates?.length) {
-            asoTemplateData.push(...templates)
-          }
-
-          if(template.category){
-            if(!categories.find((curr)=> curr.id == template.categoryId)){
-              categories.push(template.category)
-            };
-          } 
-          // Mettre à jour le contenu
-          if (template.prevImg){
-              clone.querySelector('.asoTemplateItemImg').setAttribute('src',template.prevImg)
-              clone.querySelector('.asoTemplateItemRealImg').setAttribute('src',template.realImg||template.prevImg)
-          }
-          clone.setAttribute("data-id", template.categoryId)
-          clone.setAttribute('id',"asoTemplateItem"+template.id);
-          clone.querySelector('.asoTemplateItemName').textContent = template.name;
-          clone.querySelector('.asoTemplateItemSize').textContent = template.recaps.size;
-          clone.querySelector('.asoTemplateItemPrice').textContent = (template.basePrice + template.recaps.customPrice).toFixed(2);
-          clone.querySelector('.asoTemplateItemTextAfter').textContent = template.recaps.priceType;
-          const asoDesignPageUrl =  clone.querySelector('.asoTemplateItemCustomize').getAttribute('href');
-          clone.querySelector('.asoTemplateItemCustomize').setAttribute("href", asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId)
-          clone.querySelector('.asoTemplateItemAddToCart').setAttribute('onclick',"addTemplateTocart("+template.id+")");
-          clone.querySelector('.notAddingTocart').setAttribute('class',"notAddingTocart"+template.id);
-          clone.querySelector('.addingTocart').setAttribute('class',"addingTocart"+template.id);
-          if (template?.enableAddToCart) {
-              clone.querySelector('.asoTemplateItemAddToCart').style.display = 'none';
-          }
-
-          
-          newContainer.appendChild(clone);
       });
-
-      if(templates?.length){
-        templateLiItem.setAttribute("id","asoTemplateCategoryAll")
-        newContainerUl.appendChild(templateLiItem);
-      }
-
-    categories?.forEach((category)=>{
-        const clone = templateLiItem.cloneNode(true);
-        clone.setAttribute("data-id", category.id);
-        clone.setAttribute("class"," asoTemplateLi asoTemplateLiItem")
-        clone.innerHTML = category.name;
-        newContainerUl.appendChild(clone);
-      });
-
-      // Remplacer le contenu de #asoTemplate par le nouveau contenu
-      document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #aso-templates-loader').style.display = 'none'; 
-      if(!newContainer.innerHTML){
-        document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .not-found-wrapper').style.display = 'flex'; 
-      }
-      templateDiv.innerHTML = newContainer.innerHTML;
-      templateUl.innerHTML = newContainerUl.innerHTML; 
-
-      // Ouvrir le configurateur sans recharger : au clic sur Customize, si on est déjà sur la même page, empêcher la nav et ouvrir le modal
-      var asoContainer = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }}');
-      if (asoContainer && !asoContainer.hasAttribute('data-aso-customize-bound')) {
-        asoContainer.setAttribute('data-aso-customize-bound', '1');
-        asoContainer.addEventListener('click', function(ev) {
-          var customizeLink = ev.target.closest('.asoTemplateItemCustomize');
-          if (!customizeLink) return;
-          var designModal = document.getElementById('aso-design-modal');
-          if (!designModal) return;
-          try {
-            var linkUrl = new URL(customizeLink.href, window.location.origin);
-            if (linkUrl.pathname === window.location.pathname) {
-              ev.preventDefault();
-              ev.stopPropagation();
-              history.replaceState(null, '', linkUrl.pathname + linkUrl.search);
-              if (typeof lockProductForm === 'function') lockProductForm(true);
-              if (typeof openDesignModal === 'function') openDesignModal();
-            }
-          } catch (err) { }
-        });
-      }
-
-    
-  }).catch((error) =>{
-    document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #aso-templates-loader').style.display = 'none';
-    document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .not-found-wrapper').style.display = 'flex'; 
-    console.log(' error  on fetching ')
-  });
-  }); 
-
-
-
- async function addTemplateTocart(id){
-    console.log("start  add to  cart");
-    if (typeof addTemplateToCartShopify == "function") {
-      //debut de gestion du loading
-      let template = await getAsoTemplate(id);
-      const templateDiv = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #asoTemplate');
-      templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'none';
-      templateDiv.querySelector('.addingTocart'+template.id).style.display = 'block';
-    
-      //fin
-
-      addTemplateToCartShopify(template).then(res=>{
-        //debut de gestion du loading
-        templateDiv.querySelector('.notAddingTocart'+template.id).style.display = 'block';
-        templateDiv.querySelector('.addingTocart'+template.id).style.display = 'none';
-        //fin
-        console.log("end of  add to  cart",res);
-      }).catch((err)=>{
-        console.log("error on adding to cart", error);
-      });
-    }
-  }
-
-
-  function toggleActive(element) {
-    // Check if the clicked element is already active
-    var isActive = element.classList.contains('aso-active');
-
-    // Remove the active class from all list items
-    var items = element.closest('.aso_aso_shopify').querySelectorAll('.aso-categories li');
-
-    items.forEach(function(item) {
-        item.classList.remove('aso-active');
-    });
-
-    // Hide all content items
-    var contentItems = element.closest('.aso_aso_shopify').querySelectorAll('.asoTemplateItem');
-   
-    contentItems.forEach(function(contentItem) {
-        contentItem.classList.add('hidden');
-    });
-
-    // If the clicked element was not active, activate it and show corresponding content
-
-        element.classList.add('aso-active');
-
-        // Get the data-id attribute of the clicked element
-        var id = element.getAttribute('data-id');
-
-        // Show the content items with the same data-id
-        if(id==""|| id == null){
-          contentItems.forEach(function(contentItem) {
-                contentItem.classList.remove('hidden');
-          });
-        }else{
-          contentItems.forEach(function(contentItem) {
-              if (contentItem.getAttribute('data-id') === id) {
-                  contentItem.classList.remove('hidden');
-              }
-          });
-        };
-    
-
-    // Log the active category ID to the console
-    var element_id = element.getAttribute('data-id');
-  }
-</script>
-
-<style>
-  
-  #asoTemplateItemModel{
-    display: none !important;
-  }
-
-  #asoTemplateCategory{
-    display: none !important;
-  }
-
-.asoTemplateItemCustomize {
-  color:  {{ block.settings.colour_text_customize }};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color:  {{ block.settings.colour_bg_customize }};
-  border-radius: 0.5rem;
-  width: 100%;
-  padding: 0.75rem;
-  text-decoration: none;
-  gap: 8px;
-  font-size: 1.5rem;;
-}
-
-.asoTemplateItemCustomize:hover {
-    background-color: #fcac29;
-}
-
-
-.asoTemplateItemAddToCart {
-  color: {{ block.settings.colour_text_add_to_cart }};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color:  {{ block.settings.colour_bg_add_to_cart }};
-  border-radius: 5px;
-  border-color: {{ block.settings.colour_bg_add_to_cart }} ;
-  width: 100%;
-  padding: 0.75rem;
-  text-decoration: none;
-  gap: 8px;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-
-.asoTemplateItemBtnWrapper{
-  gap: 1rem;
-  margin-block-start: 0rem;
-  margin-block-end: 0rem;
-  padding-block-start: 1rem;
-  padding-block-end: 1rem;
-  display: flex;
-  flex-direction: column;
-}
-
-
-.asoTemplateItemPrice{
-    font-weight: bold;
-}
-
-.asoTemplateItemName{
-    font-weight: bold;
-    margin-block-start: 0px;
-    margin-block-end: 1rem;
-}
-
-.aso-template-details-container{
-  border-width: 1px;
-  border-style: solid;
-  border-left: 0;
-  border-bottom: 0;
-  border-right: 0;
-  border-color: #c3cfd6;
-  padding: 1rem;
-
-}
-
-.asoTemplateItemImg, .asoTemplateItemRealImg{
-      height: 100%; 
-      width: 100%;
-      
-    object-fit: cover;
-}
-
-.aso-template-image-wrapper{
-    width: 100%; /* aso-w-1/2 */
-    height: 100%; /* aso-h-full */
-    display: flex; /* aso-flex */
-    justify-content: center; /* aso-justify-center */
-    align-items: center; /* aso-items-center */
-    overflow: clip;
-    padding: 0px;
-}
-
-.aso-template-image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px; /* aso-h-[150px] */
-    overflow: hidden;
-}
-
-.asoTemplateItem{
-    border-width: 1px;
-    border-style: solid;
-    border-color: #c3cfd6;
-    border-radius: 5px; /* aso-rounded */
-    background-color: transparent; /* aso-bg-transparent */
-    overflow: hidden;
-}
-
-.aso-template-container{
-  display: grid;
-  gap: 20px; 
-}
-
-@media (min-width: 1200px) {
-  .aso-template-container {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (min-width: 992px) and (max-width: 1199px) {
-  .aso-template-container {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (min-width: 600px) and (max-width: 991px) {
-  .aso-template-container {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .aso-template-image-container {
-    height: 150px; 
-  }
-}
-
-@media (max-width: 600px) {
-  .aso-template-container {
-    grid-template-columns: repeat(2, 1fr);
-    
-  }
-
-  .aso-template-image-container {
-    height: 150px; 
-  }
-}
-
-
-@media (max-width: 400px) {
-  .aso-template-container {
-    grid-template-columns: 1fr;
-  }
-}
-
-.aso-categories {
-  list-style-type: none;
-  gap: 8px;
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 2rem;
-  display: flex;
-  justify-content: center;
-}
-
-.aso-categories li {
-  border-bottom: 1px solid lightslategray; /* Secondary border color */
-  padding: 4px 15px;
-  margin-right: 10px;
-  color: lightslategray;
-  font-weight: 600; /* Slightly bold */
-  transition: background-color 0.3s ease, color 0.3s ease, border-bottom 0.3s ease;
-}
-
-.aso-categories li.aso-active {
-  background-color: lightslategray; /* Darker secondary color */
-  color: white;
-}
-
-#aso-templates-loader {
-  height: 50vh;
-  width: 100%;
-}
-
-.aso-grid-container {
-  grid-gap: 10px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  height: 100%;
-  padding: 10px;
-  width: 100%;
-}
-
-@keyframes pulseGradient {
-  0%, 100% {
-    background-size: 200% 100%;
-    background-position: 200% 50%;
-    opacity: 0.5;
- 
- }
-  50% {
-    background-size: 200% 100%;
-    background-position: -100% 50%;
-    opacity: 1;
-  
- }
-}
-#aso-templates-loader .aso-loader-container {
-  animation: pulseGradient 1.5s ease infinite;
-}
-
-.centered-message {
-  padding: 20px;
-  color: darkslategray;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 25px;
-}
-
-
-.not-found-wrapper {
-  height: 250px;
-  width: 100%;
-  margin: 20px 0px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid lightgray;
-  border-radius: 2px;
-}
-
-
-/* CSS for the image hover effect */
-.aso-template-image-wrapper {
-  position: relative;
-  display: inline-block; /* or block, depending on your layout */
-}
-
-.asoTemplateItemImg, 
-.asoTemplateItemRealImg {
-  transition: opacity 0.6s ease;
-  display: block; /* removes extra space under images */
-  width: 100%; /* ensures both images match dimensions */
-  height: 100%;
-}
-
-.asoTemplateItemRealImg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-}
-
-.aso-template-image-wrapper:hover .asoTemplateItemImg {
-  opacity: 0;
-}
-
-.aso-template-image-wrapper:hover .asoTemplateItemRealImg {
-  opacity: 1;
-}
-
-
-
-
-  
-</style>
+    })();
+  </script>
+{% else %}
+  {% render 'template-list',
+    aso_template_id: block.id,
+    text_all: block.settings.text_all,
+    text_template_not_found: block.settings.text_template_not_found,
+    text_add_to_cart: block.settings.text_add_to_cart,
+    text_customize: block.settings.text_customize,
+    aso_configuration_id: block.settings.aso_configuration_id,
+    aso_design_page_url: aso_design_page_url,
+    colour_bg_add_to_cart: block.settings.colour_bg_add_to_cart,
+    colour_bg_customize: block.settings.colour_bg_customize,
+    colour_text_add_to_cart: block.settings.colour_text_add_to_cart,
+    colour_text_customize: block.settings.colour_text_customize
+  %}
+{% endif %}
 
 {% schema %}
+{
+  "name": "ASO templates list",
+  "target": "section",
+  "settings": [
     {
-      "name": "ASO templates  list",
-      "target": "section",
-      "settings": [
-        {
-          "type": "number",
-          "id": "aso_configuration_id",
-          "label": "Id of template's configuration ",
-          "default":0
-        },
-        {
-          "type": "url",
-          "id": "asoDesignPageUrl",
-          "label": "Design Screen page url",
-          "default":"/"
-        },
-        { "type": "text", "id": "text_all", "label": "ALl  template text", "default": "All templates" },
-        { "type": "text", "id": "text_template_not_found", "label": "Template not available Text", "default": "No design template is available" },
-        { "type": "text", "id": "text_add_to_cart", "label": "Add  to cart text", "default": "Add  to cart" },
-        { "type": "text", "id": "text_customize", "label": "Customize text", "default": "Customize" },
-        {
-           "type": "color", 
-          "id": "colour_bg_add_to_cart", 
-          "label": "Add to  cart  background color", 
-          "default": "#122f81" 
-        },
-        {
-          "type": "color", 
-         "id": "colour_bg_customize", 
-         "label": "Customize  background color", 
-         "default": "#febd52" 
-       },
-       {
-        "type": "color", 
-       "id": "colour_text_add_to_cart", 
-       "label": "Add to  cart  text color", 
-       "default": "#FFFFFF" 
-     },
-     {
-       "type": "color", 
-      "id": "colour_text_customize", 
-      "label": "Customize  text color", 
-      "default": "#FFFFFF" 
+      "type": "checkbox",
+      "id": "use_modal_interface",
+      "label": "Use modal interface",
+      "default": true,
+      "info": "When enabled, a button is shown. Clicking it opens a modal with the template list inside."
+    },
+    {
+      "type": "header",
+      "content": "Modal button (when modal interface is enabled)"
+    },
+    {
+      "type": "text",
+      "id": "template_modal_button_text",
+      "label": "Button text",
+      "default": "View templates"
+    },
+    {
+      "type": "color",
+      "id": "template_modal_button_color",
+      "label": "Button background color",
+      "default": "#febd52"
+    },
+    {
+      "type": "color",
+      "id": "template_modal_button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Template list settings"
+    },
+    {
+      "type": "number",
+      "id": "aso_configuration_id",
+      "label": "Id of template's configuration",
+      "default": 0
+    },
+    {
+      "type": "url",
+      "id": "asoDesignPageUrl",
+      "label": "Design Screen page url",
+      "default": "/"
+    },
+    { "type": "text", "id": "text_all", "label": "All template text", "default": "All templates" },
+    { "type": "text", "id": "text_template_not_found", "label": "Template not available Text", "default": "No design template is available" },
+    { "type": "text", "id": "text_add_to_cart", "label": "Add to cart text", "default": "Add to cart" },
+    { "type": "text", "id": "text_customize", "label": "Customize text", "default": "Customize" },
+    {
+      "type": "color",
+      "id": "colour_bg_add_to_cart",
+      "label": "Add to cart background color",
+      "default": "#122f81"
+    },
+    {
+      "type": "color",
+      "id": "colour_bg_customize",
+      "label": "Customize background color",
+      "default": "#febd52"
+    },
+    {
+      "type": "color",
+      "id": "colour_text_add_to_cart",
+      "label": "Add to cart text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "colour_text_customize",
+      "label": "Customize text color",
+      "default": "#FFFFFF"
     }
-
-
-      ]
-    }
+  ]
+}
 {% endschema %}
