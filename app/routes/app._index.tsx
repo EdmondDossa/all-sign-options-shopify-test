@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { NavLink, useLoaderData, useNavigate } from "@remix-run/react";
+import { NavLink, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import {
   Badge,
   Banner,
@@ -131,6 +131,7 @@ export default function Index() {
   const { templateUrl, configurationUrl, configurations, productsCreated, ordersCount, conversionRate } =
     useLoaderData<typeof loader>();
   const navigate = useNavigate();
+  const themeSyncFetcher = useFetcher<{ ok: boolean; message: string; updated?: boolean }>();
 
   // let lastconfigs = [
   //   { id: 7420, name: 'Neon Sign Customiser', status: 'Now', type: 'simple' },
@@ -270,6 +271,31 @@ export default function Index() {
             to your online store
           </Banner>
               </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+            <Banner
+              title="Sync theme: Add/remove Templates block"
+              onDismiss={() => {}}
+              action={{
+                content: themeSyncFetcher.state === "submitting" ? "Syncing…" : "Sync theme",
+                loading: themeSyncFetcher.state === "submitting",
+                onAction: () => {
+                  themeSyncFetcher.submit(
+                    {},
+                    { method: "POST", action: "/api/theme/sync-templates-block" }
+                  );
+                },
+              }}
+            >
+              <p>
+                If you enabled &quot;Add Templates block below&quot; in the All Signs Customizer block (in the theme editor), click &quot;Sync theme&quot; to add the ASO Templates List block below it on the product template. If you disabled that option, Sync will remove that block from the theme.
+              </p>
+              {themeSyncFetcher.data && (
+                <p style={{ marginTop: 8, fontWeight: themeSyncFetcher.data.ok ? 500 : 600 }}>
+                  {themeSyncFetcher.data.ok ? "✓ " : ""}{themeSyncFetcher.data.message}
+                </p>
+              )}
+            </Banner>
+            </Grid.Cell>
         </Grid>
 
         </Box>
