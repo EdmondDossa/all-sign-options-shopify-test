@@ -1,72 +1,115 @@
 
 {% assign aso_aso_shopify_id = "now" | date: "%N" | modulo: 1000 | plus: 0 %}
 
-<div id="aso_aso_shopify_id{{ aso_aso_shopify_id }}" class="aso_aso_shopify"  style="min-height: 200px; margin-bottom: 2rem;">
+{% if block.settings.use_modal_interface %}
+  <!-- Bouton pour ouvrir la modal des templates (même principe que all-signs-options) -->
+  <div class="aso-modal-buttons-container aso-templates-modal-buttons">
+    <button id="asoOpenTemplatesModalBtn" type="button" class="aso-modal-button aso-templates-modal-button"
+            style="background-color: {{ block.settings.templates_modal_button_color }}; color: {{ block.settings.templates_modal_button_text_color }};">
+      {{ block.settings.templates_modal_button_text }}
+    </button>
+  </div>
+
+  <!-- Modal contenant la liste des templates -->
+  <div id="aso-templates-modal" class="aso-modal aso-templates-modal" style="display: none;">
+    <div class="aso-modal-content aso-templates-modal-content">
+      <div class="aso-modal-header">
+        <h2>{{ block.settings.templates_modal_title }}</h2>
+        <button class="aso-modal-close" type="button" onclick="closeTemplatesModal()" aria-label="Close">&times;</button>
+      </div>
+      <div class="aso-modal-body aso-templates-modal-body">
+        <div id="aso_aso_shopify_id{{ aso_aso_shopify_id }}" class="aso_aso_shopify" style="min-height: 200px; margin-bottom: 0;">
+          <div id="asoTemplateCategories">
+            <ul class="aso-categories" id="asoTemplateUl">
+              <li id="asoTemplateCategory" class="asoTemplateLi asoTemplateLiItem aso-active" data-id="" onclick="toggleActive(this)"> {{ block.settings.text_all }} </li>
+            </ul>
+          </div>
+          <div id="asoTemplate" class="aso-template-container">
+            <div class="asoTemplateItem" id="asoTemplateItemModel">
+              <div class="aso-template-image-container">
+                <div class="aso-template-image-wrapper">
+                  <img class="asoTemplateItemImg" src="{{ 'img_rectangle_noir.png' | asset_url }}" alt="aso template">
+                  <img class="asoTemplateItemRealImg" src="{{ 'img_rectangle_noir.png' | asset_url }}" alt="aso template">
+                </div>
+              </div>
+              <div class="aso-template-details-container">
+                <h5 class="asoTemplateItemName"> template  name </h5>
+                <div class="aso-template-size asoTemplateItemSize"> template size </div>
+                <div><span class="asoTemplateItemPrice">Price</span> <span class="asoTemplateItemTextAfter"> after price</span> </div>
+                <div class="asoTemplateItemBtnWrapper">
+                  <button class="asoTemplateItemAddToCart">
+                    <svg class="notAddingTocart" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg>
+                    <svg class="addingTocart" style="display: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" height="12" width="12"><circle cx="50" cy="50" r="32" stroke-width="8" stroke="currentColor" stroke-dasharray="50.26548245743669 50.26548245743669" fill="none" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform></circle></svg>
+                    <span> {{ block.settings.text_add_to_cart }}</span>
+                  </button>
+                  <a href="{% if product %}{{ product.url }}{% else %}{{ block.settings.asoDesignPageUrl }}{% endif %}" class="asoTemplateItemCustomize">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
+                    <span> {{ block.settings.text_customize }}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="aso-templates-loader">
+            <div class="aso-grid-container">
+              <div style="display: flex; flex-direction: column; height: 100%;"><div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1); width: 100%; height: 100%;"></div></div>
+              <div style="display: flex; flex-direction: column; height: 100%;"><div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1);width: 100%;height: 100%;"></div></div>
+              <div style="display: flex; flex-direction: column; height: 100%;"><div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1); width: 100%; height: 100%;"></div></div>
+            </div>
+          </div>
+          <div class="not-found-wrapper" style="display:none;">
+            <div class="centered-message">{{ block.settings.text_template_not_found }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <!-- Affichage direct de la liste des templates sur la page -->
+  <div id="aso_aso_shopify_id{{ aso_aso_shopify_id }}" class="aso_aso_shopify" style="min-height: 200px; margin-bottom: 2rem;">
     <div id="asoTemplateCategories">
       <ul class="aso-categories" id="asoTemplateUl">
-        <li id="asoTemplateCategory" class="asoTemplateLi asoTemplateLiItem aso-active" data-id=""  onclick="toggleActive(this)"> {{ block.settings.text_all }} </li>
+        <li id="asoTemplateCategory" class="asoTemplateLi asoTemplateLiItem aso-active" data-id="" onclick="toggleActive(this)"> {{ block.settings.text_all }} </li>
       </ul>
     </div>
     <div id="asoTemplate" class="aso-template-container">
-        <div class="asoTemplateItem" id="asoTemplateItemModel">
-            <div class="aso-template-image-container">
-                <div class="aso-template-image-wrapper">
-                  <img class=" asoTemplateItemImg " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
-                  <img class="asoTemplateItemRealImg  " src="{{'img_rectangle_noir.png' |asset_url }}" alt="aso  template">
-                </div>
-            </div>
-            <div class="aso-template-details-container">
-                <h5 class="asoTemplateItemName"> template  name </h5>
-                <div class="aso-template-size asoTemplateItemSize">  template size </div>
-                <div><span class="asoTemplateItemPrice">Price</span> <span class="asoTemplateItemTextAfter">  after price</span> </div>
-                <div class="asoTemplateItemBtnWrapper">
-                    <button  class="asoTemplateItemAddToCart">
-                      <svg class="notAddingTocart" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                      </svg>
-                      <svg class="addingTocart" style="display: none;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" height="12" width="12">
-                          <circle cx="50" cy="50" r="32" stroke-width="8" stroke="currentColor" stroke-dasharray="50.26548245743669 50.26548245743669" fill="none" stroke-linecap="round">
-                          <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform>
-                          </circle>
-                      </svg>
-                      <span> {{ block.settings.text_add_to_cart }}</span>
-                    </button>
-                 
-
-                    <a href="{% if product %}{{ product.url }}{% else %}{{ block.settings.asoDesignPageUrl }}{% endif %}"  class="asoTemplateItemCustomize">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-                        </svg>
-                        <span> {{ block.settings.text_customize }}</span>
-                    </a>
-                </div>
-
-            </div>
+      <div class="asoTemplateItem" id="asoTemplateItemModel">
+        <div class="aso-template-image-container">
+          <div class="aso-template-image-wrapper">
+            <img class="asoTemplateItemImg" src="{{ 'img_rectangle_noir.png' | asset_url }}" alt="aso template">
+            <img class="asoTemplateItemRealImg" src="{{ 'img_rectangle_noir.png' | asset_url }}" alt="aso template">
+          </div>
         </div>
+        <div class="aso-template-details-container">
+          <h5 class="asoTemplateItemName"> template  name </h5>
+          <div class="aso-template-size asoTemplateItemSize"> template size </div>
+          <div><span class="asoTemplateItemPrice">Price</span> <span class="asoTemplateItemTextAfter"> after price</span> </div>
+          <div class="asoTemplateItemBtnWrapper">
+            <button class="asoTemplateItemAddToCart">
+              <svg class="notAddingTocart" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg>
+              <svg class="addingTocart" style="display: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" height="12" width="12"><circle cx="50" cy="50" r="32" stroke-width="8" stroke="currentColor" stroke-dasharray="50.26548245743669 50.26548245743669" fill="none" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform></circle></svg>
+              <span> {{ block.settings.text_add_to_cart }}</span>
+            </button>
+            <a href="{% if product %}{{ product.url }}{% else %}{{ block.settings.asoDesignPageUrl }}{% endif %}" class="asoTemplateItemCustomize">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
+              <span> {{ block.settings.text_customize }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="aso-templates-loader">
       <div class="aso-grid-container">
-          <div style="display: flex; flex-direction: column; height: 100%;">
-              <div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1); width: 100%; height: 100%;">
-              </div>
-          </div>
-          <div style="display: flex; flex-direction: column; height: 100%;">
-              <div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1);width: 100%;height: 100%;">
-              </div>
-          </div>
-          <div style="display: flex; flex-direction: column; height: 100%;">
-              <div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1); width: 100%; height: 100%;">
-              </div>
-          </div>
+        <div style="display: flex; flex-direction: column; height: 100%;"><div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1); width: 100%; height: 100%;"></div></div>
+        <div style="display: flex; flex-direction: column; height: 100%;"><div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1);width: 100%;height: 100%;"></div></div>
+        <div style="display: flex; flex-direction: column; height: 100%;"><div class="aso-loader-container" style="background: linear-gradient(to right, #a1a1a1, #e4e4e7, #a1a1a1); width: 100%; height: 100%;"></div></div>
       </div>
     </div>
     <div class="not-found-wrapper" style="display:none;">
-        <div class="centered-message">
-          {{  block.settings.text_template_not_found }}
-      </div>
+      <div class="centered-message">{{ block.settings.text_template_not_found }}</div>
     </div>
-    
-</div>
+  </div>
+{% endif %}
 
 <script>
   if (typeof addTemplateToCartShopify === 'undefined') {
@@ -83,6 +126,46 @@
     document.write('<script src="{{ 'shopify.js' | asset_url }}"><\/script>');
   }
 </script>
+
+{% if block.settings.use_modal_interface %}
+<script>
+  function openTemplatesModal() {
+    var modal = document.getElementById('aso-templates-modal');
+    if (modal) {
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('aso-modal-open');
+    }
+  }
+  function closeTemplatesModal() {
+    var modal = document.getElementById('aso-templates-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      document.body.classList.remove('aso-modal-open');
+    }
+    if (typeof lockProductForm === 'function') lockProductForm(false);
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('aso-templates-modal');
+    if (modal) {
+      modal.remove();
+      document.body.appendChild(modal);
+    }
+    var btn = document.getElementById('asoOpenTemplatesModalBtn');
+    if (btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (typeof lockProductForm === 'function') lockProductForm(true);
+        openTemplatesModal();
+      });
+    }
+    document.addEventListener('click', function(ev) {
+      if (ev.target && ev.target.id === 'aso-templates-modal') closeTemplatesModal();
+    });
+  });
+</script>
+{% endif %}
 
 
 
@@ -590,10 +673,89 @@
   opacity: 1;
 }
 
+/* Modal templates (même principe que all-signs-options) – au cas où style.liquid n’est pas chargé */
+.aso-modal-buttons-container.aso-templates-modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.aso-modal-button.aso-templates-modal-button {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 100%;
+}
+.aso-modal-button.aso-templates-modal-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+#aso-templates-modal.aso-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+#aso-templates-modal .aso-templates-modal-content {
+  background-color: #fff;
+  margin: 2% auto;
+  padding: 0;
+  border-radius: 12px;
+  width: 96%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: asoModalSlideIn 0.3s ease-out;
+}
+#aso-templates-modal .aso-modal-header {
+  padding: 12px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#aso-templates-modal .aso-modal-header h2 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+#aso-templates-modal .aso-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 6px;
+}
+#aso-templates-modal .aso-modal-close:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+#aso-templates-modal .aso-templates-modal-body {
+  padding: 16px 24px 24px;
+  max-height: calc(90vh - 60px);
+  overflow-y: auto;
+}
+@keyframes asoModalSlideIn {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-
-
-  
 </style>
 
 {% schema %}
@@ -606,7 +768,35 @@
           "id": "use_modal_interface",
           "label": "Use modal interface",
           "default": true,
-          "info": "When enabled, clicking Customize opens the design configurator in a modal (same as All Signs Customizer block). When disabled, the link navigates to the product page."
+          "info": "When enabled, a button is shown; clicking it opens the template list in a modal (same pattern as All Signs Customizer block). When disabled, the template list is displayed directly on the page."
+        },
+        {
+          "type": "header",
+          "content": "Templates modal (when Use modal interface is on)"
+        },
+        {
+          "type": "text",
+          "id": "templates_modal_button_text",
+          "label": "Button text",
+          "default": "View templates"
+        },
+        {
+          "type": "text",
+          "id": "templates_modal_title",
+          "label": "Modal title",
+          "default": "Templates"
+        },
+        {
+          "type": "color",
+          "id": "templates_modal_button_color",
+          "label": "Button background color",
+          "default": "#febd52"
+        },
+        {
+          "type": "color",
+          "id": "templates_modal_button_text_color",
+          "label": "Button text color",
+          "default": "#ffffff"
         },
         {
           "type": "number",
