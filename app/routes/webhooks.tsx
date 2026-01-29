@@ -2,7 +2,6 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
 import { OrderCreateWebhook } from "~/webhooks/OrderCreateWebhook";
-import { syncTemplatesBlockOnProductTemplate } from "~/models/Theme.service.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   console.log("webhook call ");
@@ -31,16 +30,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       });
       console.log("Order create webhook function started");
       return new Response("Order create webhook processed", { status: 200 });
-
-    case "THEMES_PUBLISH":
-      if (session?.shop && session.accessToken) {
-        const extensionId = process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID;
-        if (extensionId) {
-          const result = await syncTemplatesBlockOnProductTemplate(session.shop, session.accessToken, extensionId);
-          console.log("Theme sync after publish:", result.message);
-        }
-      }
-      return new Response("Themes publish webhook processed", { status: 200 });
     
     // Compliance webhooks are now handled by dedicated route files:
     // - webhooks.customers.data_request.tsx

@@ -21,6 +21,7 @@ import {
   TextField,
   ButtonGroup,
   Divider,
+  ExceptionList,
 } from "@shopify/polaris";
 import { useState } from "react";
 import PlusIcon from "~/components/icons/PlusIcon";
@@ -36,10 +37,13 @@ import { authenticate } from "~/shopify.server";
 import TemplateService from "~/models/Template.service";
 import CategoryService from "~/models/Category.service";
 import TemplatePackService from "~/models/TemplatePack.service";
+import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { fileUrl } from "~/utils/fileUrl";
 import { ComboxSelect } from "~/components/inputs/ComboxSelect";
+import { LinksConfirmBtn } from "~/components/buttons/LinksConfirmBtn";
+import { AlertCircleIcon } from "@shopify/polaris-icons";
 
 
 
@@ -52,7 +56,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const categories = await CategoryService.getCategorys(session.id);
 
-  return json({ templates, categories });
+  let templateUrl = "";
+  try {
+    const shop = await ShopifyShopService.getShop(admin);
+    templateUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=product&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/all-signs-option-template&target=newAppsSection`;
+  } catch (e) {
+    // ignore
+  }
+
+  return json({ templates, categories, templateUrl });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -89,7 +101,7 @@ export default function ConfigurationTemplates() {
   const  [searchTag,  setSearchTag] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const submit = useSubmit();
-  let { templates, categories } = useLoaderData<typeof loader>();
+  let { templates, categories, templateUrl } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
  
 
@@ -253,6 +265,23 @@ export default function ConfigurationTemplates() {
                   </InlineStack>
                 </Box>
               </button>
+              {templateUrl ? (
+                <LinksConfirmBtn
+                  url={templateUrl}
+                  modalTitle="Templates List Block"
+                  title="Add template block to product page"
+                >
+                  <ExceptionList
+                    items={[
+                      {
+                        icon: AlertCircleIcon,
+                        status: "warning",
+                        description: "This will open the theme editor and add the Templates List block to the product template. You can then place it (e.g. before the add to cart button in the Product information section) and save.",
+                      },
+                    ]}
+                  />
+                </LinksConfirmBtn>
+              ) : null}
             </InlineStack>
             </InlineStack>
           </Box>

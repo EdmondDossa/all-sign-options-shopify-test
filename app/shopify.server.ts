@@ -45,17 +45,13 @@ const shopify = shopifyApp({
     ORDERS_CREATE: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      callback: async (topic, shop, body, webhookId) => {
-        console.log("========= order creatd ========");
-        const payload = JSON.parse(body);
-        console.log("==== playlod", payload);
-        console.log("========= order creatd end========");
-      },
-    },
-    THEMES_PUBLISH: {
-      deliveryMethod: DeliveryMethod.Http,
-      callbackUrl: "/webhooks",
-    },
+      callback: async (topic,shop, body, webwookId)=>{
+        console.log("========= order creatd ========")
+        const  payload = JSON.parse(body)
+        console.log('==== playlod',payload);
+        console.log("========= order creatd end========")
+      }
+    }
   },
   billing: {
     [MONTHLY_STARTER_PLAN]: {
