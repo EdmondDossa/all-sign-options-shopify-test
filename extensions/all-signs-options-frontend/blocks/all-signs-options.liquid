@@ -168,6 +168,15 @@
     document.body.style.overflow = 'auto';
     document.body.classList.remove('aso-modal-open');
     lockProductForm(false);
+    // Retirer aso-template-id et aso-config-id de l'URL pour que "Design your own Sign" rouvre le configurateur avec la config produit, pas le template
+    try {
+      var url = new URL(window.location.href);
+      if (url.searchParams.has('aso-template-id') || url.searchParams.has('aso-config-id')) {
+        url.searchParams.delete('aso-template-id');
+        url.searchParams.delete('aso-config-id');
+        history.replaceState(null, '', url.pathname + url.search);
+      }
+    } catch (e) {}
   }
 
   function closeUploadModal() {
