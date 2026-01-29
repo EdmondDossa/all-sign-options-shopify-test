@@ -1,10 +1,11 @@
 /**
- * Service pour modifier le thème via l'API REST (assets).
+ * Service pour modifier le thème via l'API GraphQL (themeFilesUpsert).
+ * L'API REST Asset PUT renvoie 404 pour les apps sans exemption Shopify, donc on utilise GraphQL.
  * Utilisé pour ajouter/supprimer le bloc "ASO Templates List" en dessous du bloc "All Signs Customizer"
  * selon le setting embed_templates_block_below.
  */
 
-const REST_API_VERSION = "2024-01";
+import { apiVersion } from "~/shopify.server";
 
 export type ThemeSyncResult = {
   ok: boolean;
@@ -38,29 +39,45 @@ export async function syncTemplatesBlockOnProductTemplate(
   extensionId: string
 ): Promise<ThemeSyncResult> {
   try {
-    const baseUrl = `https://${shop}/admin/api/${REST_API_VERSION}`;
+    const graphqlUrl = `https://${shop}/admin/api/${apiVersion}/graphql.json`;
+    const headers = {
+      "Content-Type": "application/json",
+      "X-Shopify-Access-Token": accessToken,
+    };
 
-    const themesRes = await fetch(`${baseUrl}/themes.json`, {
-      headers: { "X-Shopify-Access-Token": accessToken },
+    // 1. Récupérer le thème principal (published)
+    const themesQuery = `#graphql
+      query GetMainTheme {
+        themes(first: 1, roles: [MAIN]) {
+          nodes {
+            id
+          }
+        }
+      }
+    `;
+    const themesRes = await fetch(graphqlUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ query: themesQuery }),
     });
     if (!themesRes.ok) {
       return { ok: false, message: `Failed to list themes: ${themesRes.status}` };
     }
     const themesData = await themesRes.json();
-    const themes = themesData.themes || [];
-    const mainTheme = themes.find((t: { role: string }) => (t.role || "").toLowerCase() === "main");
-    if (!mainTheme?.id) {
+    const themeId = themesData?.data?.themes?.nodes?.[0]?.id;
+    if (!themeId) {
       return { ok: false, message: "No main (published) theme found." };
     }
 
-    const themeId = mainTheme.id;
+    // 2. Lire le contenu de templates/product.json (REST GET fonctionne en lecture)
+    const restBaseUrl = `https://${shop}/admin/api/${apiVersion}`;
     const assetKey = "templates/product.json";
-
-    const assetRes = await fetch(`${baseUrl}/themes/${themeId}/assets.json?asset[key]=${encodeURIComponent(assetKey)}`, {
-      headers: { "X-Shopify-Access-Token": accessToken },
-    });
+    const assetRes = await fetch(
+      `${restBaseUrl}/themes/${themeId.replace("gid://shopify/OnlineStoreTheme/", "")}/assets.json?asset[key]=${encodeURIComponent(assetKey)}`,
+      { headers: { "X-Shopify-Access-Token": accessToken } }
+    );
     if (!assetRes.ok) {
-      return { ok: false, message: `Failed to get ${assetKey}: ${assetRes.status}` };
+      return { ok: false, message: `Failed to get ${assetKey}: ${assetRes.status}. Make sure the product template uses JSON (e.g. Dawn).` };
     }
     const assetData = await assetRes.json();
     const asset = assetData.asset;
@@ -68,7 +85,7 @@ export async function syncTemplatesBlockOnProductTemplate(
       return { ok: false, message: "product.json not found or empty." };
     }
 
-    let json: { sections?: Record<string, { blocks?: Record<string, unknown>; block_order?: string[] }>; order?: string[] };
+    let json: { sections?: Record<string, { blocks?: Record<string, { type?: string; app_block_id?: string; settings?: Record<string, unknown> }>; block_order?: string[] }>; order?: string[] };
     try {
       json = JSON.parse(asset.value);
     } catch {
@@ -80,7 +97,7 @@ export async function syncTemplatesBlockOnProductTemplate(
     const sectionsModified: string[] = [];
 
     for (const sectionId of sectionIds) {
-      const section = sections[sectionId] as { blocks?: Record<string, { type?: string; app_block_id?: string; settings?: Record<string, unknown> }>; block_order?: string[] };
+      const section = sections[sectionId];
       if (!section?.blocks || !section.block_order) continue;
 
       const blocks = section.blocks;
@@ -143,17 +160,49 @@ export async function syncTemplatesBlockOnProductTemplate(
     }
 
     const newValue = JSON.stringify(json, null, 2);
-    const putRes = await fetch(`${baseUrl}/themes/${themeId}/assets.json`, {
-      method: "PUT",
-      headers: {
-        "X-Shopify-Access-Token": accessToken,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ asset: { key: assetKey, value: newValue } }),
+
+    // 3. Écrire via GraphQL themeFilesUpsert (évite le 404 du REST PUT)
+    const upsertMutation = `#graphql
+      mutation themeFilesUpsert($themeId: ID!, $files: [OnlineStoreThemeFilesUpsertFileInput!]!) {
+        themeFilesUpsert(themeId: $themeId, files: $files) {
+          upsertedThemeFiles {
+            filename
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+    const upsertRes = await fetch(graphqlUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        query: upsertMutation,
+        variables: {
+          themeId,
+          files: [
+            {
+              filename: assetKey,
+              body: {
+                type: "JSON",
+                value: newValue,
+              },
+            },
+          ],
+        },
+      }),
     });
-    if (!putRes.ok) {
-      const errText = await putRes.text();
-      return { ok: false, message: `Failed to update theme asset: ${putRes.status} ${errText}` };
+    if (!upsertRes.ok) {
+      const errText = await upsertRes.text();
+      return { ok: false, message: `Failed to update theme (GraphQL): ${upsertRes.status} ${errText}` };
+    }
+    const upsertData = await upsertRes.json();
+    const userErrors = upsertData?.data?.themeFilesUpsert?.userErrors || [];
+    if (userErrors.length > 0) {
+      const msg = userErrors.map((e: { message: string }) => e.message).join("; ");
+      return { ok: false, message: `Theme update errors: ${msg}` };
     }
 
     return {
