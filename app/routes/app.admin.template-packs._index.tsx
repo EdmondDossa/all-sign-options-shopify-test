@@ -8,50 +8,19 @@ import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { FileInput } from "~/components/inputs/FileInput";
-import { fileUrl } from "~/utils/fileUrl";
+import { getImageUrl } from "~/utils/fileUrl";
 import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
-
-// Helper function to get the correct image URL
-// Uses the same approach as in app.configuration._index.tsx
-const getImageUrl = (url: string | null | undefined): string => {
-  if (!url) return "/aso_logo.png";
-  
-  // Use fileUrl to transform the URL (same as in configuration list)
-  let finalUrl = fileUrl(url);
-  
-  // The URL from the database has an encoded filename (e.g., periscope%20%281%29.png)
-  // but the file on disk has the original filename (e.g., periscope (1).png)
-  // We need to decode the filename in the path so the server can find it
-  try {
-    // If it's a relative path (starts with /), decode the filename part
-    if (finalUrl.startsWith("/")) {
-      const parts = finalUrl.split("/");
-      const filename = parts[parts.length - 1];
-      if (filename && filename.includes("%")) {
-        // Decode the filename
-        const decodedFilename = decodeURIComponent(filename);
-        parts[parts.length - 1] = decodedFilename;
-        return parts.join("/");
-      }
-    }
-    // If it's still a full URL, decode the pathname
-    if (finalUrl.startsWith("http://") || finalUrl.startsWith("https://")) {
-      const urlObj = new URL(finalUrl);
-      urlObj.pathname = decodeURIComponent(urlObj.pathname);
-      return urlObj.toString();
-    }
-    return finalUrl;
-  } catch (e) {
-    // If decoding fails, return as is
-    return finalUrl;
-  }
-};
+import { PARENT_SIGN_TYPES } from "~/utils/parent-sign-types";
+import { Box, Card, Text, BlockStack, InlineStack, Badge, TextField, Select, Button, Divider } from "@shopify/polaris";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
-  const packs = await TemplatePackService.getAllPacks();
+  const [packs, templates] = await Promise.all([
+    TemplatePackService.getAllPacks(),
+    TemplatePackService.getTemplatesForExport(session.id),
+  ]);
 
-  return json({ packs });
+  return json({ packs, templates, parentSignTypes: PARENT_SIGN_TYPES });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -59,8 +28,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const packId = formData.get("packId");
   const action = formData.get("action");
-  const price = formData.get("price");
+  const plan = formData.get("plan")?.toString()?.trim() ?? null;
   const previewImg = formData.get("previewImg");
+  const parentCategoryName = formData.get("parentCategoryName")?.toString()?.trim() || undefined;
+  const packPlan = formData.get("packPlan")?.toString()?.trim() as "free" | "basic" | "pro" | undefined;
 
   if (action === "toggle") {
     const pack = await TemplatePackService.getPack(Number(packId));
@@ -73,12 +44,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   } else if (action === "delete") {
     await TemplatePackService.deletePack(Number(packId));
     return json({ ...jFlashMessage("Pack deleted successfully") });
-  } else if (action === "update") {
-    const priceValue = price ? parseFloat(price.toString()) : 0;
+  } else if (action === "updatePlan") {
+    const planValue = plan === "basic" || plan === "pro" ? plan : "free";
     await TemplatePackService.updatePack(Number(packId), {
-      price: priceValue,
+      plans: planValue,
     });
-    return json({ ...jFlashMessage("Pack price updated successfully") });
+    return json({ ...jFlashMessage("Plan du pack mis à jour") });
   } else if (action === "updatePreview") {
     await TemplatePackService.updatePack(Number(packId), {
       previewImg: previewImg?.toString() || "",
@@ -94,34 +65,82 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     } else {
       return json({ ...jFlashMessage(result.message), importResult: result });
     }
+  } else if (action === "exportPack") {
+    const packName = formData.get("packName")?.toString()?.trim();
+    const templateIds = formData.getAll("templateIds").map((id) => Number(id)).filter(Boolean);
+
+    if (!packName) {
+      return json({ ...jFlashMessage("Le nom du pack est requis", "error") });
+    }
+    if (templateIds.length === 0) {
+      return json({ ...jFlashMessage("Sélectionnez au moins un template", "error") });
+    }
+
+    const result = await TemplatePackService.exportTemplatesAsPack(
+      session.id,
+      templateIds,
+      packName,
+      parentCategoryName,
+      packPlan
+    );
+
+    if (result.success) {
+      return json({ ...jFlashMessage(result.message), exportResult: result });
+    } else {
+      return json({ ...jFlashMessage(result.message, "error") });
+    }
   }
 
   return json({ success: true });
 };
 
+const PACK_PLAN_OPTIONS = ["free", "basic", "pro"] as const;
+
 export default function AdminTemplatePacks() {
-  const { packs } = useLoaderData<typeof loader>();
+  const { packs, templates, parentSignTypes } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const submit = useSubmit();
   const shopify = useAppBridge();
   useHandleFlashMessage();
   
   const [selectedPack, setSelectedPack] = useState<any>(null);
-  const [priceValue, setPriceValue] = useState("");
+  const [planValue, setPlanValue] = useState<string>("free");
   const [previewImgValue, setPreviewImgValue] = useState("");
+  const [exportPackName, setExportPackName] = useState("");
+  const [exportParentCategoryName, setExportParentCategoryName] = useState("");
+  const [exportPackPlan, setExportPackPlan] = useState<string>("free");
+  const [exportSelectedIds, setExportSelectedIds] = useState<Set<number>>(new Set());
 
-  const editModalId = useId();
+  const editPlanModalId = useId();
   const deleteModalId = useId();
   const uploadModalId = useId();
+  const exportModalId = useId();
 
   const handleToggle = (packId: number) => {
     submit({ packId: packId.toString(), action: "toggle" }, { method: "POST" });
   };
 
-  const handleEdit = (pack: any) => {
+  const handleEditPlan = (pack: any) => {
     setSelectedPack(pack);
-    setPriceValue(pack.price.toString());
-    shopify.modal.show(editModalId);
+    const p = pack.plans?.trim().toLowerCase();
+    setPlanValue(p === "basic" || p === "pro" ? p : "free");
+    shopify.modal.show(editPlanModalId);
+  };
+
+  const handleSavePlan = () => {
+    if (selectedPack) {
+      submit(
+        {
+          packId: selectedPack.id.toString(),
+          action: "updatePlan",
+          plan: planValue,
+        },
+        { method: "POST" }
+      );
+      shopify.modal.hide(editPlanModalId);
+      setSelectedPack(null);
+      setPlanValue("free");
+    }
   };
 
   const handleUploadImages = (pack: any) => {
@@ -146,23 +165,6 @@ export default function AdminTemplatePacks() {
     }
   };
 
-  const handleSavePrice = () => {
-    if (selectedPack) {
-      const price = parseFloat(priceValue) || 0;
-      submit(
-        {
-          packId: selectedPack.id.toString(),
-          action: "update",
-          price: price.toString(),
-        },
-        { method: "POST" }
-      );
-      shopify.modal.hide(editModalId);
-      setSelectedPack(null);
-      setPriceValue("");
-    }
-  };
-
   const handleDelete = (pack: any) => {
     setSelectedPack(pack);
     shopify.modal.show(deleteModalId);
@@ -184,93 +186,115 @@ export default function AdminTemplatePacks() {
 
   return (
     <div style={{ width: "100%", height: "auto", padding: "10px 0px" }}>
-      <div
-        style={{
-          backgroundColor: "white",
-          borderRadius: "8px",
-          padding: "16px",
-          marginTop: "36px",
-          marginBottom: "36px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "bold" }}>
-            Template Packs Management
-          </h2>
-          <div style={{ display: "flex", gap: "12px" }}>
-            <button
-              className="back-large-btn"
-              type="button"
-              onClick={() => navigate("/app/admin/templates/export")}
-            >
-              <div style={{ padding: "0 16px" }}>
-                <span>Export Templates</span>
-              </div>
-            </button>
-            <button
-              className="primary-btn"
-              type="button"
-              onClick={() => {
-                submit({ action: "import" }, { method: "POST" });
-              }}
-            >
-              <div style={{ padding: "0 16px" }}>
-                <span className="primary-btn-text">Import Packs from Scripts</span>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
+      <SpacingBackground width="100%" height="auto" margin="24px 0px">
+        <Card>
+          <Box padding="400">
+            <BlockStack gap="400">
+              <InlineStack align="space-between" blockAlign="center" wrap={false}>
+                <Text as="h1" variant="headingLg" fontWeight="bold">
+                  Template Packs Management
+                </Text>
+                <InlineStack gap="300">
+                  <button
+                    className="back-large-btn"
+                    type="button"
+                    onClick={() => {
+                      setExportPackName("");
+                      setExportSelectedIds(new Set());
+                      shopify.modal.show(exportModalId);
+                    }}
+                    style={{
+                      padding: "10px 18px",
+                      borderRadius: "8px",
+                      border: "1px solid #D1D5DB",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Export template pack
+                  </button>
+                  <button
+                    className="primary-btn"
+                    type="button"
+                    onClick={() => {
+                      submit({ action: "import" }, { method: "POST" });
+                    }}
+                    style={{
+                      padding: "10px 18px",
+                      borderRadius: "8px",
+                      backgroundColor: "rgba(1, 100, 100, 0.9)",
+                      color: "white",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      border: "none",
+                    }}
+                  >
+                    <span className="primary-btn-text">Import Packs from Scripts</span>
+                  </button>
+                </InlineStack>
+              </InlineStack>
+            </BlockStack>
+          </Box>
+        </Card>
+      </SpacingBackground>
 
       <SpacingBackground width="100%" height="auto" margin="16px 0px">
         {packs.length === 0 ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "60px 20px",
-              backgroundColor: "#F8F9FB",
-            }}
-          >
-            <img
-              src="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
-              alt="Empty state"
-              style={{ maxWidth: "200px", marginBottom: "20px" }}
-            />
-            <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "10px" }}>
-              No template packs
-            </h3>
-            <p style={{ marginBottom: "10px", color: "#6B7280" }}>
-              No template packs have been imported yet.
-            </p>
-            <p style={{ marginBottom: "20px", color: "#6B7280" }}>
-              Click "Import Packs from Scripts" to import all JSON files from
-              the scripts directory.
-            </p>
-            <button
-              className="primary-btn"
-              type="button"
-              onClick={() => {
-                submit({ action: "import" }, { method: "POST" });
-              }}
-            >
-              <div style={{ padding: "0 16px" }}>
-                <span className="primary-btn-text">Import Packs from Scripts</span>
-              </div>
-            </button>
-          </div>
+          <Card>
+            <Box padding="800">
+              <BlockStack gap="400">
+                <div style={{ textAlign: "center" }}>
+                  <div
+                    style={{
+                      width: "120px",
+                      height: "120px",
+                      margin: "0 auto 24px",
+                      borderRadius: "16px",
+                      background: "linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <span style={{ fontSize: "48px" }}>📦</span>
+                  </div>
+                  <Text as="h2" variant="headingMd" fontWeight="bold">
+                    No template packs
+                  </Text>
+                  <BlockStack gap="200">
+                    <Text as="p" variant="bodyMd" tone="subdued">
+                      No template packs have been imported yet.
+                    </Text>
+                    <Text as="p" variant="bodyMd" tone="subdued">
+                      Click &quot;Import Packs from Scripts&quot; to import all JSON files from the scripts directory.
+                    </Text>
+                  </BlockStack>
+                  <Box paddingBlockStart="400">
+                    <button
+                      className="primary-btn"
+                      type="button"
+                      onClick={() => submit({ action: "import" }, { method: "POST" })}
+                      style={{
+                        padding: "12px 24px",
+                        borderRadius: "8px",
+                        backgroundColor: "rgba(1, 100, 100, 0.9)",
+                        color: "white",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        border: "none",
+                      }}
+                    >
+                      <span className="primary-btn-text">Import Packs from Scripts</span>
+                    </button>
+                  </Box>
+                </div>
+              </BlockStack>
+            </Box>
+          </Card>
         ) : (
-          <SpacingBackground
-            backgroundColor="#FFFFFF"
-            borderRadius="8px"
-            border="1px solid #E5E7EB"
-          >
-            <div style={{ padding: "24px", overflowX: "auto" }}>
+          <Card>
+            <Box padding="400">
+            <div style={{ overflowX: "auto" }}>
               <table
                 style={{
                   width: "100%",
@@ -307,7 +331,7 @@ export default function AdminTemplatePacks() {
                         fontSize: "14px",
                       }}
                     >
-                      Price
+                      Plan(s)
                     </th>
                     <th
                       style={{
@@ -347,6 +371,13 @@ export default function AdminTemplatePacks() {
                       key={pack.id}
                       style={{
                         borderBottom: "1px solid #E5E7EB",
+                        transition: "background-color 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#F9FAFB";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
                       }}
                     >
                       <td style={{ padding: "12px" }}>
@@ -378,22 +409,19 @@ export default function AdminTemplatePacks() {
                         {pack.category}
                       </td>
                       <td style={{ padding: "12px", fontSize: "14px" }}>
-                        {pack.price === 0 ? (
-                          <span
-                            style={{
-                              backgroundColor: "#D1FAE5",
-                              color: "#065F46",
-                              padding: "4px 8px",
-                              borderRadius: "4px",
-                              fontSize: "12px",
-                              fontWeight: "500",
-                            }}
-                          >
-                            Free
-                          </span>
-                        ) : (
-                          `$${pack.price.toFixed(2)}`
-                        )}
+                        <span
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 8px",
+                            borderRadius: "4px",
+                            fontSize: "12px",
+                            fontWeight: "500",
+                            backgroundColor: pack.plans === "pro" ? "#F3E8FF" : pack.plans === "basic" ? "#DBEAFE" : "#D1FAE5",
+                            color: pack.plans === "pro" ? "#6B21A8" : pack.plans === "basic" ? "#1E40AF" : "#065F46",
+                          }}
+                        >
+                          {pack.plans === "pro" ? "Pro" : pack.plans === "basic" ? "Basic" : "Free"}
+                        </span>
                       </td>
                       <td style={{ padding: "12px", fontSize: "14px" }}>
                         {pack.jsonFile}
@@ -446,10 +474,10 @@ export default function AdminTemplatePacks() {
                           <button
                             className="back-large-btn"
                             type="button"
-                            onClick={() => handleEdit(pack)}
+                            onClick={() => handleEditPlan(pack)}
                             style={{ padding: "6px 12px", fontSize: "12px" }}
                           >
-                            Edit Price
+                            Edit Plan
                           </button>
                           <button
                             className={
@@ -496,87 +524,48 @@ export default function AdminTemplatePacks() {
                 </tbody>
               </table>
             </div>
-          </SpacingBackground>
+            </Box>
+          </Card>
         )}
       </SpacingBackground>
 
-      {/* Edit Price Modal */}
-      <Modal variant="small" id={editModalId}>
+      {/* Edit Plan Modal */}
+      <Modal variant="small" id={editPlanModalId}>
         <div style={{ padding: "16px" }}>
           <div style={{ marginBottom: "16px" }}>
             <p style={{ margin: 0, fontSize: "14px", marginBottom: "16px" }}>
-              Edit the price for <strong>{selectedPack?.name}</strong>
+              Accessible à partir du plan pour <strong>{selectedPack?.name}</strong>
             </p>
             <div>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                }}
-              >
-                Price (USD)
+              <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "500" }}>
+                Plan d&apos;accès
               </label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "12px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "14px",
-                  }}
-                >
-                  $
-                </span>
-                <input
-                  type="number"
-                  value={priceValue}
-                  onChange={(e) => setPriceValue(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 8px 8px 24px",
-                    border: "1px solid #D1D5DB",
-                    borderRadius: "4px",
-                    fontSize: "14px",
-                    minHeight: "40px",
-                  }}
-                  autoComplete="off"
-                />
-              </div>
-              <p
+              <select
+                value={planValue}
+                onChange={(e) => setPlanValue(e.target.value)}
                 style={{
-                  margin: "8px 0 0 0",
-                  fontSize: "12px",
-                  color: "#6B7280",
+                  width: "100%",
+                  padding: "8px 12px",
+                  border: "1px solid #D1D5DB",
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                  minHeight: "40px",
                 }}
               >
-                Set price to 0 to make this pack free
+                <option value="free">Free — accessible par tous (free, basic, pro)</option>
+                <option value="basic">Basic — accessible par Basic et Pro uniquement</option>
+                <option value="pro">Pro — accessible par Pro uniquement</option>
+              </select>
+              <p style={{ margin: "8px 0 0 0", fontSize: "12px", color: "#6B7280" }}>
+                Un pack Free est visible par tous. Un pack Basic par Basic et Pro. Un pack Pro par Pro uniquement.
               </p>
-              {parseFloat(priceValue) === 0 && (
-                <span
-                  style={{
-                    display: "inline-block",
-                    marginTop: "8px",
-                    backgroundColor: "#D1FAE5",
-                    color: "#065F46",
-                    padding: "4px 8px",
-                    borderRadius: "4px",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                  }}
-                >
-                  This pack will be free
-                </span>
-              )}
             </div>
           </div>
         </div>
-        <TitleBar title="Edit Pack Price">
+        <TitleBar title="Edit Pack Plan">
           <button
             variant="primary"
-            onClick={handleSavePrice}
+            onClick={handleSavePlan}
             style={{
               backgroundColor: "rgb(1, 100, 100)",
               color: "white",
@@ -590,9 +579,9 @@ export default function AdminTemplatePacks() {
           </button>
           <button
             onClick={() => {
-              shopify.modal.hide(editModalId);
+              shopify.modal.hide(editPlanModalId);
               setSelectedPack(null);
-              setPriceValue("");
+              setPlanValue("free");
             }}
             style={{
               backgroundColor: "transparent",
@@ -733,6 +722,286 @@ export default function AdminTemplatePacks() {
             Cancel
           </button>
         </TitleBar>
+      </Modal>
+
+      {/* Export template pack Modal — interface alignée Template Library / création config */}
+      <Modal variant="max" id={exportModalId}>
+        <form
+          method="post"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.set("action", "exportPack");
+            formData.set("packName", exportPackName);
+            if (exportParentCategoryName) formData.set("parentCategoryName", exportParentCategoryName);
+            formData.set("packPlan", exportPackPlan);
+            exportSelectedIds.forEach((id) => formData.append("templateIds", String(id)));
+            submit(formData, { method: "POST" });
+            shopify.modal.hide(exportModalId);
+            setExportPackName("");
+            setExportParentCategoryName("");
+            setExportPackPlan("free");
+            setExportSelectedIds(new Set());
+          }}
+        >
+          <Box padding="400" minHeight="360px">
+            <BlockStack gap="400">
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingMd" fontWeight="bold">
+                  Export template pack
+                </Text>
+                <Text as="p" variant="bodyMd" tone="subdued">
+                  Choose the templates (Templates/Main) to include in the pack. A JSON file will be generated with configurations, fonts and data, then saved to <code style={{ fontSize: "11px", background: "#F3F4F6", padding: "2px 6px", borderRadius: "4px" }}>public/template-packs/json</code> and the pack will be added to the list.
+                </Text>
+              </BlockStack>
+
+              <Divider />
+
+              {/* Section 1: Pack information */}
+              <Card roundedAbove="sm">
+                <Box padding="400">
+                  <BlockStack gap="400">
+                    <Text as="h3" variant="headingSm" fontWeight="semibold">
+                      1. Pack information
+                    </Text>
+                    <InlineStack gap="400" wrap={false}>
+                      <Box paddingInlineEnd="400" paddingBlockEnd="400" minWidth={0} style={{ flex: "1 1 0" }}>
+                        <TextField
+                          label="Pack name"
+                          value={exportPackName}
+                          onChange={setExportPackName}
+                          placeholder="e.g. Signs Pack"
+                          autoComplete="off"
+                        />
+                      </Box>
+                      <Box paddingInlineEnd="400" paddingBlockEnd="400" minWidth={0} style={{ flex: "1 1 0" }}>
+                        <Select
+                          label="Sign type (parent category)"
+                          options={[
+                            { label: "— Choose a type (Door signs, Name badges, etc.) —", value: "" },
+                            ...(parentSignTypes || []).map((name: string) => ({ label: name, value: name })),
+                          ]}
+                          value={exportParentCategoryName}
+                          onChange={setExportParentCategoryName}
+                        />
+                        <Box paddingBlockStart="100">
+                          <Text as="p" variant="bodySm" tone="subdued">
+                            Sign type under which the pack will be displayed in the Template Library.
+                          </Text>
+                        </Box>
+                      </Box>
+                      <Box paddingBlockEnd="400" minWidth={0} style={{ flex: "1 1 0" }}>
+                        <Select
+                          label="Access plan"
+                          options={[
+                            { label: "Free — accessible to all", value: "free" },
+                            { label: "Basic — accessible to Basic and Pro", value: "basic" },
+                            { label: "Pro — accessible to Pro only", value: "pro" },
+                          ]}
+                          value={exportPackPlan}
+                          onChange={setExportPackPlan}
+                        />
+                        <Box paddingBlockStart="100">
+                          <Text as="p" variant="bodySm" tone="subdued">
+                            From which plan merchants can access this pack.
+                          </Text>
+                        </Box>
+                      </Box>
+                    </InlineStack>
+                  </BlockStack>
+                </Box>
+              </Card>
+
+              <Divider />
+
+              {/* Section 2: Sélection des templates */}
+              <Card roundedAbove="sm">
+                <Box padding="400">
+                  <BlockStack gap="400">
+                    <InlineStack align="space-between" blockAlign="center" wrap>
+                      <Text as="h3" variant="headingSm" fontWeight="semibold">
+                        2. Select templates
+                      </Text>
+                      <InlineStack gap="300" blockAlign="center">
+                        <Button
+                          size="slim"
+                          onClick={() => {
+                            if (exportSelectedIds.size === templates.length) {
+                              setExportSelectedIds(new Set());
+                            } else {
+                              setExportSelectedIds(new Set(templates.map((t: any) => t.id)));
+                            }
+                          }}
+                        >
+                          {exportSelectedIds.size === templates.length ? "Deselect all" : "Select all"}
+                        </Button>
+                        <Badge tone="info" size="large">
+                          {exportSelectedIds.size} template{exportSelectedIds.size !== 1 ? "s" : ""} selected
+                        </Badge>
+                      </InlineStack>
+                    </InlineStack>
+
+                    {templates.length === 0 ? (
+                      <Box padding="800" background="bg-surface-secondary" borderRadius="200" borderWidth="025" borderColor="border">
+                        <BlockStack gap="200">
+                          <Text as="p" variant="bodyMd" tone="subdued">
+                            No templates in this store.
+                          </Text>
+                          <Text as="p" variant="bodySm" tone="subdued">
+                            Create templates in Templates/Main first.
+                          </Text>
+                        </BlockStack>
+                      </Box>
+                    ) : (
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+                          gap: "14px",
+                          maxHeight: "320px",
+                          overflowY: "auto",
+                          padding: "4px",
+                        }}
+                      >
+                        {templates.map((t: any) => {
+                          const isSelected = exportSelectedIds.has(t.id);
+                          return (
+                            <div
+                              key={t.id}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => {
+                                const next = new Set(exportSelectedIds);
+                                if (next.has(t.id)) next.delete(t.id);
+                                else next.add(t.id);
+                                setExportSelectedIds(next);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  const next = new Set(exportSelectedIds);
+                                  if (next.has(t.id)) next.delete(t.id);
+                                  else next.add(t.id);
+                                  setExportSelectedIds(next);
+                                }
+                              }}
+                              style={{
+                                cursor: "pointer",
+                                borderRadius: "12px",
+                                border: isSelected ? "2px solid rgb(1, 100, 100)" : "1px solid #E5E7EB",
+                                overflow: "hidden",
+                                background: isSelected ? "#F0FDFA" : "#FFFFFF",
+                                transition: "all 0.15s ease",
+                                boxShadow: isSelected ? "0 2px 8px rgba(1, 100, 100, 0.15)" : "0 1px 3px rgba(0,0,0,0.06)",
+                              }}
+                            >
+                              <div style={{ position: "relative", aspectRatio: "1", background: "#F3F4F6" }}>
+                                {t.prevImg ? (
+                                  <img
+                                    src={getImageUrl(t.prevImg)}
+                                    alt={t.name}
+                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                  />
+                                ) : (
+                                  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <img src="/aso_logo.png" alt="" style={{ width: "48px", height: "48px", opacity: 0.4 }} />
+                                  </div>
+                                )}
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    top: "8px",
+                                    right: "8px",
+                                    width: "22px",
+                                    height: "22px",
+                                    borderRadius: "6px",
+                                    border: "2px solid " + (isSelected ? "rgb(1, 100, 100)" : "#D1D5DB"),
+                                    background: isSelected ? "rgb(1, 100, 100)" : "#FFFFFF",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  {isSelected && (
+                                    <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M1 5L4.5 8.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                  )}
+                                </div>
+                              </div>
+                              <div style={{ padding: "10px" }}>
+                                <Text as="p" variant="bodySm" fontWeight="semibold" truncate>
+                                  {t.name}
+                                </Text>
+                                <Text as="p" variant="bodySm" tone="subdued">
+                                  {t.configurationName}
+                                </Text>
+                                <Badge size="small" tone="info">
+                                  {t.categoryName}
+                                </Badge>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </BlockStack>
+                </Box>
+              </Card>
+
+              <Divider />
+
+              {/* Footer */}
+              <Box paddingBlockStart="200" paddingBlockEnd="0">
+                <InlineStack align="space-between" blockAlign="center" wrap gap="300">
+                  <Text as="p" variant="bodySm" tone="subdued">
+                    {exportSelectedIds.size > 0 && exportPackName.trim()
+                      ? `The pack "${exportPackName.trim()}" will contain ${exportSelectedIds.size} template(s).`
+                      : "Select at least one template and give the pack a name."}
+                  </Text>
+                  <Button
+                    variant="primary"
+                    size="medium"
+                    submit
+                    disabled={exportSelectedIds.size === 0 || !exportPackName.trim()}
+                  >
+                    Generate pack
+                  </Button>
+                </InlineStack>
+              </Box>
+            </BlockStack>
+          </Box>
+
+          <TitleBar title="Export template pack">
+            <button
+              type="submit"
+              disabled={exportSelectedIds.size === 0 || !exportPackName.trim()}
+              style={{
+                backgroundColor: exportSelectedIds.size === 0 || !exportPackName.trim() ? "#9CA3AF" : "rgb(1, 100, 100)",
+                color: "white",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "8px",
+                fontWeight: "600",
+                cursor: exportSelectedIds.size === 0 || !exportPackName.trim() ? "not-allowed" : "pointer",
+              }}
+            >
+              Generate pack
+            </button>
+            <Button
+              variant="plain"
+              onClick={() => {
+                shopify.modal.hide(exportModalId);
+                setExportPackName("");
+                setExportParentCategoryName("");
+                setExportPackPlan("free");
+                setExportSelectedIds(new Set());
+              }}
+            >
+              Cancel
+            </Button>
+          </TitleBar>
+        </form>
       </Modal>
     </div>
   );

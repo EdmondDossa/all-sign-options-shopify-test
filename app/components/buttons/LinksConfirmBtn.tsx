@@ -1,16 +1,22 @@
-import { BlockStack, Box, Button, ButtonProps, InlineStack, Link } from "@shopify/polaris";
+import { BlockStack, Box, Button, InlineStack, Link } from "@shopify/polaris";
 
 import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { useId } from "react";
 
-export const LinksConfirmBtn = ({ url, title, modalTitle ,children }: { url?: string; title?: any,modalTitle?:string, children?: React.ReactNode }) => {
+export const LinksConfirmBtn = ({ url, title, modalTitle, asButton, children }: { url?: string; title?: any; modalTitle?: string; asButton?: boolean; children?: React.ReactNode }) => {
   
   const shopify = useAppBridge();
   const id = useId()
 
   return (<>
     
-    <Link onClick={() => shopify.modal.show(id)} > {title||'Save'}</Link>
+    {asButton ? (
+      <Button variant="primary" tone="success" onClick={() => shopify.modal.show(id)}>
+        {title || "Save"}
+      </Button>
+    ) : (
+      <Link onClick={() => shopify.modal.show(id)}> {title || "Save"}</Link>
+    )}
     
     <Modal variant="small" id={id}>
    

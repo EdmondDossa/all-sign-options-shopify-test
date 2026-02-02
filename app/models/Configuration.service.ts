@@ -1162,11 +1162,59 @@ export default class ConfigurationService {
     }
   }
 
+  /**
+   * Normalize product ID for comparison (handles gid://shopify/Product/123 or numeric 123)
+   */
+  static normalizeProductId(productId: string | number): string {
+    if (typeof productId === "number") return String(productId);
+    const match = String(productId).match(/^(?:gid:\/\/shopify\/Product\/)?(\d+)$/);
+    return match ? match[1] : String(productId);
+  }
+
+  /**
+   * Find another configuration (same session) that already has this product linked.
+   * Returns { configId, configName } if found, null otherwise.
+   * Used to enforce: one product = one configuration.
+   */
+  static async findConfigurationContainingProduct(
+    sessionId: string,
+    productId: string | number,
+    excludeConfigurationId?: number
+  ): Promise<{ configId: number; configName: string } | null> {
+    const normalizedId = this.normalizeProductId(productId);
+    const configs = await prisma.configuration.findMany({
+      where: {
+        sessionId,
+        ...(excludeConfigurationId ? { id: { not: excludeConfigurationId } } : {}),
+      },
+      select: { id: true, name: true, product: true },
+    });
+    for (const config of configs) {
+      const productList = Array.isArray(config.product) ? config.product : [];
+      const hasProduct = productList.some((p: any) => {
+        const id = p?.id ?? p;
+        return this.normalizeProductId(id) === normalizedId;
+      });
+      if (hasProduct) return { configId: config.id, configName: config.name };
+    }
+    return null;
+  }
+
   static async updateConfiguration(
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
     const { id, products, templates, materialType, productType, ...configData } = configuration;
+    const productList = Array.isArray(products) ? products : [];
+    for (const p of productList) {
+      const productId = (p as any)?.id ?? (p as any);
+      if (productId == null) continue;
+      const other = await this.findConfigurationContainingProduct(sessionId, productId, id);
+      if (other) {
+        const msg = `Ce produit est déjà lié à la configuration "${other.configName}". Retirez-le de cette configuration avant de l'ajouter à une autre.`;
+        return Promise.reject(new Error(msg));
+      }
+    }
     try {
       console.log("updateConfiguration - Saving materialType:", materialType);
       console.log("updateConfiguration - Saving productType:", productType);
@@ -1209,8 +1257,18 @@ export default class ConfigurationService {
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
+    const { products, templates, materialType, productType, ...configData } = configuration;
+    const productList = Array.isArray(products) ? products : [];
+    for (const p of productList) {
+      const productId = (p as any)?.id ?? (p as any);
+      if (productId == null) continue;
+      const other = await this.findConfigurationContainingProduct(sessionId, productId);
+      if (other) {
+        const msg = `Ce produit est déjà lié à la configuration "${other.configName}". Retirez-le de cette configuration avant de l'ajouter à une autre.`;
+        return Promise.reject(new Error(msg));
+      }
+    }
     try {
-      const { products, templates, materialType, productType, ...configData } = configuration;
       if(configuration.materialType == "simple"){
         initialData.materials = simpleMaterials
       }else if(configuration.materialType == "advance"){

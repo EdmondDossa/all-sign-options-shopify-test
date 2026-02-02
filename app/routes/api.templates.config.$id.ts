@@ -69,8 +69,10 @@ export const action = async ({ request , params}: ActionFunctionArgs) => {
 
     let res = await TemplateService.configTemplate(parseInt(id), session.id, replaceUploadsAddShopUrl(jsonData?.data, session.shop), designImage);
     
-    return res ? json(jFlashMessage("Template configuration completed successfully"))
-      : json(jFlashMessage("Error on template updating") );
- 
-};
+    const successMsg = "Template configuration completed successfully";
+    const errorMsg = "Error on template updating";
+    return res
+      ? json({ ...jFlashMessage(successMsg), status: "success", msg: successMsg })
+      : json({ ...jFlashMessage(errorMsg, "error"), status: "error", msg: errorMsg });
+}
 

@@ -1,5 +1,6 @@
 import {
   Badge,
+  Banner,
   BlockStack,
   Box,
   Button,
@@ -2068,6 +2069,12 @@ export default function ConfigurationEdit() {
                   : "Create new configuration"}
               </Text>
             </InlineStack>
+
+            {actionData?.status === false && actionData?.message && (
+              <Banner tone="critical" onDismiss={() => {}}>
+                {actionData.message}
+              </Banner>
+            )}
             
             {!configuration && 
               <div>
@@ -2277,12 +2284,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     // Mettre à jour configuration.products avec la valeur normalisée
     configuration.products = newProducts;
 
-    // Mettre à jour la configuration en base de données
-    const configurationObject = await ConfigurationService.updateConfiguration(
-      configuration,
-      session.id,
-    );
-    
+    // Mettre à jour la configuration en base de données (blocage si un produit est déjà lié à une autre config)
+    let configurationObject: any;
+    try {
+      configurationObject = await ConfigurationService.updateConfiguration(
+        configuration,
+        session.id,
+      );
+    } catch (err: any) {
+      const msg = err?.message || "Erreur lors de la mise à jour de la configuration.";
+      return json({ status: false, message: msg, errors: {} });
+    }
+
     // Normaliser les IDs pour la comparaison (enlever les espaces, normaliser le format)
     const normalizeId = (id: string) => String(id).trim();
     
@@ -2356,10 +2369,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     console.log("Action - Creating configuration with products count:", newProducts.length);
     console.log("Action - Products to save:", newProducts);
 
-    const configurationObject = await ConfigurationService.addConfiguration(
-      configuration,
-      session.id,
-    );
+    let configurationObject: any;
+    try {
+      configurationObject = await ConfigurationService.addConfiguration(
+        configuration,
+        session.id,
+      );
+    } catch (err: any) {
+      const msg = err?.message || "Erreur lors de la création de la configuration.";
+      return json({ status: false, message: msg, errors: {} });
+    }
     console.log('demo  id selected', demoId);
 
     if (demoId !=undefined && demoId != null ) {

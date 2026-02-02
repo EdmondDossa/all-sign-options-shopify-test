@@ -123,7 +123,7 @@
     var asoThousandSep = asoFormattedPrice[1]=="2"?"":asoFormattedPrice[1];
     var asoDecimalSep = asoFormattedPrice[4]=="5"?".":asoFormattedPrice[4];
     var asoCartUrl = "{{ routes.cart_url }}";
-    document.write('<script src="{{ 'shopify.js' | asset_url }}"><\/script>');
+    document.write('<scr' + 'ipt src="{{ 'shopify.js' | asset_url }}"><' + '/scr' + 'ipt>');
   }
 </script>
 
@@ -177,10 +177,13 @@
 
 
   async function getAsotemplates() {
-      
-    
+      var productId = "{{ product.id | default: '' }}";
+      var url = `${window.Shopify.routes.root}apps/aso-proxy/api/templates`;
+      if (productId) {
+        url += '?productId=' + encodeURIComponent(productId);
+      }
       try {
-        const response = await fetch(`${window.Shopify.routes.root}apps/aso-proxy/api/templates`, {
+        const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -768,6 +771,10 @@
       "name": "ASO templates  list",
       "target": "section",
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Pour un affichage optimal, placez ce bloc avant le bloc « Boutons d'achat » sur la page produit."
+        },
         {
           "type": "checkbox",
           "id": "use_modal_interface",

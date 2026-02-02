@@ -16,6 +16,7 @@
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "shopify": "shopify",
     "prisma": "prisma",
+    "prisma:generate:win": "powershell -ExecutionPolicy Bypass -File ./scripts/prisma-generate-windows.ps1",
     "graphql-codegen": "graphql-codegen",
     "vite": "vite",
     "postinstall": "node ./postinstall.js",

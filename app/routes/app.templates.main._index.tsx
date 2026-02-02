@@ -40,7 +40,7 @@ import TemplatePackService from "~/models/TemplatePack.service";
 import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import { fileUrl } from "~/utils/fileUrl";
+import { getImageUrl } from "~/utils/fileUrl";
 import { ComboxSelect } from "~/components/inputs/ComboxSelect";
 import { LinksConfirmBtn } from "~/components/buttons/LinksConfirmBtn";
 import { AlertCircleIcon } from "@shopify/polaris-icons";
@@ -118,7 +118,7 @@ export default function ConfigurationTemplates() {
     return {
       label: item.name,
       value: `${item.id}`,
-      image: item.prevImg,
+      image: item.prevImg || item.realImg || item.configuration?.icon || item.configuration?.popupImg || "",
       basePrice: item.basePrice,
       categoryId: item.categoryId
     };
@@ -232,7 +232,7 @@ export default function ConfigurationTemplates() {
                   <InlineStack gap="100">
                     <PlusIcon />
                     <span className="primary-btn-text">
-                      Add Packs  
+                      Browse our template
                     </span>
                   </InlineStack>
                 </Box>
@@ -269,7 +269,8 @@ export default function ConfigurationTemplates() {
                 <LinksConfirmBtn
                   url={templateUrl}
                   modalTitle="Templates List Block"
-                  title="Add template block to product page"
+                  title="Add template theme"
+                  asButton
                 >
                   <ExceptionList
                     items={[
@@ -296,7 +297,7 @@ export default function ConfigurationTemplates() {
                   <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 3, xl: 3 }}>
                     <AppearanceItem
                       title={item.label}
-                      imgSrc={fileUrl(item.image)}
+                      imgSrc={getImageUrl(item.image)}
                       basePrice={item.basePrice}
                       onDelete={ ()=>handeleDelete(item.value)}
                       onUpdate={ ()=>handleUpdate(item.value)}
@@ -338,7 +339,7 @@ export const AppearanceItem = ({
         style={{ position: "relative" }}
         className={"template"}
       >
-        <img src={imgSrc||"/assets/images/img_rectangle_noir.png"} alt={title} className="image-fit" style={{height: "10rem"}} />
+        <img src={imgSrc || "/aso_logo.png"} alt={title} className="image-fit" style={{height: "10rem"}} />
 
         <Box paddingBlock="100">
           <BlockStack gap="100">

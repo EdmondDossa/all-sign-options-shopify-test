@@ -302,10 +302,11 @@ async function asoUpdateTemplate_shopify(template_id,template_data) {
     let responseData = await response.json();
 
 
-    if (responseData?.status =="success") {
-      notyf.success(`${responseData?.msg}`);
+    const msg = responseData?.msg ?? responseData?.messageFlash?.msg ?? "Template updated successfully";
+    if (responseData?.status === "success" || responseData?.messageFlash?.status === "success") {
+      notyf.success(msg);
     } else {
-      notyf.error(`${responseData?.msg}`);
+      notyf.error(msg);
     }
 
     

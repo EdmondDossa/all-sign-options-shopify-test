@@ -132,32 +132,26 @@ model Design {
   session    Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
-enum TemplatePackType {
-  PACK
-  TEMPLATE
-}
-
 model TemplatePack {
-  id          Int                @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  slug        String             @unique
+  slug        String   @unique
   description String?
   category    String
   price       Float
+  tier        String?  // "free" | "basic" | "premium" - badge affiché au marchand
+  plans       String?  // plans ayant accès: "starter,pro" ou null = tous les plans
   jsonFile    String
   previewImg  String
   icon        String?
-  isActive    Boolean            @default(true)
-  order       Int                @default(0)
-  type        TemplatePackType   @default(PACK)
-  templateIds Json?              // Array of template IDs for packs, single ID for individual templates
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   purchases   ShopTemplatePack[]
 
   @@index([slug])
   @@index([isActive])
-  @@index([type])
 }
 
 model ShopTemplatePack {
