@@ -89,9 +89,9 @@ export const  loader = async ({ request, params }: LoaderFunctionArgs) => {
   const query = url.searchParams.get('q');
   
   const productId = url.searchParams.get('productId');
-  const customerIp =  url.searchParams.get('customerIp');
+  const customerIp = url.searchParams.get('customerIp');
 
-  const data = await DesignService.getDesignsUploaded(session?.id||'', productId||'', customerIp||'')
+  const data = await DesignService.getDesignsUploaded(session?.id || '', productId || '', customerIp || undefined);
   
   return json({ data:data, message: "Files  uploaded  available"  });
 };
