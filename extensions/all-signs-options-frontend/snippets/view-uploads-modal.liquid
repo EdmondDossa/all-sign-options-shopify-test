@@ -102,26 +102,25 @@
     uploadsLoading.style.display = 'block';
     uploadsEmpty.style.display = 'none';
     uploadsList.style.display = 'none';
+    var list = [];
     try {
-      var list = await fetchUploadedFiles();
-      if (!list || list.length === 0) {
-        uploadsLoading.style.display = 'none';
-        uploadsEmpty.style.display = 'block';
-      } else {
-        if (uploadsContainer) {
-          uploadsContainer.innerHTML = '';
-          list.forEach(function(file) { uploadsContainer.appendChild(createUploadedFileItem(file)); });
-        }
-        if (uploadsCountEl) uploadsCountEl.textContent = list.length;
-        uploadsLoading.style.display = 'none';
-        uploadsEmpty.style.display = 'none';
-        uploadsList.style.display = 'block';
-      }
+      list = await fetchUploadedFiles();
     } catch (e) {
       console.error('Error loading uploaded files:', e);
+      notyf?.error('Error loading uploaded files');
+    }
+    if (!list || list.length === 0) {
       uploadsLoading.style.display = 'none';
       uploadsEmpty.style.display = 'block';
-      notyf?.error('Error loading uploaded files');
+    } else {
+      if (uploadsContainer) {
+        uploadsContainer.innerHTML = '';
+        list.forEach(function(file) { uploadsContainer.appendChild(createUploadedFileItem(file)); });
+      }
+      if (uploadsCountEl) uploadsCountEl.textContent = list.length;
+      uploadsLoading.style.display = 'none';
+      uploadsEmpty.style.display = 'none';
+      uploadsList.style.display = 'block';
     }
   }
   function downloadFile(url, filename) {
@@ -141,18 +140,24 @@
     el.innerHTML = '<div class="aso-file-icon">' + icon + '</div><div class="aso-file-details"><p class="aso-file-name" title="' + fn.replace(/"/g, '&quot;') + '">' + name.replace(/\</g, '&lt;') + '</p><span>' + (file.fileType || '') + ' • ' + formatFileSize(file.fileSize || 0) + '</span></div><div class="aso-file-actions">' + (file.fileUrl ? '<button type="button" class="aso-file-download" data-url="' + (file.fileUrl || '').replace(/"/g, '&quot;') + '" data-filename="' + fn.replace(/"/g, '&quot;') + '" onclick="downloadFile(this.dataset.url,this.dataset.filename)" title="Download">⬇️</button>' : '') + '<button type="button" class="aso-file-delete" onclick="deleteUploadedFile(' + file.id + ')" title="Delete">🗑️</button></div>';
     return el;
   }
+  function fetchWithTimeout(url, opts, ms) {
+    return Promise.race([
+      fetch(url, opts),
+      new Promise(function(_, reject) { setTimeout(function() { reject(new Error('timeout')); }, ms); })
+    ]);
+  }
   async function fetchUploadedFiles() {
     try {
-      let ip = '';
+      var ip = '';
       try {
-        const r = await fetch('https://api.ipify.org?format=json');
-        const d = await r.json();
-        ip = d.ip || '';
-      } catch (e) { console.error('Error fetching IP:', e); }
-      const url = '/apps/aso-proxy/api/uploads?productId=' + encodeURIComponent(asoProductId || '') + '&configId=' + encodeURIComponent(asoConfigurationId || '') + '&customerIp=' + encodeURIComponent(ip);
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const json = await res.json();
+        var r = await fetchWithTimeout('https://api.ipify.org?format=json', {}, 2500);
+        var d = await r.json();
+        ip = (d && d.ip) ? d.ip : '';
+      } catch (e) { ip = ''; }
+      var url = '/apps/aso-proxy/api/uploads?productId=' + encodeURIComponent(typeof asoProductId !== 'undefined' ? asoProductId : '') + '&configId=' + encodeURIComponent(typeof asoConfigurationId !== 'undefined' ? asoConfigurationId : '') + '&customerIp=' + encodeURIComponent(ip);
+      var res = await fetchWithTimeout(url, {}, 8000);
+      if (!res.ok) return [];
+      var json = await res.json();
       return Array.isArray(json.data) ? json.data : (json.data != null ? [json.data] : []);
     } catch (e) {
       console.error('Error loading uploaded files:', e);
