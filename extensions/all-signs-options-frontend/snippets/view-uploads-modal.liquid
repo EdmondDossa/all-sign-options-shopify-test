@@ -3,221 +3,142 @@
   <div class="aso-modal-content">
     <div class="aso-modal-header">
       <h2>{{ block.settings.view_uploads_button_text | default: "Uploaded Files" }}</h2>
-      <div class="aso-modal-header-actions">
-        <button type="button" class="aso-refresh-uploads aso-refresh-in-header" onclick="refreshUploadsList()">🔄 Refresh</button>
-        <button class="aso-modal-close" onclick="closeViewUploadsModal()">&times;</button>
-      </div>
+      <button class="aso-modal-close" onclick="closeViewUploadsModal()">&times;</button>
     </div>
     <div class="aso-modal-body">
-      <div class="aso-view-uploads-container" id="asoViewUploadsContainer">
+      <div class="aso-view-uploads-container">
         <div class="aso-uploads-loading" id="uploadsLoading" style="display: none;">
           <div class="aso-loading-spinner"></div>
           <p>Loading uploaded files...</p>
         </div>
-        
         <div class="aso-uploads-empty" id="uploadsEmpty" style="display: none;">
           <div class="aso-empty-icon">📂</div>
           <p>No files have been uploaded yet.</p>
-          <button type="button" class="aso-refresh-uploads" onclick="refreshUploadsList()">🔄 Refresh</button>
         </div>
-        
         <div class="aso-uploads-list" id="uploadsList" style="display: none;">
           <div class="aso-uploads-header">
             <h3>Uploaded Files (<span id="uploadsCount">0</span>)</h3>
-            <button type="button" class="aso-refresh-uploads" onclick="refreshUploadsList()">🔄 Refresh</button>
+            <button class="aso-refresh-uploads" onclick="refreshUploadsList()">🔄 Refresh</button>
           </div>
-          <div class="aso-uploads-container" id="uploadsContainer">
-            <!-- Les fichiers uploadés seront affichés ici -->
-          </div>
+          <div class="aso-uploads-container" id="uploadsContainer"></div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 <script>
-
   function formatFileSize(bytes) {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
   function getFileIcon(type, name) {
-      if (type?.startsWith('image/')) return '🖼️';
-      if (type === 'application/pdf') return '📄';
-      if (name?.toLowerCase()?.endsWith('.ai')) return '🎨';
-      if (name?.toLowerCase()?.endsWith('.eps')) return '📐';
-      if (name?.toLowerCase()?.endsWith('.svg')) return '🖊️';
-      return '📄';
+    if (type?.startsWith('image/')) return '🖼️';
+    if (type === 'application/pdf') return '📄';
+    if (name?.toLowerCase()?.endsWith('.ai')) return '🎨';
+    if (name?.toLowerCase()?.endsWith('.eps')) return '📐';
+    if (name?.toLowerCase()?.endsWith('.svg')) return '🖊️';
+    return '📄';
   }
-
-
-
   function closeViewUploadsModal() {
-      document.getElementById('aso-view-uploads-modal').style.display = 'none';
-      document.body.style.overflow = 'auto';
+    document.getElementById('aso-view-uploads-modal').style.display = 'none';
+    document.body.style.overflow = 'auto';
   }
-
-  // Fonction pour supprimer un fichier uploadé
   async function deleteUploadedFile(fileId) {
-    if (!confirm('Are you sure you want to delete this file?')) {
-      return;
-    }
-
+    if (!confirm('Are you sure you want to delete this file?')) return;
     try {
-
       let ip = "";
       try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const dataIp = await response.json();
-        ip = dataIp.ip;
-      } catch (error) {
-        console.error('Error fetching IP address:', error);
-      }
-
-      const response = await fetch(`/apps/aso-proxy/api/uploads-delete/`, {
+        const r = await fetch('https://api.ipify.org?format=json');
+        const d = await r.json();
+        ip = d.ip;
+      } catch (e) { console.error('Error fetching IP:', e); }
+      const res = await fetch('/apps/aso-proxy/api/uploads-delete/', {
         method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          productId: asoProductId + '',
-          customerIp: ip,
-          fileId: fileId
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: asoProductId + '', customerIp: ip, fileId: fileId })
       });
-
-      if (response.ok) {
+      if (res.ok) {
         notyf?.success('File deleted successfully');
         refreshUploadsList();
       } else {
         notyf?.error('Error deleting file');
       }
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      notyf.error('Error deleting file');
+    } catch (e) {
+      console.error('Error deleting file:', e);
+      notyf?.error('Error deleting file');
     }
   }
-
-  // Fonction pour rafraîchir la liste des fichiers uploadés
-  function refreshUploadsList() {
+  function refreshUploadsList() { loadUploadedFiles(); }
+  function openViewUploadsModal() {
+    document.getElementById('aso-view-uploads-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
     loadUploadedFiles();
   }
-
-  function openViewUploadsModal() {
-      document.getElementById('aso-view-uploads-modal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-      loadUploadedFiles();
-  }
-
-  // Fonction pour charger et afficher les fichiers uploadés
   async function loadUploadedFiles() {
-    const modal = document.getElementById('aso-view-uploads-modal');
-    const container = document.getElementById('asoViewUploadsContainer');
-    const uploadsLoading = modal ? modal.querySelector('#uploadsLoading') : document.getElementById('uploadsLoading');
-    const uploadsEmpty = modal ? modal.querySelector('#uploadsEmpty') : document.getElementById('uploadsEmpty');
-    const uploadsList = modal ? modal.querySelector('#uploadsList') : document.getElementById('uploadsList');
-    const uploadsContainer = modal ? modal.querySelector('#uploadsContainer') : document.getElementById('uploadsContainer');
-    const uploadsCount = modal ? modal.querySelector('#uploadsCount') : document.getElementById('uploadsCount');
-
-    if (!uploadsLoading || !uploadsEmpty || !uploadsList) {
-      if (container) container.innerHTML = '<p style="padding:20px;">Unable to load. <button type="button" onclick="refreshUploadsList()">🔄 Refresh</button></p>';
-      return;
-    }
-
+    const uploadsLoading = document.getElementById('uploadsLoading');
+    const uploadsEmpty = document.getElementById('uploadsEmpty');
+    const uploadsList = document.getElementById('uploadsList');
+    const uploadsContainer = document.getElementById('uploadsContainer');
+    const uploadsCount = document.getElementById('uploadsCount');
+    if (!uploadsLoading || !uploadsEmpty || !uploadsList) return;
     uploadsLoading.style.display = 'block';
     uploadsEmpty.style.display = 'none';
     uploadsList.style.display = 'none';
-
     try {
-      let uploadedFilesValues = await fetchUploadedFiles();
-
-      if (!uploadedFilesValues || uploadedFilesValues.length === 0) {
+      const list = await fetchUploadedFiles();
+      if (!list || list.length === 0) {
         uploadsLoading.style.display = 'none';
         uploadsEmpty.style.display = 'block';
-        uploadsList.style.display = 'none';
       } else {
-        if (uploadsContainer) {
-          uploadsContainer.innerHTML = '';
-          uploadedFilesValues.forEach(file => {
-            const fileItem = createUploadedFileItem(file);
-            uploadsContainer.appendChild(fileItem);
-          });
-        }
-        if (uploadsCount) uploadsCount.textContent = uploadedFilesValues.length;
+        uploadsContainer.innerHTML = '';
+        list.forEach(file => uploadsContainer.appendChild(createUploadedFileItem(file)));
+        uploadsCount.textContent = list.length;
         uploadsLoading.style.display = 'none';
         uploadsEmpty.style.display = 'none';
         uploadsList.style.display = 'block';
       }
-    } catch (error) {
-      console.error('Error loading uploaded files:', error);
+    } catch (e) {
+      console.error('Error loading uploaded files:', e);
       uploadsLoading.style.display = 'none';
       uploadsEmpty.style.display = 'block';
-      uploadsList.style.display = 'none';
       notyf?.error('Error loading uploaded files');
     }
   }
-
-
-
-  // Fonction pour télécharger un fichier
   function downloadFile(url, filename) {
     const link = document.createElement('a');
-    link.href = url.includes('drive.google.com') ? url : "/apps/aso-proxy/"+ url;
+    link.href = url.includes('drive.google.com') ? url : '/apps/aso-proxy/' + url;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }
-
-  // Fonction pour créer un élément de fichier uploadé
   function createUploadedFileItem(file) {
-    const fileItem = document.createElement('div');
-    fileItem.className = 'aso-uploaded-file-item';
-
-    const fileIcon = getFileIcon(file.fileType, file.fileUrl);
-
-    fileItem.innerHTML = `
-      <div class="aso-file-icon">${fileIcon}</div>
-      <div class="aso-file-details">
-        <p class="aso-file-name" title="${file.fileName}">${file.fileName?.split('/')?.pop()}</p>
-        <span> ${file.fileType} • ${formatFileSize(file.fileSize)}</span>
-      </div>
-      <div class="aso-file-actions">
-        ${file.fileUrl ? `<button class="aso-file-download" onclick="downloadFile('${file.fileUrl}', '${file.fileName || file.fileName}')" title="Download file">⬇️</button>` : ''}
-        <button class="aso-file-delete" onclick="deleteUploadedFile(${file.id})" title="Delete file">🗑️</button>
-      </div>
-    `;
-
-    return fileItem;
+    const el = document.createElement('div');
+    el.className = 'aso-uploaded-file-item';
+    const icon = getFileIcon(file.fileType, file.fileUrl);
+    const fn = file.fileName || '';
+    const name = file.fileName?.split('/')?.pop() || fn;
+    el.innerHTML = '<div class="aso-file-icon">' + icon + '</div><div class="aso-file-details"><p class="aso-file-name" title="' + fn.replace(/"/g, '&quot;') + '">' + name.replace(/\</g, '&lt;') + '</p><span>' + (file.fileType || '') + ' • ' + formatFileSize(file.fileSize || 0) + '</span></div><div class="aso-file-actions">' + (file.fileUrl ? '<button type="button" class="aso-file-download" data-url="' + (file.fileUrl || '').replace(/"/g, '&quot;') + '" data-filename="' + fn.replace(/"/g, '&quot;') + '" onclick="downloadFile(this.dataset.url,this.dataset.filename)" title="Download">⬇️</button>' : '') + '<button type="button" class="aso-file-delete" onclick="deleteUploadedFile(' + file.id + ')" title="Delete">🗑️</button></div>';
+    return el;
   }
-
-  // Nouvelle fonction pour récupérer les fichiers uploadés
   async function fetchUploadedFiles() {
     try {
-      let ip = "";
+      let ip = '';
       try {
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const dataIp = await ipRes.json();
-        ip = dataIp.ip || "";
-      } catch (e) {
-        console.error('Error fetching IP address:', e);
-      }
-
-      const url = `/apps/aso-proxy/api/uploads?productId=${encodeURIComponent(asoProductId || '')}&configId=${encodeURIComponent(asoConfigurationId || '')}&customerIp=${encodeURIComponent(ip)}`;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status}`);
-      }
-
-      const json = await response.json();
-      const list = Array.isArray(json.data) ? json.data : (json.data != null ? [json.data] : []);
-      return list;
-    } catch (error) {
-      console.error("Error loading uploaded files:", error);
+        const r = await fetch('https://api.ipify.org?format=json');
+        const d = await r.json();
+        ip = d.ip || '';
+      } catch (e) { console.error('Error fetching IP:', e); }
+      const url = '/apps/aso-proxy/api/uploads?productId=' + encodeURIComponent(asoProductId || '') + '&configId=' + encodeURIComponent(asoConfigurationId || '') + '&customerIp=' + encodeURIComponent(ip);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      return Array.isArray(json.data) ? json.data : (json.data != null ? [json.data] : []);
+    } catch (e) {
+      console.error('Error loading uploaded files:', e);
       return [];
     }
   }
