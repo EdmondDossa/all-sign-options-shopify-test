@@ -3,10 +3,13 @@
   <div class="aso-modal-content">
     <div class="aso-modal-header">
       <h2>{{ block.settings.view_uploads_button_text | default: "Uploaded Files" }}</h2>
-      <button class="aso-modal-close" onclick="closeViewUploadsModal()">&times;</button>
+      <div class="aso-modal-header-actions">
+        <button type="button" class="aso-refresh-uploads aso-refresh-in-header" onclick="refreshUploadsList()">🔄 Refresh</button>
+        <button class="aso-modal-close" onclick="closeViewUploadsModal()">&times;</button>
+      </div>
     </div>
     <div class="aso-modal-body">
-      <div class="aso-view-uploads-container">
+      <div class="aso-view-uploads-container" id="asoViewUploadsContainer">
         <div class="aso-uploads-loading" id="uploadsLoading" style="display: none;">
           <div class="aso-loading-spinner"></div>
           <p>Loading uploaded files...</p>
@@ -15,12 +18,13 @@
         <div class="aso-uploads-empty" id="uploadsEmpty" style="display: none;">
           <div class="aso-empty-icon">📂</div>
           <p>No files have been uploaded yet.</p>
+          <button type="button" class="aso-refresh-uploads" onclick="refreshUploadsList()">🔄 Refresh</button>
         </div>
         
         <div class="aso-uploads-list" id="uploadsList" style="display: none;">
           <div class="aso-uploads-header">
             <h3>Uploaded Files (<span id="uploadsCount">0</span>)</h3>
-            <button class="aso-refresh-uploads" onclick="refreshUploadsList()">🔄 Refresh</button>
+            <button type="button" class="aso-refresh-uploads" onclick="refreshUploadsList()">🔄 Refresh</button>
           </div>
           <div class="aso-uploads-container" id="uploadsContainer">
             <!-- Les fichiers uploadés seront affichés ici -->
@@ -110,13 +114,19 @@
 
   // Fonction pour charger et afficher les fichiers uploadés
   async function loadUploadedFiles() {
-    const uploadsLoading = document.getElementById('uploadsLoading');
-    const uploadsEmpty = document.getElementById('uploadsEmpty');
-    const uploadsList = document.getElementById('uploadsList');
-    const uploadsContainer = document.getElementById('uploadsContainer');
-    const uploadsCount = document.getElementById('uploadsCount');
+    const modal = document.getElementById('aso-view-uploads-modal');
+    const container = document.getElementById('asoViewUploadsContainer');
+    const uploadsLoading = modal ? modal.querySelector('#uploadsLoading') : document.getElementById('uploadsLoading');
+    const uploadsEmpty = modal ? modal.querySelector('#uploadsEmpty') : document.getElementById('uploadsEmpty');
+    const uploadsList = modal ? modal.querySelector('#uploadsList') : document.getElementById('uploadsList');
+    const uploadsContainer = modal ? modal.querySelector('#uploadsContainer') : document.getElementById('uploadsContainer');
+    const uploadsCount = modal ? modal.querySelector('#uploadsCount') : document.getElementById('uploadsCount');
 
-    // Afficher le loader
+    if (!uploadsLoading || !uploadsEmpty || !uploadsList) {
+      if (container) container.innerHTML = '<p style="padding:20px;">Unable to load. <button type="button" onclick="refreshUploadsList()">🔄 Refresh</button></p>';
+      return;
+    }
+
     uploadsLoading.style.display = 'block';
     uploadsEmpty.style.display = 'none';
     uploadsList.style.display = 'none';
@@ -124,21 +134,19 @@
     try {
       let uploadedFilesValues = await fetchUploadedFiles();
 
-
       if (!uploadedFilesValues || uploadedFilesValues.length === 0) {
-        // Aucun fichier uploadé
         uploadsLoading.style.display = 'none';
         uploadsEmpty.style.display = 'block';
         uploadsList.style.display = 'none';
       } else {
-        // Afficher les fichiers uploadés
-        uploadsContainer.innerHTML = '';
-        uploadedFilesValues.forEach(file => {
-          const fileItem = createUploadedFileItem(file);
-          uploadsContainer.appendChild(fileItem);
-        });
-
-        uploadsCount.textContent = uploadedFilesValues.length;
+        if (uploadsContainer) {
+          uploadsContainer.innerHTML = '';
+          uploadedFilesValues.forEach(file => {
+            const fileItem = createUploadedFileItem(file);
+            uploadsContainer.appendChild(fileItem);
+          });
+        }
+        if (uploadsCount) uploadsCount.textContent = uploadedFilesValues.length;
         uploadsLoading.style.display = 'none';
         uploadsEmpty.style.display = 'none';
         uploadsList.style.display = 'block';
@@ -148,7 +156,7 @@
       uploadsLoading.style.display = 'none';
       uploadsEmpty.style.display = 'block';
       uploadsList.style.display = 'none';
-      notyf.error('Error loading uploaded files');
+      notyf?.error('Error loading uploaded files');
     }
   }
 
