@@ -82,18 +82,22 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 
-export const  loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  try {
+    const { admin, session } = await authenticate.public.appProxy(request);
+    if (!session) {
+      return json({ data: [], message: "Session not found" }, { status: 401 });
+    }
+    const url = new URL(request.url);
+    const productId = url.searchParams.get('productId');
+    const customerIp = url.searchParams.get('customerIp');
 
-  const { admin, session } = await authenticate.public.appProxy(request);
-  const url = new URL(request.url);
-  const query = url.searchParams.get('q');
-  
-  const productId = url.searchParams.get('productId');
-  const customerIp = url.searchParams.get('customerIp');
-
-  const data = await DesignService.getDesignsUploaded(session?.id || '', productId || '', customerIp || undefined);
-  
-  return json({ data:data, message: "Files  uploaded  available"  });
+    const data = await DesignService.getDesignsUploaded(session.id, productId || undefined, customerIp || undefined);
+    return json({ data: data ?? [], message: "Files uploaded available" });
+  } catch (error) {
+    console.error("[api.uploads] loader error:", error);
+    return json({ data: [], message: "Error loading uploads" }, { status: 500 });
+  }
 };
 
   
