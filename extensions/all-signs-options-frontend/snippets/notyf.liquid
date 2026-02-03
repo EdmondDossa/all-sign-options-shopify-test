@@ -1,14 +1,15 @@
 <link rel="stylesheet"  href="{{'notyf.min.css' |asset_url }}">
-<script src="{{'notyf.min.js'|asset_url}}" defer></script>
+<script src="{{'notyf.min.js'|asset_url}}"></script>
 <script>
-    var notyf = new Notyf({
-        duration: 2000,
-        dismissible: true,
-        position: {
-        x: 'right',
-        y: 'top',
-        }   
-    });
+    (function() {
+        if (typeof Notyf !== 'undefined') {
+            window.notyf = new Notyf({
+                duration: 2000,
+                dismissible: true,
+                position: { x: 'right', y: 'top' }
+            });
+        }
+    })();
 </script>
 <style>
 

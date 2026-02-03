@@ -102,7 +102,14 @@ document.addEventListener('DOMContentLoaded', async function() {
   const filesContainer = document.getElementById('filesContainer');
   const filesCount = document.getElementById('filesCount');
 
-  const settingsUploads =  await  fetchConfigurationUploads(asoConfigurationId);
+  let settingsUploads = await fetchConfigurationUploads(asoConfigurationId);
+  if (!settingsUploads || settingsUploads.error) {
+    settingsUploads = {
+      allowFormat: 'jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf',
+      maxUploadSize: 100,
+      maxUploadNumber: 5
+    };
+  }
 
   if (uploadArea && fileInput) {
     // Drag and drop
@@ -155,14 +162,14 @@ document.addEventListener('DOMContentLoaded', async function() {
       
       // Vérification du type de fichier
       if (!allowedExtensions.includes(fileExtension)) {
-          notyf.error(`The file type of "${file.name}" is not supported. Allowed types: ${allowedExtensions.join(', ')}`);
+          notyf?.error(`The file type of "${file.name}" is not supported. Allowed types: ${allowedExtensions.join(', ')}`);
           return false;
       }
       
       // Vérification de la taille du fichier
       if (file.size > maxSize) {
           const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-          notyf.error(`The file "${file.name}" is too large (${fileSizeMB}MB). Maximum size allowed: ${settingsUploads.maxUploadSize}MB`);
+          notyf?.error(`The file "${file.name}" is too large (${fileSizeMB}MB). Maximum size allowed: ${settingsUploads.maxUploadSize}MB`);
           return false;
       }
       
@@ -242,7 +249,7 @@ function convertFileToBase64(file) {
 
 async function handleFileUploads() {
   if (selectedFiles.size === 0) {
-    notyf.success('Please select at least one file');
+    notyf?.success('Please select at least one file');
     return;
   }
 
@@ -306,19 +313,19 @@ async function handleFileUploads() {
       clearAllFiles();
       
       // Message de succès
-      notyf.success(`${filesArray.length} file(s) have been uploaded successfully.`);
+      notyf?.success(`${filesArray.length} file(s) have been uploaded successfully.`);
       
       return result;
     } else {
       const errorData = await response.json();
       console.error('Upload error:', errorData);
-      notyf.error('Error while uploading files');
+      notyf?.error('Error while uploading files');
       throw new Error(`HTTP Error: ${response.status}`);
     }
     
   } catch (error) {
     console.error('Upload error:', error);
-    notyf.error('Error while uploading files');
+    notyf?.error('Error while uploading files');
     throw error;
   } finally {
     // Réactiver le bouton
@@ -342,7 +349,7 @@ async function handleFileUploads() {
 
   async function handleFileUpload() {
     if (selectedFiles.size === 0) {
-      notyf.success('Please select at least one file');
+      notyf?.success('Please select at least one file');
       return;
     }
 
@@ -411,7 +418,7 @@ async function handleFileUploads() {
           const result = await response.json();
           closeUploadModal();
           clearAllFiles();
-          notyf.success(`${successfulUploads.length} file(s) have been uploaded successfully.`);
+          notyf?.success(`${successfulUploads.length} file(s) have been uploaded successfully.`);
           return result;
         } else {
           const errorData = await response.json();
@@ -420,12 +427,12 @@ async function handleFileUploads() {
           throw new Error(`HTTP Error: ${response.status}`);
         }
       } else {
-        notyf.error('No files were successfully uploaded');
+        notyf?.error('No files were successfully uploaded');
       }
       
     } catch (error) {
       console.error('Upload error:', error);
-      notyf.error('Error while uploading files');
+      notyf?.error('Error while uploading files');
       throw error;
     } finally {
       // Réactiver le bouton

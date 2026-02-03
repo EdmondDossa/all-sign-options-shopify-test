@@ -39,7 +39,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const submission = parseWithZod(formData, {schema:formSchema});
   
     if (submission.status !== 'success') {
-      return  {message: "Data is not valid",statut: "error", error: submission.error}
+      return json({ message: "Data is not valid", status: "error", error: submission.error }, { status: 400 });
     }
   
     const data = submission.value as {
@@ -70,14 +70,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     });  
    
 
-    return await DesignService.addManyDesigns( designImages, 
-    
-      session?.id
-    );
-    
+    const result = await DesignService.addManyDesigns( designImages, session?.id );
+    if (result == null) {
+      return json({ success: false, error: "Failed to save uploads" }, { status: 500 });
+    }
+    return json({ success: true, data: result });
   } catch (error) {
-    console.log("error  on getting add cart", error);
-    return json({ error: "error  on getting add cart" });
+    console.log("error on uploads", error);
+    return json({ success: false, error: "Error while uploading files" }, { status: 500 });
   }
 };
 
