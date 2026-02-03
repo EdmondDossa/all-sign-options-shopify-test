@@ -258,9 +258,14 @@
       e.preventDefault();
       e.stopPropagation();
       lockProductForm(true);
-      document.getElementById('aso-view-uploads-modal').style.display = 'block';
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('aso-modal-open');
+      if (typeof openViewUploadsModal === 'function') {
+        openViewUploadsModal();
+      } else {
+        document.getElementById('aso-view-uploads-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('aso-modal-open');
+        if (typeof loadUploadedFiles === 'function') loadUploadedFiles();
+      }
     });
 
     // 1 Bloque toute tentative de submit quand une modale ASO est ouverte
