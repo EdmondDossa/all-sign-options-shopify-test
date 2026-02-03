@@ -515,11 +515,6 @@ img.aso-logo{
 #crisp-chatbox:not([data-hidden="true"]) {
     display: block !important;
 }
-    height: 250px;
-    object-fit: cover;
-    border-radius: 5px ;
-    border: whitesmoke 1px solid;
-}
 
 .demo-item{
     padding: 10px;
