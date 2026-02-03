@@ -6,7 +6,7 @@
       <button class="aso-modal-close" onclick="closeViewUploadsModal()">&times;</button>
     </div>
     <div class="aso-modal-body">
-      <div class="aso-view-uploads-container">
+      <div class="aso-view-uploads-container" style="min-height: 140px;">
         <div class="aso-uploads-loading" id="uploadsLoading" style="display: none;">
           <div class="aso-loading-spinner"></div>
           <p>Loading uploaded files...</p>
@@ -73,29 +73,46 @@
   }
   function refreshUploadsList() { loadUploadedFiles(); }
   function openViewUploadsModal() {
-    document.getElementById('aso-view-uploads-modal').style.display = 'flex';
+    var modal = document.getElementById('aso-view-uploads-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    var container = modal.querySelector('.aso-view-uploads-container');
+    if (container) {
+      var loading = container.querySelector('.aso-uploads-loading');
+      var empty = container.querySelector('.aso-uploads-empty');
+      var list = container.querySelector('.aso-uploads-list');
+      if (loading) loading.style.display = 'block';
+      if (empty) empty.style.display = 'none';
+      if (list) list.style.display = 'none';
+    }
     loadUploadedFiles();
   }
   async function loadUploadedFiles() {
-    const uploadsLoading = document.getElementById('uploadsLoading');
-    const uploadsEmpty = document.getElementById('uploadsEmpty');
-    const uploadsList = document.getElementById('uploadsList');
-    const uploadsContainer = document.getElementById('uploadsContainer');
-    const uploadsCount = document.getElementById('uploadsCount');
+    var modal = document.getElementById('aso-view-uploads-modal');
+    if (!modal) return;
+    var container = modal.querySelector('.aso-view-uploads-container');
+    if (!container) return;
+    var uploadsLoading = container.querySelector('.aso-uploads-loading');
+    var uploadsEmpty = container.querySelector('.aso-uploads-empty');
+    var uploadsList = container.querySelector('.aso-uploads-list');
+    var uploadsContainer = container.querySelector('#uploadsContainer');
+    var uploadsCountEl = container.querySelector('#uploadsCount');
     if (!uploadsLoading || !uploadsEmpty || !uploadsList) return;
     uploadsLoading.style.display = 'block';
     uploadsEmpty.style.display = 'none';
     uploadsList.style.display = 'none';
     try {
-      const list = await fetchUploadedFiles();
+      var list = await fetchUploadedFiles();
       if (!list || list.length === 0) {
         uploadsLoading.style.display = 'none';
         uploadsEmpty.style.display = 'block';
       } else {
-        uploadsContainer.innerHTML = '';
-        list.forEach(file => uploadsContainer.appendChild(createUploadedFileItem(file)));
-        uploadsCount.textContent = list.length;
+        if (uploadsContainer) {
+          uploadsContainer.innerHTML = '';
+          list.forEach(function(file) { uploadsContainer.appendChild(createUploadedFileItem(file)); });
+        }
+        if (uploadsCountEl) uploadsCountEl.textContent = list.length;
         uploadsLoading.style.display = 'none';
         uploadsEmpty.style.display = 'none';
         uploadsList.style.display = 'block';
