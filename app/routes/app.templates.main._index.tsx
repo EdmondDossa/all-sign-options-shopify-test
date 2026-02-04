@@ -223,20 +223,23 @@ export default function ConfigurationTemplates() {
                     </InlineStack>
                   </Box>
               </button>
-              <button
-                className="primary-btn"
-                type="button"
-                onClick={ ()=>{ onHandlePacks() } }
-              >
-                <Box paddingInline="100">
-                  <InlineStack gap="100">
-                    <PlusIcon />
-                    <span className="primary-btn-text">
-                      Browse our template
-                    </span>
-                  </InlineStack>
-                </Box>
-              </button>
+              <div className="aso-coming-soon-wrapper">
+                <span className="aso-coming-soon-tooltip">Coming soon</span>
+                <button
+                  className="primary-btn aso-coming-soon-btn"
+                  type="button"
+                  disabled
+                >
+                  <Box paddingInline="100">
+                    <InlineStack gap="100">
+                      <PlusIcon />
+                      <span className="primary-btn-text">
+                        Browse our template
+                      </span>
+                    </InlineStack>
+                  </Box>
+                </button>
+              </div>
               <button
                 className="primary-btn"
                 type="button"

@@ -25,6 +25,40 @@
     color: inherit;
 }
 
+/* Coming soon button tooltip (dropup) */
+.aso-coming-soon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.aso-coming-soon-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    background: var(--p-color-bg-surface-inverse, #1a1a1a);
+    color: var(--p-color-text-inverse, #fff);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: opacity 0.2s, visibility 0.2s;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.aso-coming-soon-wrapper:hover .aso-coming-soon-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.aso-coming-soon-btn {
+    cursor: not-allowed !important;
+    opacity: 0.85;
+}
+
 .Polaris-Button--toneSuccess:is(.Polaris-Button--variantPrimary) {
     --pc-button-box-shadow: var(--p-shadow-button-primary-success);
     --pc-button-box-shadow_active: var(--p-shadow-button-primary-success-inset);
