@@ -136,10 +136,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case "DELETE": {
       console.log("start deleting");
       await TemplateService.deleteTemplate(parseInt(id), session.id);
-      
+
       // Check pack access after template deletion
       await TemplatePackService.checkPackAccessAfterDeletion(session.id);
-      
+
       return json({
         ...jFlashMessage("Template deleted successfully"),
       });
@@ -156,23 +156,23 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 
 export default function ConfigurationTemplates() {
-  const  [searchTag,  setSearchTag] = useState("");
+  const [searchTag, setSearchTag] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const submit = useSubmit();
   let { templates, categories, templateUrl } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
- 
+
 
 
   const navigation = useNavigation();
 
-  let data : Array<{
+  let data: Array<{
     label: string;
     value: any;
     image: string;
-    basePrice: number|any;
+    basePrice: number | any;
     categoryId: number | null;
-  }> =templates?.map((item, index) => {
+  }> = templates?.map((item, index) => {
     return {
       label: item.name,
       value: `${item.id}`,
@@ -180,7 +180,7 @@ export default function ConfigurationTemplates() {
       basePrice: item.basePrice,
       categoryId: item.categoryId
     };
-  })||[];
+  }) || [];
 
   // Filter by category first
   if (selectedCategoryId !== null) {
@@ -232,12 +232,12 @@ export default function ConfigurationTemplates() {
 
 
   return (
-      <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
-        <Card>
-          <Box>
-            <InlineStack gap="100" align="space-between" blockAlign="center">
-              <Text as="h2" variant="headingMd">
-                 Templates  list
+    <div style={{ width: "100%", height: "auto", padding: "10px 0px" }}>
+      <Card>
+        <Box>
+          <InlineStack gap="100" align="space-between" blockAlign="center">
+            <Text as="h2" variant="headingMd">
+              Templates  list
             </Text>
             <InlineStack gap="100" align="space-between" blockAlign="center">
               <Box minWidth="200px">
@@ -266,32 +266,46 @@ export default function ConfigurationTemplates() {
                 onChange={setSearchTag}
                 autoComplete="on"
                 labelHidden
-            />
-             <button
-                  className="primary-btn"
-                  type="button"
-                  onClick={() => { onHandleCreate() }}
-                >
-                  <Box paddingInline="100">
-                    <InlineStack gap="100">
-                      <PlusIcon />
-                      <span className="primary-btn-text">
-                       Create Template  
-                      </span>
-                    </InlineStack>
-                  </Box>
-              </button>
-              <ComingSoonButton />
+              />
               <button
                 className="primary-btn"
                 type="button"
-                onClick={ ()=>{ onHandleImport() } }
+                onClick={() => { onHandleCreate() }}
+              >
+                <Box paddingInline="100">
+                  <InlineStack gap="100">
+                    <PlusIcon />
+                    <span className="primary-btn-text">
+                      Create Template
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>
+              <ComingSoonButton />
+              {/*<button
+                className="primary-btn"
+                type="button"
+                onClick={() => { onHandlePacks() }}
+              >
+                <Box paddingInline="100">
+                  <InlineStack gap="100">
+                    <PlusIcon />
+                    <span className="primary-btn-text">
+                      Browse our template
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>*/}
+              <button
+                className="primary-btn"
+                type="button"
+                onClick={() => { onHandleImport() }}
               >
                 <Box paddingInline="100">
                   <InlineStack gap="100">
                     <ImportIcon />
                     <span className="primary-btn-text">
-                      Import  
+                      Import
                     </span>
                   </InlineStack>
                 </Box>
@@ -299,13 +313,13 @@ export default function ConfigurationTemplates() {
               <button
                 className="primary-btn"
                 type="button"
-                onClick={ ()=>{ onHandleExport() } }
+                onClick={() => { onHandleExport() }}
               >
                 <Box paddingInline="100">
                   <InlineStack gap="100">
                     <ExportIcon />
                     <span className="primary-btn-text">
-                      Export  
+                      Export
                     </span>
                   </InlineStack>
                 </Box>
@@ -329,36 +343,36 @@ export default function ConfigurationTemplates() {
                 </LinksConfirmBtn>
               ) : null}
             </InlineStack>
-            </InlineStack>
-          </Box>
-        </Card>
+          </InlineStack>
+        </Box>
+      </Card>
 
-  
-        <div style={{width:"100%", height:"auto", margin:"10px 0px", backgroundColor:"#F8F9FB"}}>
-          <Box paddingInline="300" paddingBlock="300">
+
+      <div style={{ width: "100%", height: "auto", margin: "10px 0px", backgroundColor: "#F8F9FB" }}>
+        <Box paddingInline="300" paddingBlock="300">
           <Grid gap={{ lg: "20px" }}>
-              {data.map((item: any) => {
-                return (
-                  <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 3, xl: 3 }}>
-                    <AppearanceItem
-                      title={item.label}
-                      imgSrc={getImageUrl(item.image)}
-                      basePrice={item.basePrice}
-                      onDelete={ ()=>handeleDelete(item.value)}
-                      onUpdate={ ()=>handleUpdate(item.value)}
-                      onPreview={ ()=>handlePreview(item.value)}
-                    />
-                  </Grid.Cell>
-                );
-              })}
-            </Grid>
-          </Box>
-          
-        </div>
-        
-      
+            {data.map((item: any) => {
+              return (
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 3, xl: 3 }}>
+                  <AppearanceItem
+                    title={item.label}
+                    imgSrc={getImageUrl(item.image)}
+                    basePrice={item.basePrice}
+                    onDelete={() => handeleDelete(item.value)}
+                    onUpdate={() => handleUpdate(item.value)}
+                    onPreview={() => handlePreview(item.value)}
+                  />
+                </Grid.Cell>
+              );
+            })}
+          </Grid>
+        </Box>
+
       </div>
-  
+
+
+    </div>
+
   );
 };
 
@@ -380,11 +394,11 @@ export const AppearanceItem = ({
   return (
     <SpacingBackground>
       <div
-     
+
         style={{ position: "relative" }}
         className={"template"}
       >
-        <img src={imgSrc || "/aso_logo.png"} alt={title} className="image-fit" style={{height: "10rem"}} />
+        <img src={imgSrc || "/aso_logo.png"} alt={title} className="image-fit" style={{ height: "10rem" }} />
 
         <Box paddingBlock="100">
           <BlockStack gap="100">
@@ -392,38 +406,38 @@ export const AppearanceItem = ({
               <Text as="span" variant="bodyMd" fontWeight="bold">
                 {title || "Default template"}
               </Text>
-            
+
             </InlineStack>
 
             <Box paddingBlockStart="200" paddingBlockEnd="050">
-            <Divider  borderWidth="0165" borderColor="border-tertiary" />                     
+              <Divider borderWidth="0165" borderColor="border-tertiary" />
             </Box>
-            <InlineStack blockAlign="center"  gap="200" align="space-between">
-            <Badge tone="critical">{`Base price: ${basePrice}`}</Badge>
-                <ButtonGroup fullWidth={true} noWrap gap="tight">
-              
-                  <EditIconBtn
-                    size="micro"
-                    onClick={() => {
-                      onUpdate()
-                    }}
-                  />
-            
-                  <DeleteIconBtn
-                    size="micro"
-                    onClick={() => {
-                      onDelete()
-                    }}
+            <InlineStack blockAlign="center" gap="200" align="space-between">
+              <Badge tone="critical">{`Base price: ${basePrice}`}</Badge>
+              <ButtonGroup fullWidth={true} noWrap gap="tight">
+
+                <EditIconBtn
+                  size="micro"
+                  onClick={() => {
+                    onUpdate()
+                  }}
                 />
-                    <SettingIconBtn
-                    onClick={() => {
-                   onPreview()
-                    }}
-                  />
-                
-                </ButtonGroup>
+
+                <DeleteIconBtn
+                  size="micro"
+                  onClick={() => {
+                    onDelete()
+                  }}
+                />
+                <SettingIconBtn
+                  onClick={() => {
+                    onPreview()
+                  }}
+                />
+
+              </ButtonGroup>
             </InlineStack>
-          
+
           </BlockStack>
         </Box>
       </div>
