@@ -23,7 +23,8 @@ import {
   Divider,
   ExceptionList,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import PlusIcon from "~/components/icons/PlusIcon";
 import ImportIcon from "~/components/icons/ImportIcon";
 import ExportIcon from "~/components/icons/ExportIcon";
@@ -45,7 +46,64 @@ import { ComboxSelect } from "~/components/inputs/ComboxSelect";
 import { LinksConfirmBtn } from "~/components/buttons/LinksConfirmBtn";
 import { AlertCircleIcon } from "@shopify/polaris-icons";
 
+function ComingSoonButton() {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
 
+  useLayoutEffect(() => {
+    if (!isHovered || !wrapperRef.current) return;
+    const update = () => {
+      if (!wrapperRef.current) return;
+      const rect = wrapperRef.current.getBoundingClientRect();
+      setTooltipStyle({
+        left: rect.left + rect.width / 2,
+        top: rect.top - 6,
+        transform: "translate(-50%, -100%)",
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [isHovered]);
+
+  const tooltip = isHovered ? (
+    <span
+      className="aso-coming-soon-tooltip aso-coming-soon-tooltip-portal"
+      style={tooltipStyle}
+    >
+      Coming soon
+    </span>
+  ) : null;
+
+  return (
+    <div
+      className="aso-coming-soon-wrapper"
+      ref={wrapperRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {typeof document !== "undefined" &&
+        createPortal(tooltip, document.body)}
+      <button
+        className="primary-btn aso-coming-soon-btn"
+        type="button"
+        disabled
+      >
+        <Box paddingInline="100">
+          <InlineStack gap="100">
+            <PlusIcon />
+            <span className="primary-btn-text">Browse our template</span>
+          </InlineStack>
+        </Box>
+      </button>
+    </div>
+  );
+}
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -174,8 +232,8 @@ export default function ConfigurationTemplates() {
 
 
   return (
-      <div className="aso-templates-page-wrapper" style={{width:"100%", height:"auto", padding: "10px 0px"}}>
-        <Card className="aso-templates-list-card">
+      <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
+        <Card>
           <Box>
             <InlineStack gap="100" align="space-between" blockAlign="center">
               <Text as="h2" variant="headingMd">
@@ -223,23 +281,7 @@ export default function ConfigurationTemplates() {
                     </InlineStack>
                   </Box>
               </button>
-              <div className="aso-coming-soon-wrapper">
-                <span className="aso-coming-soon-tooltip">Coming soon</span>
-                <button
-                  className="primary-btn aso-coming-soon-btn"
-                  type="button"
-                  disabled
-                >
-                  <Box paddingInline="100">
-                    <InlineStack gap="100">
-                      <PlusIcon />
-                      <span className="primary-btn-text">
-                        Browse our template
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button>
-              </div>
+              <ComingSoonButton />
               <button
                 className="primary-btn"
                 type="button"

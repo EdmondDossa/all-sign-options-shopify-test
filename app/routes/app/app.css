@@ -25,40 +25,23 @@
     color: inherit;
 }
 
-/* Coming soon button tooltip (dropup) - allow tooltip to extend above the bar */
-.aso-templates-page-wrapper,
-.aso-templates-list-card,
-.aso-templates-list-card > *,
-.aso-templates-list-card > * > * {
-    overflow: visible !important;
-}
-
+/* Coming soon button tooltip (dropup) - Portal version, insensible à overflow */
 .aso-coming-soon-wrapper {
     position: relative;
     display: inline-block;
 }
 
-.aso-coming-soon-tooltip {
-    visibility: hidden;
-    opacity: 0;
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-6px);
+.aso-coming-soon-tooltip-portal {
+    position: fixed;
     background: var(--p-color-bg-surface-inverse, #1a1a1a);
     color: var(--p-color-text-inverse, #fff);
     padding: 6px 12px;
     border-radius: 8px;
     font-size: 13px;
     white-space: nowrap;
-    transition: opacity 0.2s, visibility 0.2s;
-    z-index: 1000;
+    z-index: 999999;
     pointer-events: none;
-}
-
-.aso-coming-soon-wrapper:hover .aso-coming-soon-tooltip {
-    visibility: visible;
-    opacity: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .aso-coming-soon-btn {
