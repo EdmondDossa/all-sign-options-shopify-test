@@ -17,14 +17,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   console.log(' API configuration-upload called - START');
   try {
     const { admin, session } = await authenticate.public.appProxy(request);
- 
-    if(!params.id){
-      return uploadSetting;
+
+    if (!params?.id) {
+      return json(uploadSetting);
     }
 
-    let config = await ConfigurationService.getConfigurationWithoutTemplates(parseInt(`${params.id}`) , session?.id as string);
-
-    return config?.data?.settings?.generals?.upload || uploadSetting;
+    const config = await ConfigurationService.getConfigurationWithoutTemplates(parseInt(`${params.id}`), session?.id as string);
+    const settings = config?.data?.settings?.generals?.upload || uploadSetting;
+    return json(settings);
   } catch (error) {
     console.error('Error in configuration-upload API:', error);
     return json({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });

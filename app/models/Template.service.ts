@@ -1,7 +1,54 @@
 import prisma from "~/db.server";
 import { TemplateType } from "~/types/TemplateType";
+import ConfigurationService from "~/models/Configuration.service";
 
 export default class TemplateService {
+  /**
+   * Get templates only for the configuration(s) linked to this product.
+   * One product = one configuration; returns templates of that configuration.
+   * productId can be numeric (Liquid product.id) or gid (e.g. gid://shopify/Product/123).
+   */
+  static async getTemplatesForProduct(sessionId: string, productId: string | number): Promise<any[] | null> {
+    try {
+      const normalizedId = ConfigurationService.normalizeProductId(productId);
+      const configs = await prisma.configuration.findMany({
+        where: { sessionId },
+        select: { id: true, product: true },
+      });
+      const configIds = configs
+        .filter((c) => {
+          const productList = Array.isArray(c.product) ? c.product : [];
+          return productList.some((p: any) => ConfigurationService.normalizeProductId(p?.id ?? p) === normalizedId);
+        })
+        .map((c) => c.id);
+      if (configIds.length === 0) return [];
+      return await prisma.template.findMany({
+        where: {
+          sessionId,
+          configurationId: { in: configIds },
+        },
+        select: {
+          id: true,
+          name: true,
+          prevImg: true,
+          realImg: true,
+          basePrice: true,
+          categoryId: true,
+          configurationId: true,
+          enabledAddToCart: true,
+          category: true,
+          recaps: true,
+          configuration: {
+            select: { product: true },
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Error retrieving templates for product:", error);
+      return Promise.resolve(null);
+    }
+  }
+
   static async getTemplates(sessionId: string): Promise<any[] | null> {
     try {
       return await prisma.template.findMany({
@@ -21,7 +68,9 @@ export default class TemplateService {
           recaps:true,
           configuration: {
             select:{
-              product: true
+              product: true,
+              icon: true,
+              popupImg: true
             }
         } },
         

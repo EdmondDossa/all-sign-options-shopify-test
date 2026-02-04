@@ -13,16 +13,24 @@ export default class DesignService {
     }
   }
 
-  static async getDesignsUploaded(sessionId: string, productId:string ,customerIp: string): Promise<any[] | null> {
+  static async getDesignsUploaded(sessionId: string, productId?: string | null, customerIp?: string | null): Promise<any[] | null> {
     try {
+      const where: any = {
+        sessionId,
+        OR: [
+          { orderId: null },
+          { orderId: "" },
+        ],
+      };
+      if (productId != null && String(productId).trim() !== "") {
+        where.productId = String(productId).trim();
+      }
+      if (customerIp != null && String(customerIp).trim() !== "") {
+        where.customerIp = customerIp;
+      }
       return await prisma.design.findMany({
-        where: { 
-          sessionId,productId,customerIp,
-          OR: [
-            { orderId: null },
-            { orderId: "" },
-          ],
-        },
+        where,
+        orderBy: { id: "desc" },
       });
     } catch (error) {
       console.error("Error retrieving designs:", error);

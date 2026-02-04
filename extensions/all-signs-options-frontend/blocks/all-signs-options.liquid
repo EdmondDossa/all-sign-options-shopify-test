@@ -1,15 +1,15 @@
 {% render 'pricing-format' %}
 {% render 'notyf' %}
 
-{% assign asoProduct = product %}
-{% assign asoConfigurationId = asoProduct.metafields.allSignsOptionsAsoAso.asoConfigurationId.value  %}
-{% assign asoProductId = asoProduct.id  %}
+{% assign aso_product = product %}
+{% assign aso_configuration_id = aso_product.metafields.allSignsOptionsAsoAso.asoConfigurationId.value  %}
+{% assign aso_product_id = aso_product.id  %}
 <script>
-  var asoConfigurationId = "{{asoConfigurationId}}";
-  var asoProductId = "{{asoProductId}}";
-  var asoRegularPrice ="{{ asoProduct.price | money_without_currency }}";
+  var asoConfigurationId = "{{ aso_configuration_id }}";
+  var asoProductId = "{{ aso_product_id }}";
+  var asoRegularPrice ="{{ aso_product.price | money_without_currency }}";
 
-  {% if asoConfigurationId == null or asoConfigurationId == "" %}
+  {% if aso_configuration_id == null or aso_configuration_id == "" %}
     {% if request.design_mode == false %}
     if(!(new URLSearchParams(window.location.search)).get('aso-template-id')){
     
@@ -22,7 +22,7 @@
 {% if block.settings.useModal %}
   <!-- Boutons pour ouvrir les modals -->
   <div class="aso-modal-buttons-container">
-    {% if block.settings.design_button_enabled and asoConfigurationId %}
+    {% if block.settings.design_button_enabled and aso_configuration_id %}
       <button id="asoDesignBtn" class="aso-modal-button aso-design-button" type="button" 
               style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
         {{ block.settings.design_button_text | default: "Design your own Sign" }}
@@ -90,8 +90,8 @@
 <!-- Affichage normal du configurateur -->
 {% if block.settings.useIframe == false %}
   <link rel="stylesheet"  href="{{'index.css' |asset_url }}">
-  <script src="{{'shopify.js'|asset_url}}"></script>
-  <script src="{{'fabric.min.js'|asset_url}}"></script>
+  <script src="{{'shopify.js'|asset_url}}" defer></script>
+  <script src="{{'fabric.min.js'|asset_url}}" defer></script>
   <script id="design-js" type="module"  src="{{'index.js' |asset_url }}"></script>
 
 {% else %} 
@@ -168,6 +168,15 @@
     document.body.style.overflow = 'auto';
     document.body.classList.remove('aso-modal-open');
     lockProductForm(false);
+    // Retirer aso-template-id et aso-config-id de l'URL pour que "Design your own Sign" rouvre le configurateur avec la config produit, pas le template
+    try {
+      var url = new URL(window.location.href);
+      if (url.searchParams.has('aso-template-id') || url.searchParams.has('aso-config-id')) {
+        url.searchParams.delete('aso-template-id');
+        url.searchParams.delete('aso-config-id');
+        history.replaceState(null, '', url.pathname + url.search);
+      }
+    } catch (e) {}
   }
 
   function closeUploadModal() {
@@ -249,9 +258,14 @@
       e.preventDefault();
       e.stopPropagation();
       lockProductForm(true);
-      document.getElementById('aso-view-uploads-modal').style.display = 'block';
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('aso-modal-open');
+      if (typeof openViewUploadsModal === 'function') {
+        openViewUploadsModal();
+      } else {
+        document.getElementById('aso-view-uploads-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('aso-modal-open');
+        if (typeof loadUploadedFiles === 'function') loadUploadedFiles();
+      }
     });
 
     // 1 Bloque toute tentative de submit quand une modale ASO est ouverte
@@ -559,6 +573,10 @@
   "name": "All Signs Customizer",
   "target": "section",
   "settings": [
+      {
+        "type": "paragraph",
+        "content": "Pour un affichage optimal, placez ce bloc après le bloc « Sélecteur de quantité » sur la page produit."
+      },
       {
         "id": "useIframe",
         "type": "checkbox",

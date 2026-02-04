@@ -4,7 +4,7 @@ import { ConfigurationType } from "~/types/ConfigurationType";
 const initialData = {
   settings: {
     generals: {
-      upload:{
+      upload: {
         allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
         maxUploadSize: 5000,
         maxUploadNumber: 5,
@@ -31,8 +31,8 @@ const initialData = {
         designFromScratch: true,
         redirectToCheckOutPage: false,
         displayRecapsOnCheckout: false,
-        hidePricing:false,
-        showRecapAfterFinish:true,
+        hidePricing: false,
+        showRecapAfterFinish: true,
         redirectAfterAddingToCart: true,
         hideDesignButtonsOnShopPage: false,
         hideAddToCartButtonOnShopPage: true,
@@ -279,7 +279,7 @@ const initialData = {
         enableCustomColor: true,
         enableUploadImage: true,
         enableDownloadImage: true,
-        scenes:[]
+        scenes: []
       },
       signPart: {
         doublePart: {
@@ -508,14 +508,14 @@ const simpleMaterials: any = [
             label: "Height",
           },
           pricings: {
-            type:"unit",
-            unit:{
-              basePrice:0,
-              surface:0,
-              charPrice:0
+            type: "unit",
+            unit: {
+              basePrice: 0,
+              surface: 0,
+              charPrice: 0
             },
-            range:[],
-            rangePricingPerUnit:false
+            range: [],
+            rangePricingPerUnit: false
           },
         },
       },
@@ -869,7 +869,7 @@ const simpleMaterials: any = [
     },
     icon: "",
     name: "Default material",
-    discounts:[],
+    discounts: [],
     type: "simple",
     popImg: "",
     description: "Default material data for simple configuration",
@@ -1096,7 +1096,7 @@ const advanceMaterials: any = [
     ],
     icon: "",
     name: "Default material",
-    discounts:[],
+    discounts: [],
     type: "advance",
     popImg: "",
     description: "Default material data for advance configuration",
@@ -1106,7 +1106,7 @@ const advanceMaterials: any = [
 const layersMaterials: any = []
 
 export default class ConfigurationService {
-  static async getConfigurations(sessionId: string,includeTempletes = false): Promise<any[] | null> {
+  static async getConfigurations(sessionId: string, includeTempletes = false): Promise<any[] | null> {
     try {
       return await prisma.configuration.findMany({
         where: {
@@ -1135,7 +1135,7 @@ export default class ConfigurationService {
           id: id,
           sessionId: sessionId,
         },
-        include: {templates: true}
+        include: { templates: true }
       });
     } catch (error) {
       console.error("Error retrieving configuration:", error);
@@ -1162,11 +1162,59 @@ export default class ConfigurationService {
     }
   }
 
+  /**
+   * Normalize product ID for comparison (handles gid://shopify/Product/123 or numeric 123)
+   */
+  static normalizeProductId(productId: string | number): string {
+    if (typeof productId === "number") return String(productId);
+    const match = String(productId).match(/^(?:gid:\/\/shopify\/Product\/)?(\d+)$/);
+    return match ? match[1] : String(productId);
+  }
+
+  /**
+   * Find another configuration (same session) that already has this product linked.
+   * Returns { configId, configName } if found, null otherwise.
+   * Used to enforce: one product = one configuration.
+   */
+  static async findConfigurationContainingProduct(
+    sessionId: string,
+    productId: string | number,
+    excludeConfigurationId?: number
+  ): Promise<{ configId: number; configName: string } | null> {
+    const normalizedId = this.normalizeProductId(productId);
+    const configs = await prisma.configuration.findMany({
+      where: {
+        sessionId,
+        ...(excludeConfigurationId ? { id: { not: excludeConfigurationId } } : {}),
+      },
+      select: { id: true, name: true, product: true },
+    });
+    for (const config of configs) {
+      const productList = Array.isArray(config.product) ? config.product : [];
+      const hasProduct = productList.some((p: any) => {
+        const id = p?.id ?? p;
+        return this.normalizeProductId(id) === normalizedId;
+      });
+      if (hasProduct) return { configId: config.id, configName: config.name };
+    }
+    return null;
+  }
+
   static async updateConfiguration(
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
     const { id, products, templates, materialType, productType, ...configData } = configuration;
+    const productList = Array.isArray(products) ? products : [];
+    for (const p of productList) {
+      const productId = (p as any)?.id ?? (p as any);
+      if (productId == null) continue;
+      const other = await this.findConfigurationContainingProduct(sessionId, productId, id);
+      if (other) {
+        const msg = `This product is already linked to the configuration "${other.configName}". Remove it from this configuration before adding it to another one.`;
+        return Promise.reject(new Error(msg));
+      }
+    }
     try {
       console.log("updateConfiguration - Saving materialType:", materialType);
       console.log("updateConfiguration - Saving productType:", productType);
@@ -1209,11 +1257,21 @@ export default class ConfigurationService {
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
+    const { products, templates, materialType, productType, ...configData } = configuration;
+    const productList = Array.isArray(products) ? products : [];
+    for (const p of productList) {
+      const productId = (p as any)?.id ?? (p as any);
+      if (productId == null) continue;
+      const other = await this.findConfigurationContainingProduct(sessionId, productId);
+      if (other) {
+        const msg = `This product is already linked to the configuration "${other.configName}". Remove it from this configuration before adding it to another one.`;
+        return Promise.reject(new Error(msg));
+      }
+    }
     try {
-      const { products, templates, materialType, productType, ...configData } = configuration;
-      if(configuration.materialType == "simple"){
+      if (configuration.materialType == "simple") {
         initialData.materials = simpleMaterials
-      }else if(configuration.materialType == "advance"){
+      } else if (configuration.materialType == "advance") {
         initialData.materials = advanceMaterials
       }
       return await prisma.configuration.create({

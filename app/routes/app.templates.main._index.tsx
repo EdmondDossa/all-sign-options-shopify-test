@@ -21,8 +21,10 @@ import {
   TextField,
   ButtonGroup,
   Divider,
+  ExceptionList,
 } from "@shopify/polaris";
-import { useState } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import PlusIcon from "~/components/icons/PlusIcon";
 import ImportIcon from "~/components/icons/ImportIcon";
 import ExportIcon from "~/components/icons/ExportIcon";
@@ -36,12 +38,72 @@ import { authenticate } from "~/shopify.server";
 import TemplateService from "~/models/Template.service";
 import CategoryService from "~/models/Category.service";
 import TemplatePackService from "~/models/TemplatePack.service";
+import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import { fileUrl } from "~/utils/fileUrl";
+import { getImageUrl } from "~/utils/fileUrl";
 import { ComboxSelect } from "~/components/inputs/ComboxSelect";
+import { LinksConfirmBtn } from "~/components/buttons/LinksConfirmBtn";
+import { AlertCircleIcon } from "@shopify/polaris-icons";
 
+function ComingSoonButton() {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
 
+  useLayoutEffect(() => {
+    if (!isHovered || !wrapperRef.current) return;
+    const update = () => {
+      if (!wrapperRef.current) return;
+      const rect = wrapperRef.current.getBoundingClientRect();
+      setTooltipStyle({
+        left: rect.left + rect.width / 2,
+        top: rect.top - 6,
+        transform: "translate(-50%, -100%)",
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [isHovered]);
+
+  const tooltip = isHovered ? (
+    <span
+      className="aso-coming-soon-tooltip aso-coming-soon-tooltip-portal"
+      style={tooltipStyle}
+    >
+      Coming soon
+    </span>
+  ) : null;
+
+  return (
+    <div
+      className="aso-coming-soon-wrapper"
+      ref={wrapperRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {typeof document !== "undefined" &&
+        createPortal(tooltip, document.body)}
+      <button
+        className="primary-btn aso-coming-soon-btn"
+        type="button"
+        disabled
+      >
+        <Box paddingInline="100">
+          <InlineStack gap="100">
+            <PlusIcon />
+            <span className="primary-btn-text">Browse our template</span>
+          </InlineStack>
+        </Box>
+      </button>
+    </div>
+  );
+}
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -52,7 +114,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const categories = await CategoryService.getCategorys(session.id);
 
-  return json({ templates, categories });
+  let templateUrl = "";
+  try {
+    const shop = await ShopifyShopService.getShop(admin);
+    templateUrl = `https://${shop.myshopifyDomain}/admin/themes/current/editor?template=product&addAppBlockId=${process.env.SHOPIFY_ALL_SIGNS_OPTIONS_FRONTEND_ID}/all-signs-option-template&target=newAppsSection`;
+  } catch (e) {
+    // ignore
+  }
+
+  return json({ templates, categories, templateUrl });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -66,10 +136,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case "DELETE": {
       console.log("start deleting");
       await TemplateService.deleteTemplate(parseInt(id), session.id);
-      
+
       // Check pack access after template deletion
       await TemplatePackService.checkPackAccessAfterDeletion(session.id);
-      
+
       return json({
         ...jFlashMessage("Template deleted successfully"),
       });
@@ -86,31 +156,31 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 
 export default function ConfigurationTemplates() {
-  const  [searchTag,  setSearchTag] = useState("");
+  const [searchTag, setSearchTag] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const submit = useSubmit();
-  let { templates, categories } = useLoaderData<typeof loader>();
+  let { templates, categories, templateUrl } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
- 
+
 
 
   const navigation = useNavigation();
 
-  let data : Array<{
+  let data: Array<{
     label: string;
     value: any;
     image: string;
-    basePrice: number|any;
+    basePrice: number | any;
     categoryId: number | null;
-  }> =templates?.map((item, index) => {
+  }> = templates?.map((item, index) => {
     return {
       label: item.name,
       value: `${item.id}`,
-      image: item.prevImg,
+      image: item.prevImg || item.realImg || item.configuration?.icon || item.configuration?.popupImg || "",
       basePrice: item.basePrice,
       categoryId: item.categoryId
     };
-  })||[];
+  }) || [];
 
   // Filter by category first
   if (selectedCategoryId !== null) {
@@ -162,12 +232,12 @@ export default function ConfigurationTemplates() {
 
 
   return (
-      <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
-        <Card>
-          <Box>
-            <InlineStack gap="100" align="space-between" blockAlign="center">
-              <Text as="h2" variant="headingMd">
-                 Templates  list
+    <div style={{ width: "100%", height: "auto", padding: "10px 0px" }}>
+      <Card>
+        <Box>
+          <InlineStack gap="100" align="space-between" blockAlign="center">
+            <Text as="h2" variant="headingMd">
+              Templates  list
             </Text>
             <InlineStack gap="100" align="space-between" blockAlign="center">
               <Box minWidth="200px">
@@ -196,45 +266,46 @@ export default function ConfigurationTemplates() {
                 onChange={setSearchTag}
                 autoComplete="on"
                 labelHidden
-            />
-             <button
-                  className="primary-btn"
-                  type="button"
-                  onClick={() => { onHandleCreate() }}
-                >
-                  <Box paddingInline="100">
-                    <InlineStack gap="100">
-                      <PlusIcon />
-                      <span className="primary-btn-text">
-                       Create Template  
-                      </span>
-                    </InlineStack>
-                  </Box>
-              </button>
+              />
               <button
                 className="primary-btn"
                 type="button"
-                onClick={ ()=>{ onHandlePacks() } }
+                onClick={() => { onHandleCreate() }}
               >
                 <Box paddingInline="100">
                   <InlineStack gap="100">
                     <PlusIcon />
                     <span className="primary-btn-text">
-                      Add Packs  
+                      Create Template
                     </span>
                   </InlineStack>
                 </Box>
               </button>
+              <ComingSoonButton />
+              {/*<button
+                className="primary-btn"
+                type="button"
+                onClick={() => { onHandlePacks() }}
+              >
+                <Box paddingInline="100">
+                  <InlineStack gap="100">
+                    <PlusIcon />
+                    <span className="primary-btn-text">
+                      Browse our template
+                    </span>
+                  </InlineStack>
+                </Box>
+              </button>*/}
               <button
                 className="primary-btn"
                 type="button"
-                onClick={ ()=>{ onHandleImport() } }
+                onClick={() => { onHandleImport() }}
               >
                 <Box paddingInline="100">
                   <InlineStack gap="100">
                     <ImportIcon />
                     <span className="primary-btn-text">
-                      Import  
+                      Import
                     </span>
                   </InlineStack>
                 </Box>
@@ -242,48 +313,66 @@ export default function ConfigurationTemplates() {
               <button
                 className="primary-btn"
                 type="button"
-                onClick={ ()=>{ onHandleExport() } }
+                onClick={() => { onHandleExport() }}
               >
                 <Box paddingInline="100">
                   <InlineStack gap="100">
                     <ExportIcon />
                     <span className="primary-btn-text">
-                      Export  
+                      Export
                     </span>
                   </InlineStack>
                 </Box>
               </button>
+              {templateUrl ? (
+                <LinksConfirmBtn
+                  url={templateUrl}
+                  modalTitle="Templates List Block"
+                  title="Add template theme"
+                  asButton
+                >
+                  <ExceptionList
+                    items={[
+                      {
+                        icon: AlertCircleIcon,
+                        status: "warning",
+                        description: "This will open the theme editor and add the Templates List block to the product template. You can then place it (e.g. before the add to cart button in the Product information section) and save.",
+                      },
+                    ]}
+                  />
+                </LinksConfirmBtn>
+              ) : null}
             </InlineStack>
-            </InlineStack>
-          </Box>
-        </Card>
+          </InlineStack>
+        </Box>
+      </Card>
 
-  
-        <div style={{width:"100%", height:"auto", margin:"10px 0px", backgroundColor:"#F8F9FB"}}>
-          <Box paddingInline="300" paddingBlock="300">
+
+      <div style={{ width: "100%", height: "auto", margin: "10px 0px", backgroundColor: "#F8F9FB" }}>
+        <Box paddingInline="300" paddingBlock="300">
           <Grid gap={{ lg: "20px" }}>
-              {data.map((item: any) => {
-                return (
-                  <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 3, xl: 3 }}>
-                    <AppearanceItem
-                      title={item.label}
-                      imgSrc={fileUrl(item.image)}
-                      basePrice={item.basePrice}
-                      onDelete={ ()=>handeleDelete(item.value)}
-                      onUpdate={ ()=>handleUpdate(item.value)}
-                      onPreview={ ()=>handlePreview(item.value)}
-                    />
-                  </Grid.Cell>
-                );
-              })}
-            </Grid>
-          </Box>
-          
-        </div>
-        
-      
+            {data.map((item: any) => {
+              return (
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 2, lg: 3, xl: 3 }}>
+                  <AppearanceItem
+                    title={item.label}
+                    imgSrc={getImageUrl(item.image)}
+                    basePrice={item.basePrice}
+                    onDelete={() => handeleDelete(item.value)}
+                    onUpdate={() => handleUpdate(item.value)}
+                    onPreview={() => handlePreview(item.value)}
+                  />
+                </Grid.Cell>
+              );
+            })}
+          </Grid>
+        </Box>
+
       </div>
-  
+
+
+    </div>
+
   );
 };
 
@@ -305,11 +394,11 @@ export const AppearanceItem = ({
   return (
     <SpacingBackground>
       <div
-     
+
         style={{ position: "relative" }}
         className={"template"}
       >
-        <img src={imgSrc||"/assets/images/img_rectangle_noir.png"} alt={title} className="image-fit" style={{height: "10rem"}} />
+        <img src={imgSrc || "/aso_logo.png"} alt={title} className="image-fit" style={{ height: "10rem" }} />
 
         <Box paddingBlock="100">
           <BlockStack gap="100">
@@ -317,38 +406,38 @@ export const AppearanceItem = ({
               <Text as="span" variant="bodyMd" fontWeight="bold">
                 {title || "Default template"}
               </Text>
-            
+
             </InlineStack>
 
             <Box paddingBlockStart="200" paddingBlockEnd="050">
-            <Divider  borderWidth="0165" borderColor="border-tertiary" />                     
+              <Divider borderWidth="0165" borderColor="border-tertiary" />
             </Box>
-            <InlineStack blockAlign="center"  gap="200" align="space-between">
-            <Badge tone="critical">{`Base price: ${basePrice}`}</Badge>
-                <ButtonGroup fullWidth={true} noWrap gap="tight">
-              
-                  <EditIconBtn
-                    size="micro"
-                    onClick={() => {
-                      onUpdate()
-                    }}
-                  />
-            
-                  <DeleteIconBtn
-                    size="micro"
-                    onClick={() => {
-                      onDelete()
-                    }}
+            <InlineStack blockAlign="center" gap="200" align="space-between">
+              <Badge tone="critical">{`Base price: ${basePrice}`}</Badge>
+              <ButtonGroup fullWidth={true} noWrap gap="tight">
+
+                <EditIconBtn
+                  size="micro"
+                  onClick={() => {
+                    onUpdate()
+                  }}
                 />
-                    <SettingIconBtn
-                    onClick={() => {
-                   onPreview()
-                    }}
-                  />
-                
-                </ButtonGroup>
+
+                <DeleteIconBtn
+                  size="micro"
+                  onClick={() => {
+                    onDelete()
+                  }}
+                />
+                <SettingIconBtn
+                  onClick={() => {
+                    onPreview()
+                  }}
+                />
+
+              </ButtonGroup>
             </InlineStack>
-          
+
           </BlockStack>
         </Box>
       </div>

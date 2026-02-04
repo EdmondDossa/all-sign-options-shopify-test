@@ -1,5 +1,4 @@
 import { useLoaderData, useNavigate, useSubmit, useActionData } from "@remix-run/react";
-import { useEffect } from "react";
 import { LoaderFunctionArgs, ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import TemplatePackService from "~/models/TemplatePack.service";
@@ -109,7 +108,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
   }
 
-  const pack = await TemplatePackService.getPack(packId, session.id);
+  const { getPlanProxy } = await import("~/utils/pricing-server.server");
+  const merchantPlan = await getPlanProxy(admin, session.shop);
+  const pack = await TemplatePackService.getPack(packId, session.id, merchantPlan);
 
   if (!pack) {
     throw new Response("Pack not found", { status: 404 });
@@ -153,16 +154,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return json({ error: "Invalid pack ID" }, { status: 400 });
   }
 
-  const pack = await TemplatePackService.getPack(packId, session.id);
+  const { admin } = await authenticate.admin(request);
+  const { getPlanProxy } = await import("~/utils/pricing-server.server");
+  const merchantPlan = await getPlanProxy(admin, session.shop);
+  const pack = await TemplatePackService.getPack(packId, session.id, merchantPlan);
 
   if (!pack) {
     return json({ error: "Pack not found" }, { status: 404 });
   }
 
-  // Check if already purchased
-  if (pack.isPurchased && pack.hasAccess) {
-    // Re-import if templates are missing
-    const { admin } = await authenticate.admin(request);
+  // Check if already has access (by plan or purchased) – re-import if templates are missing
+  if (pack.hasAccess) {
     const result = await TemplatePackService.importPackToShop(
       session.id,
       packId,
@@ -179,14 +181,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
   }
 
-  // If pack is free (price = 0), import directly without payment
-  if (pack.price === 0) {
-    try {
-      // Record purchase with price 0
-      await TemplatePackService.recordPurchase(session.id, packId, 0);
+  const canTakeByPlan = merchantPlan && TemplatePackService.canAccessPackByPlan(pack, merchantPlan);
 
-      // Import pack
-      const { admin } = await authenticate.admin(request);
+  if (!pack.hasAccess) {
+    return json(
+      { error: "Ce pack n'est pas accessible avec votre plan. Passez à un plan supérieur pour y accéder." },
+      { status: 403 }
+    );
+  }
+
+  if (canTakeByPlan) {
+    try {
+      await TemplatePackService.recordPurchase(session.id, packId, 0);
       const result = await TemplatePackService.importPackToShop(
         session.id,
         packId,
@@ -210,118 +216,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
   }
 
-  // For paid packs, use one-time payment
-  // Create one-time charge using GraphQL mutation
-  try {
-    const { admin } = await authenticate.admin(request);
-    
-    // Build return URL - same route, Shopify will redirect here after approval
-    const appUrl = process.env.SHOPIFY_APP_URL || "";
-    const baseUrl = appUrl.replace(/\/$/, "");
-    const returnUrl = `${baseUrl}/app/templates/packs/${packId}`;
-    
-    console.log("Return URL for payment:", returnUrl);
-
-    const mutation = `
-      mutation appPurchaseOneTimeCreate($name: String!, $price: MoneyInput!, $test: Boolean!, $returnUrl: URL!) {
-        appPurchaseOneTimeCreate(
-          name: $name
-          price: $price
-          test: $test
-          returnUrl: $returnUrl
-        ) {
-          appPurchaseOneTime {
-            id
-            name
-            price {
-              amount
-              currencyCode
-            }
-            status
-            test
-          }
-          confirmationUrl
-          userErrors {
-            field
-            message
-          }
-        }
-      }
-    `;
-
-    const variables = {
-      name: pack.name,
-      price: {
-        amount: pack.price.toFixed(2), // Ensure 2 decimal places for Shopify
-        currencyCode: "USD",
-      },
-      test: process.env.IS_TEST === "true" || false,
-      returnUrl: returnUrl,
-    };
-
-    // Execute the GraphQL mutation
-    const response = await admin.graphql(mutation, {
-      variables,
-    });
-
-    const data = await response.json();
-
-    // Check for GraphQL errors
-    if (data.errors) {
-      console.error("GraphQL errors:", data.errors);
-      return json(
-        { error: data.errors[0]?.message || "Error creating payment charge" },
-        { status: 500 }
-      );
-    }
-
-    // Check for user errors from the mutation
-    if (data.data?.appPurchaseOneTimeCreate?.userErrors?.length > 0) {
-      const userError = data.data.appPurchaseOneTimeCreate.userErrors[0];
-      console.error("User errors:", userError);
-      return json(
-        { error: userError.message || "Error creating payment charge" },
-        { status: 400 }
-      );
-    }
-
-    const purchaseData = data.data?.appPurchaseOneTimeCreate;
-    if (!purchaseData) {
-      return json(
-        { error: "No data returned from payment creation" },
-        { status: 500 }
-      );
-    }
-
-    const confirmationUrl = purchaseData.confirmationUrl;
-    const chargeId = purchaseData.appPurchaseOneTime?.id;
-
-    if (!confirmationUrl) {
-      return json(
-        { error: "No confirmation URL returned from payment creation" },
-        { status: 500 }
-      );
-    }
-
-    // Store purchase with pending status and charge ID
-    // This will be updated to "active" when payment is confirmed via returnUrl
-    await TemplatePackService.recordPurchaseWithCharge(
-      session.id,
-      packId,
-      pack.price,
-      chargeId || null,
-      "pending"
-    );
-
-    // Return confirmation URL to client for redirect (can't use server redirect for external URLs in embedded app)
-    return json({ confirmationUrl, success: true });
-  } catch (error: any) {
-    console.error("Error processing pack purchase:", error);
-    return json(
-      { error: error.message || "Error processing purchase" },
-      { status: 500 }
-    );
-  }
+  return json(
+    { error: "Ce pack n'est pas disponible pour votre plan." },
+    { status: 403 }
+  );
 };
 
 export default function TemplatePackDetail() {
@@ -329,18 +227,6 @@ export default function TemplatePackDetail() {
   const actionData = useActionData<typeof action>();
   const navigate = useNavigate();
   const submit = useSubmit();
-
-  // Handle redirect to confirmation URL after purchase
-  useEffect(() => {
-    if (actionData?.confirmationUrl) {
-      // Use window.top to break out of iframe for external redirect
-      if (window.top) {
-        window.top.location.href = actionData.confirmationUrl;
-      } else {
-        window.location.href = actionData.confirmationUrl;
-      }
-    }
-  }, [actionData]);
 
   const handlePurchase = () => {
     submit({}, { method: "POST" });
@@ -367,19 +253,9 @@ export default function TemplatePackDetail() {
             alignItems: "center",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <button
-              className="back-large-btn"
-              type="button"
-              onClick={() => navigate("/app/templates/packs")}
-              style={{ padding: "8px 16px" }}
-            >
-              ← Back to Packs
-            </button>
-            <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "bold" }}>
-              {pack.name}
-            </h2>
-          </div>
+          <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "bold" }}>
+            {pack.name}
+          </h2>
         </div>
       </div>
 
@@ -518,32 +394,31 @@ export default function TemplatePackDetail() {
                     >
                       {templateCount} templates included
                     </p>
-                    <p
+                    <span
                       style={{
-                        margin: 0,
-                        fontSize: "20px",
-                        fontWeight: "bold",
+                        display: "inline-block",
+                        marginTop: "4px",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        backgroundColor: pack.planLevel === "pro" ? "#F3E8FF" : pack.planLevel === "basic" ? "#DBEAFE" : "#D1FAE5",
+                        color: pack.planLevel === "pro" ? "#6B21A8" : pack.planLevel === "basic" ? "#1E40AF" : "#065F46",
                       }}
                     >
-                      {pack.price === 0 ? (
-                        <span
-                          style={{
-                            backgroundColor: "#D1FAE5",
-                            color: "#065F46",
-                            padding: "4px 8px",
-                            borderRadius: "4px",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                          }}
-                        >
-                          Free
-                        </span>
-                      ) : (
-                        `$${pack.price.toFixed(2)}`
-                      )}
-                    </p>
+                      {(pack.planLevel === "free" || pack.planLevel === "basic" || pack.planLevel === "pro") ? pack.planLevel.charAt(0).toUpperCase() + pack.planLevel.slice(1) : "Free"}
+                    </span>
                   </div>
-                  {pack.isPurchased && pack.hasAccess ? (
+                  {!pack.hasAccess ? (
+                    <button
+                      className="back-large-btn"
+                      type="button"
+                      disabled
+                      style={{ padding: "8px 16px", opacity: 0.8, cursor: "not-allowed" }}
+                    >
+                      Passez à un plan supérieur
+                    </button>
+                  ) : pack.isPurchased && pack.hasAccess ? (
                     <button
                       className="back-large-btn"
                       type="button"
@@ -568,9 +443,7 @@ export default function TemplatePackDetail() {
                       onClick={handlePurchase}
                       style={{ padding: "8px 16px" }}
                     >
-                      <span className="primary-btn-text">
-                        {pack.price === 0 ? "Get Free Pack" : "Purchase Pack"}
-                      </span>
+                      <span className="primary-btn-text">Get template / Insert</span>
                     </button>
                   )}
                 </div>
@@ -609,8 +482,7 @@ export default function TemplatePackDetail() {
                   </div>
                   <div>
                     <p style={{ margin: 0, fontSize: "14px" }}>
-                      <strong>Price:</strong> ${pack.price.toFixed(2)} (one-time
-                      payment)
+                      <strong>Plan:</strong> {(pack.planLevel === "free" || pack.planLevel === "basic" || pack.planLevel === "pro") ? pack.planLevel.charAt(0).toUpperCase() + pack.planLevel.slice(1) : "Free"}
                     </p>
                   </div>
                 </div>
