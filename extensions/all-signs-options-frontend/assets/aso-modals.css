@@ -37,6 +37,7 @@
   height: 4px;
   overflow: scroll;
 }
+
 .aso-scrollBar::-webkit-scrollbar-thumb {
   background-color: #016464;
   border-radius: 20px;
@@ -46,6 +47,7 @@
   transition-property: all;
   transition-duration: 500ms;
 }
+
 .aso-full-center {
   justify-content: center !important;
   align-items: center !important;
@@ -62,9 +64,11 @@
   height: 94vh;
   width: 100%;
 }
+
 .aso-app *:not(input):empty {
   display: flex !important;
 }
+
 .shopify-app-wrapper {
   margin: 2rem 0rem;
   position: relative;
@@ -116,12 +120,14 @@
 }
 
 @keyframes pulseGradient {
+
   0%,
   100% {
     background-size: 200% 100%;
     background-position: 200% 50%;
     opacity: 0.5;
   }
+
   50% {
     background-size: 200% 100%;
     background-position: -100% 50%;
@@ -210,6 +216,7 @@
     transform: translateY(-50px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -517,6 +524,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -584,7 +592,7 @@
 }
 
 /* Individual file item - Modifié pour alignement horizontal */
-.aso-uploads-container > div {
+.aso-uploads-container>div {
   display: flex;
   align-items: center;
   padding: 12px 15px;
@@ -594,7 +602,7 @@
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.aso-uploads-container > div:hover {
+.aso-uploads-container>div:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -659,13 +667,16 @@
   .aso-file-name {
     font-size: 14px;
   }
+
   .aso-file-icon {
     font-size: 20px;
     margin-right: 10px;
   }
+
   .aso-file-actions {
     gap: 5px;
   }
+
   .aso-file-download,
   .aso-file-delete {
     padding: 3px 5px;
