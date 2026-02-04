@@ -174,8 +174,8 @@ export default function ConfigurationTemplates() {
 
 
   return (
-      <div style={{width:"100%", height:"auto", padding: "10px 0px"}}>
-        <Card>
+      <div className="aso-templates-page-wrapper" style={{width:"100%", height:"auto", padding: "10px 0px"}}>
+        <Card className="aso-templates-list-card">
           <Box>
             <InlineStack gap="100" align="space-between" blockAlign="center">
               <Text as="h2" variant="headingMd">
