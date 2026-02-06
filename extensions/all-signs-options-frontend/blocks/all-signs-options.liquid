@@ -25,7 +25,8 @@
     {% if block.settings.design_button_enabled and aso_configuration_id %}
       <button id="asoDesignBtn" class="aso-modal-button aso-design-button" type="button" 
               style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
-        {{ block.settings.design_button_text | default: "Design your own Sign" }}
+        <span class="aso-btn-spinner" aria-hidden="true"></span>
+        <span class="aso-btn-text">{{ block.settings.design_button_text | default: "Design from blank" }}</span>
       </button>
     {% endif %}
     {% if  block.settings.upload_button_enabled %}
@@ -134,12 +135,16 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
       const modals = document.querySelectorAll('.aso-modal');
-          
-          modals.forEach(function(modal) {
-              // Remove from current parent and append to body
-              modal.remove();
-              document.body.appendChild(modal);
-          });
+      modals.forEach(function(modal) {
+          modal.remove();
+          document.body.appendChild(modal);
+      });
+      {% if block.settings.useIframe %}
+      // Préchargement du configurateur pour un chargement plus rapide à l'ouverture
+      if (window.createIframeInModal) {
+        window.createIframeInModal();
+      }
+      {% endif %}
   });
 </script>
 {% endif %}
@@ -151,15 +156,9 @@
     document.getElementById('aso-design-modal').style.display = 'block';
     document.body.style.overflow = 'hidden';
     document.body.classList.add('aso-modal-open');
-    window.dispatchEvent(new Event('resize')); 
-    
+    window.dispatchEvent(new Event('resize'));
     {% if block.settings.useIframe %}
-    // Créer l'iframe dans le modal si useIframe est activé
-    setTimeout(function() {
-      if (window.createIframeInModal) {
-        window.createIframeInModal();
-      }
-    }, 100);
+    // L'iframe est déjà préchargée au chargement de la page
     {% endif %}
   }
 
@@ -168,7 +167,7 @@
     document.body.style.overflow = 'auto';
     document.body.classList.remove('aso-modal-open');
     lockProductForm(false);
-    // Retirer aso-template-id et aso-config-id de l'URL pour que "Design your own Sign" rouvre le configurateur avec la config produit, pas le template
+    // Retirer aso-template-id et aso-config-id de l'URL pour que "Design from blank" rouvre le configurateur avec la config produit, pas le template
     try {
       var url = new URL(window.location.href);
       if (url.searchParams.has('aso-template-id') || url.searchParams.has('aso-config-id')) {
@@ -237,12 +236,21 @@
       }, 500);
     }
 
-    // Binder proprement les boutons
+    // Binder proprement les boutons - Design from blank avec loader 3 sec
+    const DESIGN_BTN_DELAY_MS = 3000;
     document.getElementById('asoDesignBtn')?.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
+      const btn = e.currentTarget;
+      if (btn.disabled || btn.classList.contains('aso-design-btn-loading')) return;
+      btn.classList.add('aso-design-btn-loading');
+      btn.disabled = true;
       lockProductForm(true);
-      openDesignModal();
+      setTimeout(function() {
+        btn.classList.remove('aso-design-btn-loading');
+        btn.disabled = false;
+        openDesignModal();
+      }, DESIGN_BTN_DELAY_MS);
     });
 
     document.getElementById('asoUploadBtn')?.addEventListener('click', (e) => {
@@ -606,7 +614,7 @@
         "id": "design_button_text",
         "type": "text",
         "label": "Design Button Text",
-        "default": "Design your own Sign"
+        "default": "Design from blank"
       },
       {
         "id": "design_button_color",
