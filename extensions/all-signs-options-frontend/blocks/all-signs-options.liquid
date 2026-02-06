@@ -101,9 +101,9 @@
     const iframeBaseUrl = '/apps/aso-proxy/assets-preview/aso-iframe.html';
     const iframeUrl = `${iframeBaseUrl}?asoProductId=${encodeURIComponent(asoProductId)}&asoCurrency=${encodeURIComponent(asoCurrency)}&asoPriceFormat=${encodeURIComponent(asoPriceFormat)}&asoRegularPrice=${encodeURIComponent(asoRegularPrice)}&asoCurrency_pos=${encodeURIComponent(asoCurrency_pos)}&asoThousandSep=${encodeURIComponent(asoThousandSep)}&asoDecimalSep=${encodeURIComponent(asoDecimalSep)}&asoConfigurationId=${encodeURIComponent(asoConfigurationId)}`;
 
-    function createIframe(targetDiv) {
+    function createIframe(targetDiv, forceReload) {
       const iframe = document.createElement('iframe');
-      iframe.src = iframeUrl;
+      iframe.src = forceReload ? iframeUrl + '&_t=' + Date.now() : iframeUrl;
       iframe.width = '100%';
       iframe.height = '100%';
       iframe.style.border = 'none';
@@ -122,9 +122,10 @@
     {% endif %}
 
     // Fonction pour créer l'iframe dans le modal (quand useModal est true)
-    window.createIframeInModal = function() {
+    // forceReload=true : évite le cache pour charger le bon contenu (template ou config produit)
+    window.createIframeInModal = function(forceReload) {
       const modalTargetDiv = document.querySelector('#aso-design-modal .aso-app');
-      createIframe(modalTargetDiv);
+      createIframe(modalTargetDiv, forceReload);
     };
         
   </script>
@@ -142,7 +143,7 @@
       {% if block.settings.useIframe %}
       // Préchargement du configurateur pour un chargement plus rapide à l'ouverture
       if (window.createIframeInModal) {
-        window.createIframeInModal();
+        window.createIframeInModal(false);
       }
       {% endif %}
   });
