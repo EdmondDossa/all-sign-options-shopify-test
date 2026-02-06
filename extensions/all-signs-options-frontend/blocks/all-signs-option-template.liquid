@@ -43,9 +43,8 @@
                     <span> {{ block.settings.text_add_to_cart }}</span>
                   </button>
                   <a href="{% if product %}{{ product.url }}{% else %}{{ block.settings.asoDesignPageUrl }}{% endif %}" class="asoTemplateItemCustomize">
-                    <span class="aso-customize-spinner" aria-hidden="true"></span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="12" width="12"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
-                    <span class="aso-customize-text"> {{ block.settings.text_customize }}</span>
+                    <span> {{ block.settings.text_customize }}</span>
                   </a>
                 </div>
               </div>
@@ -313,15 +312,13 @@
       templateDiv.innerHTML = newContainer.innerHTML;
       templateUl.innerHTML = newContainerUl.innerHTML; 
 
-      // Ouvrir le configurateur : au clic sur Customize, loader 3 sec puis ouvrir la modal (pas de rechargement)
+      // Ouvrir le configurateur sans recharger : au clic sur Customize, si "Use modal interface" est activé et qu'on est sur la même page, empêcher la nav et ouvrir le modal (système du bloc all-signs-options)
       var asoContainer = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }}');
-      var DESIGN_CUSTOMIZE_DELAY_MS = 3000;
       if (asoContainer && !asoContainer.hasAttribute('data-aso-customize-bound') && typeof asoTemplateUseModal !== 'undefined' && asoTemplateUseModal) {
         asoContainer.setAttribute('data-aso-customize-bound', '1');
         asoContainer.addEventListener('click', function(ev) {
           var customizeLink = ev.target.closest('.asoTemplateItemCustomize');
           if (!customizeLink) return;
-          if (customizeLink.classList.contains('aso-customize-loading')) return;
           var designModal = document.getElementById('aso-design-modal');
           if (!designModal) return;
           try {
@@ -330,19 +327,8 @@
               ev.preventDefault();
               ev.stopPropagation();
               history.replaceState(null, '', linkUrl.pathname + linkUrl.search);
-              customizeLink.classList.add('aso-customize-loading');
-              customizeLink.style.pointerEvents = 'none';
               if (typeof lockProductForm === 'function') lockProductForm(true);
-              setTimeout(function() {
-                customizeLink.classList.remove('aso-customize-loading');
-                customizeLink.style.pointerEvents = '';
-                if (window.asoUseIframe === true) {
-                  if (typeof openDesignModal === 'function') openDesignModal();
-                } else {
-                  window.dispatchEvent(new CustomEvent('aso-reload-configurator'));
-                  if (typeof openDesignModal === 'function') openDesignModal();
-                }
-              }, DESIGN_CUSTOMIZE_DELAY_MS);
+              if (typeof openDesignModal === 'function') openDesignModal();
             }
           } catch (err) { }
         });
@@ -448,38 +434,10 @@
   text-decoration: none;
   gap: 8px;
   font-size: 1.5rem;;
-  position: relative;
 }
 
 .asoTemplateItemCustomize:hover {
     background-color: #fcac29;
-}
-
-.aso-customize-spinner {
-  display: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: currentColor;
-  border-radius: 50%;
-  animation: aso-customize-spin 0.8s linear infinite;
-}
-
-.asoTemplateItemCustomize.aso-customize-loading .aso-customize-spinner {
-  display: inline-block;
-}
-
-.asoTemplateItemCustomize.aso-customize-loading .aso-customize-text,
-.asoTemplateItemCustomize.aso-customize-loading svg {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-@keyframes aso-customize-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 

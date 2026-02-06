@@ -91,21 +91,14 @@ async function getAsoManagesData() {
 console.log("config id and  product dfg   kihhhg ", asoConfigurationId, asoProductId);
 
 async function aso_confiurator_dataFunction() {
-  var urlParams = new URLSearchParams(window.location.search);
-  var asoTemplateIdCurr = urlParams.get('aso-template-id');
-  var paramAsoConfigurationIdCurr = urlParams.get('aso-config-id');
-  var configIdToUse = asoConfigurationId;
-  if (asoTemplateIdCurr && paramAsoConfigurationIdCurr) {
-    configIdToUse = paramAsoConfigurationIdCurr;
-  }
   const managesData = await getAsoManagesData();
 
   let currentConfig = null;
   let template = null;
-  if (configIdToUse) {
-    currentConfig = await getAsoConfiguration(configIdToUse);
+  if (asoConfigurationId) {
+    currentConfig = await getAsoConfiguration(asoConfigurationId);
 
-    template = asoTemplateIdCurr ? await getAsoTemplateById(asoTemplateIdCurr) : null;
+    template = asoTemplateId ? await getAsoTemplateById(asoTemplateId) : null;
 
     if (!currentConfig) {
       currentConfig = getDefaultConfig();
@@ -144,7 +137,7 @@ async function aso_confiurator_dataFunction() {
   // end to add  font and custom css to  page
 
 
-  if (asoTemplateIdCurr && template) {
+  if (asoTemplateId && template) {
     asoRegularPrice = template.basePrice || 0;
   }
 

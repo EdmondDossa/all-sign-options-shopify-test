@@ -1,8 +1,6 @@
 {% render 'pricing-format' %}
 {% render 'notyf' %}
 
-<script>window.asoUseIframe = {{ block.settings.useIframe | json }};</script>
-
 {% assign aso_product = product %}
 {% assign aso_configuration_id = aso_product.metafields.allSignsOptionsAsoAso.asoConfigurationId.value  %}
 {% assign aso_product_id = aso_product.id  %}
@@ -27,8 +25,7 @@
     {% if block.settings.design_button_enabled and aso_configuration_id %}
       <button id="asoDesignBtn" class="aso-modal-button aso-design-button" type="button" 
               style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
-        <span class="aso-btn-spinner" aria-hidden="true"></span>
-        <span class="aso-btn-text">{{ block.settings.design_button_text | default: "Design from blank" }}</span>
+        {{ block.settings.design_button_text | default: "Design from blank" }}
       </button>
     {% endif %}
     {% if  block.settings.upload_button_enabled %}
@@ -103,18 +100,9 @@
     const iframeBaseUrl = '/apps/aso-proxy/assets-preview/aso-iframe.html';
     const iframeUrl = `${iframeBaseUrl}?asoProductId=${encodeURIComponent(asoProductId)}&asoCurrency=${encodeURIComponent(asoCurrency)}&asoPriceFormat=${encodeURIComponent(asoPriceFormat)}&asoRegularPrice=${encodeURIComponent(asoRegularPrice)}&asoCurrency_pos=${encodeURIComponent(asoCurrency_pos)}&asoThousandSep=${encodeURIComponent(asoThousandSep)}&asoDecimalSep=${encodeURIComponent(asoDecimalSep)}&asoConfigurationId=${encodeURIComponent(asoConfigurationId)}`;
 
-    function createIframeLoaderOverlay() {
-      const overlay = document.createElement('div');
-      overlay.id = 'aso-iframe-loader-overlay';
-      overlay.className = 'bg-loader';
-      overlay.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;';
-      overlay.innerHTML = '<div id="aso-configurator-loader" style="height:90vh;width:100%"><div style="display:flex;flex:1;width:100%;height:100%"><div style="flex-direction:column;width:92%;height:100%;margin-left:10px;margin-right:10px;display:flex"><div style="width:100%;height:10%;margin-top:10px;display:flex;justify-content:space-between"><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:21.33%;height:100%;animation:pulseGradient 1.5s ease infinite"></div><div style="width:31.33%;height:100%;display:flex;justify-content:space-between"><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:21.33%;height:100%;animation:pulseGradient 1.5s ease infinite"></div><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:21.33%;height:100%;animation:pulseGradient 1.5s ease infinite"></div><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:21.33%;height:100%;animation:pulseGradient 1.5s ease infinite"></div></div><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:21.33%;height:100%;animation:pulseGradient 1.5s ease infinite"></div></div><div style="width:100%;height:90%;margin-top:20px"><div style="width:100%;height:80%;display:flex;justify-content:center;align-items:center"><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:40%;height:50%;animation:pulseGradient 1.5s ease infinite"></div></div><div style="width:100%;height:20%;display:flex;justify-content:center;align-items:center"><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:7%;height:60%;margin:0 5px;animation:pulseGradient 1.5s ease infinite"></div><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:7%;height:60%;margin:0 5px;animation:pulseGradient 1.5s ease infinite"></div><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:7%;height:60%;margin:0 5px;animation:pulseGradient 1.5s ease infinite"></div></div></div></div><div style="flex-direction:column;width:8%;height:100%;margin-left:20px;margin-right:20px;display:flex"><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:100%;height:10%;margin-top:10px;animation:pulseGradient 1.5s ease infinite"></div><div style="width:100%;height:90%;display:flex;flex-direction:column;justify-content:center;align-items:center"><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:90%;height:10%;animation:pulseGradient 1.5s ease infinite"></div><div style="background:linear-gradient(to right,#a1a1a1,#e4e4e7,#a1a1a1);width:90%;height:10%;margin-top:20px;animation:pulseGradient 1.5s ease infinite"></div></div></div></div></div></div>';
-      return overlay;
-    }
-
-    function createIframe(targetDiv, forceReload) {
+    function createIframe(targetDiv) {
       const iframe = document.createElement('iframe');
-      iframe.src = forceReload ? iframeUrl + '&_t=' + Date.now() : iframeUrl;
+      iframe.src = iframeUrl;
       iframe.width = '100%';
       iframe.height = '100%';
       iframe.style.border = 'none';
@@ -122,14 +110,7 @@
 
       if (targetDiv) {
         targetDiv.innerHTML = '';
-        targetDiv.style.position = 'relative';
-        const overlay = createIframeLoaderOverlay();
-        targetDiv.appendChild(overlay);
         targetDiv.appendChild(iframe);
-        iframe.onload = function() {
-          var el = document.getElementById('aso-iframe-loader-overlay');
-          if (el && el.parentNode) el.remove();
-        };
       }
     }
 
@@ -140,10 +121,9 @@
     {% endif %}
 
     // Fonction pour créer l'iframe dans le modal (quand useModal est true)
-    // forceReload=true : évite le cache pour charger le bon contenu (template ou config produit)
-    window.createIframeInModal = function(forceReload) {
+    window.createIframeInModal = function() {
       const modalTargetDiv = document.querySelector('#aso-design-modal .aso-app');
-      createIframe(modalTargetDiv, forceReload);
+      createIframe(modalTargetDiv);
     };
         
   </script>
@@ -154,16 +134,12 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
       const modals = document.querySelectorAll('.aso-modal');
-      modals.forEach(function(modal) {
-          modal.remove();
-          document.body.appendChild(modal);
-      });
-      {% if block.settings.useIframe %}
-      // Préchargement du configurateur pour un chargement plus rapide à l'ouverture
-      if (window.createIframeInModal) {
-        window.createIframeInModal(false);
-      }
-      {% endif %}
+          
+          modals.forEach(function(modal) {
+              // Remove from current parent and append to body
+              modal.remove();
+              document.body.appendChild(modal);
+          });
   });
 </script>
 {% endif %}
@@ -172,16 +148,19 @@
 <script>
   // Fonctions pour les modals
   function openDesignModal() {
-    {% if block.settings.useIframe %}
-    // Toujours recréer l'iframe à l'ouverture pour afficher le bon contenu : template si aso-template-id dans l'URL, config produit sinon
-    if (window.createIframeInModal) {
-      window.createIframeInModal(true);
-    }
-    {% endif %}
     document.getElementById('aso-design-modal').style.display = 'block';
     document.body.style.overflow = 'hidden';
     document.body.classList.add('aso-modal-open');
-    window.dispatchEvent(new Event('resize'));
+    window.dispatchEvent(new Event('resize')); 
+    
+    {% if block.settings.useIframe %}
+    // Créer l'iframe dans le modal si useIframe est activé
+    setTimeout(function() {
+      if (window.createIframeInModal) {
+        window.createIframeInModal();
+      }
+    }, 100);
+    {% endif %}
   }
 
   function closeDesignModal() {
@@ -246,42 +225,24 @@
     const productForm = document.querySelector('form[action="/cart/add"]');
 
     // Ouvrir automatiquement le modal si aso-template-id est présent dans l'URL
+    // Cela permet d'ouvrir le configurateur directement quand on clique sur "customize" depuis le template embed
     const urlParams = new URLSearchParams(window.location.search);
     const asoTemplateId = urlParams.get('aso-template-id');
     const designModal = document.getElementById('aso-design-modal');
     if (asoTemplateId && designModal) {
+      // Attendre un peu pour que le configurateur soit initialisé
       setTimeout(function() {
         lockProductForm(true);
         openDesignModal();
       }, 500);
     }
 
-    // Binder proprement les boutons - Design from blank avec loader 3 sec
-    const DESIGN_BTN_DELAY_MS = 3000;
+    // Binder proprement les boutons
     document.getElementById('asoDesignBtn')?.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const btn = e.currentTarget;
-      if (btn.disabled || btn.classList.contains('aso-design-btn-loading')) return;
-      try {
-        var url = new URL(window.location.href);
-        if (url.searchParams.has('aso-template-id') || url.searchParams.has('aso-config-id')) {
-          url.searchParams.delete('aso-template-id');
-          url.searchParams.delete('aso-config-id');
-          history.replaceState(null, '', url.pathname + url.search);
-        }
-      } catch (err) {}
-      btn.classList.add('aso-design-btn-loading');
-      btn.disabled = true;
       lockProductForm(true);
-      setTimeout(function() {
-        btn.classList.remove('aso-design-btn-loading');
-        btn.disabled = false;
-        if (window.asoUseIframe !== true) {
-          window.dispatchEvent(new CustomEvent('aso-reload-configurator'));
-        }
-        openDesignModal();
-      }, DESIGN_BTN_DELAY_MS);
+      openDesignModal();
     });
 
     document.getElementById('asoUploadBtn')?.addEventListener('click', (e) => {
