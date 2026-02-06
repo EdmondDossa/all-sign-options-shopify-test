@@ -1,6 +1,8 @@
 {% render 'pricing-format' %}
 {% render 'notyf' %}
 
+<script>window.asoUseIframe = {{ block.settings.useIframe | json }};</script>
+
 {% assign aso_product = product %}
 {% assign aso_configuration_id = aso_product.metafields.allSignsOptionsAsoAso.asoConfigurationId.value  %}
 {% assign aso_product_id = aso_product.id  %}
@@ -154,9 +156,8 @@
   // Fonctions pour les modals
   function openDesignModal() {
     {% if block.settings.useIframe %}
-    // Si l'URL a aso-template-id, recréer l'iframe pour charger le template (sinon on afficherait l'ancien design)
-    var urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('aso-template-id') && window.createIframeInModal) {
+    // Toujours recréer l'iframe à l'ouverture pour afficher le bon contenu : template si aso-template-id dans l'URL, config produit sinon
+    if (window.createIframeInModal) {
       window.createIframeInModal(true);
     }
     {% endif %}
@@ -227,13 +228,22 @@
     // Récupérer le form d'ajout au panier
     const productForm = document.querySelector('form[action="/cart/add"]');
 
-    // Ouvrir automatiquement le modal si aso-template-id est présent dans l'URL
-    // Cela permet d'ouvrir le configurateur directement quand on clique sur "customize" depuis le template embed
+    // Ouvrir automatiquement le modal si aso-template-id ou aso-open-blank est présent dans l'URL
     const urlParams = new URLSearchParams(window.location.search);
     const asoTemplateId = urlParams.get('aso-template-id');
+    const asoOpenBlank = urlParams.get('aso-open-blank');
     const designModal = document.getElementById('aso-design-modal');
     if (asoTemplateId && designModal) {
-      // Attendre un peu pour que le configurateur soit initialisé
+      setTimeout(function() {
+        lockProductForm(true);
+        openDesignModal();
+      }, 500);
+    } else if (asoOpenBlank && designModal) {
+      try {
+        var url = new URL(window.location.href);
+        url.searchParams.delete('aso-open-blank');
+        history.replaceState(null, '', url.pathname + url.search);
+      } catch (e) {}
       setTimeout(function() {
         lockProductForm(true);
         openDesignModal();
@@ -247,13 +257,27 @@
       e.stopPropagation();
       const btn = e.currentTarget;
       if (btn.disabled || btn.classList.contains('aso-design-btn-loading')) return;
+      var url = new URL(window.location.href);
+      var hasTemplateParams = url.searchParams.has('aso-template-id') || url.searchParams.has('aso-config-id');
+      var useIframe = window.asoUseIframe !== false;
+      url.searchParams.delete('aso-template-id');
+      url.searchParams.delete('aso-config-id');
+      if (useIframe) {
+        if (hasTemplateParams) try { history.replaceState(null, '', url.pathname + url.search); } catch (err) {}
+      } else {
+        url.searchParams.set('aso-open-blank', '1');
+      }
       btn.classList.add('aso-design-btn-loading');
       btn.disabled = true;
       lockProductForm(true);
       setTimeout(function() {
         btn.classList.remove('aso-design-btn-loading');
         btn.disabled = false;
-        openDesignModal();
+        if (!useIframe) {
+          window.location.href = url.pathname + url.search;
+        } else {
+          openDesignModal();
+        }
       }, DESIGN_BTN_DELAY_MS);
     });
 
