@@ -153,13 +153,17 @@
 <script>
   // Fonctions pour les modals
   function openDesignModal() {
+    {% if block.settings.useIframe %}
+    // Si l'URL a aso-template-id, recréer l'iframe pour charger le template (sinon on afficherait l'ancien design)
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('aso-template-id') && window.createIframeInModal) {
+      window.createIframeInModal(true);
+    }
+    {% endif %}
     document.getElementById('aso-design-modal').style.display = 'block';
     document.body.style.overflow = 'hidden';
     document.body.classList.add('aso-modal-open');
     window.dispatchEvent(new Event('resize'));
-    {% if block.settings.useIframe %}
-    // L'iframe est déjà préchargée au chargement de la page
-    {% endif %}
   }
 
   function closeDesignModal() {
