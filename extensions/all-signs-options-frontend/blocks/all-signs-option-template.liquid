@@ -313,7 +313,7 @@
       templateDiv.innerHTML = newContainer.innerHTML;
       templateUl.innerHTML = newContainerUl.innerHTML; 
 
-      // Ouvrir le configurateur : au clic sur Customize, si "Use modal interface" et même page, loader 3 sec puis ouvrir (iframe) ou naviguer (sans iframe)
+      // Ouvrir le configurateur : au clic sur Customize, si "Use modal interface" et même page, loader 3 sec puis ouvrir le modal
       var asoContainer = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }}');
       var DESIGN_CUSTOMIZE_DELAY_MS = 3000;
       if (asoContainer && !asoContainer.hasAttribute('data-aso-customize-bound') && typeof asoTemplateUseModal !== 'undefined' && asoTemplateUseModal) {
@@ -323,25 +323,20 @@
           if (!customizeLink) return;
           if (customizeLink.classList.contains('aso-customize-loading')) return;
           var designModal = document.getElementById('aso-design-modal');
-          var useIframe = window.asoUseIframe !== false;
-          if (useIframe && !designModal) return;
+          if (!designModal) return;
           try {
             var linkUrl = new URL(customizeLink.href, window.location.origin);
             if (linkUrl.pathname === window.location.pathname) {
               ev.preventDefault();
               ev.stopPropagation();
+              history.replaceState(null, '', linkUrl.pathname + linkUrl.search);
               customizeLink.classList.add('aso-customize-loading');
               customizeLink.style.pointerEvents = 'none';
               if (typeof lockProductForm === 'function') lockProductForm(true);
               setTimeout(function() {
                 customizeLink.classList.remove('aso-customize-loading');
                 customizeLink.style.pointerEvents = '';
-                if (useIframe) {
-                  history.replaceState(null, '', linkUrl.pathname + linkUrl.search);
-                  if (typeof openDesignModal === 'function') openDesignModal();
-                } else {
-                  window.location.href = linkUrl.pathname + linkUrl.search;
-                }
+                if (typeof openDesignModal === 'function') openDesignModal();
               }, DESIGN_CUSTOMIZE_DELAY_MS);
             }
           } catch (err) { }
