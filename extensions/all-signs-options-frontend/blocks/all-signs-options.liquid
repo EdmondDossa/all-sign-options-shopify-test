@@ -1,6 +1,8 @@
 {% render 'pricing-format' %}
 {% render 'notyf' %}
 
+<script>window.asoUseIframe = {{ block.settings.useIframe | json }};</script>
+
 {% assign aso_product = product %}
 {% assign aso_configuration_id = aso_product.metafields.allSignsOptionsAsoAso.asoConfigurationId.value  %}
 {% assign aso_product_id = aso_product.id  %}
@@ -259,6 +261,9 @@
       setTimeout(function() {
         btn.classList.remove('aso-design-btn-loading');
         btn.disabled = false;
+        if (window.asoUseIframe !== true) {
+          window.dispatchEvent(new CustomEvent('aso-reload-configurator'));
+        }
         openDesignModal();
       }, DESIGN_BTN_DELAY_MS);
     });

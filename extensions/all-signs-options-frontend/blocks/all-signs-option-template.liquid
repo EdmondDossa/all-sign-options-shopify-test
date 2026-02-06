@@ -313,7 +313,7 @@
       templateDiv.innerHTML = newContainer.innerHTML;
       templateUl.innerHTML = newContainerUl.innerHTML; 
 
-      // Ouvrir le configurateur : au clic sur Customize, si "Use modal interface" et même page, loader 3 sec puis ouvrir le modal
+      // Ouvrir le configurateur : au clic sur Customize, loader 3 sec puis ouvrir la modal (pas de rechargement)
       var asoContainer = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }}');
       var DESIGN_CUSTOMIZE_DELAY_MS = 3000;
       if (asoContainer && !asoContainer.hasAttribute('data-aso-customize-bound') && typeof asoTemplateUseModal !== 'undefined' && asoTemplateUseModal) {
@@ -336,7 +336,12 @@
               setTimeout(function() {
                 customizeLink.classList.remove('aso-customize-loading');
                 customizeLink.style.pointerEvents = '';
-                if (typeof openDesignModal === 'function') openDesignModal();
+                if (window.asoUseIframe === true) {
+                  if (typeof openDesignModal === 'function') openDesignModal();
+                } else {
+                  window.dispatchEvent(new CustomEvent('aso-reload-configurator'));
+                  if (typeof openDesignModal === 'function') openDesignModal();
+                }
               }, DESIGN_CUSTOMIZE_DELAY_MS);
             }
           } catch (err) { }
