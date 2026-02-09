@@ -286,7 +286,7 @@ export default function ConfigurationTemplates() {
                 className="primary-btn"
                 type="button"
                 onClick={() => { onHandlePacks() }}
-              >*/}
+              >
                 <Box paddingInline="100">
                   <InlineStack gap="100">
                     <PlusIcon />
@@ -295,7 +295,7 @@ export default function ConfigurationTemplates() {
                     </span>
                   </InlineStack>
                 </Box>
-              </button>
+              </button>*/}
               <button
                 className="primary-btn"
                 type="button"
@@ -371,7 +371,7 @@ export default function ConfigurationTemplates() {
       </div>
 
 
-    </div >
+    </div>
 
   );
 };
