@@ -25,7 +25,7 @@
     {% if block.settings.design_button_enabled and aso_configuration_id %}
       <button id="asoDesignBtn" class="aso-modal-button aso-design-button" type="button" 
               style="background-color: {{ block.settings.design_button_color }}; color: {{ block.settings.design_button_text_color }};">
-        {{ block.settings.design_button_text | default: "Design your own Sign" }}
+        {{ block.settings.design_button_text | default: "Design from blank" }}
       </button>
     {% endif %}
     {% if  block.settings.upload_button_enabled %}
@@ -168,7 +168,7 @@
     document.body.style.overflow = 'auto';
     document.body.classList.remove('aso-modal-open');
     lockProductForm(false);
-    // Retirer aso-template-id et aso-config-id de l'URL pour que "Design your own Sign" rouvre le configurateur avec la config produit, pas le template
+    // Retirer aso-template-id et aso-config-id de l'URL pour que "Design from blank" rouvre le configurateur avec la config produit, pas le template
     try {
       var url = new URL(window.location.href);
       if (url.searchParams.has('aso-template-id') || url.searchParams.has('aso-config-id')) {
@@ -606,7 +606,7 @@
         "id": "design_button_text",
         "type": "text",
         "label": "Design Button Text",
-        "default": "Design your own Sign"
+        "default": "Design from blank"
       },
       {
         "id": "design_button_color",
