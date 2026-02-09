@@ -281,12 +281,12 @@ export default function ConfigurationTemplates() {
                   </InlineStack>
                 </Box>
               </button>
-              {/*<ComingSoonButton />*/}
-              <button
+              <ComingSoonButton />
+              {/*<button
                 className="primary-btn"
                 type="button"
                 onClick={() => { onHandlePacks() }}
-              >
+              >*/}
                 <Box paddingInline="100">
                   <InlineStack gap="100">
                     <PlusIcon />
@@ -371,7 +371,7 @@ export default function ConfigurationTemplates() {
       </div>
 
 
-    </div>
+    </div >
 
   );
 };
