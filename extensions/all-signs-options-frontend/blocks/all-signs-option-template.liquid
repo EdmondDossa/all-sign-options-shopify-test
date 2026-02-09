@@ -317,8 +317,10 @@
 
   document.addEventListener('DOMContentLoaded', function(){
       getAsotemplates().then(templates=>{
+      try {
       const contentHtml ="";
-      console.log("template dtata", templates)
+      templates = Array.isArray(templates) ? templates : [];
+      console.log("template dtata", templates);
 
 
       const templateDiv = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #asoTemplate');
@@ -328,6 +330,7 @@
       const templateLiItem = templateUl?.querySelector('.asoTemplateLiItem');
 
       if (!templateDiv || !templateItem || !templateUl || !templateLiItem) {
+        console.warn('ASO templates: DOM elements not found', { templateDiv: !!templateDiv, templateItem: !!templateItem, templateUl: !!templateUl, templateLiItem: !!templateLiItem });
         document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #aso-templates-loader')?.style.setProperty('display', 'none');
         document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .not-found-wrapper')?.style.setProperty('display', 'flex');
         return;
@@ -340,8 +343,10 @@
       const categories = []; 
 
   // Pour chaque élément dans templates (sur page produit : filtrer par config du produit ; sinon : par bloc setting)
-      var filterConfigId = (aso_product_config_id || (aso_configuration_id=="0" ? "" : aso_configuration_id) || "").toString().trim();
-      templates?.filter(template=>(!filterConfigId || String(template.configurationId)===filterConfigId)).forEach(template => {
+      var filterConfigId = (aso_product_config_id || (aso_configuration_id=="0" || aso_configuration_id==0 ? "" : aso_configuration_id) || "").toString().trim();
+      var filteredTemplates = templates.filter(template=>(!filterConfigId || String(template.configurationId)===filterConfigId));
+      if (filteredTemplates.length === 0 && templates.length > 0) { filteredTemplates = templates; }
+      filteredTemplates.forEach(template => {
           // Cloner l'élément template
           if(!template.recaps){
             return false;
@@ -363,10 +368,10 @@
           }
           clone.setAttribute("data-id", template.categoryId)
           clone.setAttribute('id',"asoTemplateItem"+template.id);
-          clone.querySelector('.asoTemplateItemName').textContent = template.name;
-          clone.querySelector('.asoTemplateItemSize').textContent = template.recaps.size;
-          clone.querySelector('.asoTemplateItemPrice').textContent = (template.basePrice + template.recaps.customPrice).toFixed(2);
-          clone.querySelector('.asoTemplateItemTextAfter').textContent = template.recaps.priceType;
+          clone.querySelector('.asoTemplateItemName').textContent = template.name || '';
+          clone.querySelector('.asoTemplateItemSize').textContent = template.recaps?.size || '';
+          clone.querySelector('.asoTemplateItemPrice').textContent = ((template.basePrice || 0) + (template.recaps?.customPrice || 0)).toFixed(2);
+          clone.querySelector('.asoTemplateItemTextAfter').textContent = template.recaps?.priceType || '';
           const asoDesignPageUrl =  clone.querySelector('.asoTemplateItemCustomize').getAttribute('href');
           var customizeUrl = asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId;
           var customizeLinkEl = clone.querySelector('.asoTemplateItemCustomize');
@@ -431,11 +436,14 @@
         });
       }
 
-    
+      } catch (innerErr) {
+        console.error('ASO templates inner error:', innerErr);
+        throw innerErr;
+      }
   }).catch((error) =>{
-    document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #aso-templates-loader').style.display = 'none';
-    document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .not-found-wrapper').style.display = 'flex'; 
-    console.log(' error  on fetching ')
+    document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} #aso-templates-loader')?.style.setProperty('display', 'none');
+    document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }} .not-found-wrapper')?.style.setProperty('display', 'flex'); 
+    console.error('ASO templates error:', error);
   });
   }); 
 
