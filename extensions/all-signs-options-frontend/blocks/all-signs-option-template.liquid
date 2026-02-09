@@ -254,12 +254,12 @@
 
   var aso_configuration_id = "{{ block.settings.aso_configuration_id }}";
   var aso_product_config_id = "{% if product %}{{ product.metafields.allSignsOptionsAsoAso.asoConfigurationId.value | default: '' }}{% endif %}";
+  var productId = "{{ product.id | default: '' }}";
   var asoTemplateUseModal = {{ block.settings.use_modal_interface | json }};
   var asoPriceFormatTemplate ="{{shop.money_format}}";
 
 
   async function getAsotemplates() {
-      var productId = "{{ product.id | default: '' }}";
       var url = `${window.Shopify.routes.root}apps/aso-proxy/api/templates`;
       if (productId) {
         url += '?productId=' + encodeURIComponent(productId);
