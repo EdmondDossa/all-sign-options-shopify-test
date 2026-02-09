@@ -184,7 +184,7 @@
       if (modal) {
         modal.remove();
         document.body.appendChild(modal);
-        document.addEventListener('click', function(ev) {
+        modal.addEventListener('click', function(ev) {
           if (ev.target === modal) closeAsoTemplateDesignModal();
         });
       }
@@ -822,11 +822,56 @@
 #aso-template-design-modal {
   z-index: 1100;
 }
-#aso-template-design-modal .shopify-app-wrapper { margin: 0; }
-#aso-template-design-modal .aso-modal-content,
-#aso-template-design-modal .aso-modal-header,
-#aso-template-design-modal .aso-modal-body { width: 100%; max-width: 100%; }
-#aso-template-design-modal .aso-modal-body { padding: 16px 24px 24px; max-height: calc(90vh - 60px); overflow-y: auto; }
+#aso-template-design-modal.aso-modal {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+}
+#aso-template-design-modal .aso-modal-content {
+  background-color: #fff;
+  margin: 2% auto;
+  padding: 0;
+  border-radius: 12px;
+  width: 96%;
+  max-width: 1200px;
+  height: 90vh;
+  max-height: 90vh;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: asoModalSlideIn 0.3s ease-out;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+#aso-template-design-modal .aso-modal-header {
+  padding: 12px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-shrink: 0;
+}
+#aso-template-design-modal .aso-modal-body {
+  padding: 0;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+#aso-template-design-modal .shopify-app-wrapper {
+  margin: 0;
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+#aso-template-design-modal .aso-template-app-container {
+  height: 100%;
+  min-height: 400px;
+}
 #aso-templates-modal .aso-templates-modal-content {
   background-color: #fff;
   margin: 2% auto;
