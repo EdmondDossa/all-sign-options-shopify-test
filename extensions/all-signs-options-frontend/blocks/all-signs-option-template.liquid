@@ -111,6 +111,87 @@
   </div>
 {% endif %}
 
+{% comment %} Sur page non produit : inclure la modal du configurateur pour que Customize ouvre le configurateur sans redirection {% endcomment %}
+{% unless product %}
+  {% render 'pricing-format' %}
+  {% render 'notyf' %}
+  <div id="aso-template-design-modal" class="aso-modal" style="display: none;">
+    <div class="aso-modal-content">
+      <div class="aso-modal-header">
+        <h2></h2>
+        <button class="aso-modal-close" type="button" onclick="closeAsoTemplateDesignModal()" aria-label="Close">&times;</button>
+      </div>
+      <div class="aso-modal-body">
+        <div class="shopify-app-wrapper">
+          <div class="aso-app aso-template-app-container" id="aso-template-app-container">
+            {% render 'loader' %}
+          </div>
+          <div class='aso-app-not-found'>
+            <div class="aso-app-not-found-item">No design configuration has been found.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% render 'style' %}
+  <script>
+    function openAsoTemplateDesignModal() {
+      var modal = document.getElementById('aso-template-design-modal');
+      var container = document.getElementById('aso-template-app-container');
+      if (modal && container) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('aso-modal-open');
+        window.dispatchEvent(new Event('resize'));
+        var urlParams = new URLSearchParams(window.location.search);
+        var asoTemplateId = urlParams.get('aso-template-id');
+        var asoConfigId = urlParams.get('aso-config-id');
+        if (asoConfigId) {
+          var curr = typeof asoCurrency !== 'undefined' ? asoCurrency : '{{cart.currency.symbol}}';
+          var fmt = typeof asoPriceFormat !== 'undefined' ? asoPriceFormat : '{{shop.money_format}}';
+          var iframeBaseUrl = '/apps/aso-proxy/assets-preview/aso-iframe.html';
+          var iframeUrl = iframeBaseUrl + '?asoProductId=&asoConfigurationId=' + encodeURIComponent(asoConfigId) + '&aso-template-id=' + encodeURIComponent(asoTemplateId || '') + '&aso-config-id=' + encodeURIComponent(asoConfigId) + '&asoCurrency=' + encodeURIComponent(curr) + '&asoPriceFormat=' + encodeURIComponent(fmt) + '&asoRegularPrice=&asoCurrency_pos=left&asoThousandSep=&asoDecimalSep=.';
+          var iframe = document.createElement('iframe');
+          iframe.src = iframeUrl;
+          iframe.width = '100%';
+          iframe.height = '100%';
+          iframe.style.border = 'none';
+          container.innerHTML = '';
+          container.appendChild(iframe);
+        }
+      }
+    }
+    function closeAsoTemplateDesignModal() {
+      var modal = document.getElementById('aso-template-design-modal');
+      var container = document.getElementById('aso-template-app-container');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        document.body.classList.remove('aso-modal-open');
+      }
+      if (container) { container.innerHTML = ''; }
+      try {
+        var url = new URL(window.location.href);
+        if (url.searchParams.has('aso-template-id') || url.searchParams.has('aso-config-id')) {
+          url.searchParams.delete('aso-template-id');
+          url.searchParams.delete('aso-config-id');
+          history.replaceState(null, '', url.pathname + url.search);
+        }
+      } catch (e) {}
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var modal = document.getElementById('aso-template-design-modal');
+      if (modal) {
+        modal.remove();
+        document.body.appendChild(modal);
+        document.addEventListener('click', function(ev) {
+          if (ev.target === modal) closeAsoTemplateDesignModal();
+        });
+      }
+    });
+  </script>
+{% endunless %}
+
 <script>
   if (typeof addTemplateToCartShopify === 'undefined') {
     if (typeof asoConfigurationId === 'undefined') { var asoConfigurationId = ""; }
@@ -172,6 +253,7 @@
 <script>
 
   var aso_configuration_id = "{{ block.settings.aso_configuration_id }}";
+  var aso_product_config_id = "{% if product %}{{ product.metafields.allSignsOptionsAsoAso.asoConfigurationId.value | default: '' }}{% endif %}";
   var asoTemplateUseModal = {{ block.settings.use_modal_interface | json }};
   var asoPriceFormatTemplate ="{{shop.money_format}}";
 
@@ -251,8 +333,9 @@
 
       const categories = []; 
 
-  // Pour chaque élément dans templates
-      templates?.filter(template=>(aso_configuration_id=="0" || template.configurationId==aso_configuration_id ) ).forEach(template => {
+  // Pour chaque élément dans templates (sur page produit : filtrer par config du produit ; sinon : par bloc setting)
+      var filterConfigId = aso_product_config_id || (aso_configuration_id=="0" ? "" : aso_configuration_id);
+      templates?.filter(template=>(!filterConfigId || template.configurationId==filterConfigId)).forEach(template => {
           // Cloner l'élément template
           if(!template.recaps){
             return false;
@@ -279,7 +362,11 @@
           clone.querySelector('.asoTemplateItemPrice').textContent = (template.basePrice + template.recaps.customPrice).toFixed(2);
           clone.querySelector('.asoTemplateItemTextAfter').textContent = template.recaps.priceType;
           const asoDesignPageUrl =  clone.querySelector('.asoTemplateItemCustomize').getAttribute('href');
-          clone.querySelector('.asoTemplateItemCustomize').setAttribute("href", asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId)
+          var customizeUrl = asoDesignPageUrl+(asoDesignPageUrl.includes("?")?"&":"?")+"aso-template-id="+template.id+"&aso-config-id=" +template.configurationId;
+          var customizeLinkEl = clone.querySelector('.asoTemplateItemCustomize');
+          customizeLinkEl.setAttribute("href", customizeUrl);
+          customizeLinkEl.setAttribute("data-aso-customize-url", customizeUrl);
+          if (!productId) { customizeLinkEl.setAttribute("href", "javascript:void(0)"); }
           clone.querySelector('.asoTemplateItemAddToCart').setAttribute('onclick',"addTemplateTocart("+template.id+")");
           clone.querySelector('.notAddingTocart').setAttribute('class',"notAddingTocart"+template.id);
           clone.querySelector('.addingTocart').setAttribute('class',"addingTocart"+template.id);
@@ -312,22 +399,28 @@
       templateDiv.innerHTML = newContainer.innerHTML;
       templateUl.innerHTML = newContainerUl.innerHTML; 
 
-      // Ouvrir le configurateur sans recharger : au clic sur Customize, si la modal design existe sur la page, empêcher la nav et ouvrir le modal directement (pas de redirection)
+      // Ouvrir le configurateur sans recharger : au clic sur Customize, empêcher la nav et ouvrir le modal directement (pas de redirection)
       var asoContainer = document.querySelector('#aso_aso_shopify_id{{ aso_aso_shopify_id }}');
       if (asoContainer && !asoContainer.hasAttribute('data-aso-customize-bound')) {
         asoContainer.setAttribute('data-aso-customize-bound', '1');
         asoContainer.addEventListener('click', function(ev) {
           var customizeLink = ev.target.closest('.asoTemplateItemCustomize');
           if (!customizeLink) return;
-          var designModal = document.getElementById('aso-design-modal');
-          if (!designModal) return;
+          ev.preventDefault();
+          ev.stopPropagation();
+          var customizeUrl = customizeLink.getAttribute('data-aso-customize-url') || customizeLink.href;
+          if (!customizeUrl || customizeUrl === '#' || customizeUrl.indexOf('#') === 0 || customizeUrl.indexOf('javascript:') === 0) return;
           try {
-            ev.preventDefault();
-            ev.stopPropagation();
-            var linkUrl = new URL(customizeLink.href, window.location.origin);
-            history.replaceState(null, '', linkUrl.pathname + linkUrl.search);
+            var linkUrl = new URL(customizeUrl, window.location.origin);
+            history.replaceState(null, '', window.location.pathname + (linkUrl.search || ''));
             if (typeof lockProductForm === 'function') lockProductForm(true);
-            if (typeof openDesignModal === 'function') openDesignModal();
+            if (productId) {
+              var designModal = document.getElementById('aso-design-modal');
+              if (designModal && typeof openDesignModal === 'function') openDesignModal();
+            } else {
+              var templateModal = document.getElementById('aso-template-design-modal');
+              if (templateModal && typeof openAsoTemplateDesignModal === 'function') openAsoTemplateDesignModal();
+            }
           } catch (err) { }
         });
       }
@@ -711,9 +804,15 @@
 }
 
 /* La modal du configurateur doit passer au-dessus de la modal templates (sans fermer la modal templates) */
-#aso-design-modal {
+#aso-design-modal,
+#aso-template-design-modal {
   z-index: 1100;
 }
+#aso-template-design-modal .shopify-app-wrapper { margin: 0; }
+#aso-template-design-modal .aso-modal-content,
+#aso-template-design-modal .aso-modal-header,
+#aso-template-design-modal .aso-modal-body { width: 100%; max-width: 100%; }
+#aso-template-design-modal .aso-modal-body { padding: 16px 24px 24px; max-height: calc(90vh - 60px); overflow-y: auto; }
 #aso-templates-modal .aso-templates-modal-content {
   background-color: #fff;
   margin: 2% auto;
