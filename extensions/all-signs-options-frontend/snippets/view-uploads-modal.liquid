@@ -18,7 +18,7 @@
         <div class="aso-uploads-list" id="uploadsList" style="display: none;">
           <div class="aso-uploads-header">
             <h3>Uploaded Files (<span id="uploadsCount">0</span>)</h3>
-            <button class="aso-refresh-uploads" onclick="refreshUploadsList()">🔄 Refresh</button>
+            <button type="button" class="aso-add-uploads-to-cart" id="asoAddUploadsToCartBtn" onclick="addUploadsToCart()">Add to Cart</button>
           </div>
           <div class="aso-uploads-container" id="uploadsContainer"></div>
         </div>
@@ -72,6 +72,59 @@
     }
   }
   function refreshUploadsList() { loadUploadedFiles(); }
+  async function addUploadsToCart() {
+    var btn = document.getElementById('asoAddUploadsToCartBtn');
+    if (!btn) return;
+    if (typeof asoVariantId === 'undefined' || !asoVariantId) {
+      notyf?.error('Product variant not available');
+      return;
+    }
+    var list = [];
+    try {
+      list = await fetchUploadedFiles();
+    } catch (e) {
+      console.error('Error loading uploaded files:', e);
+      notyf?.error('Error loading uploaded files');
+      return;
+    }
+    if (!list || list.length === 0) {
+      notyf?.error('No files to add to cart');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Adding...';
+    var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    var items = list.map(function(file) {
+      var fileName = (file.fileName || '').split('/').pop() || ('File ' + file.id);
+      return {
+        id: parseInt(asoVariantId, 10),
+        quantity: 1,
+        properties: { 'Uploaded file': fileName }
+      };
+    });
+    try {
+      var res = await fetch(root + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: items })
+      });
+      var data = await res.json().catch(function() { return {}; });
+      if (res.ok) {
+        notyf?.success('Added to cart');
+        if (typeof closeViewUploadsModal === 'function') closeViewUploadsModal();
+        document.location = root + 'cart';
+      } else {
+        notyf?.error(data.description || data.message || 'Error adding to cart');
+        btn.disabled = false;
+        btn.textContent = 'Add to Cart';
+      }
+    } catch (e) {
+      console.error('Error adding to cart:', e);
+      notyf?.error('Error adding to cart');
+      btn.disabled = false;
+      btn.textContent = 'Add to Cart';
+    }
+  }
   function openViewUploadsModal() {
     var modal = document.getElementById('aso-view-uploads-modal');
     if (!modal) return;

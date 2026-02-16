@@ -957,6 +957,130 @@ export default class TemplatePackService {
   }
 
   /**
+   * Synchronise la BDD avec les fichiers JSON présents dans public/template-packs/json/.
+   * Crée une entrée TemplatePack pour chaque .json qui n'a pas encore d'entrée (utile après déploiement en prod).
+   */
+  static async syncPacksFromPublicJson(): Promise<{
+    success: boolean;
+    message: string;
+    created: number;
+    skipped: number;
+    errors: string[];
+  }> {
+    try {
+      const targetJsonDir = path.join(process.cwd(), "public", "template-packs", "json");
+      if (!existsSync(targetJsonDir)) {
+        return { success: false, message: "Dossier public/template-packs/json introuvable", created: 0, skipped: 0, errors: [] };
+      }
+      const files = readdirSync(targetJsonDir).filter((f) => f.endsWith(".json"));
+      if (files.length === 0) {
+        return {
+          success: true,
+          message: "Aucun fichier JSON dans public/template-packs/json. Rien à synchroniser.",
+          created: 0,
+          skipped: 0,
+          errors: [],
+        };
+      }
+      let created = 0;
+      let skipped = 0;
+      const errors: string[] = [];
+      const slugify = (text: string) =>
+        text
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, "-")
+          .replace(/[^\w\-]+/g, "")
+          .replace(/\-\-+/g, "-")
+          .replace(/^-+/, "")
+          .replace(/-+$/, "");
+
+      for (const jsonFile of files) {
+        try {
+          const existing = await prisma.templatePack.findFirst({
+            where: { jsonFile },
+          });
+          if (existing) {
+            skipped++;
+            continue;
+          }
+          const packData = this.getPackJsonContent(jsonFile);
+          if (!packData) {
+            errors.push(`${jsonFile}: fichier illisible ou vide`);
+            continue;
+          }
+          const categoryName =
+            packData.category?.name || (typeof packData.category === "string" ? packData.category : null) || path.basename(jsonFile, ".json").replace(/_/g, " ");
+          const baseName = path.basename(jsonFile, ".json");
+          const packName = `Pack ${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}`;
+          const slug = baseName.replace(/[^a-z0-9]+/gi, "_").toLowerCase().replace(/^_+|_+$/g, "") || slugify(packName);
+          const existingBySlug = await prisma.templatePack.findUnique({ where: { slug } });
+          if (existingBySlug) {
+            skipped++;
+            continue;
+          }
+          let previewImg = "/aso_logo.png";
+          const templates = this.getTemplatesFromPackJson(packData);
+          if (templates.length > 0 && templates[0].prevImg) {
+            previewImg = templates[0].prevImg;
+          }
+          const templateCount = templates.length;
+          const price = 0;
+
+          await prisma.templatePack.create({
+            data: {
+              name: packName,
+              slug,
+              description: `Pack ${categoryName} - ${templateCount} template(s)`,
+              category: categoryName,
+              price,
+              jsonFile,
+              previewImg,
+              isActive: true,
+              order: 0,
+              plans: "free",
+            },
+          });
+          created++;
+        } catch (err: any) {
+          errors.push(`${jsonFile}: ${err?.message || String(err)}`);
+        }
+      }
+
+      const total = files.length;
+      let message: string;
+      if (errors.length === total) {
+        message = "Aucun pack créé : tous les fichiers ont généré une erreur.";
+      } else if (created === 0 && skipped > 0 && errors.length === 0) {
+        message = `Aucun nouveau pack. Les ${skipped} fichier(s) JSON correspondent déjà à des packs en base.`;
+      } else if (created > 0 && skipped === 0 && errors.length === 0) {
+        message = `${created} pack(s) créé(s) avec succès.`;
+      } else if (created > 0 && (skipped > 0 || errors.length > 0)) {
+        message = `Synchronisation terminée : ${created} pack(s) créé(s), ${skipped} déjà en base.${errors.length > 0 ? ` ${errors.length} erreur(s).` : ""}`;
+      } else if (skipped > 0 && errors.length > 0) {
+        message = `${skipped} déjà en base, ${errors.length} fichier(s) en erreur.`;
+      } else {
+        message = `Synchronisation terminée : ${created} créé(s), ${skipped} déjà en base.${errors.length > 0 ? ` ${errors.length} erreur(s).` : ""}`;
+      }
+      return {
+        success: true,
+        message,
+        created,
+        skipped,
+        errors,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error?.message || "Erreur lors de la synchronisation",
+        created: 0,
+        skipped: 0,
+        errors: [error?.message || String(error)],
+      };
+    }
+  }
+
+  /**
    * Import template packs from JSON files in scripts directory (admin)
    * This replicates the functionality of the import-template-packs.js script
    */
