@@ -16,7 +16,7 @@ export const PARENT_SIGN_TYPES = [
   "Labels and plates",
   "Banners signs",
   "Posters",
-  "Pull-up banners",
+  "Roll-up banners",
   "Vinyl lettering",
   "Decals",
   "Contour-cut / die-cut",

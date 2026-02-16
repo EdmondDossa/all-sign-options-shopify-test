@@ -2781,7 +2781,7 @@ export const configurationDemoData: ConfigurationType[] = [
     },
     {
         id : 236,
-        name : "Pull-up banners",
+        name : "Roll-up banners",
         description : "Our roll-ups are designed for hassle-free assembly and transportation, coming complete with a convenient carry case",
         icon : "",
         popupImg : "",

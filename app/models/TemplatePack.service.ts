@@ -4,7 +4,7 @@ import CategoryService from "~/models/Category.service";
 import ConfigurationService from "~/models/Configuration.service";
 import FontService from "~/models/Font.service";
 import { ShopifyProductService } from "~/models/ShopifyProduct.service";
-import { readFileSync, readdirSync, copyFileSync, existsSync, mkdirSync, writeFileSync } from "fs";
+import { readFileSync, readdirSync, copyFileSync, existsSync, mkdirSync, writeFileSync, unlinkSync } from "fs";
 import * as path from "path";
 import { replaceUrlForImport } from "~/utils/import-file";
 import { getShopPath, getShopProxyUrlWithSlash } from "~/utils/fileUrl";
@@ -25,22 +25,72 @@ export interface TemplatePackType {
   order?: number;
 }
 
+/** Cache en mémoire pour les JSON des packs (clé = jsonFile, TTL 5 min) */
+const PACK_JSON_CACHE = new Map<string, { data: any; expires: number }>();
+const PACK_JSON_CACHE_TTL_MS = 5 * 60 * 1000;
+
+function isCacheValid(expires: number): boolean {
+  return Date.now() < expires;
+}
+
 export default class TemplatePackService {
   /**
-   * Get template count from pack JSON file
+   * Lit le contenu parsé d'un pack JSON (avec cache). Invalider via invalidatePackJsonCache.
+   */
+  static getPackJsonContent(jsonFile: string): any | null {
+    try {
+      const cached = PACK_JSON_CACHE.get(jsonFile);
+      if (cached && isCacheValid(cached.expires)) {
+        return cached.data;
+      }
+      const jsonPath = path.join(process.cwd(), "public", "template-packs", "json", jsonFile);
+      if (!existsSync(jsonPath)) return null;
+      const raw = readFileSync(jsonPath, "utf8");
+      const data = JSON.parse(raw);
+      PACK_JSON_CACHE.set(jsonFile, {
+        data,
+        expires: Date.now() + PACK_JSON_CACHE_TTL_MS,
+      });
+      return data;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Invalide le cache pour un fichier (après delete ou export qui met à jour le pack). */
+  static invalidatePackJsonCache(jsonFile: string): void {
+    PACK_JSON_CACHE.delete(jsonFile);
+  }
+
+  /**
+   * Get template count from pack JSON file (utilise le cache).
    */
   static getPackTemplateCount(pack: { jsonFile: string }): number {
-    try {
-      const jsonPath = path.join(process.cwd(), "public", "template-packs", "json", pack.jsonFile);
-      const packData = JSON.parse(readFileSync(jsonPath, "utf8"));
-      const isNewFormat = packData.configurations && Array.isArray(packData.configurations);
-      if (isNewFormat) {
-        return packData.configurations.reduce((total: number, config: any) => total + (config.templates?.length || 0), 0);
-      }
-      return packData.templates?.length || 0;
-    } catch {
-      return 0;
+    const packData = this.getPackJsonContent(pack.jsonFile);
+    if (!packData) return 0;
+    const isNewFormat = packData.configurations && Array.isArray(packData.configurations);
+    if (isNewFormat) {
+      return packData.configurations.reduce((total: number, config: any) => total + (config.templates?.length || 0), 0);
     }
+    return packData.templates?.length || 0;
+  }
+
+  /**
+   * Extrait la liste des templates d'un pack à partir du JSON (format nouveau ou ancien).
+   */
+  static getTemplatesFromPackJson(packData: any): any[] {
+    if (!packData) return [];
+    const isNewFormat = packData.configurations && Array.isArray(packData.configurations);
+    if (isNewFormat) {
+      const out: any[] = [];
+      packData.configurations.forEach((config: any) => {
+        if (config.templates && Array.isArray(config.templates)) {
+          out.push(...config.templates);
+        }
+      });
+      return out;
+    }
+    return packData.templates || [];
   }
 
   /**
@@ -76,16 +126,46 @@ export default class TemplatePackService {
   }
 
   /**
+   * Construit la liste "tous les templates" pour la vue All (utilise le cache JSON).
+   */
+  static buildAllTemplatesList(packs: any[]): Array<{ packId: number; packName: string; planLevel: string; template: any; templateName: string; hasAccess: boolean }> {
+    const out: Array<{ packId: number; packName: string; planLevel: string; template: any; templateName: string; hasAccess: boolean }> = [];
+    for (const pack of packs) {
+      const packData = this.getPackJsonContent(pack.jsonFile);
+      const templates = this.getTemplatesFromPackJson(packData);
+      const planLevel = pack.planLevel || pack.plans?.trim() || "free";
+      const hasAccess = !!pack.hasAccess;
+      templates.forEach((t: any) => {
+        out.push({
+          packId: pack.id,
+          packName: pack.name,
+          planLevel,
+          template: t,
+          templateName: (t.name || "").trim() || "Template",
+          hasAccess,
+        });
+      });
+    }
+    return out;
+  }
+
+  /**
    * Get all active template packs (with templateCount, planLevel, hasAccess).
-   * Tous les packs sont retournés (pas de filtre par plan). hasAccess = true si le marchand
-   * peut insérer les templates (Free: packs free only, Basic: free+basic, Pro: tout).
+   * Visibilité selon le plan marchand :
+   * - Marchand Pro : Free, Basic et Pro
+   * - Marchand Basic : Free et Basic uniquement
+   * - Marchand Free : Free uniquement
+   * hasAccess = true si le marchand peut insérer les templates (même règle).
    */
   static async getAllPacks(sessionId?: string, merchantPlan?: string): Promise<any[]> {
     try {
+      // Admin (pas de sessionId) : tous les packs (actifs + inactifs). Marchand : uniquement actifs.
+      const where: { isActive?: boolean } = {};
+      if (sessionId !== undefined) {
+        where.isActive = true;
+      }
       const packs = await prisma.templatePack.findMany({
-        where: {
-          isActive: true,
-        },
+        where,
         orderBy: [
           { category: "asc" },
           { order: "asc" },
@@ -99,8 +179,10 @@ export default class TemplatePackService {
         return { ...pack, templateCount, planLevel };
       });
 
-      // Ne pas filtrer les packs : tout le monde voit tous les packs/templates.
-      // hasAccess (ci-dessous) indique si l'utilisateur peut insérer (Free: free only, Basic: free+basic, Pro: tout).
+      // Filtrer par plan : ne montrer que les packs accessibles au plan du marchand
+      if (merchantPlan) {
+        enriched = enriched.filter((pack) => this.canAccessPackByPlan(pack, merchantPlan));
+      }
 
       if (sessionId) {
         const purchasedPacks = await prisma.shopTemplatePack.findMany({
@@ -226,27 +308,12 @@ export default class TemplatePackService {
         return false;
       }
 
-      // Read JSON file to get template names
+      // Read JSON file to get template names (cache)
       try {
-        const jsonPath = path.join(process.cwd(), "public", "template-packs", "json", pack.jsonFile);
-        const packData = JSON.parse(readFileSync(jsonPath, "utf8"));
-        
-        // Support both new format (configurations array) and legacy format
-        const isNewFormat = packData.configurations && Array.isArray(packData.configurations);
-        let templateNames: string[] = [];
-        
-        if (isNewFormat) {
-          // New format: extract template names from all configurations
-          packData.configurations.forEach((config: any) => {
-            if (config.templates && Array.isArray(config.templates)) {
-              const configTemplateNames = config.templates.map((t: any) => t.name);
-              templateNames.push(...configTemplateNames);
-            }
-          });
-        } else {
-          // Legacy format: templates at root level
-          templateNames = packData.templates?.map((t: any) => t.name) || [];
-        }
+        const packData = this.getPackJsonContent(pack.jsonFile);
+        if (!packData) return true;
+        const templates = this.getTemplatesFromPackJson(packData);
+        const templateNames = templates.map((t: any) => t.name).filter(Boolean);
 
         if (templateNames.length === 0) {
           return false;
@@ -551,33 +618,18 @@ export default class TemplatePackService {
         }
       }
 
-      // Read JSON file
-      const jsonPath = path.join(process.cwd(), "public", "template-packs", "json", pack.jsonFile);
-      let packData: any;
-
-      try {
-        packData = JSON.parse(readFileSync(jsonPath, "utf8"));
-      } catch (error) {
-        console.error("Error reading pack JSON file:", error);
+      // Read JSON file (cache)
+      let packData = this.getPackJsonContent(pack.jsonFile);
+      if (!packData) {
         return { success: false, message: "Error reading pack file" };
       }
 
       const isNewFormat = packData.configurations && Array.isArray(packData.configurations);
-      let configurationsToImport = isNewFormat 
-        ? packData.configurations 
+      let configurationsToImport = isNewFormat
+        ? packData.configurations
         : [packData];
-      
-      const allTemplates: any[] = [];
-      
-      if (isNewFormat) {
-        configurationsToImport.forEach((config: any) => {
-          if (config.templates && Array.isArray(config.templates)) {
-            allTemplates.push(...config.templates);
-          }
-        });
-      } else {
-        allTemplates.push(...(packData.templates || []));
-      }
+
+      const allTemplates: any[] = this.getTemplatesFromPackJson(packData);
 
       // Filter by template names if provided
       const filterNames = templateNames && templateNames.length > 0
@@ -879,10 +931,21 @@ export default class TemplatePackService {
   }
 
   /**
-   * Delete a template pack (admin)
+   * Delete a template pack (admin). Supprime aussi le fichier JSON dans public/template-packs/json.
    */
   static async deletePack(id: number): Promise<boolean> {
     try {
+      const pack = await prisma.templatePack.findUnique({
+        where: { id },
+        select: { jsonFile: true },
+      });
+      if (pack?.jsonFile) {
+        this.invalidatePackJsonCache(pack.jsonFile);
+        const jsonPath = path.join(process.cwd(), "public", "template-packs", "json", pack.jsonFile);
+        if (existsSync(jsonPath)) {
+          unlinkSync(jsonPath);
+        }
+      }
       await prisma.templatePack.delete({
         where: { id },
       });
@@ -1284,13 +1347,15 @@ export default class TemplatePackService {
       const slug = sanitizeFileName(packName.trim());
       const previewImg = templates[0]?.prevImg || templates[0]?.realImg || "/aso_logo.png";
 
+      const plansValue: string =
+        packPlan === "pro" ? "pro" : packPlan === "basic" ? "basic" : "free";
       const packDataToSave = {
         name: packName.trim(),
         slug,
         description: `Pack exporté depuis l'admin - ${templates.length} template(s)`,
         category: categoryName,
         price: 0,
-        plans: packPlan === "basic" || packPlan === "pro" ? packPlan : "free",
+        plans: plansValue,
         jsonFile: fileName,
         previewImg,
         isActive: true,
@@ -1301,6 +1366,7 @@ export default class TemplatePackService {
         where: { slug },
       });
 
+      this.invalidatePackJsonCache(fileName);
       if (existingPack) {
         await prisma.templatePack.update({
           where: { slug },

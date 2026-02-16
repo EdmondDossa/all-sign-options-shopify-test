@@ -21,7 +21,8 @@
     "vite": "vite",
     "postinstall": "node ./postinstall.js",
     "export:templates": "node scripts/export-templates-by-category.js",
-    "import:packs": "node scripts/import-template-packs.js"
+    "import:packs": "node scripts/import-template-packs.js",
+    "import:data-templates": "node scripts/import-data-templates.js"
   },
   "type": "module",
   "engines": {
