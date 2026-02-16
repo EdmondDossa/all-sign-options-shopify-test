@@ -568,18 +568,26 @@
   font-size: 18px;
 }
 
-.aso-refresh-uploads {
-  background: none;
+.aso-refresh-uploads,
+.aso-add-uploads-to-cart {
+  background: #333;
+  color: #fff;
   border: none;
   cursor: pointer;
-  font-size: 16px;
-  padding: 5px 10px;
+  font-size: 14px;
+  padding: 8px 16px;
   border-radius: 4px;
   transition: background-color 0.2s;
 }
 
-.aso-refresh-uploads:hover {
-  background-color: #e9ecef;
+.aso-refresh-uploads:hover,
+.aso-add-uploads-to-cart:hover:not(:disabled) {
+  background-color: #555;
+}
+
+.aso-add-uploads-to-cart:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* File items container */

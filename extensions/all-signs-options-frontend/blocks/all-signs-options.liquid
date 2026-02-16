@@ -7,6 +7,7 @@
 <script>
   var asoConfigurationId = "{{ aso_configuration_id }}";
   var asoProductId = "{{ aso_product_id }}";
+  var asoVariantId = "{{ product.selected_or_first_available_variant.id }}";
   var asoRegularPrice ="{{ aso_product.price | money_without_currency }}";
 
   {% if aso_configuration_id == null or aso_configuration_id == "" %}

@@ -67,6 +67,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     } else {
       return json({ ...jFlashMessage(result.message), importResult: result });
     }
+  } else if (action === "syncPublic") {
+    const result = await TemplatePackService.syncPacksFromPublicJson();
+    if (result.success) {
+      const message = result.errors.length > 0
+        ? `${result.message} Détails : ${result.errors.join(" ; ")}`
+        : result.message;
+      const status =
+        result.created > 0 ? "success" : result.errors.length > 0 ? "error" : "info";
+      return json({ ...jFlashMessage(message, status), syncResult: result });
+    } else {
+      return json({ ...jFlashMessage(result.message, "error"), syncResult: result });
+    }
   } else if (action === "exportPack") {
     const packName = formData.get("packName")?.toString()?.trim();
     const templateIds = formData.getAll("templateIds").map((id) => Number(id)).filter(Boolean);
@@ -219,6 +231,20 @@ export default function AdminTemplatePacks() {
                     Export template pack
                   </button>
                   <button
+                    type="button"
+                    onClick={() => submit({ action: "syncPublic" }, { method: "POST" })}
+                    style={{
+                      padding: "10px 18px",
+                      borderRadius: "8px",
+                      border: "1px solid #D1D5DB",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      background: "#fff",
+                    }}
+                  >
+                    Sync packs from public JSON
+                  </button>
+                  <button
                     className="primary-btn"
                     type="button"
                     onClick={() => {
@@ -271,26 +297,42 @@ export default function AdminTemplatePacks() {
                       No template packs have been imported yet.
                     </Text>
                     <Text as="p" variant="bodyMd" tone="subdued">
-                      Click &quot;Import Packs from Scripts&quot; to import all JSON files from the scripts directory.
+                      Import from scripts or sync from the JSON files already in <code>public/template-packs/json</code> (e.g. after deploy).
                     </Text>
                   </BlockStack>
                   <Box paddingBlockStart="400">
-                    <button
-                      className="primary-btn"
-                      type="button"
-                      onClick={() => submit({ action: "import" }, { method: "POST" })}
-                      style={{
-                        padding: "12px 24px",
-                        borderRadius: "8px",
-                        backgroundColor: "rgba(1, 100, 100, 0.9)",
-                        color: "white",
-                        fontWeight: "600",
-                        cursor: "pointer",
-                        border: "none",
-                      }}
-                    >
-                      <span className="primary-btn-text">Import Packs from Scripts</span>
-                    </button>
+                    <InlineStack gap="300">
+                      <button
+                        className="primary-btn"
+                        type="button"
+                        onClick={() => submit({ action: "syncPublic" }, { method: "POST" })}
+                        style={{
+                          padding: "12px 24px",
+                          borderRadius: "8px",
+                          backgroundColor: "rgba(1, 100, 100, 0.9)",
+                          color: "white",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          border: "none",
+                        }}
+                      >
+                        <span className="primary-btn-text">Sync packs from public JSON</span>
+                      </button>
+                      <button
+                        className="back-large-btn"
+                        type="button"
+                        onClick={() => submit({ action: "import" }, { method: "POST" })}
+                        style={{
+                          padding: "12px 24px",
+                          borderRadius: "8px",
+                          border: "1px solid #D1D5DB",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Import Packs from Scripts
+                      </button>
+                    </InlineStack>
                   </Box>
                 </div>
               </BlockStack>
