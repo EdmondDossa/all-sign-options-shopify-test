@@ -574,7 +574,7 @@ export default function ConfigurationEdit() {
             name: "With structure",
             products: [
               {
-                name: "Pull-up banners",
+                name: "Roll-up banners",
                 description: "Roll-up banners with cassette and stand.",
                 image: ["https://signsdesigner.us/app/aso_products_preview/pull-up_banners/image_1.webp", "https://signsdesigner.us/app/aso_products_preview/pull-up_banners/image_2.webp", "https://signsdesigner.us/app/aso_products_preview/pull-up_banners/image_3.webp"],
                 type: "vinyl-banner",

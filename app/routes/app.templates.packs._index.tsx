@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLoaderData, useNavigate, useSearchParams, useSubmit, useActionData } from "@remix-run/react";
 import { LoaderFunctionArgs, ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
@@ -8,8 +8,6 @@ import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { getImageUrl } from "~/utils/fileUrl";
 import { getPlanProxy } from "~/utils/pricing-server.server";
 import { flashMessage } from "~/utils/message-flash";
-import { readFileSync } from "fs";
-import * as path from "path";
 import { Box, Card, Text, BlockStack, InlineStack } from "@shopify/polaris";
 
 const PLAN_LABELS: Record<string, string> = {
@@ -18,43 +16,6 @@ const PLAN_LABELS: Record<string, string> = {
   pro: "Pro",
 };
 const PLAN_FILTER_OPTIONS = ["all", "free", "basic", "pro"] as const;
-
-/** Build list of all templates from all packs for "All" view; hasAccess = utilisateur peut insérer ce template (selon son plan). */
-function buildAllTemplates(packs: any[]): Array<{ packId: number; packName: string; planLevel: string; template: any; templateName: string; hasAccess: boolean }> {
-  const out: Array<{ packId: number; packName: string; planLevel: string; template: any; templateName: string; hasAccess: boolean }> = [];
-  for (const pack of packs) {
-    let templates: any[] = [];
-    try {
-      const jsonPath = path.join(process.cwd(), "public", "template-packs", "json", pack.jsonFile);
-      const packData = JSON.parse(readFileSync(jsonPath, "utf8"));
-      const isNewFormat = packData.configurations && Array.isArray(packData.configurations);
-      if (isNewFormat) {
-        packData.configurations.forEach((config: any) => {
-          if (config.templates && Array.isArray(config.templates)) {
-            templates.push(...config.templates);
-          }
-        });
-      } else {
-        templates = packData.templates || [];
-      }
-    } catch {
-      // skip pack
-    }
-    const planLevel = pack.planLevel || pack.plans?.trim() || "free";
-    const hasAccess = !!pack.hasAccess;
-    templates.forEach((t) => {
-      out.push({
-        packId: pack.id,
-        packName: pack.name,
-        planLevel,
-        template: t,
-        templateName: (t.name || "").trim() || "Template",
-        hasAccess,
-      });
-    });
-  }
-  return out;
-}
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -72,26 +33,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const pack = packs.find((p: any) => p.id === packId);
     if (pack) {
       selectedPack = pack;
-      try {
-        const jsonPath = path.join(process.cwd(), "public", "template-packs", "json", pack.jsonFile);
-        const packData = JSON.parse(readFileSync(jsonPath, "utf8"));
-        const isNewFormat = packData.configurations && Array.isArray(packData.configurations);
-        if (isNewFormat) {
-          packData.configurations.forEach((config: any) => {
-            if (config.templates && Array.isArray(config.templates)) {
-              packTemplates.push(...config.templates);
-            }
-          });
-        } else {
-          packTemplates = packData.templates || [];
-        }
-      } catch (e) {
-        console.error("Error reading pack JSON:", e);
-      }
+      const packData = TemplatePackService.getPackJsonContent(pack.jsonFile);
+      packTemplates = TemplatePackService.getTemplatesFromPackJson(packData);
     }
-  } else {
-    allTemplates = buildAllTemplates(packs);
   }
+  // Vue "All" : on ne charge pas les JSON ici (chargement différé via API pour garder le premier rendu rapide)
 
   const parentCategories = Array.from(
     new Set((packs as any[]).map((p) => (p.category || "Other").trim()).filter(Boolean))
@@ -154,6 +100,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return json({ success: false, error: lastError || "Erreur lors de l'import" }, { status: 400 });
 };
 
+type AllTemplateItem = { packId: number; packName: string; planLevel: string; template: any; templateName: string; hasAccess: boolean };
+
 export default function TemplatePacksGallery() {
   const { packs, parentCategories, selectedPack, packTemplates, allTemplates } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
@@ -166,8 +114,28 @@ export default function TemplatePacksGallery() {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [selectedTemplateIds, setSelectedTemplateIds] = useState<Set<number>>(new Set());
   const [selectedAllIds, setSelectedAllIds] = useState<Set<number>>(new Set());
+  const [allTemplatesFromApi, setAllTemplatesFromApi] = useState<AllTemplateItem[] | null>(null);
 
   const currentPackId = searchParams.get("packId") ? parseInt(searchParams.get("packId")!, 10) : null;
+
+  useEffect(() => {
+    if (currentPackId != null || packs.length === 0) return;
+    if (allTemplatesFromApi !== null) return;
+    let cancelled = false;
+    fetch("/app/templates/packs/api/all-templates")
+      .then((res) => res.json())
+      .then((data: { allTemplates?: AllTemplateItem[] }) => {
+        if (!cancelled && Array.isArray(data.allTemplates)) {
+          setAllTemplatesFromApi(data.allTemplates);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setAllTemplatesFromApi([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentPackId, packs.length, allTemplatesFromApi]);
 
   const handlePackClick = (packId: number) => {
     setSearchParams({ packId: String(packId) });
@@ -184,10 +152,11 @@ export default function TemplatePacksGallery() {
       ? packs
       : (packs as any[]).filter((p) => (p.planLevel || p.plans?.trim() || "free") === planFilter);
 
+  const effectiveAllTemplates = allTemplatesFromApi !== null ? allTemplatesFromApi : (allTemplates || []);
   const filteredAllTemplates =
     planFilter === "all"
-      ? allTemplates
-      : (allTemplates || []).filter((t: any) => t.planLevel === planFilter);
+      ? effectiveAllTemplates
+      : effectiveAllTemplates.filter((t: any) => t.planLevel === planFilter);
 
   const getPacksByCategory = (category: string) =>
     (packs as any[]).filter((p) => (p.category || "Other").trim() === category);
@@ -608,6 +577,12 @@ export default function TemplatePacksGallery() {
             /* View: All templates (no pack cards), with plan filter */
             <Card>
               <Box padding="500">
+                {allTemplatesFromApi === null && packs.length > 0 ? (
+                  <div style={{ textAlign: "center", padding: "48px 24px", color: "#6B7280" }}>
+                    <p style={{ margin: 0, fontSize: "15px" }}>Chargement des templates…</p>
+                  </div>
+                ) : (
+                <>
                 <div
                   style={{
                     display: "flex",
@@ -725,6 +700,8 @@ export default function TemplatePacksGallery() {
                     );
                   })}
                 </div>
+                </>
+                )}
               </Box>
             </Card>
           )}

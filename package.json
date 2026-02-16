@@ -1,7 +1,7 @@
 {
   "name": "all-signs-option",
   "private": true,
-  "version": "2.68",
+  "version": "2.69",
   "scripts": {
     "build": "remix vite:build",
     "dev": "shopify app dev",
@@ -21,7 +21,8 @@
     "vite": "vite",
     "postinstall": "node ./postinstall.js",
     "export:templates": "node scripts/export-templates-by-category.js",
-    "import:packs": "node scripts/import-template-packs.js"
+    "import:packs": "node scripts/import-template-packs.js",
+    "import:data-templates": "node scripts/import-data-templates.js"
   },
   "type": "module",
   "engines": {

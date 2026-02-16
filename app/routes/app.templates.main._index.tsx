@@ -281,8 +281,8 @@ export default function ConfigurationTemplates() {
                   </InlineStack>
                 </Box>
               </button>
-              <ComingSoonButton />
-              {/*<button
+              {/*<ComingSoonButton />*/}
+              <button
                 className="primary-btn"
                 type="button"
                 onClick={() => { onHandlePacks() }}
@@ -295,7 +295,7 @@ export default function ConfigurationTemplates() {
                     </span>
                   </InlineStack>
                 </Box>
-              </button>*/}
+              </button>
               <button
                 className="primary-btn"
                 type="button"

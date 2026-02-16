@@ -31,7 +31,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const plan = formData.get("plan")?.toString()?.trim() ?? null;
   const previewImg = formData.get("previewImg");
   const parentCategoryName = formData.get("parentCategoryName")?.toString()?.trim() || undefined;
-  const packPlan = formData.get("packPlan")?.toString()?.trim() as "free" | "basic" | "pro" | undefined;
+  const packPlanRaw = formData.get("packPlan")?.toString()?.trim()?.toLowerCase();
+  const packPlan: "free" | "basic" | "pro" =
+    packPlanRaw === "pro" ? "pro" : packPlanRaw === "basic" ? "basic" : "free";
 
   if (action === "toggle") {
     const pack = await TemplatePackService.getPack(Number(packId));
@@ -110,11 +112,14 @@ export default function AdminTemplatePacks() {
   const [exportParentCategoryName, setExportParentCategoryName] = useState("");
   const [exportPackPlan, setExportPackPlan] = useState<string>("free");
   const [exportSelectedIds, setExportSelectedIds] = useState<Set<number>>(new Set());
+  const [customParentTypes, setCustomParentTypes] = useState<string[]>([]);
+  const [newTypeName, setNewTypeName] = useState("");
 
   const editPlanModalId = useId();
   const deleteModalId = useId();
   const uploadModalId = useId();
   const exportModalId = useId();
+  const addTypeModalId = useId();
 
   const handleToggle = (packId: number) => {
     submit({ packId: packId.toString(), action: "toggle" }, { method: "POST" });
@@ -734,7 +739,8 @@ export default function AdminTemplatePacks() {
             formData.set("action", "exportPack");
             formData.set("packName", exportPackName);
             if (exportParentCategoryName) formData.set("parentCategoryName", exportParentCategoryName);
-            formData.set("packPlan", exportPackPlan);
+            // Toujours envoyer le plan choisi (free | basic | pro) pour éviter qu'il soit perdu
+            formData.set("packPlan", exportPackPlan || "free");
             exportSelectedIds.forEach((id) => formData.append("templateIds", String(id)));
             submit(formData, { method: "POST" });
             shopify.modal.hide(exportModalId);
@@ -775,11 +781,17 @@ export default function AdminTemplatePacks() {
                         />
                       </Box>
                       <Box paddingInlineEnd="400" paddingBlockEnd="400" minWidth={0} style={{ flex: "1 1 0" }}>
+                        <Box paddingBlockEnd="200">
+                          <Button size="slim" onClick={() => shopify.modal.show(addTypeModalId)}>
+                            Add a new type
+                          </Button>
+                        </Box>
                         <Select
                           label="Sign type (parent category)"
                           options={[
                             { label: "— Choose a type (Door signs, Name badges, etc.) —", value: "" },
                             ...(parentSignTypes || []).map((name: string) => ({ label: name, value: name })),
+                            ...customParentTypes.filter((n) => !(parentSignTypes || []).includes(n)).map((name: string) => ({ label: name, value: name })),
                           ]}
                           value={exportParentCategoryName}
                           onChange={setExportParentCategoryName}
@@ -1002,6 +1014,44 @@ export default function AdminTemplatePacks() {
             </Button>
           </TitleBar>
         </form>
+      </Modal>
+
+      {/* Mini modal: Add a new type (parent category) */}
+      <Modal id={addTypeModalId}>
+        <Box padding="400">
+          <BlockStack gap="400">
+            <Text as="h2" variant="headingMd" fontWeight="bold">
+              Add a new type
+            </Text>
+            <TextField
+              label="Name type"
+              value={newTypeName}
+              onChange={setNewTypeName}
+              placeholder="e.g. Custom signs"
+              autoComplete="off"
+            />
+            <InlineStack gap="300">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  const name = newTypeName.trim();
+                  if (name) {
+                    setCustomParentTypes((prev) => (prev.includes(name) ? prev : [...prev, name]));
+                    setExportParentCategoryName(name);
+                    setNewTypeName("");
+                    shopify.modal.hide(addTypeModalId);
+                  }
+                }}
+                disabled={!newTypeName.trim()}
+              >
+                Add type
+              </Button>
+              <Button variant="plain" onClick={() => { setNewTypeName(""); shopify.modal.hide(addTypeModalId); }}>
+                Cancel
+              </Button>
+            </InlineStack>
+          </BlockStack>
+        </Box>
       </Modal>
     </div>
   );

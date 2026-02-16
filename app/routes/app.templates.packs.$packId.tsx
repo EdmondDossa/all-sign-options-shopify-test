@@ -5,8 +5,6 @@ import TemplatePackService from "~/models/TemplatePack.service";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { flashMessage } from "~/utils/message-flash";
-import { readFileSync } from "fs";
-import * as path from "path";
 import { fileUrl } from "~/utils/fileUrl";
 
 // Helper function to get the correct image URL
@@ -116,32 +114,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     throw new Response("Pack not found", { status: 404 });
   }
 
-  // Read JSON to get template count and templates data
-  let templateCount = 0;
-  let templates: any[] = [];
-  try {
-    const jsonPath = path.join(process.cwd(), "public", "template-packs", "json", pack.jsonFile);
-    const packData = JSON.parse(readFileSync(jsonPath, "utf8"));
-    
-    // Support both new format (configurations array) and legacy format
-    const isNewFormat = packData.configurations && Array.isArray(packData.configurations);
-    
-    if (isNewFormat) {
-      // New format: extract all templates from all configurations
-      packData.configurations.forEach((config: any) => {
-        if (config.templates && Array.isArray(config.templates)) {
-          templates.push(...config.templates);
-        }
-      });
-      templateCount = templates.length;
-    } else {
-      // Legacy format: templates at root level
-      templates = packData.templates || [];
-      templateCount = templates.length;
-    }
-  } catch (error) {
-    console.error("Error reading pack JSON:", error);
-  }
+  const packData = TemplatePackService.getPackJsonContent(pack.jsonFile);
+  const templates = TemplatePackService.getTemplatesFromPackJson(packData);
+  const templateCount = templates.length;
 
   return json({ pack, templateCount, templates });
 };
