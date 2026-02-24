@@ -228,3 +228,20 @@ export interface ConfigDiscount {
     discountPercentage: string;
   }>;
 }
+
+export interface SimpleOptionItem {
+  label: string;
+  value: string;
+}
+
+export interface SimpleOptionGroup {
+  id: string;
+  name: string;
+  required: boolean;
+  options: SimpleOptionItem[];
+}
+
+export interface SimpleProductOptions {
+  enabled: boolean;
+  optionGroups: SimpleOptionGroup[];
+}
