@@ -31,10 +31,24 @@ import { number } from 'zod';
    }
  }
 
- export interface configSizeThickness {
+export interface ThicknessValue {
+  label: string;
+  value: number | string;
+  pricingType: 'additional' | 'multiplier';
+  additionalPrice: number | string;
+  multiplier: number | string;
+}
+
+export interface DoubleSidedPricing {
+  type: 'additional' | 'multiplier';
+  additionalPrice: number | string;
+  multiplier: number | string;
+}
+
+export interface configSizeThickness {
   active: boolean;
-  values: Array<any>;
- }
+  values: Array<ThicknessValue | number | string>;
+}
   
  export interface ConfigCustomColor {
   active: boolean;
