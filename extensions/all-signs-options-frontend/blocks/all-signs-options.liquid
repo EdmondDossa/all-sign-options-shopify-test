@@ -20,6 +20,9 @@
   {% endif %}
 </script>
 
+<!-- Simple Options container (shown when simpleOptions.enabled = true in config) -->
+<div id="aso-simple-options-container" style="display:none;"></div>
+
 {% if block.settings.useModal %}
   <!-- Boutons pour ouvrir les modals -->
   <div class="aso-modal-buttons-container">
@@ -568,6 +571,17 @@
 </script>
 
 
+
+<style>
+  .aso-simple-options-wrapper{margin:12px 0}
+  .aso-simple-option-group{margin-bottom:14px}
+  .aso-simple-option-label{display:block;font-size:14px;font-weight:600;margin-bottom:6px;color:inherit}
+  .aso-simple-option-select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:inherit;cursor:pointer;appearance:auto}
+  .aso-simple-option-select:focus{outline:2px solid #5c6ac4;outline-offset:1px}
+  .aso-simple-option-error{display:none;color:#bf0711;font-size:13px;margin-top:4px}
+  .aso-simple-option-error.visible{display:block}
+</style>
+<script src="{{ 'aso-simple-options.js' | asset_url }}" defer></script>
 
 {% schema %} 
 {

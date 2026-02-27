@@ -1,4 +1,4 @@
-import { Box, Grid, InlineStack, Text, TextField } from "@shopify/polaris";
+import { Box, Grid, InlineStack, Select, Text, TextField } from "@shopify/polaris";
 import { useState } from "react";
 import {
   Form,
@@ -33,6 +33,14 @@ const formSchema = z.object({
         part1: z.string(),
         part2: z.string(),
         enableCopyDesignFromSide: z.boolean(),
+        pricing: z
+          .object({
+            type: z.enum(["additional", "multiplier"]).default("additional"),
+            additionalPrice: z.union([z.number(), z.string()]).default(0),
+            multiplier: z.union([z.number(), z.string()]).default(1),
+          })
+          .optional()
+          .default({ type: "additional", additionalPrice: 0, multiplier: 1 }),
       }),
     ),
 });
@@ -63,9 +71,19 @@ export default function ConfigSettingsGeneral() {
         part1: "Face A",
         part2: "Face B",
         enableCopyDesignFromSide: true,
+        pricing: {
+          type: "additional",
+          additionalPrice: 0,
+          multiplier: 1,
+        },
       },
     },
   );
+
+  const pricingTypeOptions = [
+    { label: "Additional price (+)", value: "additional" },
+    { label: "Multiplier (×)", value: "multiplier" },
+  ];
 
   const handleInputChange = (inputName: string, value: any) => {
     setFormData((prevData: any) => ({
@@ -171,6 +189,78 @@ export default function ConfigSettingsGeneral() {
                         />
                       </InlineStack>
                     </Grid.Cell>
+
+                    {/* ── Pricing section ── */}
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                      <Box paddingBlockStart="400">
+                        <Text as="strong" variant="headingMd">
+                          Double-sided pricing
+                        </Text>
+                        <Box paddingBlockStart="200">
+                          <Text as="p" tone="subdued">
+                            When the customer activates double-sided in the configurator, the selected pricing is applied to the total price.
+                          </Text>
+                        </Box>
+                      </Box>
+                    </Grid.Cell>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                      <Select
+                        label="Pricing type"
+                        options={pricingTypeOptions}
+                        value={formData.doublePart.pricing?.type || "additional"}
+                        onChange={(val) => {
+                          if (!formData.doublePart.pricing) formData.doublePart.pricing = { type: "additional", additionalPrice: 0, multiplier: 1 };
+                          formData.doublePart.pricing.type = val;
+                          handleInputChange("doublePart", formData.doublePart);
+                        }}
+                      />
+                    </Grid.Cell>
+                    {(formData.doublePart.pricing?.type === "additional" || !formData.doublePart.pricing?.type) && (
+                      <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                        <TextField
+                          label="Additional price for double-sided"
+                          autoComplete="off"
+                          pattern="[0-9]+([,.][0-9]+)?"
+                          prefix="+"
+                          value={`${formData.doublePart.pricing?.additionalPrice ?? 0}`}
+                          onChange={(val) => {
+                            if (!formData.doublePart.pricing) formData.doublePart.pricing = { type: "additional", additionalPrice: 0, multiplier: 1 };
+                            formData.doublePart.pricing.additionalPrice = val;
+                            handleInputChange("doublePart", formData.doublePart);
+                          }}
+                          onBlur={() => {
+                            if (formData.doublePart.pricing) {
+                              formData.doublePart.pricing.additionalPrice = parseFloat(String(formData.doublePart.pricing.additionalPrice)) || 0;
+                              handleInputChange("doublePart", formData.doublePart);
+                            }
+                          }}
+                          helpText="This amount is added to the total price when the customer activates double-sided."
+                        />
+                      </Grid.Cell>
+                    )}
+                    {formData.doublePart.pricing?.type === "multiplier" && (
+                      <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                        <TextField
+                          label="Multiplier for double-sided"
+                          autoComplete="off"
+                          pattern="[0-9]+([,.][0-9]+)?"
+                          prefix="×"
+                          value={`${formData.doublePart.pricing?.multiplier ?? 1}`}
+                          onChange={(val) => {
+                            if (!formData.doublePart.pricing) formData.doublePart.pricing = { type: "multiplier", additionalPrice: 0, multiplier: 1 };
+                            formData.doublePart.pricing.multiplier = val;
+                            handleInputChange("doublePart", formData.doublePart);
+                          }}
+                          onBlur={() => {
+                            if (formData.doublePart.pricing) {
+                              formData.doublePart.pricing.multiplier = parseFloat(String(formData.doublePart.pricing.multiplier)) || 1;
+                              handleInputChange("doublePart", formData.doublePart);
+                            }
+                          }}
+                          helpText="The total price is multiplied by this value when the customer activates double-sided."
+                        />
+                      </Grid.Cell>
+                    )}
                   </>
                 )}
               </Grid>

@@ -3,8 +3,10 @@ import {
   Grid,
   InlineStack,
   Select,
+  Text,
 } from "@shopify/polaris";
 import {  useState } from "react";
+import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import {
   Form,
   useActionData,
@@ -33,6 +35,7 @@ const formSchema = z.object({
   desktopColumnOrder: z.string(),
   finishButtonPosition: z.string().nullable(),
   allowNextButton: z.any().transform(booleanTransform),
+  showThicknessPricing: z.any().transform(booleanTransform),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -97,7 +100,8 @@ export default function ConfigSettingsGeneral() {
          decimalFormatMeasurements: measurementDecimalFormatOptions[0].value,
          desktopColumnOrder: 'left',
          finishButtonPosition:'bottom',
-         allowNextButton:false
+         allowNextButton:false,
+         showThicknessPricing: false,
     },
   );
 
@@ -202,6 +206,17 @@ export default function ConfigSettingsGeneral() {
                   value={formData.allowNextButton ?  'yes' : 'no'}
                   error={getError(actionData, "allowNextButton")}
                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <InlineStack blockAlign="center" gap="200">
+                    <Text as="p" variant="bodyMd">Show thickness pricing labels in configurator</Text>
+                    <ReactSwitchCustom
+                      checked={formData.showThicknessPricing ?? false}
+                      setChecked={(value: boolean) =>
+                        handleInputChange("showThicknessPricing", value)
+                      }
+                    />
+                  </InlineStack>
                 </Grid.Cell>
               </Grid>
             </Box>

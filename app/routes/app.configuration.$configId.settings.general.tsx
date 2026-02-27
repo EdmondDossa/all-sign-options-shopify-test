@@ -32,6 +32,9 @@ export default function ConfigSettingsGeneral() {
             <SubTabItem to="upload">
               Upload Design
             </SubTabItem>
+            <SubTabItem to="simple-options">
+              Simple Options
+            </SubTabItem>
           </InlineStack>
         </Box>
       </SpacingBackground>

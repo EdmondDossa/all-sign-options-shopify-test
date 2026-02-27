@@ -14,6 +14,7 @@ import {
   InlineError,
   InlineStack,
   Popover,
+  Select,
   Text,
   TextField,
   useIndexResourceState,
@@ -37,6 +38,7 @@ import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import {
   ConfigCustomSize,
   ConfigSize,
+  ThicknessValue,
   configSizeThickness,
 } from "~/types/ConfigDataType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
@@ -281,8 +283,14 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
     if (!formData.thickness.values) {
       formData.thickness.values = [];
     }
-    formData.thickness.values.push(0);
-
+    const newThickness: ThicknessValue = {
+      label: "",
+      value: 0,
+      pricingType: "additional",
+      additionalPrice: 0,
+      multiplier: 1,
+    };
+    formData.thickness.values.push(newThickness);
     setFormData({ ...formData });
   };
 
@@ -586,49 +594,93 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                       </InlineStack>
                     </Box>
                     {formData.thickness.active && (
-                      <BlockStack gap="300">
-                        <Grid gap={{ lg: "30px" }}>
-                          {formData.thickness.values?.map(
-                            (thicknessValue: any, index: number) => (
-                              <Grid.Cell
-                                columnSpan={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}
-                              >
-                                <InlineStack
-                                  gap={"100"}
-                                  blockAlign="center"
-                                  wrap={false}
-                                >
-                                  <TextField
-                                    labelHidden
-                                    pattern="[0-9]+([,.][0-9]+)?"
-                                    autoComplete="off"
-                                    onChange={(value) => {
-                                      formData.thickness.values[index] = value;
-                                      handleInputChange(
-                                        "thickness",
-                                        formData.thickness,
-                                      );
-                                    }}
-                                    onBlur={(value) => {
-                                      formData.thickness.values[index] = parseFloat(
-                                        formData.thickness.values[index],
-                                      );
-                                      handleInputChange(
-                                        "thickness",
-                                        formData.thickness,
-                                      );
-                                    }}
-                                    label="Value"
-                                    value={`${thicknessValue}`}
-                                  />
-                                  <RemoveNowIconBtn
-                                    onClick={() => handleDeleteThickness(index)}
-                                  />
-                                </InlineStack>
-                              </Grid.Cell>
-                            ),
-                          )}
-                        </Grid>
+                      <BlockStack gap="400">
+                        {formData.thickness.values?.map(
+                          (thicknessValue: any, index: number) => {
+                            const isObj = thicknessValue && typeof thicknessValue === "object";
+                            const tv: ThicknessValue = isObj
+                              ? thicknessValue
+                              : { label: String(thicknessValue), value: thicknessValue, pricingType: "additional", additionalPrice: 0, multiplier: 1 };
+
+                            const updateField = (field: string, val: any) => {
+                              formData.thickness.values[index] = { ...tv, [field]: val };
+                              handleInputChange("thickness", formData.thickness);
+                            };
+
+                            return (
+                              <SpacingBackground key={index} border="1px solid #DDDDDD" borderRadius="5px">
+                                <Box padding="300">
+                                  <BlockStack gap="300">
+                                    <InlineStack align="space-between" blockAlign="center" wrap={false}>
+                                      <Text as="strong" variant="bodySm">Thickness {index + 1}</Text>
+                                      <RemoveNowIconBtn onClick={() => handleDeleteThickness(index)} />
+                                    </InlineStack>
+                                    <Grid gap={{ lg: "10px" }}>
+                                      <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                                        <TextField
+                                          label="Label (displayed to customer)"
+                                          autoComplete="off"
+                                          placeholder='e.g. 4mm, 10mm'
+                                          value={tv.label}
+                                          onChange={(val) => updateField("label", val)}
+                                        />
+                                      </Grid.Cell>
+                                      <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                                        <TextField
+                                          label="Value (numeric)"
+                                          autoComplete="off"
+                                          pattern="[0-9]+([,.][0-9]+)?"
+                                          value={`${tv.value}`}
+                                          onChange={(val) => updateField("value", val)}
+                                          onBlur={() => updateField("value", parseFloat(String(tv.value)) || 0)}
+                                        />
+                                      </Grid.Cell>
+                                      <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                                        <Select
+                                          label="Pricing type"
+                                          options={[
+                                            { label: "Additional price (+)", value: "additional" },
+                                            { label: "Multiplier (×)", value: "multiplier" },
+                                          ]}
+                                          value={tv.pricingType || "additional"}
+                                          onChange={(val) => updateField("pricingType", val)}
+                                        />
+                                      </Grid.Cell>
+                                      {(tv.pricingType === "additional" || !tv.pricingType) && (
+                                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                                          <TextField
+                                            label="Additional price"
+                                            autoComplete="off"
+                                            pattern="[0-9]+([,.][0-9]+)?"
+                                            prefix="+"
+                                            value={`${tv.additionalPrice ?? 0}`}
+                                            onChange={(val) => updateField("additionalPrice", val)}
+                                            onBlur={() => updateField("additionalPrice", parseFloat(String(tv.additionalPrice)) || 0)}
+                                            helpText="This amount is added to the total price when this thickness is selected."
+                                          />
+                                        </Grid.Cell>
+                                      )}
+                                      {tv.pricingType === "multiplier" && (
+                                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
+                                          <TextField
+                                            label="Multiplier"
+                                            autoComplete="off"
+                                            pattern="[0-9]+([,.][0-9]+)?"
+                                            prefix="×"
+                                            value={`${tv.multiplier ?? 1}`}
+                                            onChange={(val) => updateField("multiplier", val)}
+                                            onBlur={() => updateField("multiplier", parseFloat(String(tv.multiplier)) || 1)}
+                                            helpText="The total price is multiplied by this value when this thickness is selected."
+                                          />
+                                        </Grid.Cell>
+                                      )}
+                                    </Grid>
+                                  </BlockStack>
+                                </Box>
+                              </SpacingBackground>
+                            );
+                          },
+                        )}
                         <Box width="300px">
                           <BiAddBtn
                             title="Add Thickness"
@@ -1156,6 +1208,18 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
   );
 }
 
+const thicknessValueSchema = z.union([
+  z.number(),
+  z.string(),
+  z.object({
+    label: z.string(),
+    value: z.union([z.number(), z.string()]),
+    pricingType: z.enum(["additional", "multiplier"]).default("additional"),
+    additionalPrice: z.union([z.number(), z.string()]).default(0),
+    multiplier: z.union([z.number(), z.string()]).default(1),
+  }),
+]);
+
 const formSchema = z.object({
   thickness: z
     .any()
@@ -1163,7 +1227,7 @@ const formSchema = z.object({
     .pipe(
       z.object({
         active: z.boolean(),
-        values: z.number().array(),
+        values: z.array(thicknessValueSchema),
       }),
     ),
 
