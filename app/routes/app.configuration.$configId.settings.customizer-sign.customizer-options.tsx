@@ -36,6 +36,8 @@ const formSchema = z.object({
   finishButtonPosition: z.string().nullable(),
   allowNextButton: z.any().transform(booleanTransform),
   showThicknessPricing: z.any().transform(booleanTransform),
+  showPredefinedSizesInConfigurator: z.any().transform(booleanTransform),
+  showCustomSizeInConfigurator: z.any().transform(booleanTransform),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -102,6 +104,8 @@ export default function ConfigSettingsGeneral() {
          finishButtonPosition:'bottom',
          allowNextButton:false,
          showThicknessPricing: false,
+         showPredefinedSizesInConfigurator: true,
+         showCustomSizeInConfigurator: true,
     },
   );
 
@@ -214,6 +218,28 @@ export default function ConfigSettingsGeneral() {
                       checked={formData.showThicknessPricing ?? false}
                       setChecked={(value: boolean) =>
                         handleInputChange("showThicknessPricing", value)
+                      }
+                    />
+                  </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <InlineStack blockAlign="center" gap="200">
+                    <Text as="p" variant="bodyMd">Show predefined sizes in configurator</Text>
+                    <ReactSwitchCustom
+                      checked={formData.showPredefinedSizesInConfigurator !== false}
+                      setChecked={(value: boolean) =>
+                        handleInputChange("showPredefinedSizesInConfigurator", value)
+                      }
+                    />
+                  </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <InlineStack blockAlign="center" gap="200">
+                    <Text as="p" variant="bodyMd">Show Custom size in configurator</Text>
+                    <ReactSwitchCustom
+                      checked={formData.showCustomSizeInConfigurator !== false}
+                      setChecked={(value: boolean) =>
+                        handleInputChange("showCustomSizeInConfigurator", value)
                       }
                     />
                   </InlineStack>
