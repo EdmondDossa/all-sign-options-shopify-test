@@ -27,7 +27,7 @@ import { ColorPaletteSvg } from "~/components/svgs/ColorPaletteSvg";
 import { TextImageSvg } from "~/components/svgs/TextImageSvg";
 import { AdditinalOptionSvg } from "~/components/svgs/AdditinalOptionSvg";
 
-import Sortable from "sortablejs";
+import Sortable from "~/utils/sortable-adapter";
 import { QrSvg } from "~/components/svgs/QrSvg";
 import { ImageSvg } from "~/components/svgs/ImageSvg ";
 import TemplatesIcon from "~/components/icons/TemplatesIcon";
@@ -143,7 +143,7 @@ export default function ConfigSettingsGeneral() {
   useEffect(()=>{
       const element = document.querySelector('.config-options');
       sortable   = new Sortable(element as HTMLElement, {
-
+        draggable: ".config-option",
       })
   })
 

@@ -148,8 +148,87 @@ export default function Index() {
   lastconfigs = getLastThree(configurations ?? []);
   console.log(configurations, "77777", lastconfigs);
 
-  const handleMaterials = (id: number) => {
-    navigate(`configuration/${id}/materials`);
+  const isNcpcProductType = (productType?: string | null) => {
+    const normalized = String(productType || "").trim().toLowerCase();
+    return normalized === "neon" || normalized === "channel";
+  };
+
+  const parseConfigData = (rawData: any) => {
+    if (!rawData) return null;
+    if (typeof rawData === "string") {
+      try {
+        const parsed = JSON.parse(rawData);
+        return parsed && typeof parsed === "object" ? parsed : null;
+      } catch {
+        return null;
+      }
+    }
+    return typeof rawData === "object" ? rawData : null;
+  };
+
+  const getNcpcProductTypeFromConfig = (config: any): "neon" | "channel" | null => {
+    const productType = String(config?.productType || "").trim().toLowerCase();
+    if (productType === "neon" || productType === "channel") {
+      return productType;
+    }
+
+    const data = parseConfigData(config?.data);
+    const dataProductType = String(data?.productType || "")
+      .trim()
+      .toLowerCase();
+    if (dataProductType === "neon" || dataProductType === "channel") {
+      return dataProductType;
+    }
+
+    const wrappedNcpcData = parseConfigData(data?.ncpc);
+    const wrappedDataProductType = String(wrappedNcpcData?.productType || "")
+      .trim()
+      .toLowerCase();
+    if (wrappedDataProductType === "neon" || wrappedDataProductType === "channel") {
+      return wrappedDataProductType;
+    }
+
+    const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
+    const hasClassicMaterials = Array.isArray(data?.materials);
+    const hasWrappedNcpcShape =
+      Boolean(wrappedNcpcData?.requiredOptions) && Boolean(wrappedNcpcData?.additionalOptions);
+
+    // Fallback legacy-safe:
+    // treat as NCPC only if NCPC blocks exist and classic materials are absent.
+    if (hasNcpcShape && !hasClassicMaterials) {
+      if (data?.requiredOptions?.letterTypesOptions || data?.requiredOptions?.letterTypeOptions) {
+        return "channel";
+      }
+      return "neon";
+    }
+
+    if (hasWrappedNcpcShape && !hasClassicMaterials) {
+      if (
+        wrappedNcpcData?.requiredOptions?.letterTypesOptions ||
+        wrappedNcpcData?.requiredOptions?.letterTypeOptions
+      ) {
+        return "channel";
+      }
+      return "neon";
+    }
+
+    return null;
+  };
+
+  const normalizeConfigId = (value: number | string) => {
+    const normalized = String(value ?? "").trim();
+    return /^\d+$/.test(normalized) ? normalized : "";
+  };
+
+  const handleConfigurationRoute = (id: number, productType?: string | null) => {
+    const safeConfigId = normalizeConfigId(id);
+    if (!safeConfigId) return;
+
+    if (isNcpcProductType(productType)) {
+      navigate(`/app/ncpc/${safeConfigId}/required-options`);
+      return;
+    }
+    navigate(`configuration/${safeConfigId}/materials`);
   };
 
   const updates = [
@@ -584,37 +663,50 @@ export default function Index() {
 
                     <Box paddingBlockStart="400">
                       <BlockStack gap="300">
-                        {lastconfigs.map((customiser, index) => (
-                          <div
-                            key={index}
-                            onClick={() => handleMaterials(customiser.id)}
-                          >
+                        {lastconfigs.map((customiser, index) => {
+                          const ncpcProductType = getNcpcProductTypeFromConfig(customiser);
+                          return (
                             <div
-                              style={{
-                                display: "flex",
-                                gap: "5px",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                cursor: "pointer",
-                              }}
+                              key={index}
+                              onClick={() =>
+                                handleConfigurationRoute(
+                                  customiser.id,
+                                  ncpcProductType || customiser.productType,
+                                )
+                              }
                             >
-                              <Box>
-                                <Text as="p" variant="bodySm">
-                                  ID {customiser.id}
-                                </Text>
-                                <Text as="h4" variant="headingSm">
-                                  {customiser.name}
-              </Text>
-            </Box>
-                              <Box>
-                                <Badge size="small" tone="info">
-                                  {/* {customiser.type} */}
-                                  simple
-                                </Badge>
-                              </Box>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  gap: "5px",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <Box>
+                                  <Text as="p" variant="bodySm">
+                                    ID {customiser.id}
+                                  </Text>
+                                  <Text as="h4" variant="headingSm">
+                                    {customiser.name}
+                                  </Text>
+                                </Box>
+                                <Box>
+                                  <Badge size="small" tone="info">
+                                    {isNcpcProductType(ncpcProductType || customiser.productType)
+                                      ? String(ncpcProductType || customiser.productType || "")
+                                          .trim()
+                                          .toLowerCase() === "neon"
+                                        ? "Neon"
+                                        : "Channel"
+                                      : customiser.materialType || "none"}
+                                  </Badge>
+                                </Box>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </BlockStack>
                     </Box>
                   </Box>

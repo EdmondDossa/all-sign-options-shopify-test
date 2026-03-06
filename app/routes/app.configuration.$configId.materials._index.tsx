@@ -57,6 +57,11 @@ import { BorderType, FixingMethodType, ShapeType } from "~/types/SettingsType";
 import MaterialAdvanceComponentService from "~/models/MaterialAdvanceComponent.service";
 import { number } from "zod";
 
+const isHtmlContent = (value?: string | null) => {
+  const rawValue = String(value || "").trim();
+  return rawValue.startsWith("<") && rawValue.includes(">");
+};
+
 // export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 //   const { session, admin, billing } = await authenticate.admin(request);
 //   await proSubscriptionRequired(billing,session?.shop, admin);
@@ -367,6 +372,8 @@ export default function MaterialIndex() {
     setLocalMaterials([...materials])
   }, [materials, ])
 
+  const selectedMaterialPopImg = selectedMaterial?.popImg ?? "";
+
   return (
     <div>
       <div
@@ -465,9 +472,17 @@ export default function MaterialIndex() {
               <Card>
                 <InlineStack>
                   <InlineStack gap="100" align="start">
-                    {selectedMaterial?.popImg && (
+                    {selectedMaterialPopImg && (
                       <div>
-                        <img src={selectedMaterial?.popImg} alt="" />
+                        {isHtmlContent(selectedMaterialPopImg) ? (
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: selectedMaterialPopImg,
+                            }}
+                          />
+                        ) : (
+                          <img src={selectedMaterialPopImg} alt="" />
+                        )}
                       </div>
                     )}
                     <div>

@@ -50,7 +50,7 @@ import {
 import { parseWithZod } from "@conform-to/zod";
 import { fileUrl } from "~/utils/fileUrl";
 import { PRICING_PLANS } from "~/utils/pricing";
-import Sortable from "sortablejs";
+import Sortable from "~/utils/sortable-adapter";
 import { useSortable } from "~/hooks/useSortable";
 import {
   SaveIcon,

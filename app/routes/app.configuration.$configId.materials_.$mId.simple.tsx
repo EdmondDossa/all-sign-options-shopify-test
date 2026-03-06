@@ -28,6 +28,11 @@ import MaterialFixingMethodsIndex from "./app.configuration.$configId.materials_
 import MaterialColors from "./app.configuration.$configId.materials_.$mId.simple.color._index";
 import MaterialAdditionalOptionIndex from "./app.configuration.$configId.materials_.$mId.simple.additional-option._index";
 
+const isHtmlContent = (value?: string | null) => {
+  const rawValue = String(value || "").trim();
+  return rawValue.startsWith("<") && rawValue.includes(">");
+};
+
 interface MaterielsProps {
   configuration?: ConfigurationType;
   plan?: string;
@@ -68,6 +73,7 @@ export default function SimpleMateriels(props: MaterielsProps) {
     () => configuration?.data?.materials?.[materialIndex ?? 0],
     [configuration, materialIndex]
   );
+  const materialPopImg = material?.popImg ?? "";
 
   // console.log(outletContext, "outlet context")
 
@@ -119,9 +125,17 @@ export default function SimpleMateriels(props: MaterielsProps) {
         <Card>
           <InlineStack>
             <InlineStack gap="100" align="start">
-              {material?.popImg && (
+              {materialPopImg && (
                 <div>
-                  <img src={material?.popImg} alt="" />
+                  {isHtmlContent(materialPopImg) ? (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: materialPopImg,
+                      }}
+                    />
+                  ) : (
+                    <img src={materialPopImg} alt="" />
+                  )}
                 </div>
               )}
               <div>
@@ -149,4 +163,3 @@ export default function SimpleMateriels(props: MaterielsProps) {
     </div>
   );
 }
-

@@ -22,7 +22,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { authenticate } from "~/shopify.server";
-import ConfigSettingsService from "~/models/ConfigSetttings.service ";
+import ConfigSettingsService from "~/models/ConfigSetttings.service";
 import { jFlashMessage } from "~/utils/message-flash";
 import type {
   SimpleOptionGroup,

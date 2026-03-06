@@ -48,11 +48,19 @@ interface MaterialAddOptionsProps {
   materialId: number | undefined;
   id: number;
   onClick: (id: boolean) => void;
+  showBackButton?: boolean;
   // edit: boolean
 }
 
 // This example is for guidance purposes. Copying it will come with caveats.
-export default function MaterialAdditionalOptionsIndex({ additionalOptionItems, configColors, materialId, id, onClick }: MaterialAddOptionsProps) {
+export default function MaterialAdditionalOptionsIndex({
+  additionalOptionItems,
+  configColors,
+  materialId,
+  id,
+  onClick,
+  showBackButton = true,
+}: MaterialAddOptionsProps) {
   const submit = useSubmit();
   const navigate = useNavigate();
   const deleteFetcher = useFetcher<any>();
@@ -300,22 +308,26 @@ export default function MaterialAdditionalOptionsIndex({ additionalOptionItems, 
               {rowMarkup}
             </IndexTable>
     
-            <Divider borderWidth="050" />
-            <Box paddingInline="300" paddingBlock="200">
-              <InlineStack align="end" gap="600">
-                <button className="back-large-btn" type="button" onClick={()=> onClick(false)}>
-                  <Box paddingInline="1000">
-                    <InlineStack gap="300">
-                      <RayStartArrowIcon />{" "}
-                      <span style={{ color: "black", fontWeight: "bold" }}>
-                        {" "}
-                        Back
-                      </span>
-                    </InlineStack>
-                  </Box>
-                </button>
-              </InlineStack>
-            </Box>
+            {showBackButton && (
+              <>
+                <Divider borderWidth="050" />
+                <Box paddingInline="300" paddingBlock="200">
+                  <InlineStack align="end" gap="600">
+                    <button className="back-large-btn" type="button" onClick={()=> onClick(false)}>
+                      <Box paddingInline="1000">
+                        <InlineStack gap="300">
+                          <RayStartArrowIcon />{" "}
+                          <span style={{ color: "black", fontWeight: "bold" }}>
+                            {" "}
+                            Back
+                          </span>
+                        </InlineStack>
+                      </Box>
+                    </button>
+                  </InlineStack>
+                </Box>
+              </>
+            )}
           </Card>
         </div>
       }

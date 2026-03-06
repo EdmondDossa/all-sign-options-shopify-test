@@ -51,6 +51,7 @@ model Configuration {
   product      Json?
   materialType String?
   productType  String?
+  pricingMode  String?
   session      Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   templates    Template[]
 }

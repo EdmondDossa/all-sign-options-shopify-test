@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="960" y2="540" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5F7FA"/>
+      <stop offset="1" stop-color="#DEE5EC"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8FBFF"/>
+      <stop offset="0.35" stop-color="#C8D2DC"/>
+      <stop offset="0.6" stop-color="#8F9BA8"/>
+      <stop offset="1" stop-color="#E8EEF5"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" rx="24" fill="url(#bg)"/>
+  <rect x="86" y="86" width="788" height="368" rx="26" fill="#FFFFFF" stroke="#9AA7B5" stroke-width="4"/>
+  <path d="M291 357V180h163c58 0 92 28 92 72 0 25-12 44-34 56 31 12 47 34 47 62 0 50-39 80-103 80H291Zm91-108h63c20 0 31-8 31-21 0-14-11-21-31-21h-63v42Zm0 78h70c22 0 34-8 34-24s-12-24-34-24h-70v48Z" fill="url(#steel)" stroke="#6D7A87" stroke-width="3"/>
+  <text x="480" y="435" text-anchor="middle" fill="#4C5966" font-family="Arial, sans-serif" font-size="44" font-weight="700">METAL LETTER SIGNS</text>
+</svg>

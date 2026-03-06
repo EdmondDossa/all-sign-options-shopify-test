@@ -1105,10 +1105,74 @@ const advanceMaterials: any = [
 
 const layersMaterials: any = []
 
+const normalizeNcpcProductType = (value?: string | null): "neon" | "channel" | null => {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  if (normalized === "neon" || normalized === "channel") {
+    return normalized;
+  }
+
+  return null;
+};
+
+const normalizeNcpcPricingMode = (value?: string | null) => {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  if (normalized === "fixing-height") return "fixed-height";
+  if (normalized === "fixing-width") return "fixed-width";
+  return normalized;
+};
+
+const getObjectData = (value: any) => {
+  if (!value) return null;
+
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  return typeof value === "object" ? value : null;
+};
+
+const withReadNcpcMeta = (configuration: any) => {
+  if (!configuration) return configuration;
+
+  const data = getObjectData(configuration.data);
+  const resolvedProductType =
+    normalizeNcpcProductType(configuration.productType) ||
+    normalizeNcpcProductType(data?.productType);
+
+  if (!resolvedProductType) {
+    return {
+      ...configuration,
+      pricingMode: null,
+    };
+  }
+
+  const resolvedPricingMode =
+    normalizeNcpcPricingMode((configuration as any)?.pricingMode) ||
+    normalizeNcpcPricingMode(data?.pricingMode) ||
+    "fixed-height";
+
+  return {
+    ...configuration,
+    productType: resolvedProductType,
+    pricingMode: resolvedPricingMode,
+  };
+};
+
 export default class ConfigurationService {
   static async getConfigurations(sessionId: string, includeTempletes = false): Promise<any[] | null> {
     try {
-      return await prisma.configuration.findMany({
+      const configurations = await prisma.configuration.findMany({
         where: {
           sessionId: sessionId,
         },
@@ -1119,6 +1183,8 @@ export default class ConfigurationService {
           id: "asc",
         }
       });
+
+      return configurations.map(withReadNcpcMeta);
     } catch (error) {
       console.error("Error retrieving configurations:", error);
       return Promise.reject(null);
@@ -1130,13 +1196,15 @@ export default class ConfigurationService {
     sessionId: string,
   ): Promise<any | null> {
     try {
-      return await prisma.configuration.findUnique({
+      const configuration = await prisma.configuration.findUnique({
         where: {
           id: id,
           sessionId: sessionId,
         },
         include: { templates: true }
       });
+
+      return withReadNcpcMeta(configuration);
     } catch (error) {
       console.error("Error retrieving configuration:", error);
       return Promise.reject(null);
@@ -1150,12 +1218,14 @@ export default class ConfigurationService {
     sessionId: string,
   ): Promise<any | null> {
     try {
-      return await prisma.configuration.findUnique({
+      const configuration = await prisma.configuration.findUnique({
         where: {
           id: id,
           sessionId: sessionId,
         }
       });
+
+      return withReadNcpcMeta(configuration);
     } catch (error) {
       console.error("Error retrieving configuration:", error);
       return Promise.reject(null);
@@ -1204,7 +1274,9 @@ export default class ConfigurationService {
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
-    const { id, products, templates, materialType, productType, ...configData } = configuration;
+    const { id, products, templates, materialType, productType, pricingMode, ...configData } = configuration;
+    const normalizedNcpcProductType = normalizeNcpcProductType(productType as any);
+    const isNcpcConfiguration = Boolean(normalizedNcpcProductType);
     const productList = Array.isArray(products) ? products : [];
     for (const p of productList) {
       const productId = (p as any)?.id ?? (p as any);
@@ -1216,8 +1288,16 @@ export default class ConfigurationService {
       }
     }
     try {
+      const normalizedPricingMode =
+        isNcpcConfiguration
+          ? normalizeNcpcPricingMode(
+              pricingMode || (getObjectData((configData as any).data) as any)?.pricingMode,
+            ) || "fixed-height"
+          : null;
+
       console.log("updateConfiguration - Saving materialType:", materialType);
       console.log("updateConfiguration - Saving productType:", productType);
+      console.log("updateConfiguration - Saving pricingMode:", normalizedPricingMode);
       return await prisma.configuration.update({
         where: {
           id: id,
@@ -1227,7 +1307,8 @@ export default class ConfigurationService {
           ...configData,
           product: products, // Save products array in DB field 'product' (legacy column name)
           materialType: materialType, // Explicitly preserve materialType
-          productType: productType, // Explicitly preserve productType
+          productType: normalizedNcpcProductType || productType, // Explicitly preserve productType
+          pricingMode: normalizedPricingMode,
         },
       });
     } catch (error) {
@@ -1257,7 +1338,9 @@ export default class ConfigurationService {
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
-    const { products, templates, materialType, productType, ...configData } = configuration;
+    const { products, templates, materialType, productType, pricingMode, ...configData } = configuration;
+    const normalizedNcpcProductType = normalizeNcpcProductType(productType as any);
+    const isNcpcConfiguration = Boolean(normalizedNcpcProductType);
     const productList = Array.isArray(products) ? products : [];
     for (const p of productList) {
       const productId = (p as any)?.id ?? (p as any);
@@ -1269,19 +1352,35 @@ export default class ConfigurationService {
       }
     }
     try {
-      if (configuration.materialType == "simple") {
-        initialData.materials = simpleMaterials
-      } else if (configuration.materialType == "advance") {
-        initialData.materials = advanceMaterials
+      let dataForCreate: any = initialData;
+      const normalizedPricingMode =
+        isNcpcConfiguration
+          ? normalizeNcpcPricingMode(
+              pricingMode || (getObjectData((configData as any).data) as any)?.pricingMode,
+            ) || "fixed-height"
+          : null;
+
+      if (isNcpcConfiguration) {
+        const incomingData = getObjectData((configData as any).data);
+        dataForCreate = incomingData || {};
+      } else {
+        if (configuration.materialType == "simple") {
+          initialData.materials = simpleMaterials
+        } else if (configuration.materialType == "advance") {
+          initialData.materials = advanceMaterials
+        }
+        dataForCreate = (configData as any).data || initialData;
       }
+
       return await prisma.configuration.create({
         data: {
           ...configData,
           product: products, // Save products array in DB field 'product' (legacy column name)
           materialType: materialType, // Save materialType
-          productType: productType, // Save productType
+          productType: normalizedNcpcProductType || productType, // Save productType
+          pricingMode: normalizedPricingMode,
           sessionId: sessionId,
-          data: initialData,
+          data: dataForCreate,
         },
       });
     } catch (error) {

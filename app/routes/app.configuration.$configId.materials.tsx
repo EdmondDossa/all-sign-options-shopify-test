@@ -5,7 +5,7 @@ import { BoxBackground } from "~/components/layouts/BoxBackground";
 import NextLtrIcon from "~/components/icons/NextLtrIcon";
 import MaterialService from "~/models/Material.service";
 import { ConfigAdditionalOption, Material } from "~/types/ConfigDataType";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { PRICING_PLANS } from "~/utils/pricing";
@@ -15,11 +15,77 @@ import SettingShapesService from "~/models/SettingShapes.service";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
 import SettingBorderService from "~/models/SettingBorder.service";
 import MaterialAdditionalOptionService from "~/models/MaterialAdditionalOption.service";
+import ConfigurationService from "~/models/Configuration.service";
+
+const normalizeProductType = (value?: string | null) =>
+  String(value || "")
+    .trim()
+    .toLowerCase();
+
+const parseConfigData = (rawData: any) => {
+  if (!rawData) return null;
+  if (typeof rawData === "string") {
+    try {
+      const parsed = JSON.parse(rawData);
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+  return typeof rawData === "object" ? rawData : null;
+};
+
+const resolveNcpcProductType = (configuration: any): "neon" | "channel" | null => {
+  const productType = normalizeProductType(configuration?.productType);
+  if (productType === "neon" || productType === "channel") {
+    return productType;
+  }
+
+  const data = parseConfigData(configuration?.data);
+  const dataProductType = normalizeProductType(data?.productType);
+  if (dataProductType === "neon" || dataProductType === "channel") {
+    return dataProductType;
+  }
+
+  const wrappedNcpcData = parseConfigData(data?.ncpc);
+  const wrappedProductType = normalizeProductType(wrappedNcpcData?.productType);
+  if (wrappedProductType === "neon" || wrappedProductType === "channel") {
+    return wrappedProductType;
+  }
+
+  const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
+  const hasWrappedNcpcShape =
+    Boolean(wrappedNcpcData?.requiredOptions) && Boolean(wrappedNcpcData?.additionalOptions);
+  const hasClassicMaterials = Array.isArray(data?.materials);
+
+  if ((hasNcpcShape || hasWrappedNcpcShape) && !hasClassicMaterials) {
+    if (
+      data?.requiredOptions?.letterTypesOptions ||
+      data?.requiredOptions?.letterTypeOptions ||
+      wrappedNcpcData?.requiredOptions?.letterTypesOptions ||
+      wrappedNcpcData?.requiredOptions?.letterTypeOptions
+    ) {
+      return "channel";
+    }
+    return "neon";
+  }
+
+  return null;
+};
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin, billing } = await authenticate.admin(request);
   const configId = parseInt(params.configId ?? "");
   let materials: Material[] | null = null;
+
+  const configuration = Number.isNaN(configId)
+    ? null
+    : await ConfigurationService.getConfiguration(configId, session.id);
+
+  const ncpcProductType = resolveNcpcProductType(configuration);
+  if (ncpcProductType) {
+    throw redirect(`/app/ncpc/${configId}/required-options`);
+  }
 
   if (configId) {
     materials = await MaterialService.getAll(session.id, configId);

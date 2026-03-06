@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="960" y2="540" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DDF2FF"/>
+      <stop offset="1" stop-color="#F2F6EC"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" rx="28" fill="url(#g)"/>
+  <path d="M301 155l86-35c16 24 39 37 93 37s77-13 93-37l86 35c20 8 31 30 27 51l-16 93c-3 15-16 25-31 25h-68v157c0 22-18 40-40 40H329c-22 0-40-18-40-40V324h-68c-15 0-28-10-31-25l-16-93c-4-21 7-43 27-51z" fill="#fff" stroke="#90A6B7" stroke-width="6"/>
+  <text x="480" y="474" text-anchor="middle" fill="#3F5968" font-family="Arial, sans-serif" font-size="56" font-weight="700">APPAREL</text>
+</svg>

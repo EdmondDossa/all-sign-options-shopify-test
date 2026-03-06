@@ -17,7 +17,7 @@ import {
   Text,
   Pagination, // <--- Nouvel import
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { ViewIconBtn } from "~/components/buttons/ViewIconBtn";
 import { EditIconBtn } from "~/components/buttons/EditIconBtn";
@@ -33,7 +33,11 @@ import { BoxBackground } from "~/components/layouts/BoxBackground";
 import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { authenticate } from "~/shopify.server";
-import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import ConfigurationService from "~/models/Configuration.service";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
@@ -44,7 +48,13 @@ import { fileUrl } from "~/utils/fileUrl";
 import { DuplicateIconBtn } from "~/components/buttons/DuplicateIconBtn";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { PRICING_PLANS } from "~/utils/pricing";
-import { DeleteIcon, DuplicateIcon, EditIcon, MenuHorizontalIcon, ViewIcon } from "@shopify/polaris-icons";
+import {
+  DeleteIcon,
+  DuplicateIcon,
+  EditIcon,
+  MenuHorizontalIcon,
+  ViewIcon,
+} from "@shopify/polaris-icons";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
 
 // export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -60,14 +70,14 @@ import ManageFontIcon from "~/components/icons/ManageFontIcon";
 
 //   const startIndex = (page - 1) * limit;
 //   const endIndex = startIndex + limit;
-  
+
 //   // Découpage pour la page actuelle
 //   const paginatedConfigurations = allConfigurations?.slice(startIndex, endIndex);
 
 //   const hasNextPage = endIndex < allConfigurations?.length;
 //   const hasPreviousPage = page > 1;
 
-//   return json({ 
+//   return json({
 //     configurations: paginatedConfigurations,
 //     page,
 //     hasNextPage,
@@ -82,28 +92,28 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   // --- LOGIQUE PAGINATION ---
   const page = parseInt(url.searchParams.get("page") || "1", 10);
-  const limit = 8
+  const limit = 8;
 
   const result: any = await ConfigurationService.getConfigurations(session.id);
-  
+
   const allConfigurations = Array.isArray(result) ? result : [];
 
   allConfigurations.sort((a: any, b: any) => b.id - a.id);
 
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
-  
+
   const paginatedConfigurations = allConfigurations.slice(startIndex, endIndex);
 
   const hasNextPage = endIndex < allConfigurations.length;
   const hasPreviousPage = page > 1;
 
-  return json({ 
+  return json({
     configurations: paginatedConfigurations,
     page,
     hasNextPage,
     hasPreviousPage,
-    totalCount: allConfigurations.length
+    totalCount: allConfigurations.length,
   });
 };
 
@@ -113,23 +123,25 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const id = formData.get("id") as string;
   const method = request.method;
- 
 
   switch (method) {
     case "DELETE": {
       await ConfigurationService.deleteConfiguration(parseInt(id), session.id);
-      return redirect(
-        `${flashMessage("Configuration deleted successfully")}`,
-      );
+      return redirect(`${flashMessage("Configuration deleted successfully")}`);
     }
 
     case "POST": {
       const configuration: ConfigurationType | any =
-        await ConfigurationService.getConfigurationWithoutTemplates(parseInt(id), session.id);
+        await ConfigurationService.getConfigurationWithoutTemplates(
+          parseInt(id),
+          session.id,
+        );
       delete configuration.id;
       // Ne pas copier le champ product (legacy), utiliser products à la place
       if (configuration.product) {
-        (configuration as any).products = Array.isArray(configuration.product) ? configuration.product : [];
+        (configuration as any).products = Array.isArray(configuration.product)
+          ? configuration.product
+          : [];
         delete (configuration as any).product;
       }
       configuration.name = formData.get("configTitle") as string;
@@ -152,16 +164,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function Configuration() {
   const submit = useSubmit();
-  
+
   // Récupération des données étendues du loader
-  let { configurations, page, hasNextPage, hasPreviousPage } = useLoaderData<typeof loader>();
-  
+  let { configurations, page, hasNextPage, hasPreviousPage } =
+    useLoaderData<typeof loader>();
+
   let { plan } = useOutletContext<{ plan: string }>();
-  
+
   // Gestion du plan Starter (Limitation visuelle)
   if (plan == PRICING_PLANS.STARTER) {
     // Note: Si on est en starter, on limite l'affichage même si la pagination en renvoie plus
-    configurations = configurations?.slice(0, PRICING_PLANS.STARTER_RULES.configurations)||[];
+    configurations =
+      configurations?.slice(0, PRICING_PLANS.STARTER_RULES.configurations) ||
+      [];
   }
 
   useHandleFlashMessage();
@@ -172,6 +187,11 @@ export default function Configuration() {
 
   const [active, setActive] = useState(false);
   const [activePopoverId, setActivePopoverId] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const togglePopover = useCallback(() => setActive((active) => !active), []);
 
@@ -189,7 +209,7 @@ export default function Configuration() {
     console.log(`Action "${action}" sur l'élément ID: ${id}`);
     setActivePopoverId(null);
   };
-  
+
   const onHandleConfigurationCreate = () => {
     navigate("/app/configuration/create");
   };
@@ -200,20 +220,126 @@ export default function Configuration() {
 
   const handeleDuplicate = (id: number, name: string) => {
     submit({ id: id, configTitle: `${name}-copy` }, { method: "POST" });
-
   };
 
-  const handleUpdate = (id: number) => {
-    submit({ id: id }, { method: "GET", action: "create" });
+  const normalizeConfigId = (value: number | string) => {
+    const normalized = String(value ?? "").trim();
+    return /^\d+$/.test(normalized) ? normalized : "";
   };
 
-  const handleMaterials = (id: number) => {
-    navigate(`${id}/materials`);
+  const handleUpdate = (id: number, productType?: string | null) => {
+    const safeConfigId = normalizeConfigId(id);
+    if (!safeConfigId) return;
+
+    if (isNcpcProductType(productType)) {
+      navigate(`/app/ncpc/${safeConfigId}/required-options`);
+      return;
+    }
+    submit({ id: safeConfigId }, { method: "GET", action: "create" });
   };
-  
+
+  const normalizeProductType = (productType?: string | null) =>
+    String(productType || "")
+      .trim()
+      .toLowerCase();
+
+  const isNcpcProductType = (productType?: string | null) => {
+    const normalized = normalizeProductType(productType);
+    return normalized === "neon" || normalized === "channel";
+  };
+
+  const parseConfigData = (rawData: any) => {
+    if (!rawData) return null;
+    if (typeof rawData === "string") {
+      try {
+        const parsed = JSON.parse(rawData);
+        return parsed && typeof parsed === "object" ? parsed : null;
+      } catch {
+        return null;
+      }
+    }
+    return typeof rawData === "object" ? rawData : null;
+  };
+
+  const getNcpcProductTypeFromConfig = (
+    config: any,
+  ): "neon" | "channel" | null => {
+    const normalized = normalizeProductType(config?.productType);
+    if (normalized === "neon" || normalized === "channel") {
+      return normalized;
+    }
+
+    const data = parseConfigData(config?.data);
+    const normalizedDataProductType = normalizeProductType(data?.productType);
+    if (
+      normalizedDataProductType === "neon" ||
+      normalizedDataProductType === "channel"
+    ) {
+      return normalizedDataProductType;
+    }
+
+    const wrappedNcpcData = parseConfigData(data?.ncpc);
+    const normalizedWrappedProductType = normalizeProductType(
+      wrappedNcpcData?.productType,
+    );
+    if (
+      normalizedWrappedProductType === "neon" ||
+      normalizedWrappedProductType === "channel"
+    ) {
+      return normalizedWrappedProductType;
+    }
+
+    const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
+    const hasClassicMaterials = Array.isArray(data?.materials);
+    const hasWrappedNcpcShape =
+      Boolean(wrappedNcpcData?.requiredOptions) && Boolean(wrappedNcpcData?.additionalOptions);
+
+    // Fallback legacy-safe:
+    // treat as NCPC only if NCPC blocks exist and classic materials are absent.
+    if (hasNcpcShape && !hasClassicMaterials) {
+      if (data?.requiredOptions?.letterTypesOptions || data?.requiredOptions?.letterTypeOptions) {
+        return "channel";
+      }
+      return "neon";
+    }
+
+    if (hasWrappedNcpcShape && !hasClassicMaterials) {
+      if (
+        wrappedNcpcData?.requiredOptions?.letterTypesOptions ||
+        wrappedNcpcData?.requiredOptions?.letterTypeOptions
+      ) {
+        return "channel";
+      }
+      return "neon";
+    }
+
+    return null;
+  };
+
+  const handleConfigurationRoute = (
+    id: number,
+    productType?: string | null,
+  ) => {
+    const safeConfigId = normalizeConfigId(id);
+    if (!safeConfigId) return;
+
+    if (isNcpcProductType(productType)) {
+      navigate(`/app/ncpc/${safeConfigId}/required-options`);
+      return;
+    }
+    navigate(`${safeConfigId}/materials`);
+  };
 
   const handlePreviews = (id: number) => {
-    navigate(`${id}/preview`);
+    const safeConfigId = normalizeConfigId(id);
+    if (!safeConfigId) return;
+    navigate(`${safeConfigId}/preview`);
+  };
+
+  const handleNcpcInterface = (id: number) => {
+    const safeConfigId = normalizeConfigId(id);
+    if (!safeConfigId) return;
+    navigate(`/app/ncpc/${safeConfigId}/required-options`);
   };
 
   configurations = configurations || [];
@@ -223,94 +349,138 @@ export default function Configuration() {
     plural: "Configurations",
   };
 
+  const rowMarkup = configurations.map((config: any, index: number) => {
+    const { id, name, description, icon, materialType, productType } = config;
+    const isActive = activePopoverId === id;
+    const ncpcProductType = getNcpcProductTypeFromConfig(config);
+    const materialBadgeLabel = ncpcProductType
+      ? ncpcProductType === "neon"
+        ? "Neon"
+        : "Channel"
+      : (materialType ?? "none");
+    const materialBadgeTone = ncpcProductType
+      ? "attention"
+      : materialType === "simple"
+        ? "info"
+        : materialType === "advance"
+          ? "success"
+          : "attention";
 
-  const rowMarkup = configurations.map(
-    ({ id, name, description, icon, popupImg, materialType }: any, index: number) => {
-      const isActive = activePopoverId === id;
-      let materialTyp = 'simple'
-  
-      return (
-        <IndexTable.Row id={`${id}`} key={id} position={index} onClick={() => handleMaterials(id)}>
-          <IndexTable.Cell>
-            <InlineStack blockAlign="center" gap="300" wrap={false}>
-              <BorderCircleText onClick={() => handleMaterials(id)} text={name} />
-              <span className="btn-span" onClick={() => handleMaterials(id)}>
-                {truncateText(name)}
-              </span>
-            </InlineStack>
-          </IndexTable.Cell>
-  
-          <IndexTable.Cell>
-            <span className="btn-span" onClick={() => handleMaterials(id)}>
-              {truncateText(description)}
+    return (
+      <IndexTable.Row
+        id={`${id}`}
+        key={id}
+        position={index}
+        onClick={() =>
+          handleConfigurationRoute(id, ncpcProductType || productType)
+        }
+      >
+        <IndexTable.Cell>
+          <InlineStack blockAlign="center" gap="300" wrap={false}>
+            <BorderCircleText
+              onClick={() =>
+                handleConfigurationRoute(id, ncpcProductType || productType)
+              }
+              text={name}
+            />
+            <span
+              className="btn-span"
+              onClick={() =>
+                handleConfigurationRoute(id, ncpcProductType || productType)
+              }
+            >
+              {truncateText(name)}
             </span>
-          </IndexTable.Cell>
-  
-          <IndexTable.Cell className="td-center">
-            {icon && (
-              <img
-                style={{ height: "30px" }}
-                src={fileUrl(icon)}
-                alt={`product thumbnail ${name}`}
-              />
-            )}
-          </IndexTable.Cell>
+          </InlineStack>
+        </IndexTable.Cell>
 
-          <IndexTable.Cell className="td-center">
-            {(materialType === null || materialType === undefined) && 
-              <Badge>
-                none
-              </Badge>
+        <IndexTable.Cell>
+          <span
+            className="btn-span"
+            onClick={() =>
+              handleConfigurationRoute(id, ncpcProductType || productType)
             }
-            {(materialType != null || materialType != undefined) &&
-              <Badge tone={
-                materialType === 'simple' ? 'info' : materialType === 'advance' ? 'success' : 'attention'
-              }>
-                {materialType}
-              </Badge>
-            }
-          </IndexTable.Cell>
-  
-          <IndexTable.Cell className="td-center">
-            <div onClick={(e) => { e.stopPropagation() }}>
-              <Popover
-                active={isActive}
-                activator={
-                  <Button
-                    onClick={() =>
-                      setActivePopoverId(isActive ? null : id)
-                    }
-                    icon={<Icon source={MenuHorizontalIcon} />}
-                  />
-                }
-                onClose={() => setActivePopoverId(null)}
-                preferredAlignment="right"
-              >
-                <ActionList
-                  items={[
-                    { content: 'Preview', icon: ViewIcon, onAction: () => handlePreviews(id) },
-                    { content: 'Edit', icon: EditIcon, onAction: () => handleUpdate(id) },
-                    { content: 'Duplicate', icon: DuplicateIcon, onAction: () => handeleDuplicate(id, name) },
-                    { content: 'Delete', icon: DeleteIcon, onAction: () => handeleDelete(id), destructive: true, },
-                  ]}
+          >
+            {truncateText(description)}
+          </span>
+        </IndexTable.Cell>
+
+        <IndexTable.Cell className="td-center">
+          {icon && (
+            <img
+              style={{ height: "30px" }}
+              src={fileUrl(icon)}
+              alt={`product thumbnail ${name}`}
+            />
+          )}
+        </IndexTable.Cell>
+
+        <IndexTable.Cell className="td-center">
+          <Badge tone={materialBadgeTone}>{materialBadgeLabel}</Badge>
+        </IndexTable.Cell>
+
+        <IndexTable.Cell className="td-center">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Popover
+              active={isActive}
+              activator={
+                <Button
+                  onClick={() => setActivePopoverId(isActive ? null : id)}
+                  icon={<Icon source={MenuHorizontalIcon} />}
                 />
-              </Popover>
-            </div>
-          </IndexTable.Cell>
-        </IndexTable.Row>
-      );
-    }
-  );
+              }
+              onClose={() => setActivePopoverId(null)}
+              preferredAlignment="right"
+            >
+              <ActionList
+                items={[
+                  {
+                    content: "Preview",
+                    icon: ViewIcon,
+                    onAction: () => handlePreviews(id),
+                  },
+                  {
+                    content: "Edit",
+                    icon: EditIcon,
+                    onAction: () =>
+                      handleUpdate(id, ncpcProductType || productType),
+                  },
+                  {
+                    content: "Duplicate",
+                    icon: DuplicateIcon,
+                    onAction: () => handeleDuplicate(id, name),
+                  },
+                  {
+                    content: "Delete",
+                    icon: DeleteIcon,
+                    onAction: () => handeleDelete(id),
+                    destructive: true,
+                  },
+                ]}
+              />
+            </Popover>
+          </div>
+        </IndexTable.Cell>
+      </IndexTable.Row>
+    );
+  });
 
   return (
     <Page fullWidth>
       <Card>
-        <InlineStack gap="100" align="space-between" blockAlign='center'>
+        <InlineStack gap="100" align="space-between" blockAlign="center">
           <Text as="h2" variant="headingMd">
             Configurations list
           </Text>
 
-          { !(plan == PRICING_PLANS.STARTER && configurations?.length >= PRICING_PLANS.STARTER_RULES.configurations) &&
+          {!(
+            plan == PRICING_PLANS.STARTER &&
+            configurations?.length >= PRICING_PLANS.STARTER_RULES.configurations
+          ) && (
             <InlineStack align="end">
               <button
                 className="primary-btn"
@@ -328,34 +498,44 @@ export default function Configuration() {
                 </Box>
               </button>
             </InlineStack>
-          }
+          )}
         </InlineStack>
       </Card>
-      
-      <div style={{margin:"10px 0px "}}>
+
+      <div style={{ margin: "10px 0px " }}>
         <Card>
-          <IndexTable
-            resourceName={resourceName}
-            itemCount={configurations.length}
-            selectable={false}
-            headings={[
-              { title: "Name configuration" },
-              { title: "Desciption" },
-              { title: "Icon", alignment: "center" },
-              { title: "Material Type", alignment: "center" },
-              { title: "Action", alignment: "center" },
-            ]}
-          >
-            {rowMarkup}
-          </IndexTable>
-          
+          {isClient ? (
+            <IndexTable
+              resourceName={resourceName}
+              itemCount={configurations.length}
+              selectable={false}
+              headings={[
+                { title: "Name configuration" },
+                { title: "Desciption" },
+                { title: "Icon", alignment: "center" },
+                { title: "Material Type", alignment: "center" },
+                { title: "Action", alignment: "center" },
+              ]}
+            >
+              {rowMarkup}
+            </IndexTable>
+          ) : (
+            <Box padding="300">
+              <Text as="p" tone="subdued">
+                Loading configurations...
+              </Text>
+            </Box>
+          )}
+
           {/* --- COMPOSANT PAGINATION --- */}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            padding: '16px',
-            borderTop: '1px solid var(--p-color-border-secondary)' 
-          }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: "16px",
+              borderTop: "1px solid var(--p-color-border-secondary)",
+            }}
+          >
             <Pagination
               hasPrevious={hasPreviousPage}
               onPrevious={handlePreviousPage}
@@ -364,7 +544,6 @@ export default function Configuration() {
             />
           </div>
           {/* ----------------------------- */}
-          
         </Card>
       </div>
     </Page>

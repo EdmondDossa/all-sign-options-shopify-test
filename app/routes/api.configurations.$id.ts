@@ -59,6 +59,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
             id: config?.id,
             materialType: config?.materialType,
             productType: config?.productType,
+            pricingMode: config?.pricingMode,
             name: config?.name
         });
         
@@ -73,10 +74,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
         config = await replaceDomainUrl(config, admin);
 
-        // Ajouter materialType et productType dans l'objet data pour le configurateur frontend
-        if (config && config.data) {
+        const normalizedProductType = String(config?.productType || "")
+          .trim()
+          .toLowerCase();
+        const isNcpcConfiguration =
+          normalizedProductType === "neon" || normalizedProductType === "channel";
+
+        // Ajouter materialType dans l'objet data uniquement pour le flux legacy (non-NCPC)
+        if (config && config.data && !isNcpcConfiguration) {
             config.data.materialType = config.materialType;
-            config.data.productType = config.productType;
         }
 
         // S'assurer que materialType et productType sont bien présents au niveau racine ET dans data
@@ -84,8 +90,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
             id: config?.id,
             materialType: config?.materialType,
             productType: config?.productType,
+            pricingMode: config?.pricingMode,
             dataMaterialType: config?.data?.materialType,
-            dataProductType: config?.data?.productType,
             hasData: !!config?.data
         });
 

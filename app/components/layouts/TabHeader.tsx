@@ -117,7 +117,7 @@ interface TabHeaderProps {
   onSelectTab: (tabId: string) => void;
 }
 
-export const TabHeader = ({ selectedTab, onSelectTab }: TabHeaderProps) => (
+const TabHeader = ({ selectedTab, onSelectTab }: TabHeaderProps) => (
   <div style={{
     // display: 'flex',
     // border: '10px solid red',
@@ -150,4 +150,7 @@ export const TabHeader = ({ selectedTab, onSelectTab }: TabHeaderProps) => (
   {/* </Box> */}
   </div>
 );
+
+export { TabHeader };
+export default TabHeader;
   

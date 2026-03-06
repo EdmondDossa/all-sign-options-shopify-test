@@ -1,4 +1,4 @@
-import { Box, Button, ButtonProps, InlineStack } from "@shopify/polaris";
+import { Box, InlineStack } from "@shopify/polaris";
 
 import RayStartArrowIcon from "../icons/RayStartArrowIcon";
 import { useNavigate } from "@remix-run/react";
@@ -8,13 +8,18 @@ export const BackBtn = ({
   isLoading,
   title,
   onClick,
+  type,
+  disabled,
 }: {
   isLoading?: boolean;
   title?: string;
-  onClick?: Function;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }) => {
   const navigate = useNavigate();
   const onBack = () => {
+    if (isLoading || disabled) return;
     if (onClick) {
       onClick();
     } else {
@@ -22,7 +27,12 @@ export const BackBtn = ({
     }
   };
   return (
-    <button className="back-large-btn" type="button" onClick={onBack}>
+    <button
+      className="back-large-btn"
+      type={type || "button"}
+      onClick={onBack}
+      disabled={Boolean(isLoading || disabled)}
+    >
       <Box paddingInline="1000">
         <InlineStack gap="300">
           {isLoading ? <LoadingGray /> : <RayStartArrowIcon />}

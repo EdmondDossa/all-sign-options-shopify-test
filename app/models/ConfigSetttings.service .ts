@@ -1,6 +1,5 @@
-import { Material, MaterialSimple } from "~/types/ConfigDataType";
 import ConfigurationService from "./Configuration.service";
-import { ConfigurationType } from '~/types/ConfigurationType';
+import type { ConfigurationType } from "~/types/ConfigurationType";
 
 export default class ConfigSettingsService {
   static async getAll(sessionId: string, configurationId: number): Promise<any| null> {
@@ -106,6 +105,45 @@ export default class ConfigSettingsService {
       return Promise.resolve(null);
     } catch (error) {
       console.error("Error Editing config setting main:", error);
+      return Promise.resolve(null);
+    }
+  }
+
+  static async updateSetting(
+    configurationId: number,
+    sessionId: string,
+    setting: string,
+    value: any,
+  ): Promise<any | null> {
+    try {
+      let configuration: ConfigurationType = await ConfigurationService.getConfiguration(
+        configurationId,
+        sessionId,
+      );
+      if (!configuration) return null;
+
+      const data = configuration.data || {};
+      const settings =
+        data && typeof data === "object" && "settings" in data
+          ? (data as any).settings || {}
+          : {};
+
+      configuration.data = {
+        ...(data as any),
+        settings: {
+          ...settings,
+          [setting]: value,
+        },
+      } as any;
+
+      configuration = await ConfigurationService.updateConfiguration(
+        configuration,
+        sessionId,
+      );
+
+      return configuration?.data?.settings?.[setting] ?? null;
+    } catch (error) {
+      console.error("Error updating setting:", error);
       return Promise.resolve(null);
     }
   }

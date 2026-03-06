@@ -1,4 +1,4 @@
-export  const SpacingBackground = ({
+const SpacingBackground = ({
     children,
     width = "100%",
     height = "auto",
@@ -47,4 +47,7 @@ export  const SpacingBackground = ({
       </div>
     );
   };
+
+export { SpacingBackground };
+export default SpacingBackground;
   

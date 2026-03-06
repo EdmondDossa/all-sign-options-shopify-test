@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import Sortable from 'sortablejs';
+import Sortable from '~/utils/sortable-adapter';
 
 export const useSortable = (selector: string, data?: any) => {
   useEffect(() => {
@@ -23,12 +23,14 @@ export const useSortable = (selector: string, data?: any) => {
         },
 
         onStart: function (evt:any) {
+          if (!evt?.item) return;
           const rect = evt.item.getBoundingClientRect();
           evt.item.style.width = `${rect.width}px`;
           evt.item.style.height = `${rect.height}px`;
         },
 
         onEnd: function (evt:any) {
+          if (!evt?.item) return;
           evt.item.classList.remove('dragging-row');
           document.body.style.cursor = '';
         },

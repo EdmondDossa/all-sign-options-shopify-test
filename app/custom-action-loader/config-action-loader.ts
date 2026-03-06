@@ -1,6 +1,6 @@
 import { parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-import ConfigSettingsService from "~/models/ConfigSetttings.service ";
+import ConfigSettingsService from "~/models/ConfigSetttings.service";
 import { authenticate } from "~/shopify.server";
 import { jFlashMessage } from "~/utils/message-flash";
 

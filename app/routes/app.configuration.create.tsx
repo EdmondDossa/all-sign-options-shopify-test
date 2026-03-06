@@ -20,7 +20,7 @@ import {
   TextField,
   Thumbnail,
 } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   Form,
@@ -60,9 +60,14 @@ import FontService from "~/models/Font.service";
 import {  fontData } from "~/models/demoData";
 import { getPlan } from "~/utils/pricing-server.server";
 import { MultiProductSelectField } from "~/components/inputs/MultiProductSelectField";
+import {
+  getAllowedNcpcPricingModes,
+  getDefaultNcpcPresetKey,
+  getDefaultNcpcPricingMode,
+  NCPC_PRICING_OPTIONS,
+} from "~/utils/ncpc-presets";
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@shopify/polaris-icons"; 
-import { useMemo, useEffect } from "react"; // Ajoutez useMemo et useEffect si ce n'est pas déjà fait
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -409,7 +414,7 @@ export default function ConfigurationEdit() {
   //   ]
   // }
 
-   let signageOption = {
+  let signageOption = {
     name: "Signage",
     type: "signage", 
     productCategories: [
@@ -516,7 +521,6 @@ export default function ConfigurationEdit() {
                 materialType: "advance",
                 // materialType: "all"
               },
-              ,
               {
                 name: "Labels and plates",
                 description: "Small information or identification plates.",
@@ -656,9 +660,234 @@ export default function ConfigurationEdit() {
             ]
           }
         ]
+      },
+      {
+        name: "Neon",
+        type: "neon",
+        description: "LED / flex neon illuminated signs.",
+        demoLink: "",
+        productGroups: [
+          {
+            name: "Most popular",
+            products: [
+              {
+                name: "Neon Letter Signs",
+                description: "Neon and Flex LED Neon Letter Signs.",
+                image: [],
+                type: "neon-letter-signs",
+                demoData: "",
+                materialType: "all",
+              },
+              {
+                name: "Neon Logo Signs",
+                description: "AI-powered custom logo signs.",
+                image: [],
+                type: "neon-logo-signs",
+                demoData: "",
+                materialType: "all",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        name: "Channel",
+        type: "channel",
+        description: "2D / 3D channel letter signage.",
+        demoLink: "",
+        productGroups: [
+          {
+            name: "Most popular",
+            products: [
+              {
+                name: "Acrylic Letter Signs",
+                description: "2D / 3D acrylic letter signs.",
+                image: [],
+                type: "acrylic-letter-signs",
+                demoData: "",
+                materialType: "all",
+              },
+              {
+                name: "Metal Letter Signs",
+                description: "2D / 3D metal letter signs.",
+                image: [],
+                type: "metal-letter-signs",
+                demoData: "",
+                materialType: "all",
+              },
+              {
+                name: "Wood Letter Signs",
+                description: "Flat or 3D wood letter signs.",
+                image: [],
+                type: "wood-letter-signs",
+                demoData: "",
+                materialType: "all",
+              },
+            ],
+          },
+        ],
       }
     ]
   }
+
+  const PRODUCT_IMAGE_MAP: Record<string, string> = {
+    "neon-letter-signs": "/images/configuration-examples/neon.webp",
+    "neon-logo-signs": "/images/configuration-examples/ai-design.webp",
+    "acrylic-letter-signs": "/images/configuration-examples/acrylic.webp",
+    "metal-letter-signs": "/images/configuration-examples/metal.webp",
+    "wood-letter-signs": "/images/configuration-examples/wood.webp",
+  };
+
+  const PRICING_PREVIEW_MAP: Record<
+    string,
+    { image: string; tag: string; hint: string }
+  > = {
+    "fixed-height": {
+      image: "/images/configuration-examples/pricing-previews/fixed-height.svg",
+      tag: "Simple",
+      hint: "Best for standard height constraints.",
+    },
+    "fixed-width": {
+      image: "/images/configuration-examples/pricing-previews/fixed-witdh.svg",
+      tag: "Simple",
+      hint: "Best for standard width constraints.",
+    },
+    advanced: {
+      image: "/images/configuration-examples/pricing-previews/advanced.svg",
+      tag: "Advanced",
+      hint: "Most accurate for neon and LED tube signs.",
+    },
+    "frame-fit": {
+      image: "/images/configuration-examples/pricing-previews/frame-fit.svg",
+      tag: "Frame Fit",
+      hint: "Best for frame-focused signs.",
+    },
+  };
+
+  const DEFAULT_PRODUCT_IMAGE = "/images/configuration-examples/product-generic-sign.svg";
+
+  const DOMAIN_CARDS = [
+    {
+      key: "signage",
+      title: "Signs",
+      badge: "Signage",
+      description: "This domain covers various products such as:",
+      tags: ["Signboard", "Banner", "Sticker", "Neon", "Channel"],
+      gradient: "linear-gradient(0.45turn, #DCDCDC, #ebf8e1, #ebf8e1)",
+      selectable: true,
+      comingSoon: false,
+    },
+    {
+      key: "apparel",
+      title: "Textile",
+      badge: "Apparel",
+      description: "This domain covers various products such as:",
+      tags: ["T-shirt", "Cap", "Hoodie"],
+      gradient: "linear-gradient(0.45turn, #B2DFDB, #E0F2F1, #ebf8e1)",
+      selectable: false,
+      comingSoon: true,
+    },
+    {
+      key: "object",
+      title: "Goodies",
+      badge: "Objects",
+      description: "This domain covers various products such as:",
+      tags: ["Mug", "Card", "Tote bag"],
+      gradient: "linear-gradient(0.45turn, #F8BBD0, #FCE4EC, #ebf8e1)",
+      selectable: false,
+      comingSoon: true,
+    },
+  ];
+
+  const toImageArray = (imageValue: unknown) => {
+    if (typeof imageValue === "string") {
+      return imageValue.trim() ? [imageValue] : [];
+    }
+    if (Array.isArray(imageValue)) {
+      return imageValue
+        .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
+        .filter(Boolean);
+    }
+    return [];
+  };
+
+  const getProductCardImage = (product: any) => {
+    const images = toImageArray(product?.image);
+    if (images.length > 0) return images[0];
+    return PRODUCT_IMAGE_MAP[product?.type] || DEFAULT_PRODUCT_IMAGE;
+  };
+
+  const dedupeItems = (items: any[], getKey: (item: any, index: number) => string) => {
+    const seen = new Set<string>();
+    return (Array.isArray(items) ? items : []).filter((item, index) => {
+      const key = getKey(item, index) || `idx-${index}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+
+  const getDomainIcon = (domainKey: string) => {
+    if (domainKey === "apparel") {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
+        </svg>
+      );
+    }
+
+    if (domainKey === "object") {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 8 1.75 12.28a2 2 0 0 0 2 1.72h4.54a2 2 0 0 0 2-1.72L18 8"></path>
+          <path d="M5 8h14"></path>
+          <path d="M7 15a6.47 6.47 0 0 1 5 0 6.47 6.47 0 0 0 5 0"></path>
+          <path d="m12 8 1-6h2"></path>
+        </svg>
+      );
+    }
+
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <rect width="20" height="14" x="2" y="3" rx="2"></rect>
+        <line x1="8" x2="16" y1="21" y2="21"></line>
+        <line x1="12" x2="12" y1="17" y2="21"></line>
+      </svg>
+    );
+  };
 
 
   const [step, setStep] = useState(configuration ? 3 : 0);
@@ -670,16 +899,60 @@ export default function ConfigurationEdit() {
     comment: '',
   });
 
+  //selectionner la catégorie
+  const [productCategorie, setProductCategorie] = useState<any>(configuration ? null : signageOption);
+  const selectProductCategorie = (data: object) => {
+    setProductCategorie(data);
+    console.log(data, "product categorie");
+  };
+
   // selection du type produit
-  const [productType, setProductType] = useState<any>(configuration ? null : (signageOption.productCategories[0] || null));
+  const initialProductType =
+    signageOption.productCategories.find(
+      (category: any) => category.type === (configuration as any)?.productType,
+    ) || signageOption.productCategories[0] || null;
+
+  const [productType, setProductType] = useState<any>(initialProductType);
   const selectProductType = (data: any) => {
     setProductType(data);
+    setProductData(null);
     if(data.productGroups.length > 0){
       setProductGroup(data.productGroups[0])
     }
       };
+  const isNcpcProductType =
+    productType?.type === "neon" || productType?.type === "channel";
 
-  const [productGroup, setProductGroup] = useState<any>(productType?.productGroups[0]);
+  const [productGroup, setProductGroup] = useState<any>(
+    initialProductType?.productGroups?.[0] || null,
+  );
+
+  const visibleProductCategories = useMemo(
+    () =>
+      dedupeItems(
+        productCategorie?.productCategories || [],
+        (item) => String(item?.type || item?.name || ""),
+      ),
+    [productCategorie],
+  );
+
+  const visibleProductGroups = useMemo(
+    () =>
+      dedupeItems(
+        productType?.productGroups || [],
+        (item) => String(item?.name || ""),
+      ),
+    [productType],
+  );
+
+  const visibleProducts = useMemo(
+    () =>
+      dedupeItems(
+        productGroup?.products || [],
+        (item) => String(item?.type || item?.name || ""),
+      ),
+    [productGroup],
+  );
 
 
   //selectionner le produit
@@ -702,17 +975,10 @@ export default function ConfigurationEdit() {
 
   // Préparation des URLs d'images (pour gérer le string ou le tableau)
   const imageUrls = useMemo(() => {
-    if (!previewProduct?.image) return [];
-
-    // S'assurer que image est un tableau même si c'est un seul string
-    const image = previewProduct.image;
-    
-    if (typeof image === 'string') {
-        return [image];
-    } else if (Array.isArray(image)) {
-        return image.filter(url => typeof url === 'string');
-    }
-    return [];
+    if (!previewProduct) return [];
+    const productImages = toImageArray(previewProduct?.image);
+    if (productImages.length > 0) return productImages;
+    return [PRODUCT_IMAGE_MAP[previewProduct?.type] || DEFAULT_PRODUCT_IMAGE];
   }, [previewProduct]);
 
   // Réinitialiser l'index lorsque le produit change ou la modale s'ouvre/ferme
@@ -725,7 +991,7 @@ export default function ConfigurationEdit() {
       if (!previewProduct) {
           setCurrentImageIndex(0);
       }
-  }, [previewProduct, imageUrls.length]);
+  }, [previewProduct, imageUrls.length, currentImageIndex]);
 
   const [isImageLoading, setIsImageLoading] = useState(true);
 
@@ -747,19 +1013,6 @@ export default function ConfigurationEdit() {
   const handlePreviousImage = useCallback(() => {
     setCurrentImageIndex(prevIndex => (prevIndex - 1 + imageUrls.length) % imageUrls.length);
   }, [imageUrls.length]);
-
-
-
-
-
-
-  //selectionner la catégorie
-  const [productCategorie, setProductCategorie] = useState<any>(configuration ? null : signageOption);
-  const selectProductCategorie = (data: object) => {
-    setProductCategorie(data);
-    console.log(data, "product categorie");
-  };
-
   // selection du type de materiel
   // Initialiser avec la valeur de la configuration si elle existe, sinon 'simple' par défaut
   const [materialType, setMaterialType] = useState<string>(
@@ -774,6 +1027,38 @@ export default function ConfigurationEdit() {
   const [validDemoData, setValidDemoData] = useState<boolean>(false);
   const [demoId, setDemoId] = useState<any>(null);
   const [demoName, setDemoName] = useState<any>('');
+  const [includeNcpcMeta, setIncludeNcpcMeta] = useState<boolean>(true);
+  const [ncpcPricingMode, setNcpcPricingMode] = useState<string>(
+    (configuration as any)?.pricingMode || "",
+  );
+  const allowedNcpcPricingModes = useMemo(
+    () =>
+      getAllowedNcpcPricingModes(
+        productType?.type === "channel" ? "channel" : "neon",
+        productData?.type || null,
+      ),
+    [productType?.type, productData?.type],
+  );
+
+  useEffect(() => {
+    if (!isNcpcProductType) return;
+    if (!allowedNcpcPricingModes.length) return;
+
+    if (!ncpcPricingMode || !allowedNcpcPricingModes.includes(ncpcPricingMode as any)) {
+      setNcpcPricingMode(
+        getDefaultNcpcPricingMode(
+          productType?.type === "channel" ? "channel" : "neon",
+          productData?.type || null,
+        ),
+      );
+    }
+  }, [
+    isNcpcProductType,
+    allowedNcpcPricingModes,
+    ncpcPricingMode,
+    productType?.type,
+    productData?.type,
+  ]);
 
   const handleSubmit = () => {
     // Log demoId seulement s'il existe
@@ -787,8 +1072,14 @@ export default function ConfigurationEdit() {
     products: JSON.stringify(formData.products || []),
     // Toujours utiliser le materialType du state (initialisé depuis la config ou modifié par l'utilisateur)
     materialType: materialType,
-    productType: productType
+    productType: productType?.type || ""
   };
+
+  if (isNcpcProductType) {
+    submitData.ncpcPresetKey = productData?.type || "";
+    submitData.ncpcPricingMode = ncpcPricingMode;
+    submitData.ncpcIncludeMeta = includeNcpcMeta ? "true" : "false";
+  }
   
   console.log("Submit - materialType:", materialType);
   console.log("Submit - productType:", productType);
@@ -805,6 +1096,21 @@ export default function ConfigurationEdit() {
 
 
   const allowDemoData = (statut: boolean) => {
+    if (!statut) {
+      setValidDemoData(false);
+      setDemoId(null);
+      setDemoName("");
+      return;
+    }
+
+    if (isNcpcProductType) {
+      // Les templates demo actuels ne couvrent pas encore NCPC (neon/channel)
+      setValidDemoData(false);
+      setDemoId(null);
+      setDemoName("");
+      return;
+    }
+
     setValidDemoData(statut);
     // if(statut == true){
     //   setShowDemoData(true)
@@ -829,9 +1135,15 @@ export default function ConfigurationEdit() {
     });
 
     data = data.filter((item) => {
-      return item.label === productData.name;
+      return item.label === productData?.name;
     });
 
+    if (!data[0]) {
+      setValidDemoData(false);
+      setDemoId(null);
+      setDemoName("");
+      return;
+    }
 
     setDemoId(data[0].value);
     setDemoName(data[0].label)  
@@ -954,14 +1266,29 @@ export default function ConfigurationEdit() {
   const [showConfigRecap, setShowConfigRecap] = useState(false);
 
 
-  // navigation enter les steps
-  function nextStep(){
-    if((step != 1) || ((step == 1) && productData != null)){
-      setStep((prev) => Math.min(prev + 1, 4))
+  const canProceedStep = useMemo(() => {
+    if (step === 1) {
+      return productData != null;
     }
 
-    if(step == 1){
-      allowDemoData(true)
+    if (step === 2) {
+      if (isNcpcProductType) {
+        return Boolean(ncpcPricingMode);
+      }
+      return Boolean(materialType);
+    }
+
+    return true;
+  }, [step, productData, isNcpcProductType, ncpcPricingMode, materialType]);
+
+  // navigation entre les steps
+  function nextStep() {
+    if (!canProceedStep) return;
+
+    setStep((prev) => Math.min(prev + 1, 3));
+
+    if (step == 1 && !isNcpcProductType) {
+      allowDemoData(true);
     }
   }
 
@@ -974,507 +1301,212 @@ export default function ConfigurationEdit() {
           <Box>
             <div style={{paddingBottom: '25px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-                Select the signage domain <Badge tone="success" size="large" >{productCategorie.name}</Badge> 
+                Select the signage domain <Badge tone="success" size="large" >{productCategorie?.name || "Signage"}</Badge> 
               </Text>
               <p>Select a domain so we can prepare the matching product types for your next step.</p>
             </div>
 
             <Grid columns={{xs: 1, sm: 1, md: 3, lg: 3, xl: 3}}>
-              <Grid.Cell>
-                <div 
-                  onClick={() => selectProductCategorie(signageOption)} 
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                    cursor: 'pointer',
-                    backgroundColor: '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '20px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: productCategorie.type === 'signage' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    transition: 'all 50ms',
-                    overflow: "hidden"
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "relative",
-                      background: "linear-gradient(0.45turn, #DCDCDC, #ebf8e1, #ebf8e1)",
-                      width: "100%",
-                      height: "150px",
-                    }}
-                  >
-                    <span 
+              {DOMAIN_CARDS.map((domain) => {
+                const selected = productCategorie?.type === domain.key;
+                return (
+                  <Grid.Cell key={domain.key}>
+                    <div
+                      onClick={() => {
+                        if (domain.selectable) {
+                          selectProductCategorie(signageOption);
+                        }
+                      }}
                       style={{
-                        position: "absolute",
-                        top: "15px",
-                        left: "15px",
                         display: "flex",
-                        width: "fit",
-                        background: "white", 
-                        color: "#424242", 
-                        fontSize: "12px", 
+                        flexDirection: "column",
+                        cursor: domain.selectable ? "pointer" : "not-allowed",
+                        backgroundColor: "#F5F5F5",
+                        color: "black",
                         borderRadius: "20px",
-                        padding: "1px 10px"
+                        border: "0.07em solid #BDBDBD",
+                        boxShadow: selected ? "0px 0px 4px 2px rgba(1, 100, 100, 0.8)" : "",
+                        transition: "all 120ms",
+                        overflow: "hidden",
+                        opacity: domain.selectable ? 1 : 0.96,
                       }}
                     >
-                      Signage
-                    </span>
-                    
-                    <span 
-                      style={{
-                        position: "absolute",
-                        top: "25px",
-                        right: "25px",
-                        display: "flex",
-                        width: "fit",
-                        background: "white", 
-                        color: "#424242", 
-                        fontSize: "12px", 
-                        borderRadius: "16px",
-                        padding: "10px",
-                        boxShadow:  '0px 1px 4px #BDBDBD',
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-source-pos="281:24-281:67" data-source-name="Icon">
-                        <rect width="20" height="14" x="2" y="3" rx="2"></rect>
-                        <line x1="8" x2="16" y1="21" y2="21"></line>
-                        <line x1="12" x2="12" y1="17" y2="21"></line>
-                      </svg>
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      padding: "6px 15px",
-                    }}
-                  >
-                    <InlineStack gap="100" blockAlign="center">
-                      <p style={{fontSize: "18px"}}>Signs</p>
-                      <span 
+                      <div
                         style={{
-                          display: productCategorie === 'signage' ? "flex" : "none",
-                          width: "fit",
-                          background: "rgba(1, 100, 100, 0.2)", 
-                          color: "rgba(1, 100, 100, 0.8)", 
-                          fontSize: "10px", 
-                          borderRadius: "20px",
-                          padding: "0.5px 4px"
+                          position: "relative",
+                          background: domain.gradient,
+                          width: "100%",
+                          height: "160px",
                         }}
                       >
-                        selected
-                      </span>
-                    </InlineStack>
-                    <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-                      <p style={{color: "#424242", fontWeight: "normal"}} >This domain covers various products such as:</p>
-                      <div style={{display: "flex", gap: "5px"}}>
-                        <span 
-                          style={{                            
+                        <div
+                          style={{
+                            position: "absolute",
+                            left: "50%",
+                            top: "56%",
+                            transform: "translate(-50%, -50%)",
+                            width: "74%",
+                            height: "92px",
+                            borderRadius: "10px",
+                            border: "2px solid rgba(94, 132, 129, 0.45)",
+                            background: "rgba(255,255,255,0.22)",
                             display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
+                            alignItems: "center",
+                            justifyContent: "center",
+                            boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.35)",
                           }}
                         >
-                          Signboard
+                          <div style={{ textAlign: "center" }}>
+                            <p
+                              style={{
+                                fontSize: "32px",
+                                letterSpacing: "0.04em",
+                                fontWeight: 700,
+                                color: "rgba(52, 96, 95, 0.75)",
+                                textTransform: "uppercase",
+                                lineHeight: 1,
+                              }}
+                            >
+                              {domain.badge}
+                            </p>
+                            <div
+                              style={{
+                                marginTop: "8px",
+                                width: "110px",
+                                height: "4px",
+                                borderRadius: "999px",
+                                background: "rgba(52, 96, 95, 0.55)",
+                                marginInline: "auto",
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "15px",
+                            left: "15px",
+                            display: "flex",
+                            width: "fit-content",
+                            background: "white",
+                            color: "#424242",
+                            fontSize: "12px",
+                            borderRadius: "20px",
+                            padding: "1px 10px",
+                          }}
+                        >
+                          {domain.badge}
                         </span>
-                        <span 
-                          style={{                            
+
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "20px",
+                            right: "20px",
                             display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
+                            width: "fit-content",
+                            background: "white",
+                            color: "#424242",
+                            borderRadius: "16px",
+                            padding: "10px",
+                            boxShadow: "0px 1px 4px #BDBDBD",
                           }}
                         >
-                          Banner
+                          {getDomainIcon(domain.key)}
                         </span>
-                        <span 
-                          style={{                            
+                      </div>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "10px",
+                          padding: "10px 15px 8px 15px",
+                        }}
+                      >
+                        <InlineStack gap="100" blockAlign="center">
+                          <p style={{fontSize: "18px"}}>{domain.title}</p>
+                          {selected && (
+                            <span
+                              style={{
+                                display: "flex",
+                                width: "fit-content",
+                                background: "rgba(1, 100, 100, 0.2)",
+                                color: "rgba(1, 100, 100, 0.8)",
+                                fontSize: "10px",
+                                borderRadius: "20px",
+                                padding: "0.5px 6px",
+                              }}
+                            >
+                              selected
+                            </span>
+                          )}
+                          {domain.comingSoon && <Badge tone="info">Coming soon</Badge>}
+                        </InlineStack>
+
+                        <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
+                          <p style={{color: "#424242", fontWeight: "normal"}}>{domain.description}</p>
+                          <div style={{display: "flex", gap: "5px", flexWrap: "wrap"}}>
+                            {domain.tags.map((tag) => (
+                              <span
+                                key={`${domain.key}-${tag}`}
+                                style={{
+                                  display: "flex",
+                                  width: "fit-content",
+                                  background: "#E0F2F1",
+                                  color: "#424242",
+                                  fontSize: "11.5px",
+                                  borderRadius: "20px",
+                                  padding: "1px 8px",
+                                  border: "2px solid #E0E0E0",
+                                }}
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "10px",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "10px 15px 12px 15px",
+                        }}
+                      >
+                        <p style={{color: "gray", fontSize: "12px", fontWeight: "normal"}}>
+                          {domain.selectable ? "Click to choose" : "Unavailable for now"}
+                        </p>
+
+                        <span
+                          style={{
                             display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
+                            padding: "5px",
+                            border: selected ? "2px solid rgba(1, 100, 100, 0.8)" : "2px solid #DCDCDC",
+                            borderRadius: "10px",
                           }}
                         >
-                          Sticker
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            width="20"
+                            height="20"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                          </svg>
                         </span>
                       </div>
                     </div>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "10px 15px",
-                    }}
-                  >
-                    <p style={{color: "gray", fontSize: "12px", fontWeight: "normal"}} >Click to choose</p>
-
-                    <span 
-                      style={{
-                        display: "flex",
-                        padding: "5px",
-                        border: productCategorie === 'signage' ? "2px solid rgba(1, 100, 100, 0.8)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </Grid.Cell>
-
-              <Grid.Cell>
-                <div 
-                  // onClick={() => selectProductCategorie('apparel')} 
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                    cursor: 'pointer',
-                    backgroundColor: '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '20px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: productCategorie === 'apparel' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    transition: 'all 50ms',
-                    overflow: "hidden"
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "relative",
-                      background: "linear-gradient(0.45turn, #B2DFDB, #E0F2F1, #ebf8e1)",
-                      width: "100%",
-                      height: "150px",
-                    }}
-                  >
-                    <span 
-                      style={{
-                        position: "absolute",
-                        top: "15px",
-                        left: "15px",
-                        display: "flex",
-                        width: "fit",
-                        background: "white", 
-                        color: "#424242", 
-                        fontSize: "12px", 
-                        borderRadius: "20px",
-                        padding: "1px 10px"
-                      }}
-                    >
-                      Apparel
-                    </span>
-                    
-                    <span 
-                      style={{
-                        position: "absolute",
-                        top: "25px",
-                        right: "25px",
-                        display: "flex",
-                        width: "fit",
-                        background: "white", 
-                        color: "#424242", 
-                        fontSize: "12px", 
-                        borderRadius: "16px",
-                        padding: "10px",
-                        boxShadow:  '0px 1px 4px #BDBDBD',
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-source-pos="281:24-281:67" data-source-name="Icon">
-                        <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
-                      </svg>
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      padding: "6px 15px",
-                    }}
-                  >
-                    <InlineStack gap="100" blockAlign="center">
-                      <p style={{fontSize: "18px"}}>Textile</p>
-                      <span 
-                        style={{
-                          display: productCategorie === 'apparel' ? "flex" : "none",
-                          width: "fit",
-                          background: "rgba(1, 100, 100, 0.2)", 
-                          color: "rgba(1, 100, 100, 0.8)", 
-                          fontSize: "10px", 
-                          borderRadius: "20px",
-                          padding: "0.5px 4px"
-                        }}
-                      >
-                        selected
-                      </span>
-                      <Badge tone="info">Coming soon</Badge>
-                    </InlineStack>
-                    <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-                      <p style={{color: "#424242", fontWeight: "normal"}} >This domain covers various products such as: </p>
-                      <div style={{display: "flex", gap: "5px"}}>
-                        <span 
-                          style={{                            
-                            display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
-                          }}
-                        >
-                          T-shirt
-                        </span>
-                        <span 
-                          style={{                            
-                            display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
-                          }}
-                        >
-                          Cap
-                        </span>
-                        <span 
-                          style={{                            
-                            display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
-                          }}
-                        >
-                          Hoodie
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "10px 15px",
-                    }}
-                  >
-                    <p style={{color: "gray", fontSize: "12px", fontWeight: "normal"}} >Click to choose</p>
-
-                    <span 
-                      style={{
-                        display: "flex",
-                        padding: "5px",
-                        border: productCategorie === 'apparel' ? "2px solid rgba(1, 100, 100, 0.8)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </Grid.Cell>
-
-              <Grid.Cell> 
-                <div 
-                  // onClick={() => selectProductCategorie('object')} 
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                    cursor: 'pointer',
-                    backgroundColor: '#F5F5F5',
-                    color: 'black',
-                    borderRadius: '20px',
-                    border: '0.07em solid #BDBDBD',
-                    boxShadow: productCategorie === 'object' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    transition: 'all 50ms',
-                    overflow: "hidden"
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "relative",
-                      background: "linear-gradient(0.45turn, #F8BBD0, #FCE4EC, #ebf8e1)",
-                      width: "100%",
-                      height: "150px",
-                    }}
-                  >
-                    <span 
-                      style={{
-                        position: "absolute",
-                        top: "15px",
-                        left: "15px",
-                        display: "flex",
-                        width: "fit",
-                        background: "white", 
-                        color: "#424242", 
-                        fontSize: "12px", 
-                        borderRadius: "20px",
-                        padding: "1px 10px"
-                      }}
-                    >
-                      Objects
-                    </span>
-                    
-                    <span 
-                      style={{
-                        position: "absolute",
-                        top: "25px",
-                        right: "25px",
-                        display: "flex",
-                        width: "fit",
-                        background: "white", 
-                        color: "#424242", 
-                        fontSize: "12px", 
-                        borderRadius: "16px",
-                        padding: "10px",
-                        boxShadow:  '0px 1px 4px #BDBDBD',
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-source-pos="281:24-281:67" data-source-name="Icon">
-                        <path d="m6 8 1.75 12.28a2 2 0 0 0 2 1.72h4.54a2 2 0 0 0 2-1.72L18 8"></path>
-                        <path d="M5 8h14"></path>
-                        <path d="M7 15a6.47 6.47 0 0 1 5 0 6.47 6.47 0 0 0 5 0"></path>
-                        <path d="m12 8 1-6h2"></path>
-                      </svg>
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      padding: "6px 15px",
-                    }}
-                  >
-                    <InlineStack gap="100" blockAlign="center">
-                      <p style={{fontSize: "18px"}}>Goodies</p>
-                      <span 
-                        style={{
-                          display: productCategorie === 'object' ? "flex" : "none",
-                          width: "fit",
-                          background: "rgba(1, 100, 100, 0.2)", 
-                          color: "rgba(1, 100, 100, 0.8)", 
-                          fontSize: "10px", 
-                          borderRadius: "20px",
-                          padding: "0.5px 4px"
-                        }}
-                      >
-                        selected
-                      </span>
-                      <Badge tone="info">Coming soon</Badge>
-                    </InlineStack>
-                    <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-                      <p style={{color: "#424242", fontWeight: "normal"}} >This domain covers various products such as: </p>
-                      <div style={{display: "flex", gap: "5px"}}>
-                        <span 
-                          style={{                            
-                            display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
-                          }}
-                        >
-                          Mug
-                        </span>
-                        <span 
-                          style={{                            
-                            display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
-                          }}
-                        >
-                          Card
-                        </span>
-                        <span 
-                          style={{                            
-                            display: "flex",
-                            width: "fit",
-                            background: "#E0F2F1", 
-                            color: "#424242", 
-                            fontSize: "11.5px", 
-                            borderRadius: "20px",
-                            padding: "1px 8px",
-                            border: "2px solid #E0E0E0"
-                          }}
-                        >
-                          Tote bag
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "10px 15px",
-                    }}
-                  >
-                    <p style={{color: "gray", fontSize: "12px", fontWeight: "normal"}} >Click to choose</p>
-
-                    <span 
-                      style={{
-                        display: "flex",
-                        padding: "5px",
-                        border: productCategorie === 'object' ? "2px solid rgba(1, 100, 100, 0.8)" : "2px solid #DCDCDC",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </Grid.Cell>
+                  </Grid.Cell>
+                );
+              })}
             </Grid>
 
           </Box>
@@ -1485,16 +1517,17 @@ export default function ConfigurationEdit() {
             <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
                {/* Select the type and the product sample of {productCategorie.name}  */}
-                What product would you like to sell? <Badge size="large" >{productCategorie.name}</Badge> <Badge tone="success" size="large" >{productType.name}</Badge> 
+                What product would you like to sell? <Badge size="large" >{productCategorie?.name || "Signage"}</Badge> <Badge tone="success" size="large" >{productType?.name || "Signboard"}</Badge> 
               </Text>
-              <p>Choose the subtype that best matches your product within Signboard. You will fine-tune material behaviour in the next step.</p>
+              <p>Choose the subtype that best matches your product within {productType?.name}. You will fine-tune material behaviour in the next step.</p>
               {/* <span style={{fontWeight: "700"}}>{productCategorie.name}</span> */}
             </div>
 
 
             <div style={{display: "flex", gap: "10px", paddingBottom: '20px'}}>
-              {productCategorie.productCategories.map((categorie: any) => (
-                <div 
+              {visibleProductCategories.map((categorie: any) => (
+                <div
+                  key={categorie.type}
                   onClick={() => selectProductType(categorie)} 
                   style={{
                     cursor: 'pointer',
@@ -1525,9 +1558,13 @@ export default function ConfigurationEdit() {
             </div>
 
             <div style={{display: "flex", gap: "8px", marginBottom: '20px', borderBottom: '1px solid #E0E0E0'}}>
-              {productType.productGroups.map((productGrp: any) => (
-                <div 
-                  onClick={() => {setProductGroup(productGrp), setProductData(null)}} 
+              {visibleProductGroups.map((productGrp: any) => (
+                <div
+                  key={productGrp.name}
+                  onClick={() => {
+                    setProductGroup(productGrp);
+                    setProductData(null);
+                  }}
                   style={{
                     cursor: 'pointer',
                     backgroundColor: productGroup?.name === productGrp?.name ?  'rgba(1, 100, 100, 0.1)' : '',
@@ -1549,74 +1586,156 @@ export default function ConfigurationEdit() {
               ))}
             </div>
 
-            <Grid columns={{xs: 2, sm: 3, md: 3, lg: 3, xl: 4}}>
-              {productGroup.products.map((product: any) => (
-                <Grid.Cell>
-                  <div 
-                    onClick={() => selectProductData(product)} 
-                    style={{
-                      cursor: 'pointer',
-                      // backgroundColor:  '#f1f1f1',
-                      backgroundColor:  '#F5F5F5',
-                      color: 'black',
-                      borderRadius: '16px',
-                      border: '0.07em solid #BDBDBD',
-                      boxShadow: productData?.name === product?.name ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                      padding: '16px',
-                      transition: 'all 50ms',
-                    }}
-                  >
-                    <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                      <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                        <div style={{padding: '0px', display: 'flex', justifyContent: 'space-between'}}>
-                          <BlockStack gap="100">
-                            <p style={{fontSize: "14px", fontWeight: "600"}}>{product.name}</p>
-                            {/* <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>All material options are customizable for the customer</p> */}
-                          </BlockStack>
-                          
-                          <span 
-                            style={{
-                              display: productData?.name === product?.name ? "flex" : "none",
-                              width: "fit",
-                              background: "rgba(1, 100, 100, 0.2)", 
-                              color: "rgba(1, 100, 100, 0.8)", 
-                              fontSize: "10px", 
-                              borderRadius: "20px",
-                              padding: "0.5px 4px"
+            <Grid columns={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2 }}>
+              {visibleProducts.map((product: any) => {
+                const cardImage = getProductCardImage(product);
+                const isSelected = productData?.name === product?.name;
+                return (
+                  <Grid.Cell key={product?.type || product?.name}>
+                    <div
+                      onClick={() => selectProductData(product)}
+                      style={{
+                        cursor: "pointer",
+                        background: isSelected
+                          ? "linear-gradient(165deg, #F8FEFD 0%, #F2F8F8 100%)"
+                          : "#F7F8FA",
+                        color: "black",
+                        borderRadius: "14px",
+                        border: "1px solid #C6CDD4",
+                        boxShadow: isSelected
+                          ? "0 0 0 2px rgba(1, 100, 100, 0.72), 0 12px 24px rgba(15, 23, 42, 0.08)"
+                          : "0 4px 14px rgba(15, 23, 42, 0.04)",
+                        transition: "all 180ms",
+                        padding: "14px",
+                        minHeight: "108px",
+                        position: "relative",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {isSelected && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: "2px",
+                            background: "linear-gradient(90deg, rgba(1, 100, 100, 0.85), rgba(1, 100, 100, 0.35))",
+                          }}
+                        />
+                      )}
+
+                      <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
+                        <div
+                          style={{
+                            width: "62px",
+                            height: "62px",
+                            borderRadius: "12px",
+                            backgroundColor: "#EEF3F6",
+                            border: "1px solid #D6DEE3",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            overflow: "hidden",
+                            flexShrink: 0,
+                            boxShadow: isSelected
+                              ? "0 0 0 2px rgba(1, 100, 100, 0.22)"
+                              : "inset 0 0 0 1px rgba(255,255,255,0.45)",
+                          }}
+                        >
+                          <img
+                            src={cardImage}
+                            alt={`${product?.name} example`}
+                            onError={(event) => {
+                              event.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
                             }}
-                          >
-                            selected
-                          </span>
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "contain",
+                              objectPosition: "center",
+                            }}
+                          />
                         </div>
-                        
-                        <p style={{color: "#757575", fontSize: "12px"}}>{product?.description}</p>
 
-                        <div style={{display: "flex", justifyContent: "space-between"}}>
-                          <p style={{color: "#9E9E9E", fontSize: "11px"}}>Click to select</p>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: 1, minWidth: 0 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", gap: "8px", alignItems: "center" }}>
+                            <p
+                              style={{
+                                fontSize: "17px",
+                                fontWeight: 700,
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {product.name}
+                            </p>
+                            {isSelected && (
+                              <span
+                                style={{
+                                  display: "flex",
+                                  width: "fit-content",
+                                  background: "rgba(1, 100, 100, 0.14)",
+                                  color: "rgba(1, 100, 100, 0.9)",
+                                  fontSize: "10px",
+                                  borderRadius: "20px",
+                                  padding: "1px 7px",
+                                  height: "fit-content",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                selected
+                              </span>
+                            )}
+                          </div>
 
-
-                          {/* <span style={{color: "rgba(1, 100, 100, 0.8)", fontSize: "12px", fontWeight: "600"}}> Preview </span> */}
-                          <div 
-                            onClick={(e) => {
-                              e.stopPropagation(); // Empêche la sélection du produit
-                              setPreviewProduct(product);
-                              console.log("preview", product)
-                            }}
+                          <p
                             style={{
-                              cursor: "pointer",
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              transition: "background 0.2s"
+                              color: "#5F6368",
+                              fontSize: "14px",
+                              marginTop: "1px",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
                             }}
                           >
-                             <span style={{color: "rgba(1, 100, 100, 0.8)", fontSize: "12px", fontWeight: "600"}}> Preview </span>
+                            {product?.description}
+                          </p>
+
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2px" }}>
+                            <p style={{ color: "#9EA6AD", fontSize: "12px", fontWeight: 500 }}>Click to select</p>
+
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPreviewProduct(product);
+                              }}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                                width: "fit-content",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  color: "rgba(1, 100, 100, 0.8)",
+                                  fontSize: "12px",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                Preview
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </Grid.Cell>
-              ))}
+                  </Grid.Cell>
+                );
+              })}
             </Grid>
 
             {/* --- MODAL DE PREVIEW --- */}
@@ -1679,6 +1798,9 @@ export default function ConfigurationEdit() {
                               </div>
                               <img
                                   src={imageUrls[currentImageIndex]}
+                                  onError={(event) => {
+                                    event.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
+                                  }}
                                   onLoad={handleImageLoad}
                                   alt={`Aperçu ${currentImageIndex + 1}`}
                                   style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
@@ -1726,238 +1848,423 @@ export default function ConfigurationEdit() {
           <Box>
             <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
-                Add product template for fast setup <Badge size="large" >{productCategorie.name}</Badge> <Badge size="large" >{productType.name}</Badge> <Badge tone="success" size="large" >{productData.name}</Badge>
+                {isNcpcProductType
+                  ? "Configure NCPC preset"
+                  : "Add product template for fast setup"}{" "}
+                <Badge size="large" >{productCategorie?.name || "Signage"}</Badge> <Badge size="large" >{productType?.name || "Signboard"}</Badge> <Badge tone="success" size="large" >{productData?.name || "-"}</Badge>
               </Text>
-              <p>Choose a starter template whose demo content matches your product.</p>
-              {/* <p>Decide whether to preload demo content for your <Badge tone="success" >{productData.name}</Badge> product sample  . If enabled, choose a starting template for faster setup.</p> */}
+              <p>
+                {isNcpcProductType
+                  ? "Choose the pricing model and whether to initialize Neon/Channel starter data."
+                  : "Choose a starter template whose demo content matches your product."}
+              </p>
             </div>
 
-            <div 
-              style={{
-                cursor: 'pointer',
-                // backgroundColor:  '#f1f1f1',
-                backgroundColor:  '#F5F5F5',
-                color: 'black',
-                borderRadius: '16px',
-                border: '0.07em solid #BDBDBD',
-                padding: '20px',
-                transition: 'all 50ms',
-              }}
-            >
-              <div style={{display: 'flex', gap: '10px', alignItems: 'center', height: '100%'}}>                    
-                <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                  <div style={{padding: '0px'}}>
-                    <BlockStack gap="100">
-                      <p style={{fontSize: "16px", fontWeight: "600"}}>Include demo data?</p>
-                      <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>Preload a template to start faster. You can still customize everything later.</p>
-                    </BlockStack>
+            {isNcpcProductType ? (
+              <>
+                <div
+                  style={{
+                    backgroundColor: "#F5F5F5",
+                    color: "black",
+                    borderRadius: "16px",
+                    border: "0.07em solid #BDBDBD",
+                    padding: "20px",
+                  }}
+                >
+                  <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "10px" }}>
+                    How do you price your signs?
+                  </p>
+                  <p style={{ fontSize: "14px", color: "#616161", marginBottom: "14px" }}>
+                    Choose a pricing model for this NCPC configuration.
+                  </p>
+                  <Grid columns={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2 }}>
+                    {NCPC_PRICING_OPTIONS.filter((option) =>
+                      allowedNcpcPricingModes.includes(option.value),
+                    ).map((option) => {
+                      const isSelected = ncpcPricingMode === option.value;
+                      const preview = PRICING_PREVIEW_MAP[option.value] || {
+                        image: "/images/configuration-examples/pricing-previews/sizes.svg",
+                        tag: "Option",
+                        hint: "",
+                      };
+
+                      return (
+                        <Grid.Cell key={option.value}>
+                          <div
+                            onClick={() => setNcpcPricingMode(option.value)}
+                            style={{
+                              cursor: "pointer",
+                              background: isSelected
+                                ? "linear-gradient(160deg, #F9FEFD 0%, #F2F8F8 100%)"
+                                : "#FFFFFF",
+                              borderRadius: "14px",
+                              border: isSelected
+                                ? "2px solid rgba(1, 100, 100, 0.8)"
+                                : "1px solid #D6DEE3",
+                              boxShadow: isSelected
+                                ? "0 10px 22px rgba(15, 23, 42, 0.08), 0 0 0 2px rgba(1, 100, 100, 0.15)"
+                                : "0 3px 10px rgba(15, 23, 42, 0.04)",
+                              padding: "14px 16px",
+                              minHeight: "98px",
+                              transition: "all 160ms ease",
+                            }}
+                          >
+                            <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
+                              <div
+                                style={{
+                                  width: "54px",
+                                  height: "54px",
+                                  borderRadius: "10px",
+                                  background: "#F3F6F8",
+                                  border: "1px solid #D8E0E6",
+                                  overflow: "hidden",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                <img
+                                  src={preview.image}
+                                  alt={`${option.name} preview`}
+                                  onError={(event) => {
+                                    event.currentTarget.src =
+                                      "/images/configuration-examples/pricing-previews/sizes.svg";
+                                  }}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "contain",
+                                    objectPosition: "center",
+                                  }}
+                                />
+                              </div>
+
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    marginBottom: "2px",
+                                  }}
+                                >
+                                  <p style={{ fontSize: "14px", fontWeight: 700 }}>{option.name}</p>
+                                  <span
+                                    style={{
+                                      fontSize: "11px",
+                                      lineHeight: 1,
+                                      padding: "4px 7px",
+                                      borderRadius: "999px",
+                                      background: isSelected
+                                        ? "rgba(1, 100, 100, 0.15)"
+                                        : "#F0F2F4",
+                                      color: isSelected ? "rgba(1, 100, 100, 0.85)" : "#5F6368",
+                                      fontWeight: 700,
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {preview.tag}
+                                  </span>
+                                </div>
+
+                                <p style={{ fontSize: "12px", color: "#5F6368" }}>{option.description}</p>
+                                {preview.hint ? (
+                                  <p style={{ fontSize: "12px", color: "#3B4146", marginTop: "6px" }}>
+                                    {preview.hint}
+                                  </p>
+                                ) : null}
+                              </div>
+                            </div>
+                          </div>
+                        </Grid.Cell>
+                      );
+                    })}
+                  </Grid>
+                </div>
+
+                <div
+                  style={{
+                    marginTop: "14px",
+                    backgroundColor: "#F7F8FA",
+                    borderRadius: "16px",
+                    border: "1px solid #C6CDD4",
+                    padding: "20px",
+                  }}
+                >
+                  <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "10px" }}>
+                    Include starter data?
+                  </p>
+                  <p style={{ fontSize: "14px", color: "#616161", marginBottom: "12px" }}>
+                    Pre-fill colors, sizes and options from a Neon/Channel starter preset.
+                  </p>
+                  <InlineStack gap="200">
+                    <span
+                      onClick={() => setIncludeNcpcMeta(false)}
+                      style={{
+                        cursor: "pointer",
+                        padding: "7px 14px",
+                        borderRadius: "10px",
+                        border: !includeNcpcMeta
+                          ? "2px solid rgba(1, 100, 100, 0.7)"
+                          : "1px solid #8A939B",
+                        color: !includeNcpcMeta ? "rgba(1, 100, 100, 0.8)" : "#5F6368",
+                        background: !includeNcpcMeta ? "rgba(1, 100, 100, 0.08)" : "#F0F2F4",
+                        fontWeight: 600,
+                        transition: "all 120ms ease",
+                      }}
+                    >
+                      No
+                    </span>
+                    <span
+                      onClick={() => setIncludeNcpcMeta(true)}
+                      style={{
+                        cursor: "pointer",
+                        padding: "7px 14px",
+                        borderRadius: "10px",
+                        border: includeNcpcMeta
+                          ? "2px solid rgba(1, 100, 100, 0.7)"
+                          : "1px solid #8A939B",
+                        color: includeNcpcMeta ? "rgba(1, 100, 100, 0.8)" : "#5F6368",
+                        background: includeNcpcMeta ? "rgba(1, 100, 100, 0.08)" : "#F0F2F4",
+                        fontWeight: 600,
+                        transition: "all 120ms ease",
+                      }}
+                    >
+                      Yes
+                    </span>
+                  </InlineStack>
+                </div>
+              </>
+            ) : (
+              <>
+                <div 
+                  style={{
+                    cursor: 'pointer',
+                    backgroundColor:  '#F5F5F5',
+                    color: 'black',
+                    borderRadius: '16px',
+                    border: '0.07em solid #BDBDBD',
+                    padding: '20px',
+                    transition: 'all 50ms',
+                  }}
+                >
+                  <div style={{display: 'flex', gap: '10px', alignItems: 'center', height: '100%'}}>                    
+                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                      <div style={{padding: '0px'}}>
+                        <BlockStack gap="100">
+                          <p style={{fontSize: "16px", fontWeight: "600"}}>Include demo data?</p>
+                          <p style={{fontSize: "14px", fontWeight: "400", color: "#616161"}}>Preload a template to start faster. You can still customize everything later.</p>
+                        </BlockStack>
+                      </div>
+                    </div>
+
+                    <div 
+                      style={{
+                        display: "flex",
+                        gap: "10px"
+                      }}
+                    >
+                      <span 
+                        onClick={() => {
+                          allowDemoData(false);
+                          setDemoId(null);
+                        }} 
+                        style={{
+                          width: "fit-content",
+                          height: "fit-content",
+                          display: "flex",
+                          color: !validDemoData ? "rgba(1, 100, 100, 0.7)" : "#757575",
+                          fontSize: "15px",
+                          padding: "7px 10px",
+                          border: !validDemoData ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #757575",
+                          borderRadius: "10px",
+                          boxShadow: !validDemoData ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                        }}
+                      >
+                        No
+                      </span>
+                      <span 
+                        onClick={() => {
+                          allowDemoData(true);
+                        }} 
+                        style={{
+                          width: "fit-content",
+                          height: "fit-content",
+                          display: "flex",
+                          color: (validDemoData && demoName != "") ? "rgba(1, 100, 100, 0.7)" : "#757575",
+                          fontSize: "15px",
+                          padding: "7px 10px",
+                          border: (validDemoData && demoName != "") ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #757575",
+                          borderRadius: "10px",
+                          boxShadow: (validDemoData && demoName != "") ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                        }}
+                      >
+                        Yes
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div 
-                  style={{
-                    display: "flex",
-                    gap: "10px"
+                { (validDemoData && demoName != "") && <div style={{paddingTop: '15px'}}>
+                  <p>Demo data selected: <span style={{fontSize: "14px", fontWeight: "600"}}> {demoName} </span></p>
+                </div>}
+
+                <div style={{display: productData != null ? "flex" : "none", flexDirection: "column", gap: "10px", paddingTop: "20px"}}>
+                  <p style={{fontSize: "16px", fontWeight: "600"}}>Select how user can customize your product</p>
+
+                  <Grid columns={{xs: 2, sm: 2, md: 2, lg: 3, xl: 3}}>
+                    {productData?.materialType != "advance" && 
+                      <Grid.Cell>
+                        <div 
+                          onClick={() => selectMaterialType('simple')} 
+                          style={{
+                            cursor: 'pointer',
+                            backgroundColor:  '#F5F5F5',
+                            color: 'black',
+                            borderRadius: '16px',
+                            border: '0.07em solid #BDBDBD',
+                            boxShadow: materialType === 'simple' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                            padding: '16px',
+                            transition: 'all 50ms',
+                          }}
+                        >
+                          <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                              <div style={{padding: '0px'}}>
+                                <BlockStack gap="100">
+                                  <p style={{fontSize: "15px", fontWeight: "600"}}>Simple</p>
+                                  <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can control the all option of the product like shape, size, color, etc…</p>
+                                </BlockStack>
+                              </div>
+                            </div>
+
+                            <span 
+                              style={{
+                                width: "fit-content",
+                                height: "fit-content",
+                                display: "flex",
+                                padding: "5px",
+                                border: materialType === 'simple' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                                borderRadius: "10px"
+                              }}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </Grid.Cell>
+                    }
+                    {productData?.materialType != "simple" && 
+                      <Grid.Cell>
+                        <div 
+                          onClick={() => selectMaterialType('advance')} 
+                          style={{
+                            cursor: 'pointer',
+                            backgroundColor:  '#F5F5F5',
+                            color: 'black',
+                            borderRadius: '16px',
+                            border: '0.07em solid #BDBDBD',
+                            boxShadow: materialType === 'advance' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                            padding: '16px',
+                            transition: 'all 50ms',
+                          }}
+                        >
+                          <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                              <div style={{padding: '0px'}}>
+                                <BlockStack gap="100">
+                                  <p style={{fontSize: "15px", fontWeight: "600"}}>Advance</p>
+                                  <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can add text and image, not control the shape, size, color  of the product  </p>
+                                </BlockStack>
+                              </div>
+                            </div>
+
+                            <span 
+                              style={{
+                                width: "fit-content",
+                                height: "fit-content",
+                                display: "flex",
+                                padding: "5px",
+                                border: materialType === 'advance' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                                borderRadius: "10px"
+                              }}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </Grid.Cell>
+                    }
+
+                    {productData?.materialType == "all" && 
+                      <Grid.Cell>
+                        <div 
+                          style={{
+                            cursor: 'pointer',
+                            backgroundColor:  '#F5F5F5',
+                            color: 'black',
+                            borderRadius: '16px',
+                            border: '0.07em solid #BDBDBD',
+                            boxShadow: materialType === 'layer' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
+                            padding: '16px',
+                            transition: 'all 50ms',
+                          }}
+                        >
+                          <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                              <div style={{padding: '0px'}}>
+                                <BlockStack gap="100">
+                                  <p style={{fontSize: "15px", fontWeight: "600"}}>Layers</p>
+                                  <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can control some part of the product <Badge tone="info">Coming soon</Badge></p>
+                                </BlockStack>
+                              </div>
+                            </div>
+
+                            <span 
+                              style={{
+                                width: "fit-content",
+                                height: "fit-content",
+                                display: "flex",
+                                padding: "5px",
+                                border: materialType === 'layer' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
+                                borderRadius: "10px"
+                              }}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </Grid.Cell>
+                    }
+                  </Grid>
+                </div>
+
+                <Modal
+                  size="large"
+                  open={showDemoData}
+                  onClose={() => setShowDemoData(false)}
+                  title="Select a demo"
+                  primaryAction={{
+                    content: 'Done',
+                    onAction: () => setShowDemoData(false),
                   }}
                 >
-                  <span 
-                    onClick={() => {allowDemoData(false), setDemoId(null)}} 
-                    style={{
-                      width: "fit-content",
-                      height: "fit-content",
-                      display: "flex",
-                      color: !validDemoData ? "rgba(1, 100, 100, 0.7)" : "#757575",
-                      fontSize: "15px",
-                      padding: "7px 10px",
-                      border: !validDemoData ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #757575",
-                      borderRadius: "10px",
-                      boxShadow: !validDemoData ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    }}
-                  >
-                    No
-                  </span>
-                  <span 
-                    onClick={() => allowDemoData(true)} 
-                    style={{
-                      width: "fit-content",
-                      height: "fit-content",
-                      display: "flex",
-                      color: (validDemoData && demoName != "") ? "rgba(1, 100, 100, 0.7)" : "#757575",
-                      fontSize: "15px",
-                      padding: "7px 10px",
-                      border: (validDemoData && demoName != "") ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #757575",
-                      borderRadius: "10px",
-                      boxShadow: (validDemoData && demoName != "") ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                    }}
-                  >
-                    Yes
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            { (validDemoData && demoName != "") && <div style={{paddingTop: '15px'}}>
-              <p>Demo data selected: <span style={{fontSize: "14px", fontWeight: "600"}}> {demoName} </span></p>
-            </div>}
-
-            <div style={{display: productData != null ? "flex" : "none", flexDirection: "column", gap: "10px", paddingTop: "20px"}}>
-              <p style={{fontSize: "16px", fontWeight: "600"}}>Select how user can customize your product</p>
-
-              <Grid columns={{xs: 2, sm: 2, md: 2, lg: 3, xl: 3}}>
-                {productData?.materialType != "advance" && 
-                  <Grid.Cell>
-                    <div 
-                      onClick={() => selectMaterialType('simple')} 
-                      style={{
-                        cursor: 'pointer',
-                        // backgroundColor:  '#f1f1f1',
-                        backgroundColor:  '#F5F5F5',
-                        color: 'black',
-                        borderRadius: '16px',
-                        border: '0.07em solid #BDBDBD',
-                        boxShadow: materialType === 'simple' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                        padding: '16px',
-                        transition: 'all 50ms',
-                      }}
-                    >
-                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                          <div style={{padding: '0px'}}>
-                            <BlockStack gap="100">
-                              <p style={{fontSize: "15px", fontWeight: "600"}}>Simple</p>
-                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can control the all option of the product like shape, size, color, etc…</p>
-                            </BlockStack>
-                          </div>
-                        </div>
-
-                        <span 
-                          style={{
-                            width: "fit-content",
-                            height: "fit-content",
-                            display: "flex",
-                            padding: "5px",
-                            border: materialType === 'simple' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                            borderRadius: "10px"
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </Grid.Cell>
-                }
-                {productData?.materialType != "simple" && 
-                  <Grid.Cell>
-                    <div 
-                      onClick={() => selectMaterialType('advance')} 
-                      style={{
-                        cursor: 'pointer',
-                        // backgroundColor:  '#f1f1f1',
-                        backgroundColor:  '#F5F5F5',
-                        color: 'black',
-                        borderRadius: '16px',
-                        border: '0.07em solid #BDBDBD',
-                        boxShadow: materialType === 'advance' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                        padding: '16px',
-                        transition: 'all 50ms',
-                      }}
-                    >
-                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                          <div style={{padding: '0px'}}>
-                            <BlockStack gap="100">
-                              <p style={{fontSize: "15px", fontWeight: "600"}}>Advance</p>
-                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can add text and image, not control the shape, size, color  of the product  </p>
-                            </BlockStack>
-                          </div>
-                        </div>
-
-                        <span 
-                          style={{
-                            width: "fit-content",
-                            height: "fit-content",
-                            display: "flex",
-                            padding: "5px",
-                            border: materialType === 'advance' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                            borderRadius: "10px"
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </Grid.Cell>
-                }
-
-                {productData?.materialType == "all" && 
-                  <Grid.Cell>
-                    <div 
-                      // onClick={() => selectMaterialType('layer')} 
-                      style={{
-                        cursor: 'pointer',
-                        // backgroundColor:  '#f1f1f1',
-                        backgroundColor:  '#F5F5F5',
-                        color: 'black',
-                        borderRadius: '16px',
-                        border: '0.07em solid #BDBDBD',
-                        boxShadow: materialType === 'layer' ? '0px 0px 4px 2px rgba(1, 100, 100, 0.8)' : '',
-                        padding: '16px',
-                        transition: 'all 50ms',
-                      }}
-                    >
-                      <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                          <div style={{padding: '0px'}}>
-                            <BlockStack gap="100">
-                              <p style={{fontSize: "15px", fontWeight: "600"}}>Layers</p>
-                              <p style={{fontSize: "13px", fontWeight: "400", color: "#616161"}}>User can control some part of the product <Badge tone="info">Coming soon</Badge></p>
-                            </BlockStack>
-                          </div>
-                        </div>
-
-                        <span 
-                          style={{
-                            width: "fit-content",
-                            height: "fit-content",
-                            display: "flex",
-                            padding: "5px",
-                            border: materialType === 'layer' ? "2px solid rgba(1, 100, 100, 0.6)" : "2px solid #DCDCDC",
-                            borderRadius: "10px"
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="15" height="15">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </Grid.Cell>
-                }
-              </Grid>
-            </div>
-
-            <Modal
-              size="large"
-              open={showDemoData}
-              onClose={() => setShowDemoData(false)}
-              title="Select a demo"
-              primaryAction={{
-                content: 'Done',
-                onAction: () => setShowDemoData(false),
-              }}
-            >
-              <Modal.Section>
-                {/* <Text as="p">demos datas list</Text> */}
-                <DemoList handleOnBack={() => setShowDemoData(false)} handleDemoId={(demoId:string, demoName: string)=> {
-                    setDemoId(demoId);
-                    setDemoName(demoName)                  
-                  }} />
-              </Modal.Section>
-            </Modal>
+                  <Modal.Section>
+                    <DemoList handleOnBack={() => setShowDemoData(false)} handleDemoId={(demoId:string, demoName: string)=> {
+                        setDemoId(demoId);
+                        setDemoName(demoName)                  
+                      }} />
+                  </Modal.Section>
+                </Modal>
+              </>
+            )}
           </Box>
         );
       case 3:
@@ -2030,8 +2337,17 @@ export default function ConfigurationEdit() {
                 {productData?.name && (
                   <p style={{color: "#757575"}}>Product sample: <span style={{color: "#424242", fontWeight: "600"}}> {productData.name} </span></p>
                 )}
-                <p style={{color: "#757575"}}>Material type: <span style={{color: "#424242", fontWeight: "600"}}> {materialType} </span></p>
-                <p style={{color: "#757575"}}>Demo data: <span style={{color: "#424242", fontWeight: "600"}}> {validDemoData ? 'Yes' : 'No'} {validDemoData && demoName != "" ? `(${demoName})` : ''} </span></p>
+                {isNcpcProductType ? (
+                  <>
+                    <p style={{color: "#757575"}}>Pricing mode: <span style={{color: "#424242", fontWeight: "600"}}> {ncpcPricingMode || "-"} </span></p>
+                    <p style={{color: "#757575"}}>Starter data: <span style={{color: "#424242", fontWeight: "600"}}> {includeNcpcMeta ? "Yes" : "No"} </span></p>
+                  </>
+                ) : (
+                  <>
+                    <p style={{color: "#757575"}}>Material type: <span style={{color: "#424242", fontWeight: "600"}}> {materialType} </span></p>
+                    <p style={{color: "#757575"}}>Demo data: <span style={{color: "#424242", fontWeight: "600"}}> {validDemoData ? 'Yes' : 'No'} {validDemoData && demoName != "" ? `(${demoName})` : ''} </span></p>
+                  </>
+                )}
 
                 <p style={{color: "#757575"}}>Name: <span style={{color: "#424242", fontWeight: "600"}}> {formData.name} </span></p>
                 {formData.description != "" &&
@@ -2165,14 +2481,16 @@ export default function ConfigurationEdit() {
               
               {step < 3 ? (
                 <button 
-                  onClick={nextStep} 
+                  onClick={nextStep}
+                  disabled={!canProceedStep}
                   style={{
                     backgroundColor: 'rgba(1, 100, 100, 0.9)',
                     color: 'white',
                     borderRadius: '8px',
                     padding: '7px 10px',
                     fontWeight: '600',
-                    cursor: ( (step != 1 && step != 2) || (step == 1 && productData != null) || (step == 2 && materialType != "") ) ? 'pointer' : 'not-allowed',
+                    cursor: canProceedStep ? 'pointer' : 'not-allowed',
+                    opacity: canProceedStep ? 1 : 0.6,
                     border: '1px',
                     // boxShadow: ' 0rem -0.0625rem 0rem 0rem #b5b5b5 inset, 0rem 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.1) inset, 0rem 0.03125rem 0rem 0.09375rem #FFF inset'
                   }}
@@ -2233,6 +2551,9 @@ const formSchema = z.object({
   productType: z.string().nullish().transform(stringTransform),
   materialType: z.string().nullish().transform(stringTransform),
   demoId: z.number().nullish().nullable(),
+  ncpcPresetKey: z.string().nullish().transform(stringTransform),
+  ncpcPricingMode: z.string().nullish().transform(stringTransform),
+  ncpcIncludeMeta: z.string().nullish().transform(stringTransform),
   products: z.any().transform(jsonTransform),
 
 });
@@ -2244,6 +2565,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
+  const forwardedSearchParams = new URLSearchParams();
+  ["shop", "host", "embedded", "locale", "session"].forEach((key) => {
+    const value = url.searchParams.get(key);
+    if (value) forwardedSearchParams.set(key, value);
+  });
+  const forwardedSearch = forwardedSearchParams.toString()
+    ? `?${forwardedSearchParams.toString()}`
+    : "";
   const submission = parseWithZod(formData, { schema: formSchema });
   let demoId = null;
 
@@ -2251,14 +2580,48 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ status: false, message: null, errors: submission.error });
   }
 
-  let configuration: any = submission.value as ConfigurationType;
+  let configuration: any = submission.value as ConfigurationType & {
+    ncpcPresetKey?: string;
+    ncpcPricingMode?: string;
+    ncpcIncludeMeta?: string;
+  };
+  const ncpcPresetKey = configuration.ncpcPresetKey || "";
+  const ncpcPricingMode = configuration.ncpcPricingMode || "";
+  const normalizeNcpcPricingMode = (value?: string | null) => {
+    const normalized = String(value || "")
+      .trim()
+      .toLowerCase();
+    if (normalized === "fixing-height") return "fixed-height";
+    if (normalized === "fixing-width") return "fixed-width";
+    return normalized;
+  };
+
+  delete configuration.ncpcPresetKey;
+  delete configuration.ncpcPricingMode;
+  delete configuration.ncpcIncludeMeta;
   if (configuration.demoId !== null && configuration.demoId !== undefined && !isNaN(configuration.demoId)) {
     demoId = configuration.demoId;
   }
   delete configuration.demoId
 
+  if (configuration.productType === "neon" || configuration.productType === "channel") {
+    const normalizedProductType =
+      configuration.productType === "channel" ? "channel" : "neon";
+    const normalizedPricingMode =
+      normalizeNcpcPricingMode(ncpcPricingMode) || "fixed-height";
+    configuration.productType = normalizedProductType;
+    configuration.pricingMode = normalizedPricingMode;
+  } else {
+    configuration.pricingMode = null;
+  }
+
   if (id) {
     configuration.id = parseInt(id);
+
+    if (configuration.productType === "neon" || configuration.productType === "channel") {
+      configuration.productType =
+        configuration.productType === "channel" ? "channel" : "neon";
+    }
 
     // Récupérer les anciens produits associés depuis Shopify
     const oldShopifyProducts = await ShopifyProductService.getProductsByConfiguration(
@@ -2398,7 +2761,57 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return json({ status: false, message: "Failed to create configuration", errors: {} });
     }
     
-    return redirect(`/app/configuration/${configId}/materials`)
+    if (configuration.productType === "neon" || configuration.productType === "channel") {
+      const { getNcpcPresetConfigurationData } = await import(
+        "~/utils/ncpc-config-data.server"
+      );
+      const ncpcProductType = configuration.productType === "channel" ? "channel" : "neon";
+      const safePresetKey = ncpcPresetKey || getDefaultNcpcPresetKey(ncpcProductType);
+      const requestedPricingMode =
+        ncpcPricingMode || getDefaultNcpcPricingMode(ncpcProductType, safePresetKey);
+      const safePricingMode =
+        requestedPricingMode === "fixing-height"
+          ? "fixed-height"
+          : requestedPricingMode === "fixing-width"
+            ? "fixed-width"
+            : requestedPricingMode;
+
+      const presetData = await getNcpcPresetConfigurationData({
+        productType: ncpcProductType,
+        presetKey: safePresetKey,
+        pricingMode: safePricingMode,
+      });
+
+      if (!presetData || !presetData.requiredOptions || !presetData.additionalOptions) {
+        return json(
+          { status: false, message: "NCPC preset data is invalid", errors: {} },
+          { status: 400 },
+        );
+      }
+
+      const createdConfiguration = await ConfigurationService.getConfiguration(
+        configId,
+        session.id,
+      );
+
+      if (createdConfiguration) {
+        createdConfiguration.products = Array.isArray(createdConfiguration.product)
+          ? createdConfiguration.product
+          : [];
+        createdConfiguration.productType = ncpcProductType;
+        createdConfiguration.pricingMode = safePricingMode;
+        createdConfiguration.data = presetData;
+
+        await ConfigurationService.updateConfiguration(
+          createdConfiguration as ConfigurationType,
+          session.id,
+        );
+      }
+
+      return redirect(`/app/ncpc/${configId}/required-options${forwardedSearch}`);
+    }
+
+    return redirect(`/app/configuration/${configId}/materials${forwardedSearch}`)
   }
 };
 

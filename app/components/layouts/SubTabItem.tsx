@@ -1,7 +1,7 @@
 import { NavLink } from "@remix-run/react";
 import { BlockStack, InlineStack } from "@shopify/polaris";
 
-export const SubTabItem = ({
+const SubTabItem = ({
     to,
     children,
   }: {
@@ -23,3 +23,6 @@ export const SubTabItem = ({
       </NavLink>
     );
   };
+
+export { SubTabItem };
+export default SubTabItem;

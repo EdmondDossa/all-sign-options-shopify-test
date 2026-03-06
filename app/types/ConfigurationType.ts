@@ -9,4 +9,5 @@
      templates?: any;
      materialType?: string;
      productType?: string;
+     pricingMode?: string | null;
 }
