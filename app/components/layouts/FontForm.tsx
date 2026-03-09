@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import SpacingBackground from "./SpacingBackground";
 import {
   Autocomplete,
+  Banner,
   Box,
+  Button,
+  Card,
   Divider,
   Grid,
   Icon,
-  IndexTableSelectionType,
   InlineStack,
   Select,
   Text,
@@ -14,14 +15,10 @@ import {
 } from "@shopify/polaris";
 import { SearchIcon } from "@shopify/polaris-icons";
 import { HelpLink, ToggleButton } from "../buttons";
-import { BiSaveIcon, NextLtrIcon, RayStartArrowIcon } from "../icons";
-import { Controller, set, useForm } from "react-hook-form";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
-import { LoaderFunction, json } from "@remix-run/node";
-import ImageCardWithDeleteButton from "../cards/ImageCardWithDeleteButton";
+import { Controller, useForm } from "react-hook-form";
+import { Form, useNavigation } from "@remix-run/react";
 import { FileInput, MultiCombobox } from "../inputs";
-import { FileUploader } from "~/routes/app.upload";
-import { fileUrl } from "~/utils/fileUrl";
+import UploaderLayout from "./UploderLayout";
 
 export interface ResizeSettingsFontSizeSettings {
   defaultFontSize: number;
@@ -68,6 +65,7 @@ export interface AdvancedSizeType {
 
 export interface AdvancedFont {
   id: number | null;
+  managedFontId?: number | null;
   label: string;
   url: string;
   previewImg: string;
@@ -87,6 +85,7 @@ export interface AdvancedFont {
 
 export interface FixedFont {
   id: number | null;
+  managedFontId?: number | null;
   label: string;
   url: string;
   pricing: number;
@@ -106,6 +105,12 @@ interface Props {
   pricings: any[];
   sizes: any[];
   googleFonts: any[];
+  managedFonts: Array<{
+    id: number;
+    label: string;
+    url: string;
+    isGoogleFont: boolean;
+  }>;
   isEditing?: boolean;
   pricingMode: string;
   onChange?: (font: FixedFont | AdvancedFont) => void;
@@ -119,6 +124,7 @@ export default function FontForm({
   pricings,
   sizes,
   googleFonts,
+  managedFonts,
   onChange,
   onSubmit,
   onClose,
@@ -128,11 +134,12 @@ export default function FontForm({
     pricingMode == "advanced"
       ? {
           id: null,
+          managedFontId: null,
           label: "",
           url: "",
           previewImg: "",
           pricing: 0,
-          isDefault: true,
+          isDefault: false,
           minHeightFontChar: {
             smallLetter: 6,
             uppercaseLetter: 10,
@@ -146,11 +153,12 @@ export default function FontForm({
         }
       : {
           id: null,
+          managedFontId: null,
           label: "",
           url: "",
           pricing: 0,
           previewImg: "",
-          isDefault: true,
+          isDefault: false,
           limitFont: [],
           lineHeight: {
             type: "normal",
@@ -163,7 +171,6 @@ export default function FontForm({
   const defaultSize: FixedFont | AdvancedFont = isEditing
     ? (font as FixedFont | AdvancedFont)
     : fontWithRightType;
-  const [hasError, setHasError] = useState(false);
   const [selectedGoogleFont, setSelectedGoogleFont] = useState<any>(null);
   const [selectedGoogleFontVariant, setSelectedGoogleFontVariant] =
     useState<string>("");
@@ -175,12 +182,10 @@ export default function FontForm({
   const {
     handleSubmit,
     control,
-    reset,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
     setValue,
     getValues,
-    trigger,
   } = useForm<FixedFont | AdvancedFont>({
     defaultValues: defaultSize,
     mode: "onChange", // Active la validation au changement
@@ -190,7 +195,6 @@ export default function FontForm({
   let isSubmitting = navigation.state == "submitting";
   const SelectedGoogleType = watch("isGoogleFont");
   const selectedLineType = watch("lineHeight.type");
-  const selectedPreviewImage = watch("previewImg");
   const selectFontUrl = watch("url");
 
   const onInternalSubmit = (data: FixedFont | AdvancedFont) => {
@@ -202,6 +206,19 @@ export default function FontForm({
   };
 
   const [googleFontsList, setGoogleFontsList] = useState<any[]>([]);
+  const [managedFontMode, setManagedFontMode] = useState<"existing" | "custom">(
+    "existing",
+  );
+  const [managedFontSearchValue, setManagedFontSearchValue] = useState("");
+  const allManagedFontOptions = useMemo(
+    () =>
+      managedFonts.map((managedFont) => ({
+        label: `${managedFont.label} (${managedFont.isGoogleFont ? "Google" : "Uploaded"})`,
+        value: String(managedFont.id),
+      })),
+    [managedFonts],
+  );
+  const [managedFontList, setManagedFontList] = useState<any[]>([]);
 
   const deselectedOptions = useMemo(
     () =>
@@ -246,15 +263,84 @@ export default function FontForm({
         setSelectedGoogleFont(selectedFont);
         setSelectedGoogleFontVariant(selectedFont.variants[0]);
         setValue("url", selectedFont.files[selectedFont.variants[0]]);
+        setValue("managedFontId", null);
         if (getValues("label") == "") {
-          setValue("label", selectedFont.family);
+          setValue("label", String(selectedFont.family || "").trim());
         }
       } else {
         setSelectedGoogleFontVariant("");
         setSelectedGoogleFont(null);
       }
     },
-    [googleFontsList, googleFonts, selectedGoogleFontVariant],
+    [googleFontsList, googleFonts, getValues, setValue],
+  );
+
+  const applyManagedFont = useCallback(
+    (fontId: number | null) => {
+      if (fontId == null) {
+        setValue("managedFontId", null);
+        return;
+      }
+
+      const matched = managedFonts.find((fontRow) => fontRow.id === fontId);
+      if (!matched) return;
+
+      setValue("managedFontId", matched.id);
+      setValue("label", String(matched.label || "").trim());
+      setValue("url", matched.url);
+      setValue("isGoogleFont", !!matched.isGoogleFont);
+      setSearchGoogleFontValue(matched.isGoogleFont ? matched.label : "");
+
+      if (matched.isGoogleFont) {
+        const matchedGoogleFont = googleFonts.find(
+          (googleFont: any) => String(googleFont.family) === matched.label,
+        );
+        if (matchedGoogleFont) {
+          setSelectedGoogleFont(matchedGoogleFont);
+          const initialVariant =
+            Object.entries(matchedGoogleFont.files || {}).find(
+              ([, fileUrl]) => fileUrl === matched.url,
+            )?.[0] || matchedGoogleFont.variants?.[0] || "";
+          setSelectedGoogleFontVariant(initialVariant);
+        }
+      } else {
+        setSelectedGoogleFont(null);
+        setSelectedGoogleFontVariant("");
+      }
+    },
+    [googleFonts, managedFonts, setValue],
+  );
+
+  const updateManagedFontSearch = useCallback(
+    (value: string) => {
+      setManagedFontSearchValue(value);
+
+      if (value.trim() === "") {
+        setManagedFontList(allManagedFontOptions);
+        return;
+      }
+
+      const filterRegex = new RegExp(value, "i");
+      setManagedFontList(
+        allManagedFontOptions.filter((option) => option.label.match(filterRegex)),
+      );
+    },
+    [allManagedFontOptions],
+  );
+
+  const updateManagedFontSelection = useCallback(
+    (selected: string[]) => {
+      const selectedId = selected[0];
+      const selectedOption = managedFontList.find(
+        (option) => option.value === selectedId,
+      );
+      if (!selectedOption) return;
+
+      setManagedFontSearchValue(selectedOption.label);
+      setManagedFontMode("existing");
+      applyManagedFont(Number(selectedOption.value));
+    },
+    [managedFontList, applyManagedFont],
   );
 
   const googleFontsTextField = (
@@ -268,109 +354,264 @@ export default function FontForm({
     />
   );
 
-  // Surveille les erreurs et met à jour l'état hasError
   useEffect(() => {
-    const errorCount = Object.keys(errors).length;
-    setHasError(errorCount > 0);
-  }, [errors]);
+    setGoogleFontsList(deselectedOptions);
+  }, [deselectedOptions]);
+
+  useEffect(() => {
+    setManagedFontList(allManagedFontOptions);
+  }, [allManagedFontOptions]);
+
+  useEffect(() => {
+    const matchingManagedFont = managedFonts.find(
+      (managedFont) =>
+        managedFont.url === defaultSize.url ||
+        managedFont.label.toLowerCase() === String(defaultSize.label || "").toLowerCase(),
+    );
+
+    if (matchingManagedFont) {
+      setValue("managedFontId", matchingManagedFont.id);
+      setManagedFontMode("existing");
+      setManagedFontSearchValue(
+        `${matchingManagedFont.label} (${matchingManagedFont.isGoogleFont ? "Google" : "Uploaded"})`,
+      );
+    } else {
+      setManagedFontSearchValue("");
+    }
+  }, [defaultSize.label, defaultSize.url, managedFonts, setValue]);
+
+  const managedFontsTextField = (
+    <Autocomplete.TextField
+      label="Search existing font"
+      onChange={updateManagedFontSearch}
+      value={managedFontSearchValue}
+      prefix={<Icon source={SearchIcon} />}
+      placeholder="Search in Manage Fonts"
+      autoComplete="off"
+    />
+  );
 
   return (
-    <>
-      <Box paddingInline="300" paddingBlock="200" background="bg-surface">
-        <InlineStack gap="300" align="space-between">
-          <Box padding="300" background="bg-surface">
-            <Text as="p" variant="headingMd">
-              Fonts <NextLtrIcon width={6} height={10} />{" "}
-              {isEditing ? "Edit Font" : "Add new Font"}
-            </Text>
-          </Box>
-          <InlineStack gap="300" align="center">
+    <div style={{ display: "grid", gap: 12 }}>
+      <Card>
+        <Box padding="300">
+          <InlineStack gap="300" align="space-between" blockAlign="start">
+            <div>
+              <Text as="h3" variant="headingSm">
+                {isEditing ? "Edit font" : "Add new font"}
+              </Text>
+              <Box paddingBlockStart="150" />
+              <Text as="p" tone="subdued">
+                Configure font source, preview and sizing behavior.
+              </Text>
+            </div>
             <HelpLink
               url="https://docs.signsdesigner.us/docs/ncpc-documentation/configurations-9624/adding-fonts-9726/"
               text="Get Help"
             />
           </InlineStack>
-        </InlineStack>
-      </Box>
-
-      <Divider />
+        </Box>
+      </Card>
 
       <Form onSubmit={handleSubmit(onInternalSubmit)}>
-        <Box paddingInline="300" paddingBlock="200" as="div">
-          <SpacingBackground backgroundColor="#F8F9FB">
-            <Box paddingInline="300" paddingBlock="100">
-              <Box padding="100" />
-              <InlineStack gap="200">
-                <Controller
-                  name="isGoogleFont"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <Text as="span">Use Google Font</Text>
-                      <ToggleButton
-                        id="use-googleFont"
-                        type="radio"
-                        checked={field.value}
-                        value={true}
-                        name="fontType"
-                        onChange={(val) => {
-                          field.onChange(val);
-                        }}
-                      />
-                    </>
-                  )}
-                />
-                <Controller
-                  name="isGoogleFont"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <Text as="span">Upload Your Own</Text>
-                      <ToggleButton
-                        id="upload-own"
-                        type="radio"
-                        name="fontType"
-                        checked={!field.value}
-                        value={false}
-                        onChange={(val) => field.onChange(val)}
-                      />
-                    </>
-                  )}
-                />
-              </InlineStack>
-              {SelectedGoogleType && (
-                <>
-                  <Box paddingBlock="200">
-                    <Autocomplete
-                      options={googleFontsList}
-                      selected={[font?.label || ""]}
-                      onSelect={updateSelection}
-                      textField={googleFontsTextField}
+        <div style={{ display: "grid", gap: 12 }}>
+          <Card>
+            <Box padding="300">
+              <Banner tone="info">
+                Any font added or updated here is automatically synchronized to Manage Fonts.
+              </Banner>
+              <Box paddingBlockStart="300" />
+              <Text as="h3" variant="headingMd">
+                Font Library
+              </Text>
+              <Box paddingBlockStart="150" />
+              <div style={{ display: "grid", gap: 8 }}>
+                <Box
+                  borderColor="border"
+                  borderWidth="025"
+                  borderRadius="200"
+                  padding="200"
+                  background={managedFontMode === "existing" ? "bg-surface-active" : "bg-surface"}
+                >
+                  <InlineStack align="space-between" blockAlign="center">
+                    <div>
+                      <Text as="p" variant="headingSm">
+                        Choose an existing font
+                      </Text>
+                      <Text as="p" tone="subdued">
+                        Recommended to keep fonts centralized in Manage Fonts.
+                      </Text>
+                    </div>
+                    <ToggleButton
+                      id="managed-existing"
+                      type="radio"
+                      checked={managedFontMode === "existing"}
+                      value={"existing"}
+                      name="managedFontMode"
+                      onChange={(val) => {
+                        setManagedFontMode(String(val) as "existing" | "custom");
+                      }}
                     />
-                  </Box>
-                </>
+                  </InlineStack>
+                </Box>
+                <Box
+                  borderColor="border"
+                  borderWidth="025"
+                  borderRadius="200"
+                  padding="200"
+                  background={managedFontMode === "custom" ? "bg-surface-active" : "bg-surface"}
+                >
+                  <InlineStack align="space-between" blockAlign="center">
+                    <div>
+                      <Text as="p" variant="headingSm">
+                        Create / upload a font
+                      </Text>
+                      <Text as="p" tone="subdued">
+                        Add a new font here, then it will also be saved to Manage Fonts.
+                      </Text>
+                    </div>
+                    <ToggleButton
+                      id="managed-custom"
+                      type="radio"
+                      checked={managedFontMode === "custom"}
+                      value={"custom"}
+                      name="managedFontMode"
+                      onChange={(val) => {
+                        setManagedFontMode(String(val) as "existing" | "custom");
+                        setValue("managedFontId", null);
+                        applyManagedFont(null);
+                      }}
+                    />
+                  </InlineStack>
+                </Box>
+              </div>
+
+              {managedFontMode === "existing" && (
+                <Box paddingBlockStart="250">
+                  <Autocomplete
+                    options={managedFontList}
+                    selected={[]}
+                    onSelect={updateManagedFontSelection}
+                    textField={managedFontsTextField}
+                  />
+                  <Box paddingBlockStart="100" />
+                  <Text as="p" tone="subdued">
+                    Select a font already available in Manage Fonts.
+                  </Text>
+                </Box>
               )}
-              {SelectedGoogleType && selectedGoogleFont && (
+
+              {managedFontMode === "custom" && (
                 <>
-                  <Select
-                    label="Choose font variant(Required)"
-                    options={selectedGoogleFont.variants.map(
-                      (variant: any) => ({
-                        label: variant,
-                        value: variant,
-                      }),
+                  <Box paddingBlockStart="300" />
+                  <Text as="h3" variant="headingMd">
+                    Font Source
+                  </Text>
+                  <Box paddingBlockStart="150" />
+
+                  <Controller
+                    name="isGoogleFont"
+                    control={control}
+                    render={({ field }) => (
+                      <div style={{ display: "grid", gap: 8 }}>
+                        <Box
+                          borderColor="border"
+                          borderWidth="025"
+                          borderRadius="200"
+                          padding="200"
+                          background={field.value ? "bg-surface-active" : "bg-surface"}
+                        >
+                          <InlineStack align="space-between" blockAlign="center">
+                            <div>
+                              <Text as="p" variant="headingSm">
+                                Google Font
+                              </Text>
+                              <Text as="p" tone="subdued">
+                                Search and import from the Google Fonts catalog.
+                              </Text>
+                            </div>
+                            <ToggleButton
+                              id="use-googleFont"
+                              type="radio"
+                              checked={field.value}
+                              value={true}
+                              name="fontType"
+                              onChange={(val) => {
+                                setValue("managedFontId", null);
+                                setManagedFontMode("custom");
+                                field.onChange(val);
+                              }}
+                            />
+                          </InlineStack>
+                        </Box>
+                        <Box
+                          borderColor="border"
+                          borderWidth="025"
+                          borderRadius="200"
+                          padding="200"
+                          background={!field.value ? "bg-surface-active" : "bg-surface"}
+                        >
+                          <InlineStack align="space-between" blockAlign="center">
+                            <div>
+                              <Text as="p" variant="headingSm">
+                                Upload your own
+                              </Text>
+                              <Text as="p" tone="subdued">
+                                Upload a local `.ttf` file and reuse it across configurations.
+                              </Text>
+                            </div>
+                            <ToggleButton
+                              id="upload-own"
+                              type="radio"
+                              checked={!field.value}
+                              value={false}
+                              name="fontType"
+                              onChange={(val) => {
+                                setValue("managedFontId", null);
+                                setManagedFontMode("custom");
+                                field.onChange(val);
+                              }}
+                            />
+                          </InlineStack>
+                        </Box>
+                      </div>
                     )}
-                    onChange={(value) => {
-                      setSelectedGoogleFontVariant(value);
-                      setValue("url", selectedGoogleFont.files[value]);
-                      if (getValues("label") == "") {
-                        setValue("label", selectedGoogleFont.family);
-                      }
-                    }}
                   />
                 </>
               )}
-              <Box padding="100" />
+
+              {managedFontMode === "custom" && SelectedGoogleType && (
+                <Box paddingBlockStart="300">
+                  <Autocomplete
+                    options={googleFontsList}
+                    selected={[]}
+                    onSelect={updateSelection}
+                    textField={googleFontsTextField}
+                  />
+                </Box>
+              )}
+
+              {managedFontMode === "custom" && SelectedGoogleType && selectedGoogleFont && (
+                <Box paddingBlockStart="300">
+                  <Select
+                    label="Choose font variant (Required)"
+                    options={selectedGoogleFont.variants.map((variant: any) => ({
+                      label: variant,
+                      value: variant,
+                    }))}
+                    value={selectedGoogleFontVariant}
+                    onChange={(value) => {
+                      setSelectedGoogleFontVariant(value);
+                      setValue("url", selectedGoogleFont.files[value]);
+                      if (getValues("label") === "") {
+                        setValue("label", String(selectedGoogleFont.family || "").trim());
+                      }
+                    }}
+                  />
+                </Box>
+              )}
+
+              <Box paddingBlockStart="300" />
               <Controller
                 name="label"
                 control={control}
@@ -379,79 +620,75 @@ export default function FontForm({
                   <TextField
                     label="Label"
                     value={field.value}
-                    onChange={field.onChange}
-                    autoComplete="on"
+                    onChange={(value) => {
+                      setValue("managedFontId", null);
+                      setManagedFontMode("custom");
+                      field.onChange(value);
+                    }}
+                    autoComplete="off"
                     error={errors.label?.message}
                   />
                 )}
               />
-              {!SelectedGoogleType && (
-                <>
-                  <Box padding="100" />
-                  <Text as="h6" variant="headingMd">
-                    Upload font
+
+              {managedFontMode === "custom" && !SelectedGoogleType && (
+                <Box paddingBlockStart="300">
+                  <Text as="h3" variant="headingMd">
+                    Upload Font
                   </Text>
-                  <Text as="h6" variant="headingMd">
+                  <Box paddingBlockStart="100" />
+                  <Text as="p" tone="subdued">
                     .ttf Font File Type (Required)
                   </Text>
+                  <Box paddingBlockStart="200" />
                   <FileInput
                     type="font"
                     path={selectFontUrl}
                     handlePath={(files: any) => {
                       if (files?.trim() !== "") {
+                        setValue("managedFontId", null);
                         setValue("url", files);
                       }
                     }}
                   />
-                  <Box padding="100" />
-                </>
+                </Box>
               )}
             </Box>
-            <Box padding="200">
-              <Box padding="150" />
-              <Text as="h6" variant="bodyMd">
+          </Card>
+
+          <Card>
+            <Box padding="300">
+              <Text as="h3" variant="headingMd">
                 Font Preview Image
               </Text>
-              <Box padding="100" />
-              <InlineStack gap="300">
-                <FileUploader
-                  type={"image"}
-                  setFilesData={(files: any) => {
-                    if (files?.trim() !== "") {
-                      setValue("previewImg", files);
-                    }
-                  }}
-                  title={"Upload Font Preview Image"}
-                >
-                  <button
-                    disabled={isSubmitting}
-                    type="button"
-                    className="next-large-btn"
-                  >
-                    <Box paddingInline="1000">
-                      <InlineStack gap="300" blockAlign="center">
-                        <span style={{ color: "white", fontWeight: "bold" }}>
-                          Choose font image
-                        </span>
-                        {!isSubmitting && <BiSaveIcon />}
-                      </InlineStack>
-                    </Box>
-                  </button>
-                </FileUploader>
-                <ImageCardWithDeleteButton
-                  imageSrc={fileUrl(selectedPreviewImage)}
-                  onDelete={() => {
-                    setValue("previewImg", "");
-                  }}
-                />
-              </InlineStack>
+              <Controller
+                name="previewImg"
+                control={control}
+                render={({ field }) => (
+                  <UploaderLayout
+                    label="Preview Image (optional)"
+                    modalTitle="Upload Font Preview Image"
+                    helperText="Choose an image to represent this font in the configurator."
+                    buttonText="Choose font image"
+                    fileType="image"
+                    value={field.value}
+                    isSubmitting={isSubmitting}
+                    onChange={(val) => field.onChange(val)}
+                  />
+                )}
+              />
             </Box>
-            <Box padding="200">
-              <Box padding="150" />
-              <Text as="h6" variant="bodyMd">
-                Pricing
+          </Card>
+
+          <Card>
+            <Box padding="300">
+              <Text as="h3" variant="headingMd">
+                Pricing & Style
               </Text>
-              <Box padding="100" />
+              <Box paddingBlockStart="200" />
+              <Divider borderWidth="100" />
+              <Box paddingBlockStart="200" />
+
               <Controller
                 name="pricing"
                 control={control}
@@ -471,41 +708,33 @@ export default function FontForm({
                   />
                 )}
               />
-              <Box padding="100" />
+
+              <Box paddingBlockStart="200" />
               {pricingMode !== "advanced" && (
-                <>
-                  <Controller
-                    name="limitFont"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        <MultiCombobox
-                          label={
-                            "Limit this font to a size and above (optional)"
-                          }
-                          placeholder={"Select Sizes"}
-                          data={sizes?.map((size: any, index: number) => ({
-                            label: size.label,
-                            value: index,
-                          }))}
-                          selectedOptions={field.value}
-                          setSelectedOptions={(data: any) => {
-                            if (data) {
-                              field.onChange(data);
-                            }
-                          }}
-                        />
-                      </>
-                    )}
-                  />
-                  <Box padding="100" />
-                </>
+                <Controller
+                  name="limitFont"
+                  control={control}
+                  render={({ field }) => (
+                    <MultiCombobox
+                      label={"Limit this font to a size and above (optional)"}
+                      placeholder={"Select Sizes"}
+                      data={sizes?.map((size: any, index: number) => ({
+                        label: size.label,
+                        value: index,
+                      }))}
+                      selectedOptions={field.value}
+                      setSelectedOptions={(data: any) => {
+                        if (data) {
+                          field.onChange(data);
+                        }
+                      }}
+                    />
+                  )}
+                />
               )}
-              {pricingMode == "advanced" && (
-                <Grid
-                  gap={{ lg: "30px" }}
-                  columns={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-                >
+
+              {pricingMode === "advanced" && (
+                <Grid gap={{ lg: "30px" }} columns={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 3, xl: 3 }}>
                     <Controller
                       name="minHeightFontChar.smallLetter"
@@ -530,7 +759,7 @@ export default function FontForm({
                       rules={{ required: "This field is required" }}
                       render={({ field }) => (
                         <TextField
-                          label="The minimum height for uppercase letter in centimeter"
+                          label="Minimum height for uppercase letter"
                           helpText="The minimum height for uppercase letter in centimeter (cm)."
                           value={field.value.toString()}
                           onChange={(val) => field.onChange(Number(val))}
@@ -542,155 +771,114 @@ export default function FontForm({
                   </Grid.Cell>
                 </Grid>
               )}
-            </Box>
-            <Box paddingInline="300" paddingBlock="100">
-              <Text as="h6" variant="headingMd">
-                Font Style
-              </Text>
-              <Text as="h6" variant="bodySm">
+
+              <Box paddingBlockStart="300" />
+              <Divider borderWidth="100" />
+              <Box paddingBlockStart="200" />
+              <Text as="h3" variant="headingMd">
                 Line Height
               </Text>
-              <Box padding="100" />
-              <InlineStack gap="200">
+              <Box paddingBlockStart="150" />
+              <InlineStack gap="400">
                 <Controller
                   name="lineHeight.type"
                   control={control}
                   render={({ field }) => (
                     <>
-                      <Text as="span">Normal(default)</Text>
-                      <ToggleButton
-                        id="lineHeight1"
-                        type="radio"
-                        checked={field.value == "normal"}
-                        value={"normal"}
-                        name="lineHeight"
-                        onChange={(val) => {
-                          field.onChange(val);
-                        }}
-                      />
-                    </>
-                  )}
-                />
-                <Controller
-                  name="lineHeight.type"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <Text as="span">Specific Line Height</Text>
-                      <ToggleButton
-                        id="lineHeight2"
-                        type="radio"
-                        checked={field.value == "custom"}
-                        value={"custom"}
-                        name="lineHeight"
-                        onChange={(val) => {
-                          field.onChange(val);
-                        }}
-                      />
+                      <InlineStack gap="150" blockAlign="center">
+                        <Text as="span">Normal (default)</Text>
+                        <ToggleButton
+                          id="lineHeight1"
+                          type="radio"
+                          checked={field.value === "normal"}
+                          value={"normal"}
+                          name="lineHeight"
+                          onChange={(val) => {
+                            field.onChange(val);
+                          }}
+                        />
+                      </InlineStack>
+                      <InlineStack gap="150" blockAlign="center">
+                        <Text as="span">Specific line height</Text>
+                        <ToggleButton
+                          id="lineHeight2"
+                          type="radio"
+                          checked={field.value === "custom"}
+                          value={"custom"}
+                          name="lineHeight"
+                          onChange={(val) => {
+                            field.onChange(val);
+                          }}
+                        />
+                      </InlineStack>
                     </>
                   )}
                 />
               </InlineStack>
-              <Box padding="100" />
-              {selectedLineType == "custom" && (
-                <Grid
-                  gap={{ lg: "30px" }}
-                  columns={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-                >
-                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 3, xl: 3 }}>
-                    <Controller
-                      name="lineHeight.value"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          label=""
-                          type="number"
-                          value={field.value.toString()}
-                          helpText="Adjust the space between each new line of text for this font in the configurator"
-                          autoComplete="off"
-                          onChange={(val) => {
-                            field.onChange(Number(val));
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid.Cell>
-                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 3, xl: 3 }}>
-                    <Controller
-                      name="lineHeight.calculHeight"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          label=""
-                          type="number"
-                          suffix="cm"
-                          value={field.value.toString()}
-                          helpText="Adjust the space between each new line of text for this font in the height calculation."
-                          autoComplete="off"
-                          onChange={(val) => {
-                            field.onChange(Number(val));
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid.Cell>
-                </Grid>
+
+              {selectedLineType === "custom" && (
+                <Box paddingBlockStart="200">
+                  <Grid
+                    gap={{ lg: "30px" }}
+                    columns={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+                  >
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 3, xl: 3 }}>
+                      <Controller
+                        name="lineHeight.value"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            label="Line height value"
+                            type="number"
+                            value={field.value.toString()}
+                            helpText="Adjust the space between each new line of text for this font in the configurator."
+                            autoComplete="off"
+                            onChange={(val) => {
+                              field.onChange(Number(val));
+                            }}
+                          />
+                        )}
+                      />
+                    </Grid.Cell>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 3, xl: 3 }}>
+                      <Controller
+                        name="lineHeight.calculHeight"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            label="Height calculation adjustment"
+                            type="number"
+                            suffix="cm"
+                            value={field.value.toString()}
+                            helpText="Adjust the space between each new line for height calculation."
+                            autoComplete="off"
+                            onChange={(val) => {
+                              field.onChange(Number(val));
+                            }}
+                          />
+                        )}
+                      />
+                    </Grid.Cell>
+                  </Grid>
+                </Box>
               )}
             </Box>
-          </SpacingBackground>
-        </Box>
+          </Card>
 
-        <SpacingBackground
-          backgroundColor="#F9F9F9"
-          position="relative"
-          bottom="0"
-          shadow="0px 0px 10px rgba(0, 0, 0, 0.1)"
-          width="100%"
-          zIndex={100}
-        >
-          <Box paddingInline="300" paddingBlock="200">
-            <InlineStack align="end" gap="600">
-              <button
-                disabled={isSubmitting}
-                className="back-large-btn"
-                type="button"
-                onClick={handleGoBack}
-              >
-                <Box paddingInline="1000">
-                  <InlineStack gap="300">
-                    <RayStartArrowIcon />{" "}
-                    <span style={{ color: "black", fontWeight: "bold" }}>
-                      Back
-                    </span>
-                  </InlineStack>
-                </Box>
-              </button>
-
-              <button
-                disabled={isSubmitting}
-                className="next-large-btn"
-                type="submit"
-              >
-                <Box paddingInline="1000">
-                  <InlineStack gap="300" blockAlign="center">
-                    {isSubmitting && (
-                      <img
-                        width="22"
-                        height="22"
-                        src="/assets/loading/ic_loading_gray.svg"
-                      />
-                    )}
-                    <span style={{ color: "white", fontWeight: "bold" }}>
-                      {isEditing ? "Update" : "Save"}
-                    </span>
-                    {!isSubmitting && <BiSaveIcon />}
-                  </InlineStack>
-                </Box>
-              </button>
-            </InlineStack>
-          </Box>
-        </SpacingBackground>
+          <Card>
+            <Box padding="300">
+              <InlineStack align="end" gap="300">
+                <Button onClick={handleGoBack} disabled={isSubmitting}>
+                  Cancel
+                </Button>
+                <Button submit variant="primary" tone="success" loading={isSubmitting}>
+                  {isEditing ? "Update" : "Save"}
+                </Button>
+              </InlineStack>
+            </Box>
+          </Card>
+        </div>
       </Form>
-    </>
+    </div>
   );
 }

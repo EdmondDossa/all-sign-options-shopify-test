@@ -69,6 +69,9 @@ import {
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@shopify/polaris-icons"; 
 
+const LETTERING_CATEGORY_TYPE = "lettering";
+const LETTERING_PRODUCT_TYPES = ["neon", "channel"] as const;
+
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -920,8 +923,9 @@ export default function ConfigurationEdit() {
       setProductGroup(data.productGroups[0])
     }
       };
-  const isNcpcProductType =
-    productType?.type === "neon" || productType?.type === "channel";
+  const isNcpcProductType = LETTERING_PRODUCT_TYPES.includes(
+    (productType?.type || "") as (typeof LETTERING_PRODUCT_TYPES)[number],
+  );
 
   const [productGroup, setProductGroup] = useState<any>(
     initialProductType?.productGroups?.[0] || null,
@@ -936,6 +940,41 @@ export default function ConfigurationEdit() {
     [productCategorie],
   );
 
+  const letteringProductCategories = useMemo(
+    () =>
+      visibleProductCategories.filter((category: any) =>
+        LETTERING_PRODUCT_TYPES.includes(
+          (category?.type || "") as (typeof LETTERING_PRODUCT_TYPES)[number],
+        ),
+      ),
+    [visibleProductCategories],
+  );
+
+  const primaryProductCategories = useMemo(() => {
+    const nonLetteringCategories = visibleProductCategories.filter(
+      (category: any) =>
+        !LETTERING_PRODUCT_TYPES.includes(
+          (category?.type || "") as (typeof LETTERING_PRODUCT_TYPES)[number],
+        ),
+    );
+
+    if (!letteringProductCategories.length) return nonLetteringCategories;
+
+    return [
+      ...nonLetteringCategories,
+      {
+        name: "Lettering",
+        type: LETTERING_CATEGORY_TYPE,
+        description: "Neon and Channel letter signs.",
+      },
+    ];
+  }, [visibleProductCategories, letteringProductCategories]);
+
+  const selectedPrimaryCategoryLabel = useMemo(() => {
+    if (isNcpcProductType) return "Lettering";
+    return productType?.name || "Signboard";
+  }, [isNcpcProductType, productType?.name]);
+
   const visibleProductGroups = useMemo(
     () =>
       dedupeItems(
@@ -943,6 +982,19 @@ export default function ConfigurationEdit() {
         (item) => String(item?.name || ""),
       ),
     [productType],
+  );
+
+  const productGroupsToDisplay = useMemo(
+    () =>
+      visibleProductGroups.filter(
+        (group: any) => String(group?.name || "").trim().toLowerCase() !== "most popular",
+      ),
+    [visibleProductGroups],
+  );
+
+  const shouldShowProductGroupTabs = useMemo(
+    () => productGroupsToDisplay.length > 0,
+    [productGroupsToDisplay],
   );
 
   const visibleProducts = useMemo(
@@ -1517,26 +1569,56 @@ export default function ConfigurationEdit() {
             <div style={{paddingBottom: '20px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
               <Text as="h2" variant="headingLg" fontWeight="bold">
                {/* Select the type and the product sample of {productCategorie.name}  */}
-                What product would you like to sell? <Badge size="large" >{productCategorie?.name || "Signage"}</Badge> <Badge tone="success" size="large" >{productType?.name || "Signboard"}</Badge> 
+                What product would you like to sell?{" "}
+                <Badge size="large" >{productCategorie?.name || "Signage"}</Badge>{" "}
+                <Badge size="large" tone={isNcpcProductType ? "info" : "success"}>
+                  {selectedPrimaryCategoryLabel}
+                </Badge>{" "}
+                {isNcpcProductType && (
+                  <Badge tone="success" size="large" >
+                    {productType?.name || "Neon"}
+                  </Badge>
+                )}
               </Text>
-              <p>Choose the subtype that best matches your product within {productType?.name}. You will fine-tune material behaviour in the next step.</p>
+              <p>
+                Choose the subtype that best matches your product within{" "}
+                {selectedPrimaryCategoryLabel}. You will fine-tune material behaviour in the next step.
+              </p>
               {/* <span style={{fontWeight: "700"}}>{productCategorie.name}</span> */}
             </div>
 
 
             <div style={{display: "flex", gap: "10px", paddingBottom: '20px'}}>
-              {visibleProductCategories.map((categorie: any) => (
+              {primaryProductCategories.map((categorie: any) => {
+                const isLetteringCategory = categorie.type === LETTERING_CATEGORY_TYPE;
+                const isSelectedCategory = isLetteringCategory
+                  ? isNcpcProductType
+                  : productType?.type === categorie.type;
+
+                return (
                 <div
                   key={categorie.type}
-                  onClick={() => selectProductType(categorie)} 
+                  onClick={() => {
+                    if (isLetteringCategory) {
+                      const activeLetteringType =
+                        letteringProductCategories.find(
+                          (letteringCategory: any) => letteringCategory.type === productType?.type,
+                        ) || letteringProductCategories[0];
+                      if (activeLetteringType) {
+                        selectProductType(activeLetteringType);
+                      }
+                      return;
+                    }
+                    selectProductType(categorie);
+                  }} 
                   style={{
                     cursor: 'pointer',
                     // backgroundColor:  '#f1f1f1',
                     backgroundColor:  '#F5F5F5',
-                    color: productType.type === categorie.type ? 'rgba(1, 100, 100, 0.8)' : '#424242',
+                    color: isSelectedCategory ? 'rgba(1, 100, 100, 0.8)' : '#424242',
                     borderRadius: '16px',
                     border: '0.07em solid #BDBDBD',
-                    boxShadow: productType.type === categorie.type ? '0px 0px 2px 2px rgba(1, 100, 100, 0.8)' : '',
+                    boxShadow: isSelectedCategory ? '0px 0px 2px 2px rgba(1, 100, 100, 0.8)' : '',
                     paddingInline: '16px',
                     paddingBlock: '5px',
                     transition: 'all 50ms',
@@ -1554,37 +1636,80 @@ export default function ConfigurationEdit() {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
-            <div style={{display: "flex", gap: "8px", marginBottom: '20px', borderBottom: '1px solid #E0E0E0'}}>
-              {visibleProductGroups.map((productGrp: any) => (
-                <div
-                  key={productGrp.name}
-                  onClick={() => {
-                    setProductGroup(productGrp);
-                    setProductData(null);
-                  }}
-                  style={{
-                    cursor: 'pointer',
-                    backgroundColor: productGroup?.name === productGrp?.name ?  'rgba(1, 100, 100, 0.1)' : '',
-                    color: productGroup?.name === productGrp?.name ?  'rgba(1, 100, 100, 1)' : '#424242',
-                    borderBottom: productGroup?.name === productGrp?.name ? '0.09em solid rgba(1, 100, 100, 1)' : '0.07em solid #BDBDBD',
-                    paddingInline: '16px',
-                    paddingBlock: '6px',
-                    transition: 'all 50ms',
-                  }}
-                >
-                  <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-                      <div style={{padding: '0px'}}>
-                          <p style={{fontSize: "14px", fontWeight: "500"}}>{productGrp.name}</p>
+            {isNcpcProductType && letteringProductCategories.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  marginBottom: "20px",
+                  borderBottom: "1px solid #E0E0E0",
+                }}
+              >
+                {letteringProductCategories.map((letteringType: any) => (
+                  <div
+                    key={letteringType.type}
+                    onClick={() => selectProductType(letteringType)}
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor:
+                        productType?.type === letteringType.type
+                          ? "rgba(1, 100, 100, 0.1)"
+                          : "",
+                      color:
+                        productType?.type === letteringType.type
+                          ? "rgba(1, 100, 100, 1)"
+                          : "#424242",
+                      borderBottom:
+                        productType?.type === letteringType.type
+                          ? "0.09em solid rgba(1, 100, 100, 1)"
+                          : "0.07em solid #BDBDBD",
+                      paddingInline: "16px",
+                      paddingBlock: "6px",
+                      transition: "all 50ms",
+                    }}
+                  >
+                    <p style={{ fontSize: "14px", fontWeight: "600" }}>
+                      {letteringType.name}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {shouldShowProductGroupTabs && (
+              <div style={{display: "flex", gap: "8px", marginBottom: '20px', borderBottom: '1px solid #E0E0E0'}}>
+                {productGroupsToDisplay.map((productGrp: any) => (
+                  <div
+                    key={productGrp.name}
+                    onClick={() => {
+                      setProductGroup(productGrp);
+                      setProductData(null);
+                    }}
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: productGroup?.name === productGrp?.name ?  'rgba(1, 100, 100, 0.1)' : '',
+                      color: productGroup?.name === productGrp?.name ?  'rgba(1, 100, 100, 1)' : '#424242',
+                      borderBottom: productGroup?.name === productGrp?.name ? '0.09em solid rgba(1, 100, 100, 1)' : '0.07em solid #BDBDBD',
+                      paddingInline: '16px',
+                      paddingBlock: '6px',
+                      transition: 'all 50ms',
+                    }}
+                  >
+                    <div style={{display: 'flex', gap: '10px', alignItems: '', height: '100%'}}>                    
+                      <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                        <div style={{padding: '0px'}}>
+                            <p style={{fontSize: "14px", fontWeight: "500"}}>{productGrp.name}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             <Grid columns={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2 }}>
               {visibleProducts.map((product: any) => {

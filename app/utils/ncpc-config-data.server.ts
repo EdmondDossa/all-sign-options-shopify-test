@@ -18,6 +18,29 @@ const PRESET_NAME_BY_KEY: Record<string, string> = {
   "wood-letter-signs": "Wood Letter Signs",
 };
 
+const DEFAULT_SCENE_IMAGES = Array.from(
+  { length: 7 },
+  (_item, index) => `/aso_default_files/scenes/${index + 1}.jpg`,
+);
+
+const normalizeDemoFontUrl = (input: unknown, isGoogleFont: boolean) => {
+  const raw = String(input || "").trim();
+  if (!raw || isGoogleFont) return raw;
+
+  const normalized = raw.replace(/\\/g, "/");
+  const directMatch = normalized.match(/\/aso_default_files\/fonts\/([^/?#]+)$/i);
+  if (directMatch?.[1]) {
+    return `/aso_default_files/fonts/${directMatch[1]}`;
+  }
+
+  const genericFontsMatch = normalized.match(/\/fonts\/([^/?#]+)$/i);
+  if (genericFontsMatch?.[1]) {
+    return `/aso_default_files/fonts/${genericFontsMatch[1]}`;
+  }
+
+  return raw;
+};
+
 const deepClone = <T>(value: T): T =>
   JSON.parse(JSON.stringify(value ?? null));
 
@@ -166,5 +189,41 @@ export const getNcpcPresetConfigurationData = async ({
   const cleanData = deepClone(rawData as Record<string, any>);
   delete (cleanData as any).productType;
   delete (cleanData as any).pricingMode;
+
+  const sceneImages = (cleanData as any)?.settings?.languageImages?.images?.manageImages;
+  const normalizedSceneImages = Array.isArray(sceneImages)
+    ? sceneImages.map((img: any) => String(img || "").trim()).filter(Boolean)
+    : [];
+
+  const shouldFallbackToDefaultScenes =
+    normalizedSceneImages.length === 0 ||
+    normalizedSceneImages.every((img: string) => {
+      const lower = img.toLowerCase();
+      return (
+        lower.includes("/images/include-imgs/") ||
+        lower.includes("ncpc_assets_url")
+      );
+    });
+
+  if ((cleanData as any)?.settings?.languageImages?.images) {
+    (cleanData as any).settings.languageImages.images.manageImages =
+      shouldFallbackToDefaultScenes
+        ? [...DEFAULT_SCENE_IMAGES]
+        : normalizedSceneImages;
+  }
+
+  const presetFonts = (cleanData as any)?.requiredOptions?.fontOptions?.fonts;
+  if (Array.isArray(presetFonts)) {
+    (cleanData as any).requiredOptions.fontOptions.fonts = presetFonts.map(
+      (font: any) => {
+        const isGoogleFont = Boolean(font?.isGoogleFont);
+        return {
+          ...(font || {}),
+          url: normalizeDemoFontUrl(font?.url, isGoogleFont),
+        };
+      },
+    );
+  }
+
   return cleanData;
 };

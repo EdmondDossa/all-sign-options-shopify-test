@@ -46,6 +46,11 @@ const DEFAULT_RANGE_PRICING = [
   { surface: 150, basePrice: 0, charPrice: 20 },
 ];
 
+const DEFAULT_SCENE_IMAGES = Array.from(
+  { length: 7 },
+  (_item, index) => `/aso_default_files/scenes/${index + 1}.jpg`,
+);
+
 const DEFAULT_THEME_COLORS = {
   backgroundColor: "#FFFFFF",
   titleColor: "#000000",
@@ -232,7 +237,7 @@ export const createDefaultNcpcSettings = (productType: NcpcProductType) => ({
         activate: false,
         displayDefaultBackgroundImage: false,
       },
-      manageImages: [],
+      manageImages: [...DEFAULT_SCENE_IMAGES],
     },
     main: {
       header: "CREATE YOUR SIGN",

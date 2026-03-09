@@ -471,7 +471,7 @@ export default function NcpcRequiredColors() {
           <Icon source={DragHandleIcon} />
         </span>
       </IndexTable.Cell>
-      <IndexTable.Cell className="td-center">{previewSwatch(currentColor)}</IndexTable.Cell>
+      <IndexTable.Cell>{previewSwatch(currentColor)}</IndexTable.Cell>
       <IndexTable.Cell>
         <Text as="span" variant="bodyMd" fontWeight="semibold">
           {truncateText(currentColor.label, 26)}
@@ -565,7 +565,7 @@ export default function NcpcRequiredColors() {
                     selectable={false}
                     headings={[
                       { title: "" },
-                      { title: "Color", alignment: "center" },
+                      { title: "Color" },
                       { title: "Label" },
                       { title: "Type", alignment: "center" },
                       { title: "Default", alignment: "center" },

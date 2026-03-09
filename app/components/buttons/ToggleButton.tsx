@@ -23,12 +23,13 @@ const isChevronToggle = (props: ToggleButtonProps): props is ChevronToggleProps 
   "buttonProps" in props;
 
 export const ToggleButton = (props: ToggleButtonProps) => {
+  const generatedId = useId();
+
   if (isChevronToggle(props)) {
     const { buttonProps, open } = props;
     return <Button icon={open ? CircleChevronUpIcon : CircleChevronDownIcon} {...buttonProps} />;
   }
 
-  const generatedId = useId();
   const {
     id,
     checked,
@@ -50,9 +51,14 @@ export const ToggleButton = (props: ToggleButtonProps) => {
         disabled={disabled}
         name={name}
         value={value}
+        onClick={() => {
+          if (disabled) return;
+          if (type === "radio" && !checked) {
+            onChange?.(value);
+          }
+        }}
         onChange={(event) => {
           if (type === "radio") {
-            onChange?.(value);
             return;
           }
           onChange?.(event.currentTarget.checked);

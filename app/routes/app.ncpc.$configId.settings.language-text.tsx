@@ -29,6 +29,39 @@ const boolOptions = [
   { label: "No", value: "false" },
 ];
 
+const DEFAULT_SCENE_IMAGES = Array.from(
+  { length: 7 },
+  (_item, index) => `/aso_default_files/scenes/${index + 1}.jpg`,
+);
+
+const normalizeSceneImages = (value: unknown): string[] => {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item) => String(item || "").trim())
+    .filter(Boolean);
+};
+
+const shouldFallbackToDefaultScenes = (images: string[]) => {
+  if (images.length === 0) return true;
+
+  return images.every((img) => {
+    const lower = img.toLowerCase();
+    return (
+      lower.includes("/images/include-imgs/") ||
+      lower.includes("ncpc_assets_url")
+    );
+  });
+};
+
+const resolveSceneImages = (value: unknown) => {
+  const normalized = normalizeSceneImages(value);
+  if (shouldFallbackToDefaultScenes(normalized)) {
+    return [...DEFAULT_SCENE_IMAGES];
+  }
+  return normalized;
+};
+
 const toYesNo = (value: boolean): YesNo => (value ? "true" : "false");
 const fromYesNo = (value: string): boolean => value === "true";
 
@@ -365,7 +398,7 @@ export default function ConfigSettingsLanguageImages() {
       activate: false,
       displayDefaultBackgroundImage: false,
     },
-    manageImages: [],
+    manageImages: [...DEFAULT_SCENE_IMAGES],
   });
 
   const [icons, setIcons] = useState<any>({
@@ -391,7 +424,14 @@ export default function ConfigSettingsLanguageImages() {
     setMain((prev: any) => ({ ...prev, ...(languageImages.main || {}) }));
     setCustomDesign((prev: any) => ({ ...prev, ...(languageImages.customDesign || {}) }));
     setVisualizer((prev: any) => ({ ...prev, ...(languageImages.visualizer || {}) }));
-    setImages((prev: any) => ({ ...prev, ...(languageImages.images || {}) }));
+    setImages((prev: any) => {
+      const incoming = languageImages.images || {};
+      return {
+        ...prev,
+        ...incoming,
+        manageImages: resolveSceneImages(incoming.manageImages),
+      };
+    });
     setIcons((prev: any) => ({ ...prev, ...(languageImages.icons || {}) }));
   }, [configuration]);
 
@@ -807,7 +847,9 @@ export default function ConfigSettingsLanguageImages() {
                   if (!Array.isArray(files) || files.length === 0) return;
                   setImages((prev: any) => ({
                     ...prev,
-                    manageImages: [...(prev?.manageImages || []), ...files],
+                    manageImages: Array.from(
+                      new Set([...(prev?.manageImages || []), ...normalizeSceneImages(files)]),
+                    ),
                   }));
                 }}
                 title="Upload scene images"
@@ -824,9 +866,27 @@ export default function ConfigSettingsLanguageImages() {
                   </Box>
                 </button>
               </FileUploader>
+              <Box paddingInlineStart="200">
+                <Button
+                  type="button"
+                  onClick={() =>
+                    setImages((prev: any) => ({
+                      ...prev,
+                      manageImages: [...DEFAULT_SCENE_IMAGES],
+                    }))
+                  }
+                >
+                  Use default scenes
+                </Button>
+              </Box>
             </InlineStack>
           </Box>
           <Box paddingBlockStart="200">
+            <Text as="p" tone="subdued">
+              Default scenes path: <code>/public/aso_default_files/scenes</code>
+            </Text>
+          </Box>
+          <Box paddingBlockStart="150">
             <div
               style={{
                 display: "flex",

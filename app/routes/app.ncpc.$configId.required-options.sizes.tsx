@@ -551,7 +551,7 @@ export default function NcpcRequiredSizes() {
 
                   <InlineStack gap="200" blockAlign="center">
                     <Text as="p" variant="headingSm">
-                      Prevent automatic size switching
+                      Enable automatic size change
                     </Text>
                     <ToggleButton
                       id="preventAutoSwitch"
@@ -563,8 +563,7 @@ export default function NcpcRequiredSizes() {
                     />
                   </InlineStack>
                   <Text as="p" tone="subdued">
-                    When customer text exceeds the character limit of the current size, the app
-                    can auto-switch to the next size. Disable this behavior if needed.
+                    When enabled, the app will automatically switch to the next size when the customer text exceeds the character limit of the current size.
                   </Text>
                 </>
               )}

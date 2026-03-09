@@ -243,6 +243,31 @@ export default function Configuration() {
       .trim()
       .toLowerCase();
 
+  const normalizePricingMode = (pricingMode?: string | null) => {
+    const normalized = String(pricingMode || "")
+      .trim()
+      .toLowerCase();
+
+    if (normalized === "fixing-height") return "fixed-height";
+    if (normalized === "fixing-width") return "fixed-width";
+    return normalized;
+  };
+
+  const formatPricingModeLabel = (pricingMode?: string | null) => {
+    const normalized = normalizePricingMode(pricingMode);
+    if (!normalized) return "";
+
+    const labels: Record<string, string> = {
+      "fixed-height": "Fixed height",
+      "fixed-width": "Fixed width",
+      advanced: "Advanced",
+      "frame-fit": "Frame fit",
+      simple: "Simple",
+    };
+
+    return labels[normalized] || normalized;
+  };
+
   const isNcpcProductType = (productType?: string | null) => {
     const normalized = normalizeProductType(productType);
     return normalized === "neon" || normalized === "channel";
@@ -353,6 +378,11 @@ export default function Configuration() {
     const { id, name, description, icon, materialType, productType } = config;
     const isActive = activePopoverId === id;
     const ncpcProductType = getNcpcProductTypeFromConfig(config);
+    const configData = parseConfigData(config?.data);
+    const wrappedNcpcData = parseConfigData(configData?.ncpc);
+    const pricingModeLabel = formatPricingModeLabel(
+      config?.pricingMode || configData?.pricingMode || wrappedNcpcData?.pricingMode,
+    );
     const materialBadgeLabel = ncpcProductType
       ? ncpcProductType === "neon"
         ? "Neon"
@@ -417,6 +447,16 @@ export default function Configuration() {
 
         <IndexTable.Cell className="td-center">
           <Badge tone={materialBadgeTone}>{materialBadgeLabel}</Badge>
+        </IndexTable.Cell>
+
+        <IndexTable.Cell className="td-center">
+          {pricingModeLabel ? (
+            <Badge tone="info">{pricingModeLabel}</Badge>
+          ) : (
+            <Text as="span" tone="subdued">
+              -
+            </Text>
+          )}
         </IndexTable.Cell>
 
         <IndexTable.Cell className="td-center">
@@ -514,6 +554,7 @@ export default function Configuration() {
                 { title: "Desciption" },
                 { title: "Icon", alignment: "center" },
                 { title: "Material Type", alignment: "center" },
+                { title: "Pricing mode", alignment: "center" },
                 { title: "Action", alignment: "center" },
               ]}
             >
