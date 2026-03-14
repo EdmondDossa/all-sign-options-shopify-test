@@ -30,7 +30,6 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
-import PlusIcon from "~/components/icons/PlusIcon";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
 import { authenticate } from "~/shopify.server";
 import {
@@ -53,6 +52,7 @@ import {
   DuplicateIcon,
   EditIcon,
   MenuHorizontalIcon,
+  PlusIcon,
   ViewIcon,
 } from "@shopify/polaris-icons";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
@@ -522,21 +522,14 @@ export default function Configuration() {
             configurations?.length >= PRICING_PLANS.STARTER_RULES.configurations
           ) && (
             <InlineStack align="end">
-              <button
-                className="primary-btn"
-                type="button"
+              <Button
+                variant="primary"
+                tone="success"
+                icon={PlusIcon}
                 onClick={onHandleConfigurationCreate}
               >
-                <Box paddingInline="200">
-                  <InlineStack gap="200">
-                    <PlusIcon />
-                    <span className="primary-btn-text">
-                      {" "}
-                      Add new configuration
-                    </span>
-                  </InlineStack>
-                </Box>
-              </button>
+                Add new configuration
+              </Button>
             </InlineStack>
           )}
         </InlineStack>

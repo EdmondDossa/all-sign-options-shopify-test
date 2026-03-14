@@ -165,13 +165,17 @@ export const FileUploader = ({
     new Set(fileData || []),
   );
   let { submit, isUploading, images } = useFileUpload();
+  const acceptedExtensions =
+    type === "all"
+      ? Array.from(new Set(Object.values(fileExtensions).flat()))
+      : fileExtensions[type || "image"] || fileExtensions.image;
 
   useEffect(() => {
     let data: any = fileFetcher?.data;
     let newFiles = data ? [...data.files] : files;
     newFiles.sort((a, b) => b.createdAt - a.createdAt);
     newFiles = newFiles.filter((file) =>
-      fileType == "all" ? true : getFileType(file.url) == fileType,
+      fileMatchesRequestedType(file.url, fileType),
     );
     setFiles(newFiles);
 
@@ -211,7 +215,7 @@ export const FileUploader = ({
   const handleAllSeletedFiles = () => {
     if (typeof setFilesData == "function") {
       let selectedFilesArr = [...selectedFiles]
-        .filter((file) => type =="all" || getFileType(file) == (type || "image"));
+        .filter((file) => fileMatchesRequestedType(file, type || "image"));
       setFilesData(
         multiple
           ? selectedFilesArr
@@ -400,7 +404,12 @@ export const FileUploader = ({
               >
                 <BlockStack gap="300">
                   <Box padding="300">
-                    <DropZone onDrop={handleDropZoneDrop} variableHeight>
+                    <DropZone
+                      onDrop={handleDropZoneDrop}
+                      variableHeight
+                      allowMultiple={Boolean(multiple)}
+                      accept={acceptedExtensions.join(",")}
+                    >
                       <DropZone.FileUpload actionHint="or  drag drop" />
                     </DropZone>
                   </Box>
@@ -481,11 +490,16 @@ export const FileUploader = ({
           <button
             type="button"
             variant="primary"
+            tone="success"
             onClick={handleAllSeletedFiles}
           >
             Select file
           </button>
-          <button type="button" onClick={handleCancelSelectedFiles}>
+          <button
+            type="button"
+            variant="secondary"
+            onClick={handleCancelSelectedFiles}
+          >
             Cancel
           </button>
         </TitleBar>
@@ -567,3 +581,13 @@ function getFileType(filename: string) {
   return null;
 }
 
+function fileMatchesRequestedType(filename: string, requestedType: string) {
+  if (requestedType === "all") {
+    return true;
+  }
+
+  let part = filename.split(".");
+  let ext = `.${part.length > 1 ? part.reverse()[0] : ""}`.toLowerCase();
+
+  return (fileExtensions[requestedType as keyof typeof fileExtensions] || []).includes(ext);
+}

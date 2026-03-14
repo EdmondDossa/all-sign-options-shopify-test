@@ -29,6 +29,12 @@ export default function ConfigSettingsGeneral() {
             <SubTabItem to="mobile-option">
               Mobile Option
             </SubTabItem>
+            <SubTabItem to="request-quote">
+              Request Quote
+            </SubTabItem>
+            <SubTabItem to="mode">
+              Mode
+            </SubTabItem>
             <SubTabItem to="upload">
               Upload Design
             </SubTabItem>
@@ -47,6 +53,5 @@ export default function ConfigSettingsGeneral() {
 export const action = () => {
   return null;
 };
-
 
 

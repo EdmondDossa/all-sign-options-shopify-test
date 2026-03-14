@@ -1,6 +1,7 @@
 import { json } from "@remix-run/node";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import {
+  Banner,
   Box,
   Button,
   Card,
@@ -13,7 +14,7 @@ import {
   TextField,
 } from "@shopify/polaris";
 import { DeleteIcon, DragHandleIcon, EditIcon } from "@shopify/polaris-icons";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { ToggleButton } from "~/components/buttons";
 import HelpLink from "~/components/buttons/HelpLink";
@@ -401,11 +402,54 @@ export default function NcpcRequiredLetterTypes() {
   const [partEditorIndex, setPartEditorIndex] = useState<number | null>(null);
   const [textureEditorIndex, setTextureEditorIndex] = useState<number | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  const [editorNotice, setEditorNotice] = useState<{
+    tone: "success" | "warning";
+    text: string;
+  } | null>(null);
 
   const listTableRef = useRef<HTMLDivElement | null>(null);
   const textureTableRef = useRef<HTMLDivElement | null>(null);
   const listSortableRef = useRef<Sortable | null>(null);
   const textureSortableRef = useRef<Sortable | null>(null);
+
+  const persistExistingLetterType = useCallback((snapshot: LetterTypeItem, successText: string) => {
+    if (editingIndex == null) {
+      setEditorNotice({
+        tone: "warning",
+        text: "Save the letter type first before managing its parts and textures.",
+      });
+      return false;
+    }
+
+    const normalized = normalizeLetterType(snapshot);
+
+    setLetterTypesState((current) => {
+      if (!current[editingIndex]) return current;
+
+      const next = [...current];
+      next[editingIndex] = normalized;
+      const preferredIndex =
+        normalized.isDefault || normalized.default ? editingIndex : undefined;
+
+      return ensureOneDefaultLetterTypes(next, preferredIndex);
+    });
+
+    submit(
+      {
+        operation: "update-letter-type",
+        index: String(editingIndex),
+        letterType: JSON.stringify(normalized),
+      },
+      { method: "POST" },
+    );
+
+    setEditorNotice({
+      tone: "success",
+      text: successText,
+    });
+
+    return true;
+  }, [editingIndex, submit]);
 
   useEffect(() => {
     const latest = getLetterTypesContainer(ncpcData);
@@ -489,6 +533,7 @@ export default function NcpcRequiredLetterTypes() {
         const oldIndex = evt.oldIndex ?? -1;
         const newIndex = evt.newIndex ?? -1;
         if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return;
+        let nextSnapshot: LetterTypeItem | null = null;
 
         setLetterTypeForm((current) => {
           const next = clone(current);
@@ -499,9 +544,13 @@ export default function NcpcRequiredLetterTypes() {
           const [moved] = colors.splice(oldIndex, 1);
           colors.splice(newIndex, 0, moved);
           part.colors = ensureOneDefaultTextures(colors);
-
-          return next;
+          nextSnapshot = normalizeLetterType(next);
+          return nextSnapshot;
         });
+
+        if (nextSnapshot) {
+          persistExistingLetterType(nextSnapshot, "Texture order saved successfully.");
+        }
       },
     });
 
@@ -509,7 +558,14 @@ export default function NcpcRequiredLetterTypes() {
       textureSortableRef.current?.destroy();
       textureSortableRef.current = null;
     };
-  }, [editorOpen, partEditorIndex, textureEditorIndex, activePart, activePart?.colors.length]);
+  }, [
+    activePart,
+    activePart?.colors.length,
+    editorOpen,
+    partEditorIndex,
+    persistExistingLetterType,
+    textureEditorIndex,
+  ]);
 
   if (productType !== "channel") {
     return (
@@ -528,6 +584,7 @@ export default function NcpcRequiredLetterTypes() {
     setLetterTypeForm(emptyLetterType());
     setPartEditorIndex(null);
     setTextureEditorIndex(null);
+    setEditorNotice(null);
     setEditorOpen(true);
   };
 
@@ -536,6 +593,7 @@ export default function NcpcRequiredLetterTypes() {
     setLetterTypeForm(normalizeLetterType(letterTypesState[index]));
     setPartEditorIndex(null);
     setTextureEditorIndex(null);
+    setEditorNotice(null);
     setEditorOpen(true);
   };
 
@@ -546,6 +604,7 @@ export default function NcpcRequiredLetterTypes() {
     setEditorOpen(false);
     setEditingIndex(null);
     setLetterTypeForm(emptyLetterType());
+    setEditorNotice(null);
   };
 
   const saveSettings = () => {
@@ -562,7 +621,8 @@ export default function NcpcRequiredLetterTypes() {
     if (!letterTypeForm.label.trim()) return;
 
     const normalized = normalizeLetterType(letterTypeForm);
-    const operation = editingIndex == null ? "add-letter-type" : "update-letter-type";
+    const isCreate = editingIndex == null;
+    const operation = isCreate ? "add-letter-type" : "update-letter-type";
     const payload: Record<string, string> = {
       operation,
       letterType: JSON.stringify(normalized),
@@ -573,7 +633,7 @@ export default function NcpcRequiredLetterTypes() {
 
     setLetterTypesState((current) => {
       const next = [...current];
-      if (editingIndex == null) {
+      if (isCreate) {
         if (!next.length) {
           normalized.isDefault = true;
           normalized.default = true;
@@ -592,8 +652,18 @@ export default function NcpcRequiredLetterTypes() {
 
       return ensureOneDefaultLetterTypes(next, preferredIndex);
     });
+
+    if (isCreate) {
+      setEditingIndex(letterTypesState.length);
+    }
+
     submit(payload, { method: "POST" });
-    closeEditor();
+    setEditorNotice({
+      tone: "success",
+      text: isCreate
+        ? "Letter type saved. You can now manage its textures."
+        : "Letter type saved. Use Back to letter types when you want to leave this editor.",
+    });
   };
 
   const deleteLetterType = (index: number) => {
@@ -621,6 +691,15 @@ export default function NcpcRequiredLetterTypes() {
   };
 
   const openPartEditor = (partIndex: number) => {
+    if (editingIndex == null) {
+      setEditorNotice({
+        tone: "warning",
+        text: "Save the letter type first before managing its parts and textures.",
+      });
+      return;
+    }
+
+    setEditorNotice(null);
     setPartEditorIndex(partIndex);
     setTextureEditorIndex(null);
   };
@@ -630,8 +709,13 @@ export default function NcpcRequiredLetterTypes() {
     setPartEditorIndex(null);
   };
 
-  const updatePart = (updater: (part: LetterPart) => LetterPart) => {
+  const updatePart = (
+    updater: (part: LetterPart) => LetterPart,
+    options?: { persist?: boolean; successText?: string },
+  ) => {
     if (partEditorIndex == null) return;
+    let nextSnapshot: LetterTypeItem | null = null;
+
     setLetterTypeForm((current) => {
       const next = clone(current);
       const part = next.letterParts[partEditorIndex];
@@ -640,24 +724,35 @@ export default function NcpcRequiredLetterTypes() {
         updater(part),
         PART_TEMPLATES[partEditorIndex],
       );
-      return next;
+      nextSnapshot = normalizeLetterType(next);
+      return nextSnapshot;
     });
+
+    if (options?.persist && nextSnapshot) {
+      persistExistingLetterType(nextSnapshot, options.successText || "Face changes saved.");
+    }
   };
 
   const setTextureDefault = (index: number) => {
-    updatePart((part) => ({
-      ...part,
-      colors: ensureOneDefaultTextures(part.colors, index),
-    }));
+    updatePart(
+      (part) => ({
+        ...part,
+        colors: ensureOneDefaultTextures(part.colors, index),
+      }),
+      { persist: true, successText: "Default texture updated successfully." },
+    );
   };
 
   const deleteTexture = (index: number) => {
-    updatePart((part) => ({
-      ...part,
-      colors: ensureOneDefaultTextures(
-        part.colors.filter((_entry, currentIndex) => currentIndex !== index),
-      ),
-    }));
+    updatePart(
+      (part) => ({
+        ...part,
+        colors: ensureOneDefaultTextures(
+          part.colors.filter((_entry, currentIndex) => currentIndex !== index),
+        ),
+      }),
+      { persist: true, successText: "Texture deleted successfully." },
+    );
   };
 
   const openTextureCreate = () => {
@@ -670,33 +765,41 @@ export default function NcpcRequiredLetterTypes() {
 
   const handleTextureSubmit = (textureValue: Texture) => {
     const normalizedTexture = normalizeTexture(textureValue, activePart?.type || "face");
+    const isCreate = textureEditorIndex == null || textureEditorIndex < 0;
 
-    updatePart((part) => {
-      const colors = [...part.colors];
-      const isCreate = textureEditorIndex == null || textureEditorIndex < 0;
+    updatePart(
+      (part) => {
+        const colors = [...part.colors];
 
-      if (isCreate) {
-        if (colors.length === 0) {
-          normalizedTexture.isDefault = true;
-          normalizedTexture.default = true;
+        if (isCreate) {
+          if (colors.length === 0) {
+            normalizedTexture.isDefault = true;
+            normalizedTexture.default = true;
+          }
+          colors.push(normalizedTexture);
+        } else if (colors[textureEditorIndex]) {
+          colors[textureEditorIndex] = normalizedTexture;
         }
-        colors.push(normalizedTexture);
-      } else if (colors[textureEditorIndex]) {
-        colors[textureEditorIndex] = normalizedTexture;
-      }
 
-      const preferredIndex =
-        normalizedTexture.isDefault || normalizedTexture.default
-          ? isCreate
-            ? colors.length - 1
-            : textureEditorIndex
-          : undefined;
+        const preferredIndex =
+          normalizedTexture.isDefault || normalizedTexture.default
+            ? isCreate
+              ? colors.length - 1
+              : textureEditorIndex
+            : undefined;
 
-      return {
-        ...part,
-        colors: ensureOneDefaultTextures(colors, preferredIndex),
-      };
-    });
+        return {
+          ...part,
+          colors: ensureOneDefaultTextures(colors, preferredIndex),
+        };
+      },
+      {
+        persist: true,
+        successText: isCreate
+          ? "Texture added and saved successfully."
+          : "Texture updated and saved successfully.",
+      },
+    );
 
     setTextureEditorIndex(null);
   };
@@ -958,6 +1061,15 @@ export default function NcpcRequiredLetterTypes() {
         </div>
       ) : partEditorIndex == null ? (
         <div style={{ display: "grid", gap: 12 }}>
+          {editorNotice ? (
+            <Banner
+              tone={editorNotice.tone}
+              onDismiss={() => setEditorNotice(null)}
+            >
+              <p>{editorNotice.text}</p>
+            </Banner>
+          ) : null}
+
           <Card>
             <Box padding="300">
               <InlineStack align="space-between" blockAlign="center">
@@ -1084,7 +1196,7 @@ export default function NcpcRequiredLetterTypes() {
             <Box padding="300">
               <InlineStack align="end" gap="200">
                 <Button onClick={closeEditor} disabled={isSubmitting}>
-                  Back
+                  Back to letter types
                 </Button>
                 <Button
                   variant="primary"
@@ -1124,6 +1236,15 @@ export default function NcpcRequiredLetterTypes() {
           ) : null
         ) : (
           <div style={{ display: "grid", gap: 12 }}>
+            {editorNotice ? (
+              <Banner
+                tone={editorNotice.tone}
+                onDismiss={() => setEditorNotice(null)}
+              >
+                <p>{editorNotice.text}</p>
+              </Banner>
+            ) : null}
+
             <Card>
               <Box padding="300">
                 <InlineStack align="space-between" blockAlign="center">
@@ -1231,7 +1352,8 @@ export default function NcpcRequiredLetterTypes() {
                 </div>
                 <Box paddingBlockStart="200" />
                 <Text as="p" tone="subdued">
-                  These changes are saved with the letter type when you click Save.
+                  Texture add, edit, delete and default changes are saved immediately. Use Save
+                  face changes for the part settings below.
                 </Text>
               </Box>
             </Card>
@@ -1241,6 +1363,17 @@ export default function NcpcRequiredLetterTypes() {
                 <InlineStack align="end" gap="200">
                   <Button onClick={closePartEditor} disabled={isSubmitting}>
                     Back to letter type
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      persistExistingLetterType(
+                        letterTypeForm,
+                        `${activePart.label || "Face"} settings saved successfully.`,
+                      )
+                    }
+                    disabled={isSubmitting}
+                  >
+                    Save face changes
                   </Button>
                   <Button variant="primary" onClick={openTextureCreate} disabled={isSubmitting}>
                     Add texture

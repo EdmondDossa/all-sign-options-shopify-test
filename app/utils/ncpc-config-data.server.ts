@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import vm from "node:vm";
+import { DEFAULT_THEME_COLORS } from "~/utils/ncpc-presets";
 
 export type NcpcProductType = "neon" | "channel";
 
@@ -210,6 +211,31 @@ export const getNcpcPresetConfigurationData = async ({
       shouldFallbackToDefaultScenes
         ? [...DEFAULT_SCENE_IMAGES]
         : normalizedSceneImages;
+  }
+
+  const themeSettings = (cleanData as any)?.settings?.themes;
+  if (themeSettings && typeof themeSettings === "object") {
+    (cleanData as any).settings.themes = {
+      ...themeSettings,
+      skin: String(themeSettings.skin || "default"),
+      colors: {
+        ...DEFAULT_THEME_COLORS,
+        ...(themeSettings.colors && typeof themeSettings.colors === "object"
+          ? themeSettings.colors
+          : {}),
+      },
+    };
+  }
+
+  const themeColorsSettings = (cleanData as any)?.settings?.themeColors;
+  if (themeColorsSettings && typeof themeColorsSettings === "object") {
+    (cleanData as any).settings.themeColors = {
+      ...themeColorsSettings,
+      customCss: String(
+        themeColorsSettings.customCss ?? themeColorsSettings.customCSS ?? "",
+      ),
+    };
+    delete (cleanData as any).settings.themeColors.customCSS;
   }
 
   const presetFonts = (cleanData as any)?.requiredOptions?.fontOptions?.fonts;

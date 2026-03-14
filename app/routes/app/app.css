@@ -1,3 +1,11 @@
+:root {
+  --aso-color-primary: #016464;
+  --aso-color-primary-hover: #004e4e;
+  --aso-color-primary-active: #003b3b;
+  --aso-color-primary-soft: rgba(1, 100, 100, 0.08);
+  --aso-color-primary-contrast: #ffffff;
+}
+
 .active {
   opacity: 100%;
 }
@@ -48,13 +56,23 @@
   opacity: 0.85;
 }
 
+.Polaris-Button--variantPrimary:not(.Polaris-Button--toneCritical) {
+  --pc-button-box-shadow: var(--p-shadow-button-primary-success);
+  --pc-button-box-shadow_active: var(--p-shadow-button-primary-success-inset);
+  --pc-button-bg: var(--aso-color-primary) !important;
+  --pc-button-bg_hover: var(--aso-color-primary-hover) !important;
+  --pc-button-bg_active: var(--aso-color-primary-active) !important;
+  --pc-button-bg_pressed: var(--aso-color-primary) !important;
+  --pc-button-color: var(--aso-color-primary-contrast) !important;
+}
+
 .Polaris-Button--toneSuccess:is(.Polaris-Button--variantPrimary) {
   --pc-button-box-shadow: var(--p-shadow-button-primary-success);
   --pc-button-box-shadow_active: var(--p-shadow-button-primary-success-inset);
-  --pc-button-bg: rgb(1, 100, 100) !important;
-  --pc-button-bg_hover: rgb(0, 78, 78) !important;
-  --pc-button-bg_active: rgb(0, 59, 59) !important;
-  --pc-button-bg_pressed: rgb(1, 100, 100) !important;
+  --pc-button-bg: var(--aso-color-primary) !important;
+  --pc-button-bg_hover: var(--aso-color-primary-hover) !important;
+  --pc-button-bg_active: var(--aso-color-primary-active) !important;
+  --pc-button-bg_pressed: var(--aso-color-primary) !important;
 }
 
 .Polaris-TextField__Input {
@@ -148,19 +166,19 @@
 
 .next-large-btn {
   height: 45px;
-  background-color: rgb(1, 100, 100) !important;
+  background-color: var(--aso-color-primary) !important;
   border-radius: 5px;
   border-width: 1px;
-  border-color: rgb(1, 100, 100) !important;
+  border-color: var(--aso-color-primary) !important;
   cursor: pointer;
 }
 
 .primary-btn {
   height: 32px;
-  background-color: rgb(1, 100, 100) !important;
+  background-color: var(--aso-color-primary) !important;
   border-radius: 6px;
   border-width: 1px;
-  border-color: rgb(1, 100, 100) !important;
+  border-color: var(--aso-color-primary) !important;
 
   cursor: pointer;
 }
@@ -193,12 +211,12 @@
 }
 
 .tab-items.active path {
-  fill: rgb(1, 100, 100) !important;
+  fill: var(--aso-color-primary) !important;
 }
 
 .tab-items.active {
-  border-bottom: 2px rgb(1, 100, 100) solid;
-  color: rgb(1, 100, 100);
+  border-bottom: 2px solid var(--aso-color-primary);
+  color: var(--aso-color-primary);
   background-color: #f9f9f9;
 }
 
@@ -207,8 +225,8 @@
 }
 
 .next-large-btn:hover {
-  background-color: rgb(0, 80, 80) !important;
-  border-color: rgb(0, 80, 80) !important;
+  background-color: var(--aso-color-primary-hover) !important;
+  border-color: var(--aso-color-primary-hover) !important;
 }
 
 .check-text {
@@ -219,12 +237,12 @@
 .check-span {
   height: 20px;
   width: 20px;
-  border: 1px solid #016464;
+  border: 1px solid var(--aso-color-primary);
   border-radius: 22px;
 }
 
 .check-span.check {
-  background-color: #016464;
+  background-color: var(--aso-color-primary);
 }
 
 .color-span {
@@ -252,12 +270,12 @@
 }
 
 .sub-tab-items.active path {
-  fill: rgb(1, 100, 100) !important;
+  fill: var(--aso-color-primary) !important;
 }
 
 .sub-tab-items.active {
-  color: rgb(1, 100, 100);
-  background-color: #01646414;
+  color: var(--aso-color-primary);
+  background-color: var(--aso-color-primary-soft);
 }
 
 .react-switch {
@@ -311,19 +329,19 @@
 }
 
 .activatable-item.active {
-  color: #016464 !important;
+  color: var(--aso-color-primary) !important;
 }
 
 .activatable-item.active path {
-  stroke: #016464;
+  stroke: var(--aso-color-primary);
 }
 
 .activatable-item.active.fill path {
-  fill: #016464 !important;
+  fill: var(--aso-color-primary) !important;
 }
 
 .activatable-item.active .activatable-item-child {
-  border: 1px solid #016464;
+  border: 1px solid var(--aso-color-primary);
 }
 
 .activatable-item.no-troke.active path {
@@ -357,10 +375,10 @@
   justify-content: center;
   font-weight: 500;
   padding: 5px 7px;
-  border: 2px solid #016464;
+  border: 2px solid var(--aso-color-primary);
   border-radius: 6px;
   color: white;
-  background: #016464;
+  background: var(--aso-color-primary);
   cursor: pointer;
 }
 

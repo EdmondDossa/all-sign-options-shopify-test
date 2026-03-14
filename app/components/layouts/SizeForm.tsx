@@ -11,7 +11,7 @@ import {
 } from "@shopify/polaris";
 import { Controller, useForm } from "react-hook-form";
 import { Form, useNavigation } from "@remix-run/react";
-import { HelpLink, ToggleButton } from "../buttons";
+import { HelpLink, SaveButton, ToggleButton } from "../buttons";
 
 export interface ResizeSettingsFontSizeSettings {
   defaultFontSize: number;
@@ -593,14 +593,9 @@ export default function SizeForm({
                 >
                   Cancel
                 </Button>
-                <Button
-                  submit
-                  loading={isSubmitting}
-                  disabled={isSubmitting}
-                  variant="primary"
-                >
+                <SaveButton submit loading={isSubmitting} disabled={isSubmitting}>
                   {isEditing ? "Update" : "Save"}
-                </Button>
+                </SaveButton>
               </InlineStack>
             </Box>
           </Card>

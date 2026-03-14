@@ -12,7 +12,7 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import { HelpLink, ToggleButton } from "../buttons";
+import { HelpLink, SaveButton, ToggleButton } from "../buttons";
 import { PlusIcon } from "@shopify/polaris-icons";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -273,14 +273,9 @@ export function PricingSimpleForm({
                 >
                   Cancel
                 </Button>
-                <Button
-                  submit
-                  loading={isSubmitting}
-                  variant="primary"
-                  disabled={isSubmitting}
-                >
+                <SaveButton submit loading={isSubmitting} disabled={isSubmitting}>
                   {isEditing ? "Update" : "Save"}
-                </Button>
+                </SaveButton>
               </InlineStack>
             </Box>
           </Card>
@@ -1085,14 +1080,9 @@ export function PricingAdvancedForm({
                 >
                   Cancel
                 </Button>
-                <Button
-                  submit
-                  loading={isSubmitting}
-                  variant="primary"
-                  disabled={isSubmitting}
-                >
+                <SaveButton submit loading={isSubmitting} disabled={isSubmitting}>
                   {isEditing ? "Update" : "Save"}
-                </Button>
+                </SaveButton>
               </InlineStack>
             </Box>
           </Card>

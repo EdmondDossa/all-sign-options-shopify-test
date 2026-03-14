@@ -3,10 +3,21 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { Box, Button, Card, Divider, Select, Text, TextField } from "@shopify/polaris";
+import {
+  Box,
+  Button,
+  Card,
+  Divider,
+  Select,
+  Text,
+  TextField,
+} from "@shopify/polaris";
 import ConfigSettingsService from "~/models/ConfigSetttings.service";
 import { authenticate } from "~/shopify.server";
 import { jFlashMessage } from "~/utils/message-flash";
+import RequestQuoteSettingsSection from "~/components/settings/RequestQuoteSettingsSection";
+import ModeSettingsSection from "~/components/settings/ModeSettingsSection";
+import ProductSettingsSection from "~/components/settings/ProductSettingsSection";
 
 type YesNo = "true" | "false";
 
@@ -17,6 +28,94 @@ const boolOptions = [
   { label: "Yes", value: "true" },
   { label: "No", value: "false" },
 ];
+
+const sanitizeCustomizerSettings = (raw: any = {}) => {
+  const measurementUnit = ["cm", "in", "both"].includes(raw?.measurementUnit)
+    ? raw.measurementUnit
+    : "cm";
+  const showHideMeasurements = [
+    "both",
+    "nothing",
+    "only-height",
+    "only-width",
+  ].includes(raw?.showHideMeasurements)
+    ? raw.showHideMeasurements
+    : "both";
+  const decimalFormatMeasurements = ["decimal", "no-decimal"].includes(
+    raw?.decimalFormatMeasurements,
+  )
+    ? raw.decimalFormatMeasurements
+    : "no-decimal";
+  const destokColumnOrder = ["right", "left"].includes(raw?.destokColumnOrder)
+    ? raw.destokColumnOrder
+    : "right";
+  const displayOptions = ["name", "both"].includes(raw?.displayOptions)
+    ? raw.displayOptions
+    : "name";
+  const discount = ["none", "percent", "fixed"].includes(raw?.discount)
+    ? raw.discount
+    : "none";
+  const defaultTextAlign = ["left", "center", "right"].includes(
+    raw?.defaultTextAlign,
+  )
+    ? raw.defaultTextAlign
+    : "center";
+  const displayPriceBeforeFinishBotton = ["hide", "show"].includes(
+    raw?.displayPriceBeforeFinishBotton,
+  )
+    ? raw.displayPriceBeforeFinishBotton
+    : "hide";
+  const discountValue = Number(raw?.discountValue);
+
+  return {
+    measurementUnit,
+    showHideMeasurements,
+    decimalFormatMeasurements,
+    destokColumnOrder,
+    shadowSwitch:
+      raw?.shadowSwitch === undefined ? true : Boolean(raw.shadowSwitch),
+    defaultGlowSwitch: raw?.defaultGlowSwitch === "off" ? "off" : "on",
+    showDayNightButton:
+      raw?.showDayNightButton === undefined
+        ? true
+        : Boolean(raw.showDayNightButton),
+    useExampleIcon:
+      raw?.useExampleIcon === undefined ? true : Boolean(raw.useExampleIcon),
+    exampleText:
+      typeof raw?.exampleText === "string" && raw.exampleText.length > 0
+        ? raw.exampleText
+        : "Example",
+    showExampleOnHover: Boolean(raw?.showExampleOnHover),
+    showColorNameOnHover: Boolean(raw?.showColorNameOnHover),
+    discount,
+    discountValue: Number.isFinite(discountValue) ? discountValue : 0,
+    displayOptions,
+    displayPriceBeforeFinishBotton,
+    showNumberedSelections: Boolean(raw?.showNumberedSelections),
+    showTextAlign:
+      raw?.showTextAlign === undefined ? true : Boolean(raw.showTextAlign),
+    defaultTextAlign,
+  };
+};
+
+const sanitizeProductSettings = (raw: any = {}) => ({
+  designFromScratch:
+    raw?.designFromScratch === undefined ? true : Boolean(raw.designFromScratch),
+  redirectAfterAddingToCart:
+    raw?.redirectAfterAddingToCart !== undefined
+      ? Boolean(raw.redirectAfterAddingToCart)
+      : raw?.redirectAfterAddToCart !== undefined
+        ? Boolean(raw.redirectAfterAddToCart)
+        : true,
+  redirectToCheckOutPage: Boolean(raw?.redirectToCheckOutPage),
+  hideAddToCartButtonOnShopPage: Boolean(raw?.hideAddToCartButtonOnShopPage),
+  hidePricing: Boolean(raw?.hidePricing),
+  showRecapAfterFinish:
+    raw?.showRecapAfterFinish === undefined
+      ? true
+      : Boolean(raw.showRecapAfterFinish),
+  uploadFileOnFinish: Boolean(raw?.uploadFileOnFinish),
+});
 
 const normalizeModeSettings = (raw: any) => {
   const type = raw?.type === "multi" ? "multi" : "simple";
@@ -46,14 +145,27 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   const formData = await request.formData();
-  const sections = ["customizer", "product", "output", "mobile", "requestQuote", "mode"];
+  const sections = [
+    "customizer",
+    "product",
+    "output",
+    "mobile",
+    "requestQuote",
+    "mode",
+  ];
 
   for (const section of sections) {
     const raw = formData.get(section);
     if (!raw || typeof raw !== "string") continue;
 
     try {
-      const value = JSON.parse(raw);
+      const parsedValue = JSON.parse(raw);
+      const value =
+        section === "customizer"
+          ? sanitizeCustomizerSettings(parsedValue)
+          : section === "product"
+            ? sanitizeProductSettings(parsedValue)
+          : parsedValue;
       await ConfigSettingsService.updateSettingsSection(
         configId,
         session.id,
@@ -68,11 +180,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         ...jFlashMessage(`${section} settings updated successfully`),
       });
     } catch (error) {
-      return json({ ok: false, section, error: String(error) }, { status: 400 });
+      return json(
+        { ok: false, section, error: String(error) },
+        { status: 400 },
+      );
     }
   }
 
-  return json({ ok: false, error: "No section payload received" }, { status: 400 });
+  return json(
+    { ok: false, error: "No section payload received" },
+    { status: 400 },
+  );
 };
 
 function SectionShell({
@@ -119,9 +237,15 @@ function SectionShell({
 export default function ConfigSettingsGeneral() {
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { configuration } = useOutletContext<any>();
+  const { configuration, ncpcData } = useOutletContext<any>();
   const saving = navigation.state === "submitting";
-  const productType = configuration?.productType === "channel" ? "channel" : "neon";
+  const productType =
+    configuration?.productType === "channel" ? "channel" : "neon";
+  const currencySymbol =
+    ncpcData?.currencySymbol ||
+    ncpcData?.settings?.currencySymbol ||
+    configuration?.data?.currencySymbol ||
+    "$";
 
   const defaultManufacturerTemplate = useMemo(() => {
     if (productType === "neon") {
@@ -131,36 +255,9 @@ export default function ConfigSettingsGeneral() {
     return '{{#product}}\n<p><br>\n<b>Text:</b> {{ncpc_text}}<br>\n<b>Alignment:</b> {{ncpc_text_align}}<br>\n<b>Font:</b> {{ncpc_font_family}}<br>\n<b>Size:</b> {{ncpc_size}}<br>\n<b>Letter Type:</b> {{ncpc_letter_type}}<br>\n<b>Face Color:</b> {{ncpc_face}}<br>\n<br>\n<b>Trim Color:</b> {{ncpc_trim}}<br>\n<br>\n<b>Side Color:</b> {{ncpc_side}}<br>\n<br>\n<b>Back Lit Color:</b> {{ncpc_back_lit}}<br>\n<br>\n<b>Backboard:</b> {{ncpc_backboard}}<br>\n<b>Backboard Colour:</b> {{ncpc_backboard_color}}<br>\n<b>Material:</b> {{ncpc_material}}<br>\n<b>Jacket:</b> {{ncpc_jacket}}<br>\n<b>Mounting:</b> {{ncpc_mounting}}<br>\n{{#additional_options}}<b>{{label}}:</b> {{value}}<br>\n{{/additional_options}} <img src="{{ncpc_preview_img}}"><br>\n<br>\n{{#svgPreviewLink}}<b>SVG:</b> <a href="{{ncpc_svg_data}}" target="_blank">Link</a><br>\n{{/svgPreviewLink}}</p>{{/products}}<br>\n<b>Name:</b> {{shipping_adddress.name}} <br>\n<b>Phone:</b> {{shipping_adddress.phone}} <br>\n<b>Address:</b> {{shipping_adddress.address1}} {{shipping_adddress.address2}} {{shipping_adddress.city}} {{shipping_adddress.country}} <br>\n<b>Shipping option:</b> {{shippingLine}} <br>\n<b>Email:</b> {{email}} <br>\n{{/product}}';
   }, [productType]);
 
-  const [customizer, setCustomizer] = useState<any>({
-    measurementUnit: "cm",
-    showHideMeasurements: "both",
-    decimalFormatMeasurements: "no-decimal",
-    fontFamilyName: "",
-    priceStartOptions: "at-zero",
-    priceMeasurementAnimation: "on",
-    destokColumnOrder: "right",
-    glowSwitch: "glow-only",
-    displayOptions: "name",
-    shadowSwitch: true,
-    showDayNightButton: true,
-    useExampleIcon: true,
-    exampleText: "Example",
-    showExampleOnHover: false,
-    discount: "none",
-    discountValue: 0,
-    displayPriceBeforeFinishBotton: "hide",
-    textAlignment: "display-alignment",
-  });
+  const [customizer, setCustomizer] = useState<any>(sanitizeCustomizerSettings());
 
-  const [product, setProduct] = useState<any>({
-    enableAddToCart: true,
-    redirectAfterAddToCart: true,
-    redirectToCheckOutPage: false,
-    displayRecapsOnCheckout: false,
-    hideAddToCartButtonCustomProducts: true,
-    hideDesignButtonsOnShopPage: false,
-    hideAddToCartButtonOnShopPage: true,
-  });
+  const [product, setProduct] = useState<any>(sanitizeProductSettings());
 
   const [output, setOutput] = useState<any>({
     fileFormat: "svg",
@@ -203,12 +300,18 @@ export default function ConfigSettingsGeneral() {
   useEffect(() => {
     const generals = configuration?.data?.settings?.generals || {};
 
-    setCustomizer((prev: any) => ({ ...prev, ...(generals.customizer || {}) }));
-    setProduct((prev: any) => ({ ...prev, ...(generals.product || {}) }));
+    setCustomizer(sanitizeCustomizerSettings(generals.customizer || {}));
+    setProduct(sanitizeProductSettings(generals.product || {}));
     setOutput((prev: any) => ({ ...prev, ...(generals.output || {}) }));
     setMobile((prev: any) => ({ ...prev, ...(generals.mobile || {}) }));
-    setRequestQuote((prev: any) => ({ ...prev, ...(generals.requestQuote || {}) }));
-    setMode((prev: any) => ({ ...prev, ...normalizeModeSettings(generals.mode || {}) }));
+    setRequestQuote((prev: any) => ({
+      ...prev,
+      ...(generals.requestQuote || {}),
+    }));
+    setMode((prev: any) => ({
+      ...prev,
+      ...normalizeModeSettings(generals.mode || {}),
+    }));
   }, [configuration]);
 
   useEffect(() => {
@@ -223,8 +326,21 @@ export default function ConfigSettingsGeneral() {
   }, [defaultManufacturerTemplate]);
 
   const submitSection = (section: string, value: any) => {
-    submit({ [section]: JSON.stringify(value) }, { method: "POST" });
+    const sanitizedValue =
+      section === "customizer"
+        ? sanitizeCustomizerSettings(value)
+        : section === "product"
+          ? sanitizeProductSettings(value)
+          : value;
+
+    submit({ [section]: JSON.stringify(sanitizedValue) }, { method: "POST" });
   };
+
+  const customizerGridStyle = {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: 12,
+  } as const;
 
   return (
     <Box paddingBlockEnd="400">
@@ -234,202 +350,271 @@ export default function ConfigSettingsGeneral() {
         saving={saving}
         onSave={() => submitSection("customizer", customizer)}
       >
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+        <div style={customizerGridStyle}>
           <Select
             label="Measurement Unit"
+            helpText="Choose the measurement unit used by the customizer."
             options={[
               { label: "Centimeters", value: "cm" },
               { label: "Inches", value: "in" },
-              { label: "Both", value: "both" },
+              { label: "Both Centimeters and Inches", value: "both" },
             ]}
             value={customizer.measurementUnit || "cm"}
-            onChange={(value) => setCustomizer((prev: any) => ({ ...prev, measurementUnit: value }))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                measurementUnit: value,
+              }))
+            }
           />
           <Select
             label="Show/Hide Measurements"
+            helpText="Control whether width, height or both measurements are shown."
             options={[
-              { label: "show both width and height", value: "both" },
+              { label: "Show both width and height", value: "both" },
               { label: "Do not show measurements", value: "nothing" },
               { label: "Only show height", value: "only-height" },
               { label: "Only show width", value: "only-width" },
             ]}
             value={customizer.showHideMeasurements || "both"}
             onChange={(value) =>
-              setCustomizer((prev: any) => ({ ...prev, showHideMeasurements: value }))
+              setCustomizer((prev: any) => ({
+                ...prev,
+                showHideMeasurements: value,
+              }))
             }
           />
           <Select
             label="Decimal Format Measurements"
+            helpText="Choose whether measurements should include decimals."
             options={[
-              { label: "Decimal", value: "decimal" },
+              { label: "With decimal", value: "decimal" },
               { label: "No Decimal", value: "no-decimal" },
             ]}
             value={customizer.decimalFormatMeasurements || "no-decimal"}
             onChange={(value) =>
-              setCustomizer((prev: any) => ({ ...prev, decimalFormatMeasurements: value }))
+              setCustomizer((prev: any) => ({
+                ...prev,
+                decimalFormatMeasurements: value,
+              }))
             }
           />
           <Select
             label="Desktop Column Order"
+            helpText="Choose whether the option panel should sit on the left or right on desktop."
             options={[
               { label: "Right", value: "right" },
               { label: "Left", value: "left" },
             ]}
             value={customizer.destokColumnOrder || "right"}
-            onChange={(value) => setCustomizer((prev: any) => ({ ...prev, destokColumnOrder: value }))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                destokColumnOrder: value,
+              }))
+            }
+          />
+          <Select
+            label="Shadow Switch"
+            helpText="Display a switch to turn shadow on or off on the sign."
+            options={boolOptions}
+            value={toYesNo(Boolean(customizer.shadowSwitch))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                shadowSwitch: fromYesNo(value),
+              }))
+            }
+          />
+          <Select
+            label="Default Glow Switch Value"
+            helpText="Set the glow switch state when the customizer first loads."
+            options={[
+              { label: "On", value: "on" },
+              { label: "Off", value: "off" },
+            ]}
+            value={customizer.defaultGlowSwitch || "on"}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                defaultGlowSwitch: value,
+              }))
+            }
+          />
+          <Select
+            label="Show Day/Night Button"
+            helpText="Display a switch to toggle the default background between day and night."
+            options={boolOptions}
+            value={toYesNo(Boolean(customizer.showDayNightButton))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                showDayNightButton: fromYesNo(value),
+              }))
+            }
+          />
+          <Select
+            label="Display Example Icon"
+            helpText="Choose whether the example entry should be displayed as an icon or text."
+            options={boolOptions}
+            value={toYesNo(Boolean(customizer.useExampleIcon))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                useExampleIcon: fromYesNo(value),
+              }))
+            }
+          />
+          {!customizer.useExampleIcon ? (
+            <TextField
+              label="Example Text"
+              autoComplete="off"
+              helpText="Text to display when the example icon is disabled."
+              value={String(customizer.exampleText || "")}
+              onChange={(value) =>
+                setCustomizer((prev: any) => ({ ...prev, exampleText: value }))
+              }
+            />
+          ) : (
+            <div />
+          )}
+          <Select
+            label="Show Example On Hover"
+            helpText="Display the example preview only when the customer hovers the trigger."
+            options={boolOptions}
+            value={toYesNo(Boolean(customizer.showExampleOnHover))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                showExampleOnHover: fromYesNo(value),
+              }))
+            }
+          />
+          <Select
+            label="Show Color Name On Hover"
+            helpText="Display the color name tooltip only on hover."
+            options={boolOptions}
+            value={toYesNo(Boolean(customizer.showColorNameOnHover))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                showColorNameOnHover: fromYesNo(value),
+              }))
+            }
           />
           <Select
             label="Display Options"
+            helpText="Choose how option values are displayed inside the customizer."
             options={[
               { label: "Option Name", value: "name" },
               { label: "Option image and name", value: "both" },
             ]}
             value={customizer.displayOptions || "name"}
-            onChange={(value) => setCustomizer((prev: any) => ({ ...prev, displayOptions: value }))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({ ...prev, displayOptions: value }))
+            }
           />
           <Select
             label="Discount"
+            helpText="Apply a discount to the total product price."
             options={[
               { label: "None", value: "none" },
               { label: "Percentage", value: "percent" },
               { label: "Fixed", value: "fixed" },
             ]}
             value={customizer.discount || "none"}
-            onChange={(value) => setCustomizer((prev: any) => ({ ...prev, discount: value }))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({ ...prev, discount: value }))
+            }
           />
           {(customizer.discount || "none") !== "none" ? (
             <TextField
-              label="Discount Value"
+              label={
+                (customizer.discount || "none") === "percent"
+                  ? "Discount Percentage"
+                  : "Discount Fixed Amount"
+              }
               type="number"
               autoComplete="off"
+              prefix={(customizer.discount || "none") === "fixed" ? currencySymbol : undefined}
+              suffix={(customizer.discount || "none") === "percent" ? "%" : undefined}
               value={String(customizer.discountValue ?? 0)}
               onChange={(value) =>
-                setCustomizer((prev: any) => ({ ...prev, discountValue: Number(value || 0) }))
+                setCustomizer((prev: any) => ({
+                  ...prev,
+                  discountValue: Number(value || 0),
+                }))
               }
             />
           ) : (
             <div />
           )}
-          <TextField
-            label="Example Text"
-            autoComplete="off"
-            value={String(customizer.exampleText || "")}
-            onChange={(value) => setCustomizer((prev: any) => ({ ...prev, exampleText: value }))}
-          />
           <Select
-            label="Shadow Button Switch"
-            options={boolOptions}
-            value={toYesNo(Boolean(customizer.shadowSwitch))}
+            label="Default Text Align"
+            helpText="Choose the default text alignment on first load."
+            options={[
+              { label: "Left", value: "left" },
+              { label: "Center", value: "center" },
+              { label: "Right", value: "right" },
+            ]}
+            value={customizer.defaultTextAlign || "center"}
             onChange={(value) =>
-              setCustomizer((prev: any) => ({ ...prev, shadowSwitch: fromYesNo(value) }))
+              setCustomizer((prev: any) => ({
+                ...prev,
+                defaultTextAlign: value,
+              }))
             }
           />
           <Select
-            label="Show Day/Night Button"
+            label="Show Text Align"
+            helpText="Show or hide the text alignment control in the customizer."
             options={boolOptions}
-            value={toYesNo(Boolean(customizer.showDayNightButton))}
+            value={toYesNo(
+              customizer.showTextAlign === undefined ? true : Boolean(customizer.showTextAlign),
+            )}
             onChange={(value) =>
-              setCustomizer((prev: any) => ({ ...prev, showDayNightButton: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Display Example Icon"
-            options={boolOptions}
-            value={toYesNo(Boolean(customizer.useExampleIcon))}
-            onChange={(value) =>
-              setCustomizer((prev: any) => ({ ...prev, useExampleIcon: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Show Example On Hover"
-            options={boolOptions}
-            value={toYesNo(Boolean(customizer.showExampleOnHover))}
-            onChange={(value) =>
-              setCustomizer((prev: any) => ({ ...prev, showExampleOnHover: fromYesNo(value) }))
+              setCustomizer((prev: any) => ({
+                ...prev,
+                showTextAlign: fromYesNo(value),
+              }))
             }
           />
           <Select
             label="Display Price Before Finish Button"
+            helpText="Show the price block before the finish button."
             options={[
               { label: "Hide", value: "hide" },
               { label: "Show", value: "show" },
             ]}
             value={customizer.displayPriceBeforeFinishBotton || "hide"}
             onChange={(value) =>
-              setCustomizer((prev: any) => ({ ...prev, displayPriceBeforeFinishBotton: value }))
+              setCustomizer((prev: any) => ({
+                ...prev,
+                displayPriceBeforeFinishBotton: value,
+              }))
+            }
+          />
+          <Select
+            label="Show Numbered Selections"
+            helpText="Display numbered steps or selections inside the customizer."
+            options={boolOptions}
+            value={toYesNo(Boolean(customizer.showNumberedSelections))}
+            onChange={(value) =>
+              setCustomizer((prev: any) => ({
+                ...prev,
+                showNumberedSelections: fromYesNo(value),
+              }))
             }
           />
         </div>
       </SectionShell>
 
-      <SectionShell
-        title="Product"
-        description="Add-to-cart and storefront behavior settings."
+      <ProductSettingsSection
+        value={product}
+        onChange={setProduct}
         saving={saving}
         onSave={() => submitSection("product", product)}
-      >
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-          <Select
-            label="Enable Add To Cart"
-            options={boolOptions}
-            value={toYesNo(Boolean(product.enableAddToCart))}
-            onChange={(value) =>
-              setProduct((prev: any) => ({ ...prev, enableAddToCart: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Redirect After Add To Cart"
-            options={boolOptions}
-            value={toYesNo(Boolean(product.redirectAfterAddToCart))}
-            onChange={(value) =>
-              setProduct((prev: any) => ({ ...prev, redirectAfterAddToCart: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Redirect To Checkout"
-            options={boolOptions}
-            value={toYesNo(Boolean(product.redirectToCheckOutPage))}
-            onChange={(value) =>
-              setProduct((prev: any) => ({ ...prev, redirectToCheckOutPage: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Display Recaps On Checkout"
-            options={boolOptions}
-            value={toYesNo(Boolean(product.displayRecapsOnCheckout))}
-            onChange={(value) =>
-              setProduct((prev: any) => ({ ...prev, displayRecapsOnCheckout: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Hide Add To Cart (Custom Products)"
-            options={boolOptions}
-            value={toYesNo(Boolean(product.hideAddToCartButtonCustomProducts))}
-            onChange={(value) =>
-              setProduct((prev: any) => ({
-                ...prev,
-                hideAddToCartButtonCustomProducts: fromYesNo(value),
-              }))
-            }
-          />
-          <Select
-            label="Hide Design Buttons On Shop"
-            options={boolOptions}
-            value={toYesNo(Boolean(product.hideDesignButtonsOnShopPage))}
-            onChange={(value) =>
-              setProduct((prev: any) => ({ ...prev, hideDesignButtonsOnShopPage: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Hide Add To Cart On Shop"
-            options={boolOptions}
-            value={toYesNo(Boolean(product.hideAddToCartButtonOnShopPage))}
-            onChange={(value) =>
-              setProduct((prev: any) => ({ ...prev, hideAddToCartButtonOnShopPage: fromYesNo(value) }))
-            }
-          />
-        </div>
-      </SectionShell>
+      />
 
       <SectionShell
         title="Output"
@@ -437,17 +622,31 @@ export default function ConfigSettingsGeneral() {
         saving={saving}
         onSave={() => submitSection("output", output)}
       >
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: 12,
+          }}
+        >
           <Select
             label="Output File Format"
-            options={[{ label: "SVG", value: "svg" }]}
+            options={[
+              { label: "SVG", value: "svg" },
+              { label: "DXF", value: "dxf" },
+              { label: "SVG+DXF", value: "svg+dxf" },
+            ]}
             value={output.fileFormat || "svg"}
-            onChange={(value) => setOutput((prev: any) => ({ ...prev, fileFormat: value }))}
+            onChange={(value) =>
+              setOutput((prev: any) => ({ ...prev, fileFormat: value }))
+            }
           />
           <Select
             label="Send Design By Email"
             options={boolOptions}
-            value={toYesNo(Boolean(output.manufacturerEmail?.sendDesignByEmail))}
+            value={toYesNo(
+              Boolean(output.manufacturerEmail?.sendDesignByEmail),
+            )}
             onChange={(value) =>
               setOutput((prev: any) => ({
                 ...prev,
@@ -515,7 +714,13 @@ export default function ConfigSettingsGeneral() {
         saving={saving}
         onSave={() => submitSection("mobile", mobile)}
       >
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: 12,
+          }}
+        >
           <Select
             label="Show Navigation Menu"
             options={[
@@ -523,7 +728,9 @@ export default function ConfigSettingsGeneral() {
               { label: "On", value: "on" },
             ]}
             value={mobile.showNavigatorMenu || "off"}
-            onChange={(value) => setMobile((prev: any) => ({ ...prev, showNavigatorMenu: value }))}
+            onChange={(value) =>
+              setMobile((prev: any) => ({ ...prev, showNavigatorMenu: value }))
+            }
           />
           <Select
             label="Show Navigation Menu First"
@@ -533,7 +740,10 @@ export default function ConfigSettingsGeneral() {
             ]}
             value={mobile.showNavigationMenuFirst || "yes"}
             onChange={(value) =>
-              setMobile((prev: any) => ({ ...prev, showNavigationMenuFirst: value }))
+              setMobile((prev: any) => ({
+                ...prev,
+                showNavigationMenuFirst: value,
+              }))
             }
           />
           <Select
@@ -544,199 +754,33 @@ export default function ConfigSettingsGeneral() {
             ]}
             value={mobile.mobileSelectionOptionsDisplay || "horizontally-stack"}
             onChange={(value) =>
-              setMobile((prev: any) => ({ ...prev, mobileSelectionOptionsDisplay: value }))
-            }
-          />
-        </div>
-      </SectionShell>
-
-      <SectionShell
-        title="Request A Quote"
-        description="Request quote flow and upload constraints."
-        saving={saving}
-        onSave={() => submitSection("requestQuote", requestQuote)}
-      >
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-          <Select
-            label="Enable Request Quote"
-            options={boolOptions}
-            value={toYesNo(Boolean(requestQuote.enableRequestQuote))}
-            onChange={(value) =>
-              setRequestQuote((prev: any) => ({ ...prev, enableRequestQuote: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Send To Customer"
-            options={boolOptions}
-            value={toYesNo(Boolean(requestQuote.sendToCustomer))}
-            onChange={(value) =>
-              setRequestQuote((prev: any) => ({ ...prev, sendToCustomer: fromYesNo(value) }))
-            }
-          />
-          <Select
-            label="Allow Upload Files"
-            options={boolOptions}
-            value={toYesNo(Boolean(requestQuote.allowUploadFiles))}
-            onChange={(value) =>
-              setRequestQuote((prev: any) => ({ ...prev, allowUploadFiles: fromYesNo(value) }))
-            }
-          />
-          <TextField
-            label="Email Subject"
-            autoComplete="off"
-            value={String(requestQuote.emailSubject || "")}
-            onChange={(value) => setRequestQuote((prev: any) => ({ ...prev, emailSubject: value }))}
-          />
-          <TextField
-            label="Receivers Email(s)"
-            autoComplete="off"
-            value={(requestQuote.receiversEmail || []).join(", ")}
-            onChange={(value) =>
-              setRequestQuote((prev: any) => ({
+              setMobile((prev: any) => ({
                 ...prev,
-                receiversEmail: value
-                  .split(",")
-                  .map((item) => item.trim())
-                  .filter(Boolean),
-              }))
-            }
-          />
-          <TextField
-            label="Accepted Extensions"
-            autoComplete="off"
-            value={(requestQuote.acceptExtensions || []).join(", ")}
-            onChange={(value) =>
-              setRequestQuote((prev: any) => ({
-                ...prev,
-                acceptExtensions: value
-                  .split(",")
-                  .map((item) => item.trim())
-                  .filter(Boolean),
-              }))
-            }
-          />
-          <TextField
-            label="Max File Size"
-            type="number"
-            autoComplete="off"
-            value={String(requestQuote.maxFileSize ?? 10)}
-            onChange={(value) =>
-              setRequestQuote((prev: any) => ({ ...prev, maxFileSize: Number(value || 0) }))
-            }
-          />
-          <TextField
-            label="Max Files Number"
-            type="number"
-            autoComplete="off"
-            value={String(requestQuote.maxFilesNumber ?? 5)}
-            onChange={(value) =>
-              setRequestQuote((prev: any) => ({ ...prev, maxFilesNumber: Number(value || 0) }))
-            }
-          />
-        </div>
-      </SectionShell>
-
-      <SectionShell
-        title="Mode"
-        description="Editor behavior and multi-color/font mode."
-        saving={saving}
-        onSave={() => submitSection("mode", mode)}
-      >
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-          <Select
-            label="Mode"
-            options={[
-              { label: "Simple", value: "simple" },
-              { label: "Multi", value: "multi" },
-            ]}
-            value={mode.type || "simple"}
-            onChange={(value) =>
-              setMode((prev: any) => ({
-                ...prev,
-                type: value,
-              }))
-            }
-          />
-
-          {mode.type === "multi" ? (
-            <Select
-              label="Allow Multi Fonts"
-              options={boolOptions}
-              value={toYesNo(Boolean(mode.allowMultiFonts))}
-              onChange={(value) =>
-                setMode((prev: any) => ({ ...prev, allowMultiFonts: fromYesNo(value) }))
-              }
-            />
-          ) : (
-            <div />
-          )}
-
-          {mode.type === "multi" ? (
-            <Select
-              label="Allow Multi Colors"
-              options={boolOptions}
-              value={toYesNo(Boolean(mode.allowMultiColors))}
-              onChange={(value) =>
-                setMode((prev: any) => ({ ...prev, allowMultiColors: fromYesNo(value) }))
-              }
-            />
-          ) : (
-            <div />
-          )}
-
-          <Select
-            label="Allow Share"
-            options={boolOptions}
-            value={toYesNo(Boolean(mode?.shareAndSave?.allowShare))}
-            onChange={(value) =>
-              setMode((prev: any) => ({
-                ...prev,
-                shareAndSave: {
-                  ...(prev.shareAndSave || {}),
-                  allowShare: fromYesNo(value),
-                },
-              }))
-            }
-          />
-
-          <Select
-            label="Allow Save"
-            options={boolOptions}
-            value={toYesNo(Boolean(mode?.shareAndSave?.allowSave))}
-            onChange={(value) =>
-              setMode((prev: any) => ({
-                ...prev,
-                shareAndSave: {
-                  ...(prev.shareAndSave || {}),
-                  allowSave: fromYesNo(value),
-                },
-              }))
-            }
-          />
-
-          <Select
-            label="Share Sign Location"
-            options={[
-              { label: "Options + Review", value: "options_review" },
-              { label: "Review only", value: "review_only" },
-            ]}
-            value={
-              mode?.shareAndSave?.shareSignLocation === "review_only"
-                ? "review_only"
-                : "options_review"
-            }
-            onChange={(value) =>
-              setMode((prev: any) => ({
-                ...prev,
-                shareAndSave: {
-                  ...(prev.shareAndSave || {}),
-                  shareSignLocation: value === "review_only" ? "review_only" : "options_review",
-                },
+                mobileSelectionOptionsDisplay: value,
               }))
             }
           />
         </div>
       </SectionShell>
+
+      <Box paddingBlockStart="300">
+        <RequestQuoteSettingsSection
+          value={requestQuote}
+          saving={saving}
+          onChange={setRequestQuote}
+          onSave={() => submitSection("requestQuote", requestQuote)}
+        />
+      </Box>
+
+      <Box paddingBlockStart="300">
+        <ModeSettingsSection
+          value={mode}
+          saving={saving}
+          supportsMultiMode={productType === "neon" || productType === "channel"}
+          onChange={setMode}
+          onSave={() => submitSection("mode", mode)}
+        />
+      </Box>
 
       <Box paddingBlockStart="300">
         <Divider borderWidth="025" />

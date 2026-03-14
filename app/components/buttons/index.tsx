@@ -11,6 +11,7 @@ import { LinksConfirmBtn } from "./LinksConfirmBtn";
 import { ManageBtn } from "./ManageBtn";
 import { RemoveNowIconBtn } from "./RemoveNowIconBtn";
 import { SettingIconBtn } from "./SettingIconBtn";
+import SaveButton from "./SaveButton";
 import { ToggleButton } from "./ToggleButton";
 import { ViewIconBtn } from "./ViewIconBtn";
 import HelpLink from "./HelpLink";
@@ -27,6 +28,7 @@ export {
   LinksConfirmBtn,
   ManageBtn,
   RemoveNowIconBtn,
+  SaveButton,
   SettingIconBtn,
   ToggleButton,
   ViewIconBtn,

@@ -1,6 +1,6 @@
 import { json, redirect } from "@remix-run/node";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { NavLink, Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import { NavLink, Outlet, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import { useMemo, useState } from "react";
 import { Badge, Box, Card, Icon, InlineStack, Text, TextField } from "@shopify/polaris";
 import {
@@ -14,6 +14,7 @@ import {
   PlusCircleIcon,
   SettingsIcon,
   ArrowLeftIcon,
+  ViewIcon,
 } from "@shopify/polaris-icons";
 import NcpcConfigurationService from "~/models/NcpcConfiguration.service";
 import { authenticate } from "~/shopify.server";
@@ -59,11 +60,21 @@ const normalizePath = (value: string) => value.split("?")[0];
 export default function NcpcConfigurationLayout() {
   const context = useLoaderData<typeof loader>();
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchMenu, setSearchMenu] = useState("");
 
   const configId = String(context.configuration?.id || "");
   const search = location.search || "";
   const currentPath = location.pathname;
+
+  const handlePreview = () => {
+    const previewConfigId = parseInt(configId, 10);
+    if (Number.isNaN(previewConfigId)) return;
+
+    navigate(`/app/configuration/${previewConfigId}/preview`, {
+      state: { returnTo: `${location.pathname}${location.search}` },
+    });
+  };
 
   const backboardColorsCount = useMemo(() => {
     const nested =
@@ -198,6 +209,20 @@ export default function NcpcConfigurationLayout() {
     return currentPath === basePath || currentPath.startsWith(`${basePath}/`);
   };
 
+  const sidebarActionButtonStyle = {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    border: "1px solid #d1d5db",
+    background: "#fff",
+    color: "#111827",
+    textDecoration: "none",
+  } as const;
+
   return (
     <div
       style={{
@@ -212,28 +237,29 @@ export default function NcpcConfigurationLayout() {
       <div style={{ width: 220, position: "sticky", top: 12 }}>
         <Card>
           <Box padding="250">
-            <InlineStack align="start" blockAlign="center" gap="200">
-              <NavLink
-                to={`/app/configuration${search}`}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: 30,
-                  height: 30,
-                  borderRadius: 8,
-                  border: "1px solid #d1d5db",
-                  background: "#fff",
-                  color: "#111827",
-                  textDecoration: "none",
-                }}
+            <InlineStack align="space-between" blockAlign="center">
+              <InlineStack align="start" blockAlign="center" gap="100">
+                <NavLink
+                  to={`/app/configuration${search}`}
+                  style={sidebarActionButtonStyle}
+                >
+                  <Icon source={ArrowLeftIcon} tone="subdued" />
+                </NavLink>
+              </InlineStack>
+              <button
+                type="button"
+                aria-label="Preview configuration"
+                onClick={handlePreview}
+                style={sidebarActionButtonStyle}
               >
-                <Icon source={ArrowLeftIcon} tone="subdued" />
-              </NavLink>
+                <Icon source={ViewIcon} tone="subdued" />
+              </button>
+            </InlineStack>
+            <Box paddingBlockStart="150">
               <Text as="h2" variant="headingLg">
                 {String(context.configuration?.name || "Customiser")}
               </Text>
-            </InlineStack>
+            </Box>
             <Box paddingBlockStart="050">
               <InlineStack gap="100">
                 <Badge>ID: {context.configuration?.id}</Badge>

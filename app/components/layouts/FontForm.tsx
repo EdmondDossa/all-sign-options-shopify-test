@@ -14,7 +14,7 @@ import {
   TextField,
 } from "@shopify/polaris";
 import { SearchIcon } from "@shopify/polaris-icons";
-import { HelpLink, ToggleButton } from "../buttons";
+import { HelpLink, SaveButton, ToggleButton } from "../buttons";
 import { Controller, useForm } from "react-hook-form";
 import { Form, useNavigation } from "@remix-run/react";
 import { FileInput, MultiCombobox } from "../inputs";
@@ -871,9 +871,9 @@ export default function FontForm({
                 <Button onClick={handleGoBack} disabled={isSubmitting}>
                   Cancel
                 </Button>
-                <Button submit variant="primary" tone="success" loading={isSubmitting}>
+                <SaveButton submit loading={isSubmitting}>
                   {isEditing ? "Update" : "Save"}
-                </Button>
+                </SaveButton>
               </InlineStack>
             </Box>
           </Card>

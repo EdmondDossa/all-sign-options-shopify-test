@@ -94,6 +94,8 @@ export default function ConfigSettingsThemeColor() {
       finishButtonContainerColor:"#000000",
       finishButtonContainerPriceColor:"#FFFFFF",
       finishButtonContainerDiscountPriceColor:"#000000",
+      shareButtonContainerColor:"#FFFFFF",
+      shareButtonTextColor:"#000000",
       selectedTextBorderColor:"#000000",
       selectedTextBorderCornerColor:"#000000",
       darkBackgroundColor:"#1c1c1c",
@@ -150,6 +152,8 @@ export default function ConfigSettingsThemeColor() {
     finishButtonContainerPriceColor: "Finish Button Container Price Color",
     finishButtonContainerDiscountPriceColor:
       "Finish Button Container Discount Price Color",
+    shareButtonContainerColor: "Share Button Container Color",
+    shareButtonTextColor: "Share Button Text Color",
     formErrorBg: "Error background Color",
     formErrorText: "Error text Color",
     darkBackgroundColor: "Dark Background Color",

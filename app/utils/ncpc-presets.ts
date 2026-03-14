@@ -51,7 +51,7 @@ const DEFAULT_SCENE_IMAGES = Array.from(
   (_item, index) => `/aso_default_files/scenes/${index + 1}.jpg`,
 );
 
-const DEFAULT_THEME_COLORS = {
+export const DEFAULT_THEME_COLORS = {
   backgroundColor: "#FFFFFF",
   titleColor: "#000000",
   descriptionColor: "#000000",
@@ -81,6 +81,8 @@ const DEFAULT_THEME_COLORS = {
   finishButtonContainerColor: "#000000",
   finishButtonContainerPriceColor: "#FFFFFF",
   finishButtonContainerDiscountPriceColor: "#000000",
+  shareButtonContainerColor: "#FFFFFF",
+  shareButtonTextColor: "#000000",
   selectedTextBorderColor: "#000000",
   selectedTextBorderCornerColor: "#000000",
   darkBackgroundColor: "#1c1c1c",
