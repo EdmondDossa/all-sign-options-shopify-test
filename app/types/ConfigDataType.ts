@@ -3,15 +3,18 @@ import { number } from 'zod';
   
  export interface ConfigCustomSize {
     active: boolean;
+    hideSizes?: boolean;
     width: {
       label: string;
       min: number|string;
       max: number|string;
+      default?: number|string;
     };
     height: {
       label: string;
       min: number|string;
       max: number|string;
+      default?: number|string;
     };
    pricings: {
      type: "unit"|"range";
@@ -25,6 +28,7 @@ import { number } from 'zod';
         basePrice: number | string;
         surface: number | string;
         charPrice: number | string;
+        areaConversionFactor?: number | string;
       };
 
    

@@ -26,7 +26,8 @@ const initialDataSimple = {
         unit:{
           basePrice:0,
           surface:0,
-          charPrice:0
+          charPrice:0,
+          areaConversionFactor:1
         },
         range:[]
       }
