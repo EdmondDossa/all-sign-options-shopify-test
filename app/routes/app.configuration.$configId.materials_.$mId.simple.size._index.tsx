@@ -763,7 +763,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                           />
                         </InlineStack>
                         {formData.customSize.active && (
-                        <Box paddingBlockEnd="400">
+                        <Box paddingBlockStart="400" paddingBlockEnd="400">
                           <InlineStack blockAlign="center" gap="200">
                             <Text as="p" variant="bodyMd">Hide Sizes</Text>
                             <ReactSwitchCustom
