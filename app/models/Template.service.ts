@@ -1,5 +1,5 @@
 import prisma from "~/db.server";
-import { TemplateType } from "~/types/TemplateType";
+import type { TemplateType } from "~/types/TemplateType";
 import ConfigurationService from "~/models/Configuration.service";
 
 export default class TemplateService {
@@ -36,6 +36,7 @@ export default class TemplateService {
           categoryId: true,
           configurationId: true,
           enabledAddToCart: true,
+          enabledAutoImgUpdate: true,
           category: true,
           recaps: true,
           configuration: {
@@ -77,6 +78,45 @@ export default class TemplateService {
       });
     } catch (error) {
       console.error("Error retrieving templates:", error);
+      return Promise.resolve(null);
+    }
+  }
+
+  static async getTemplatesByConfiguration(
+    sessionId: string,
+    configurationId: number,
+  ): Promise<any[] | null> {
+    try {
+      return await prisma.template.findMany({
+        where: {
+          sessionId,
+          configurationId,
+        },
+        select: {
+          id: true,
+          name: true,
+          prevImg: true,
+          realImg: true,
+          basePrice: true,
+          categoryId: true,
+          configurationId: true,
+          enabledAddToCart: true,
+          category: true,
+          recaps: true,
+          configuration: {
+            select: {
+              product: true,
+              icon: true,
+              popupImg: true,
+            },
+          },
+        },
+        orderBy: {
+          id: "desc",
+        },
+      });
+    } catch (error) {
+      console.error("Error retrieving templates by configuration:", error);
       return Promise.resolve(null);
     }
   }

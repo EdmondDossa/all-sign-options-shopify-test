@@ -279,17 +279,13 @@
               "colorsPrevImg": "",
               "enableClipart": {
                 "active": true,
-                "selectClipartGroups": [
-                  1
-                ]
+                "selectClipartGroups": [1]
               },
               "fileUploadScript": {
                 "uploadMaxWidth": 1000,
                 "uploadMinWidth": 10,
                 "customWithGraphical": false,
-                "allowedUploadsExtentions": [
-                  "png"
-                ]
+                "allowedUploadsExtentions": ["png"]
               },
               "enableCustomColor": true,
               "enableUploadImage": true,

@@ -1,6 +1,11 @@
 import { json } from "@remix-run/node";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { useFetcher, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import {
+  useFetcher,
+  useNavigation,
+  useOutletContext,
+  useSubmit,
+} from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -748,10 +753,7 @@ export default function ConfigSettingsLanguageImages() {
     return nextCodepoint > 0xf8ff ? 0xe001 : nextCodepoint;
   };
 
-  const buildIconFontPayload = async (
-    svgUrl: string,
-    iconLabel = "icon",
-  ) => {
+  const buildIconFontPayload = async (svgUrl: string, iconLabel = "icon") => {
     const [{ default: svgpath }, opentypeModule] = await Promise.all([
       import("svgpath"),
       import("opentype.js"),
@@ -810,51 +812,53 @@ export default function ConfigSettingsLanguageImages() {
       .abs()
       .unarc()
       .unshort()
-      .iterate((segment: any, _index: number, currentX: number, currentY: number) => {
-        const command = segment[0];
-        switch (command) {
-          case "M": {
-            const point = mapToFontCoordinates(segment[1], segment[2]);
-            glyphPath.moveTo(point.x, point.y);
-            break;
+      .iterate(
+        (segment: any, _index: number, currentX: number, currentY: number) => {
+          const command = segment[0];
+          switch (command) {
+            case "M": {
+              const point = mapToFontCoordinates(segment[1], segment[2]);
+              glyphPath.moveTo(point.x, point.y);
+              break;
+            }
+            case "L": {
+              const point = mapToFontCoordinates(segment[1], segment[2]);
+              glyphPath.lineTo(point.x, point.y);
+              break;
+            }
+            case "H": {
+              const point = mapToFontCoordinates(segment[1], currentY);
+              glyphPath.lineTo(point.x, point.y);
+              break;
+            }
+            case "V": {
+              const point = mapToFontCoordinates(currentX, segment[1]);
+              glyphPath.lineTo(point.x, point.y);
+              break;
+            }
+            case "C": {
+              const c1 = mapToFontCoordinates(segment[1], segment[2]);
+              const c2 = mapToFontCoordinates(segment[3], segment[4]);
+              const end = mapToFontCoordinates(segment[5], segment[6]);
+              glyphPath.curveTo(c1.x, c1.y, c2.x, c2.y, end.x, end.y);
+              break;
+            }
+            case "Q": {
+              const control = mapToFontCoordinates(segment[1], segment[2]);
+              const end = mapToFontCoordinates(segment[3], segment[4]);
+              glyphPath.quadTo(control.x, control.y, end.x, end.y);
+              break;
+            }
+            case "Z":
+              glyphPath.closePath();
+              break;
+            default:
+              break;
           }
-          case "L": {
-            const point = mapToFontCoordinates(segment[1], segment[2]);
-            glyphPath.lineTo(point.x, point.y);
-            break;
-          }
-          case "H": {
-            const point = mapToFontCoordinates(segment[1], currentY);
-            glyphPath.lineTo(point.x, point.y);
-            break;
-          }
-          case "V": {
-            const point = mapToFontCoordinates(currentX, segment[1]);
-            glyphPath.lineTo(point.x, point.y);
-            break;
-          }
-          case "C": {
-            const c1 = mapToFontCoordinates(segment[1], segment[2]);
-            const c2 = mapToFontCoordinates(segment[3], segment[4]);
-            const end = mapToFontCoordinates(segment[5], segment[6]);
-            glyphPath.curveTo(c1.x, c1.y, c2.x, c2.y, end.x, end.y);
-            break;
-          }
-          case "Q": {
-            const control = mapToFontCoordinates(segment[1], segment[2]);
-            const end = mapToFontCoordinates(segment[3], segment[4]);
-            glyphPath.quadTo(control.x, control.y, end.x, end.y);
-            break;
-          }
-          case "Z":
-            glyphPath.closePath();
-            break;
-          default:
-            break;
-        }
 
-        return segment;
-      });
+          return segment;
+        },
+      );
 
     if (glyphPath.commands.length === 0) {
       return null;
@@ -1040,7 +1044,11 @@ export default function ConfigSettingsLanguageImages() {
       if (!fontPayload) {
         throw new Error("Unable to generate icon font");
       }
-      await loadPreviewFont(fontPayload.fontFamily, fontPayload.fontDataBase64, true);
+      await loadPreviewFont(
+        fontPayload.fontFamily,
+        fontPayload.fontDataBase64,
+        true,
+      );
       setIconDraft((prev: any) => ({
         ...prev,
         preview: selected,
@@ -1776,9 +1784,9 @@ export default function ConfigSettingsLanguageImages() {
               <IndexTable.Row
                 id={`${index}`}
                 key={`${icon?.name || "icon"}-${index}`}
-              position={index}
-              selected={false}
-            >
+                position={index}
+                selected={false}
+              >
                 <IndexTable.Cell>
                   <div
                     style={{
@@ -1807,7 +1815,9 @@ export default function ConfigSettingsLanguageImages() {
                     ) : String(icon?.file || "")
                         .trim()
                         .startsWith("<") ? (
-                      <Icon source={buildSvgIconSource(String(icon?.file || ""))} />
+                      <Icon
+                        source={buildSvgIconSource(String(icon?.file || ""))}
+                      />
                     ) : icon?.preview || icon?.file ? (
                       <img
                         src={fileUrl(String(icon?.preview || icon?.file || ""))}
@@ -2052,7 +2062,9 @@ export default function ConfigSettingsLanguageImages() {
                   ) : String(iconDraft?.file || "")
                       .trim()
                       .startsWith("<") ? (
-                    <Icon source={buildSvgIconSource(String(iconDraft?.file || ""))} />
+                    <Icon
+                      source={buildSvgIconSource(String(iconDraft?.file || ""))}
+                    />
                   ) : iconDraft?.file ? (
                     <img
                       src={fileUrl(iconDraft.file)}
@@ -2086,53 +2098,53 @@ export default function ConfigSettingsLanguageImages() {
               </Text>
             </div>
 
-          <Box paddingBlockStart="400">
-            <Text as="h3" variant="headingSm">
-              Icon Settings
-            </Text>
-          </Box>
-          <Box paddingBlockStart="200">
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                gap: 12,
-              }}
-            >
-              <TextField
-                label="Icon name"
-                autoComplete="off"
-                value={String(iconDraft?.name || "")}
-                onChange={(value) =>
-                  setIconDraft((prev: any) => ({ ...prev, name: value }))
-                }
-              />
-              <TextField
-                label="Base Price"
-                type="number"
-                autoComplete="off"
-                value={String(iconDraft?.basePrice ?? 0)}
-                onChange={(value) =>
-                  setIconDraft((prev: any) => ({
-                    ...prev,
-                    basePrice: Number(value || 0),
-                  }))
-                }
-              />
-              <TextField
-                label="Minimum Height"
-                type="number"
-                autoComplete="off"
-                value={String(iconDraft?.minHeight ?? 5)}
-                onChange={(value) =>
-                  setIconDraft((prev: any) => ({
-                    ...prev,
-                    minHeight: Number(value || 0),
-                  }))
-                }
-              />
-            </div>
-          </Box>
+            <Box paddingBlockStart="400">
+              <Text as="h3" variant="headingSm">
+                Icon Settings
+              </Text>
+            </Box>
+            <Box paddingBlockStart="200">
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                  gap: 12,
+                }}
+              >
+                <TextField
+                  label="Icon name"
+                  autoComplete="off"
+                  value={String(iconDraft?.name || "")}
+                  onChange={(value) =>
+                    setIconDraft((prev: any) => ({ ...prev, name: value }))
+                  }
+                />
+                <TextField
+                  label="Base Price"
+                  type="number"
+                  autoComplete="off"
+                  value={String(iconDraft?.basePrice ?? 0)}
+                  onChange={(value) =>
+                    setIconDraft((prev: any) => ({
+                      ...prev,
+                      basePrice: Number(value || 0),
+                    }))
+                  }
+                />
+                <TextField
+                  label="Minimum Height"
+                  type="number"
+                  autoComplete="off"
+                  value={String(iconDraft?.minHeight ?? 5)}
+                  onChange={(value) =>
+                    setIconDraft((prev: any) => ({
+                      ...prev,
+                      minHeight: Number(value || 0),
+                    }))
+                  }
+                />
+              </div>
+            </Box>
           </div>
         </Modal.Section>
       </Modal>

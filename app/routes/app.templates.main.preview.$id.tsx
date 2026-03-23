@@ -1,22 +1,18 @@
 import { Box, InlineStack, Page, Text } from "@shopify/polaris";
 
-import { useFetcher, useLoaderData, useNavigate, useOutletContext, useSubmit } from "@remix-run/react";
+import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import NextLtrIcon from "~/components/icons/NextLtrIcon";
-import MaterialService from "~/models/Material.service";
-import { Material } from "~/types/ConfigDataType";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import { ConfigurationType } from "~/types/ConfigurationType";
-import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import { Modal, TitleBar } from "@shopify/app-bridge-react";
 import TemplateService from "~/models/Template.service";
-import { useEffect } from "react";
-import {Jwt} from "jsonwebtoken"
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const id = parseInt(params.id ?? "");
   let template = null;
 
@@ -30,9 +26,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function Preview() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   let { template , token} = useLoaderData<typeof loader>();
+  const returnTo = searchParams.get("returnTo");
 
-  const shopify = useAppBridge();
   useHandleFlashMessage();
   
 
@@ -44,9 +41,10 @@ export default function Preview() {
         id="my-modal"
         open={true}
         variant="max"
-        onHide={() => navigate(`../..`)}
+        onHide={() => navigate(returnTo || `../..`)}
       >
         <iframe
+          title={template?.name ? `${template.name} preview` : "Template preview"}
           name={JSON.stringify({
             configId: template?.configurationId,
             templateId: template?.id,

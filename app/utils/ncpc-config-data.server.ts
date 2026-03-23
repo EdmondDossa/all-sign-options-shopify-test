@@ -29,7 +29,7 @@ const normalizeDemoFontUrl = (input: unknown, isGoogleFont: boolean) => {
   if (!raw || isGoogleFont) return raw;
 
   const normalized = raw.replace(/\\/g, "/");
-  const directMatch = normalized.match(/\/aso_default_files\/fonts\/([^/?#]+)$/i);
+  const directMatch = normalized.match(/\/aso_default_files/\/fonts\/([^/?#]+)$/i);
   if (directMatch?.[1]) {
     return `/aso_default_files/fonts/${directMatch[1]}`;
   }

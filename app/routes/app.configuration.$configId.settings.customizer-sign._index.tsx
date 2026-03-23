@@ -1,6 +1,3 @@
-import { redirect } from "@remix-run/react"
-
-export const loader = async () => {
-  
-  return redirect('customizer-options');
+export default function ConfigurationSettingsCustomizerSignIndex() {
+  return null;
 }

@@ -1,35 +1,28 @@
 import { Box, InlineStack, Page, Text } from "@shopify/polaris";
 
-import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import { useLoaderData, useNavigate, useOutletContext, useSearchParams } from "@remix-run/react";
 import { BoxBackground } from "~/components/layouts/BoxBackground";
 import NextLtrIcon from "~/components/icons/NextLtrIcon";
-import MaterialService from "~/models/Material.service";
-import { Material } from "~/types/ConfigDataType";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
-import { ConfigurationType } from "~/types/ConfigurationType";
-import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import type { ConfigurationType } from "~/types/ConfigurationType";
+import { Modal, TitleBar } from "@shopify/app-bridge-react";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
-  const configId = parseInt(params.configId ?? "");
-  let materials: Material[] | null = null;
-
-  if (configId) {
-    materials = await MaterialService.getAll(session.id, configId);
-  }
-
-  return json({ materials,token:session.accessToken });
+  const { session } = await authenticate.admin(request);
+  return json({ token: session.accessToken, configId: parseInt(params.configId ?? "") || 0 });
 };
 
 export default function Preview() {
   const navigate = useNavigate();
-  let { materials, token } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
+  const { token } = useLoaderData<typeof loader>();
   const { configuration } = useOutletContext<{
     configuration: ConfigurationType;
   }>();
-  const shopify = useAppBridge();
+  const returnTo = searchParams.get("returnTo") || "";
 
   return (
     <Page fullWidth>
@@ -37,13 +30,14 @@ export default function Preview() {
         id="my-modal"
         open={true}
         variant="max"
-        onHide={() => navigate(-1)}
+        onHide={() => navigate(returnTo || `/app/configuration/${configuration.id}/materials`)}
       >
         <iframe
+          title={configuration?.name ? `${configuration.name} preview` : "Configuration preview"}
           name={JSON.stringify({
             configId: configuration.id,
             templateId: "",
-            token:token
+            token,
           })}
           src="/preview.html"
           className="aso-preview"

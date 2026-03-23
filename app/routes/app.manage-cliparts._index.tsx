@@ -1,53 +1,68 @@
+import { json, redirect } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Box,
-  ButtonGroup,
+  Button,
   Card,
-  Divider,
   IndexTable,
+  InlineGrid,
   InlineStack,
   Text,
+  TextField,
 } from "@shopify/polaris";
-import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
-import { EditIconBtn } from "~/components/buttons/EditIconBtn";
-import { useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
-import PlusIcon from "~/components/icons/PlusIcon";
-import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import RoundManageHistoryIcon from "~/components/icons/RoundManageHistoryIcon";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-import { authenticate } from "~/shopify.server";
+import { PlusIcon } from "@shopify/polaris-icons";
+import {
+  useLoaderData,
+  useNavigate,
+  useNavigation,
+  useSearchParams,
+  useSubmit,
+} from "@remix-run/react";
+import { useEffect, useMemo, useState } from "react";
 import ClipartsGroupService from "~/models/ClipartsGroup.service";
-import { jFlashMessage } from "~/utils/message-flash";
+import { authenticate } from "~/shopify.server";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
-
-  const clipartsGroups = await ClipartsGroupService.getClipartsGroups(
-    session.id,
-  );
-
-  return json({ clipartsGroups });
+  const { session } = await authenticate.admin(request);
+  const clipartsGroups = await ClipartsGroupService.getClipartsGroups(session.id);
+  return json({ clipartsGroups: Array.isArray(clipartsGroups) ? clipartsGroups : [] });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
-
+  const { session } = await authenticate.admin(request);
   const formData = await request.formData();
-  const id = formData.get("id") as string;
-  const method = request.method;
+  const url = new URL(request.url);
+  const operation = String(formData.get("operation") || "");
+  const id = parseInt(String(formData.get("id") || ""), 10);
 
-  switch (method) {
-    case "DELETE": {
-      console.log("start deleting");
-      await ClipartsGroupService.deleteClipartsGroup(parseInt(id), session.id);
-      return json({
-        ...jFlashMessage("Clipart group deleted successfully"),
-      });
+  if (request.method === "DELETE" && Number.isFinite(id)) {
+    await ClipartsGroupService.deleteClipartsGroup(id, session.id);
+    return json(jFlashMessage("Clipart group deleted successfully"));
+  }
+
+  if (operation === "save-group") {
+    const title = String(formData.get("title") || "").trim();
+    const description = String(formData.get("description") || "");
+
+    if (!title) {
+      return json(jFlashMessage("Title is required", "error"), { status: 400 });
     }
 
-    default:
-      break;
+    if (Number.isFinite(id)) {
+      await ClipartsGroupService.updateClipartsGroup(
+        { id, title, description } as any,
+        session.id,
+      );
+      return redirect(`${url.pathname}${flashMessage("Clipart group updated successfully")}`);
+    }
+
+    await ClipartsGroupService.addClipartsGroup(
+      { title, description } as any,
+      session.id,
+    );
+    return redirect(`${url.pathname}${flashMessage("Clipart group added successfully")}`);
   }
 
   return null;
@@ -55,108 +70,165 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function ManageClipartIndex() {
   const submit = useSubmit();
-  let { clipartsGroups } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+  const navigation = useNavigation();
+  const [searchParams] = useSearchParams();
+  const { clipartsGroups } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
 
-  const navigate = useNavigate();
-  const onHandleCreate = () => {
-    navigate("edit");
-  };
+  const editingId = searchParams.get("id");
+  const isCreating = searchParams.get("new") === "1";
+  const currentGroup = useMemo(
+    () =>
+      editingId
+        ? clipartsGroups.find((entry: any) => String(entry?.id) === editingId) || null
+        : null,
+    [clipartsGroups, editingId],
+  );
 
-  const handeleDelete = (id: number) => {
-    submit({ id: id }, { method: "DELETE" });
-  };
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
-  const handleUpdate = (id: number) => {
-    submit({ id: id }, { method: "GET", action: "edit" });
-  };
+  useEffect(() => {
+    if (currentGroup) {
+      setTitle(String(currentGroup.title || ""));
+      setDescription(String(currentGroup.description || ""));
+      return;
+    }
 
+    if (isCreating) {
+      setTitle("");
+      setDescription("");
+    }
+  }, [currentGroup, isCreating]);
+
+  const isEditing = Boolean(currentGroup || isCreating);
+  const isSubmitting = navigation.state === "submitting";
   const resourceName = {
     singular: "Clipart Group",
     plural: "Clipart Groups",
   };
 
-  const rowMarkup = clipartsGroups?.map(({ id, title, description }, index) => (
-    <IndexTable.Row id={id} key={id} position={index}>
-      <IndexTable.Cell>{title}</IndexTable.Cell>
-      <IndexTable.Cell>{description}</IndexTable.Cell>
+  const openCreate = () => navigate("?new=1");
+  const openEdit = (id: number) => navigate(`?id=${id}`);
+  const closeForm = () => navigate(".");
 
-      <IndexTable.Cell className="td-center">
-        <ButtonGroup fullWidth noWrap gap="loose">
-          <button
-            className="add-option-btn"
-            onClick={() => navigate(`${id}/clipart`)}
-          >
-            <InlineStack gap="100" blockAlign="center">
-              {" "}
-              <RoundManageHistoryIcon /> <Text as="span">
-                manage cliparts
-              </Text>{" "}
-            </InlineStack>
-          </button>
-          <EditIconBtn
-            size="micro"
-            onClick={() => {
-              handleUpdate(id);
-            }}
-          />
-          <DeleteIconBtn
-            size="micro"
-            onClick={() => {
-              handeleDelete(id);
-            }}
-          />
-        </ButtonGroup>
-      </IndexTable.Cell>
-    </IndexTable.Row>
-  ));
-  return (
-    <>
-    <div>
-      <Card>
-          <InlineStack gap="100" align="start">
-            <Text as="h2" variant="headingMd">
-            List of clipart group
+  const saveGroup = () => {
+    submit(
+      {
+        operation: "save-group",
+        id: currentGroup?.id ? String(currentGroup.id) : "",
+        title,
+        description,
+      },
+      { method: "POST" },
+    );
+  };
+
+  if (isEditing) {
+    return (
+      <div style={{ display: "grid", gap: 12 }}>
+        <Card>
+          <Box padding="300">
+            <Text as="h2" variant="headingLg">
+              {currentGroup ? "Edit clipart group" : "Add clipart group"}
             </Text>
-        </InlineStack>
-      </Card>
-    </div>
-    
-    <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
+          </Box>
+        </Card>
+
+        <Card>
+          <Box padding="300">
+            <InlineGrid columns={{ xs: 1, md: 2 }} gap="400">
+              <TextField
+                label="Title"
+                autoComplete="off"
+                value={title}
+                onChange={setTitle}
+              />
+              <TextField
+                label="Description"
+                autoComplete="off"
+                value={description}
+                onChange={setDescription}
+              />
+            </InlineGrid>
+          </Box>
+          <Box padding="300">
+            <InlineStack align="end" gap="200">
+              <Button onClick={closeForm}>Back</Button>
+              <Button
+                variant="primary"
+                tone="success"
+                loading={isSubmitting}
+                onClick={saveGroup}
+                disabled={!title.trim()}
+              >
+                Save
+              </Button>
+            </InlineStack>
+          </Box>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 12 }}>
       <Card>
-        <Box padding="150">
-          <InlineStack gap="100" align="end">
-            <button
-              className="primary-btn"
-              type="button"
-              onClick={onHandleCreate}
-            >
-              <Box paddingInline="300">
-                <InlineStack gap="300">
-                  <PlusIcon />
-                  <span className="primary-btn-text">
-                    Add new clipart group
-                  </span>
-                </InlineStack>
-              </Box>
-            </button>
+        <Box padding="300">
+          <InlineStack align="space-between" blockAlign="center">
+            <div>
+              <Text as="h2" variant="headingLg">
+                Clipart Groups
+              </Text>
+              <Text as="p" tone="subdued">
+                Manage the reusable clipart groups used across configurations.
+              </Text>
+            </div>
+            <Button icon={PlusIcon} variant="primary" tone="success" onClick={openCreate}>
+              Add new clipart group
+            </Button>
           </InlineStack>
         </Box>
-        <Divider borderWidth="050" />
-        <IndexTable
-          resourceName={resourceName}
-          itemCount={clipartsGroups ? clipartsGroups.length : 0}
-          headings={[
-            { title: "Title" },
-            { title: "Description" },
-            { title: "Action", alignment: "center" },
-          ]}
-          selectable={false}
-        >
-          {rowMarkup}
-        </IndexTable>
+      </Card>
+
+      <Card>
+        <Box padding="300">
+          <IndexTable
+            resourceName={resourceName}
+            itemCount={clipartsGroups.length}
+            headings={[
+              { title: "Title" },
+              { title: "Description" },
+              { title: "Actions" },
+            ]}
+            selectable={false}
+          >
+            {clipartsGroups.map(({ id, title, description }: any, index: number) => (
+              <IndexTable.Row id={String(id)} key={id} position={index}>
+                <IndexTable.Cell>
+                  <Text as="span" fontWeight="semibold">
+                    {title || "Untitled"}
+                  </Text>
+                </IndexTable.Cell>
+                <IndexTable.Cell>{description || "-"}</IndexTable.Cell>
+                <IndexTable.Cell>
+                  <InlineStack gap="200">
+                    <Button onClick={() => navigate(`${id}/clipart`)}>Manage</Button>
+                    <Button onClick={() => openEdit(id)}>Edit</Button>
+                    <Button
+                      tone="critical"
+                      onClick={() => submit({ id: String(id) }, { method: "DELETE" })}
+                    >
+                      Delete
+                    </Button>
+                  </InlineStack>
+                </IndexTable.Cell>
+              </IndexTable.Row>
+            ))}
+          </IndexTable>
+        </Box>
       </Card>
     </div>
-    </>
   );
 }

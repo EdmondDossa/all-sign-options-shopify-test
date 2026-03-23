@@ -492,6 +492,14 @@ export const FileUploader = ({
             variant="primary"
             tone="success"
             onClick={handleAllSeletedFiles}
+            style={{
+              backgroundColor: "rgb(1, 100, 100)",
+              color: "white",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
           >
             Select file
           </button>
@@ -499,6 +507,13 @@ export const FileUploader = ({
             type="button"
             variant="secondary"
             onClick={handleCancelSelectedFiles}
+            style={{
+              backgroundColor: "transparent",
+              border: "1px solid #D1D5DB",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
           >
             Cancel
           </button>

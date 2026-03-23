@@ -63,10 +63,8 @@ const HeaderTopMenu = () => {
   };
 
   const handlePreviews = (configId: number) => {
-    const currentPath = window.location.pathname;
-    navigate(`/app/configuration/${configId}/preview`, {
-      state: { returnTo: currentPath },
-    });
+    const currentPath = `${window.location.pathname}${window.location.search || ""}`;
+    navigate(`/app/configuration/${configId}/preview?returnTo=${encodeURIComponent(currentPath)}`);
   };
 
   return (

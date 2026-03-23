@@ -1,5 +1,6 @@
 import prisma from "~/db.server";
-import { ConfigurationType } from "~/types/ConfigurationType";
+import type { ConfigurationType } from "~/types/ConfigurationType";
+import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
 
 const initialData = {
   settings: {
@@ -11,7 +12,7 @@ const initialData = {
         zipFiles: {
           active: false,
           zipOutFolderPrefix: "aso_",
-        }
+        },
       },
       mobile: {
         showNavigatorMenu: "off",
@@ -251,7 +252,7 @@ const initialData = {
         enableCurvedDown: false,
         enableCustomColor: true,
         enableTextAlignment: true,
-        textType: "normal"
+        textType: "normal",
       },
       images: {
         colors: [],
@@ -279,7 +280,7 @@ const initialData = {
         enableCustomColor: true,
         enableUploadImage: true,
         enableDownloadImage: true,
-        scenes: []
+        scenes: [],
       },
       signPart: {
         doublePart: {
@@ -351,8 +352,8 @@ const initialData = {
         textButtonNext: "Redo",
         textCanvasEdit: "Edit",
         textOptionText: "Text",
-        textAdditonnalOptionsHeader: 'Additionnals Options',
-        textButtonAdditonnalOptions: 'Add Option',
+        textAdditonnalOptionsHeader: "Additionnals Options",
+        textButtonAdditonnalOptions: "Add Option",
         textBeforePrice: "",
         textCanvasClone: "Clone",
         textButtonFinish: "Finish",
@@ -512,10 +513,10 @@ const simpleMaterials: any = [
             unit: {
               basePrice: 0,
               surface: 0,
-              charPrice: 0
+              charPrice: 0,
             },
             range: [],
-            rangePricingPerUnit: false
+            rangePricingPerUnit: false,
           },
         },
       },
@@ -874,7 +875,7 @@ const simpleMaterials: any = [
     popImg: "",
     description: "Default material data for simple configuration",
   },
-]
+];
 
 const advanceMaterials: any = [
   {
@@ -1101,11 +1102,11 @@ const advanceMaterials: any = [
     popImg: "",
     description: "Default material data for advance configuration",
   },
-]
+];
 
-const layersMaterials: any = []
-
-const normalizeNcpcProductType = (value?: string | null): "neon" | "channel" | null => {
+const normalizeNcpcProductType = (
+  value?: string | null,
+): "neon" | "channel" | null => {
   const normalized = String(value || "")
     .trim()
     .toLowerCase();
@@ -1144,7 +1145,6 @@ const getObjectData = (value: any) => {
 
 const withReadNcpcMeta = (configuration: any) => {
   if (!configuration) return configuration;
-
   const data = getObjectData(configuration.data);
   const resolvedProductType =
     normalizeNcpcProductType(configuration.productType) ||
@@ -1153,6 +1153,12 @@ const withReadNcpcMeta = (configuration: any) => {
   if (!resolvedProductType) {
     return {
       ...configuration,
+      data: ensureClassicSimplifiedBuilderData({
+        data,
+        materialType: configuration?.materialType,
+        productType: configuration?.productType,
+        pricingMode: configuration?.pricingMode || null,
+      }),
       pricingMode: null,
     };
   }
@@ -1170,18 +1176,23 @@ const withReadNcpcMeta = (configuration: any) => {
 };
 
 export default class ConfigurationService {
-  static async getConfigurations(sessionId: string, includeTempletes = false): Promise<any[] | null> {
+  static async getConfigurations(
+    sessionId: string,
+    includeTempletes = false,
+  ): Promise<any[] | null> {
     try {
       const configurations = await prisma.configuration.findMany({
         where: {
           sessionId: sessionId,
         },
-        include: includeTempletes ? {
-          templates: true
-        } : undefined,
+        include: includeTempletes
+          ? {
+              templates: true,
+            }
+          : undefined,
         orderBy: {
           id: "asc",
-        }
+        },
       });
 
       return configurations.map(withReadNcpcMeta);
@@ -1201,7 +1212,7 @@ export default class ConfigurationService {
           id: id,
           sessionId: sessionId,
         },
-        include: { templates: true }
+        include: { templates: true },
       });
 
       return withReadNcpcMeta(configuration);
@@ -1210,8 +1221,6 @@ export default class ConfigurationService {
       return Promise.reject(null);
     }
   }
-
-
 
   static async getConfigurationWithoutTemplates(
     id: number,
@@ -1222,7 +1231,7 @@ export default class ConfigurationService {
         where: {
           id: id,
           sessionId: sessionId,
-        }
+        },
       });
 
       return withReadNcpcMeta(configuration);
@@ -1237,7 +1246,9 @@ export default class ConfigurationService {
    */
   static normalizeProductId(productId: string | number): string {
     if (typeof productId === "number") return String(productId);
-    const match = String(productId).match(/^(?:gid:\/\/shopify\/Product\/)?(\d+)$/);
+    const match = String(productId).match(
+      /^(?:gid:\/\/shopify\/Product\/)?(\d+)$/,
+    );
     return match ? match[1] : String(productId);
   }
 
@@ -1249,13 +1260,15 @@ export default class ConfigurationService {
   static async findConfigurationContainingProduct(
     sessionId: string,
     productId: string | number,
-    excludeConfigurationId?: number
+    excludeConfigurationId?: number,
   ): Promise<{ configId: number; configName: string } | null> {
     const normalizedId = this.normalizeProductId(productId);
     const configs = await prisma.configuration.findMany({
       where: {
         sessionId,
-        ...(excludeConfigurationId ? { id: { not: excludeConfigurationId } } : {}),
+        ...(excludeConfigurationId
+          ? { id: { not: excludeConfigurationId } }
+          : {}),
       },
       select: { id: true, name: true, product: true },
     });
@@ -1274,30 +1287,55 @@ export default class ConfigurationService {
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
-    const { id, products, templates, materialType, productType, pricingMode, ...configData } = configuration;
-    const normalizedNcpcProductType = normalizeNcpcProductType(productType as any);
+    const {
+      id,
+      products,
+      templates,
+      materialType,
+      productType,
+      pricingMode,
+      ...configData
+    } = configuration;
+    const normalizedNcpcProductType = normalizeNcpcProductType(
+      productType as any,
+    );
     const isNcpcConfiguration = Boolean(normalizedNcpcProductType);
     const productList = Array.isArray(products) ? products : [];
     for (const p of productList) {
       const productId = (p as any)?.id ?? (p as any);
       if (productId == null) continue;
-      const other = await this.findConfigurationContainingProduct(sessionId, productId, id);
+      const other = await this.findConfigurationContainingProduct(
+        sessionId,
+        productId,
+        id,
+      );
       if (other) {
         const msg = `This product is already linked to the configuration "${other.configName}". Remove it from this configuration before adding it to another one.`;
         return Promise.reject(new Error(msg));
       }
     }
     try {
-      const normalizedPricingMode =
-        isNcpcConfiguration
-          ? normalizeNcpcPricingMode(
-              pricingMode || (getObjectData((configData as any).data) as any)?.pricingMode,
-            ) || "fixed-height"
-          : null;
+      const normalizedData = isNcpcConfiguration
+        ? getObjectData((configData as any).data)
+        : ensureClassicSimplifiedBuilderData({
+            data: getObjectData((configData as any).data) || {},
+            materialType: materialType as any,
+            productType: productType as any,
+            pricingMode: null,
+          });
+
+      const normalizedPricingMode = isNcpcConfiguration
+        ? normalizeNcpcPricingMode(
+            pricingMode || (normalizedData as any)?.pricingMode,
+          ) || "fixed-height"
+        : null;
 
       console.log("updateConfiguration - Saving materialType:", materialType);
       console.log("updateConfiguration - Saving productType:", productType);
-      console.log("updateConfiguration - Saving pricingMode:", normalizedPricingMode);
+      console.log(
+        "updateConfiguration - Saving pricingMode:",
+        normalizedPricingMode,
+      );
       return await prisma.configuration.update({
         where: {
           id: id,
@@ -1305,6 +1343,7 @@ export default class ConfigurationService {
         },
         data: {
           ...configData,
+          data: normalizedData,
           product: products, // Save products array in DB field 'product' (legacy column name)
           materialType: materialType, // Explicitly preserve materialType
           productType: normalizedNcpcProductType || productType, // Explicitly preserve productType
@@ -1338,14 +1377,26 @@ export default class ConfigurationService {
     configuration: ConfigurationType,
     sessionId: string,
   ): Promise<any | null> {
-    const { products, templates, materialType, productType, pricingMode, ...configData } = configuration;
-    const normalizedNcpcProductType = normalizeNcpcProductType(productType as any);
+    const {
+      products,
+      templates,
+      materialType,
+      productType,
+      pricingMode,
+      ...configData
+    } = configuration;
+    const normalizedNcpcProductType = normalizeNcpcProductType(
+      productType as any,
+    );
     const isNcpcConfiguration = Boolean(normalizedNcpcProductType);
     const productList = Array.isArray(products) ? products : [];
     for (const p of productList) {
       const productId = (p as any)?.id ?? (p as any);
       if (productId == null) continue;
-      const other = await this.findConfigurationContainingProduct(sessionId, productId);
+      const other = await this.findConfigurationContainingProduct(
+        sessionId,
+        productId,
+      );
       if (other) {
         const msg = `This product is already linked to the configuration "${other.configName}". Remove it from this configuration before adding it to another one.`;
         return Promise.reject(new Error(msg));
@@ -1353,23 +1404,28 @@ export default class ConfigurationService {
     }
     try {
       let dataForCreate: any = initialData;
-      const normalizedPricingMode =
-        isNcpcConfiguration
-          ? normalizeNcpcPricingMode(
-              pricingMode || (getObjectData((configData as any).data) as any)?.pricingMode,
-            ) || "fixed-height"
-          : null;
+      const normalizedPricingMode = isNcpcConfiguration
+        ? normalizeNcpcPricingMode(
+            pricingMode ||
+              (getObjectData((configData as any).data) as any)?.pricingMode,
+          ) || "fixed-height"
+        : null;
 
       if (isNcpcConfiguration) {
         const incomingData = getObjectData((configData as any).data);
         dataForCreate = incomingData || {};
       } else {
         if (configuration.materialType == "simple") {
-          initialData.materials = simpleMaterials
+          initialData.materials = simpleMaterials;
         } else if (configuration.materialType == "advance") {
-          initialData.materials = advanceMaterials
+          initialData.materials = advanceMaterials;
         }
-        dataForCreate = (configData as any).data || initialData;
+        dataForCreate = ensureClassicSimplifiedBuilderData({
+          data: (configData as any).data || initialData,
+          materialType: materialType as any,
+          productType: productType as any,
+          pricingMode: null,
+        });
       }
 
       return await prisma.configuration.create({

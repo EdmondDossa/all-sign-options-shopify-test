@@ -1,4 +1,4 @@
-import { BlockStack, Box, Button, ButtonProps, InlineStack } from "@shopify/polaris";
+import { BlockStack, Box, InlineStack } from "@shopify/polaris";
 import LoadingGray from "../icons/LoadingGray";
 import BiSaveIcon from "../icons/BiSaveIcon";
 import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
@@ -32,8 +32,34 @@ export const BiSaveConfirmBtn = ({ isLoading, title, modalTitle ,children }: { i
                 </Box>
               
                 <TitleBar title={modalTitle||'Saving confirmation'}>
-                    <button variant="primary" onClick={()=>{shopify.modal.hide(id)}} type="submit">{title||'Save'}</button>
-                    <button type="button" onClick={() => shopify.modal.hide(id)}>cancel</button>
+                    <button
+                      variant="primary"
+                      onClick={()=>{shopify.modal.hide(id)}}
+                      type="submit"
+                      style={{
+                        backgroundColor: "rgb(1, 100, 100)",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {title||'Save'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => shopify.modal.hide(id)}
+                      style={{
+                        backgroundColor: "transparent",
+                        border: "1px solid #D1D5DB",
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      cancel
+                    </button>
                 </TitleBar>
             </Modal>
     </> 

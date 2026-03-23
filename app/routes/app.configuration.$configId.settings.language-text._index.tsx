@@ -1,6 +1,3 @@
-import { redirect } from "@remix-run/react"
-
-export const loader = async () => {
-  
-  return redirect('upload-design');
+export default function ConfigurationSettingsLanguageTextIndex() {
+  return null;
 }

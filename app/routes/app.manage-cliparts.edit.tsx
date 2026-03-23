@@ -1,7 +1,7 @@
 import {
   Box,
+  Button,
   Card,
-  Divider,
   Grid,
   InlineStack,
   Text,
@@ -18,23 +18,21 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import ClipartsGroupService from "~/models/ClipartsGroup.service";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import { ClipartsGroupType } from "~/types/ManagePropertyType";
+import type { ClipartsGroupType } from "~/types/ManagePropertyType";
 import { getError } from "~/utils/error-getting";
-import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
-import { BackBtn } from "~/components/buttons/BackBtn";
 import { stringTransform } from "~/utils/transfomerZod";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
   let clipartsGroup = null;
@@ -51,7 +49,6 @@ export default function ManageClipartCreate() {
   const navigation = useNavigation()
   const actionData = useActionData<typeof action>();
   useHandleFlashMessage();
-  console.log('action data :', actionData);
   let {clipartsGroup} = useLoaderData<typeof loader>()
   const [formData, setFormData] = useState<ClipartsGroupType>((clipartsGroup as ClipartsGroupType) || {
     title: "",
@@ -90,68 +87,59 @@ export default function ManageClipartCreate() {
   };
   
   return (
-    <div>
-      {/* <div>
-        <Card>
-            <InlineStack gap="100" align="start">
-              <Text as="h2" variant="headingMd">
-              List of clipart group
+    <SpacingBackground width="100%" height="auto" margin="16px 0px ">
+      <Form onSubmit={handleSubmit} method="POST">
+        <div style={{ display: "grid", gap: 12 }}>
+          <Card>
+            <Box padding="300">
+              <Text as="h2" variant="headingLg">
+                {clipartsGroup ? "Update clipart group" : "Create new clipart group"}
               </Text>
-          </InlineStack>
-        </Card>
-      </div> */}
+            </Box>
+          </Card>
 
-      <SpacingBackground width="100%" height="auto" margin="16px 0px ">
-          <Form onSubmit={handleSubmit} method="POST">
-            {/* <SpacingBackground backgroundColor="#F9F9F9"> */}
-            <div>
-              <Card>
-                    <Text as="h6" variant="bodyMd" fontWeight="bold" >{clipartsGroup?'Update clipart group' :"Create new clipart group"} </Text>
-              </Card>
-            </div>
-            <Divider borderWidth="100" />
-
-            <div style={{margin:"10px 0px"}}>
-              <Card>
-                <div>
-                  <Box paddingInline="300" paddingBlock="1000">
-                    <Grid gap={{lg:"30px"}}>
-                      <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                        <TextField
-                          label="Title"
-                          value={`${formData.title}`}
-                          onChange={handleTitle}
-                          autoComplete="on"
-                          error={getError(actionData,"title")}
-                        />
-                      </Grid.Cell>
-                      <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-                        <TextField
-                          label="Description"
-                          value={`${formData.description}`}
-                          onChange={handleDescription}
-                          autoComplete="on"
-                          error={getError(actionData,"description")}
-                        />
-                      </Grid.Cell>
-                  
-                    </Grid>
-                  </Box>
-                </div>
-                  <Divider borderWidth="100" />
-                <div>
-                  <Box paddingInline="300" paddingBlock="300">
-                    <InlineStack align="end" gap="600">
-                    <BackBtn isLoading={isLoading} title="Back"/>
-                    <BiSaveBtn isLoading={isSubmitting} title="Save" />
-                    </InlineStack>
-                  </Box>
-                </div>
-              </Card>
-            </div>
-          </Form>
-      </SpacingBackground>
-    </div>
+          <Card>
+            <Box padding="300">
+              <Grid gap={{ lg: "30px" }}>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="Title"
+                    value={`${formData.title}`}
+                    onChange={handleTitle}
+                    autoComplete="on"
+                    error={getError(actionData,"title")}
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="Description"
+                    value={`${formData.description}`}
+                    onChange={handleDescription}
+                    autoComplete="on"
+                    error={getError(actionData,"description")}
+                  />
+                </Grid.Cell>
+              </Grid>
+            </Box>
+            <Box padding="300">
+              <InlineStack align="end" gap="200">
+                <Button onClick={onBack} disabled={Boolean(isLoading)}>
+                  Back
+                </Button>
+                <Button
+                  submit
+                  variant="primary"
+                  tone="success"
+                  loading={isSubmitting}
+                >
+                  Save
+                </Button>
+              </InlineStack>
+            </Box>
+          </Card>
+        </div>
+      </Form>
+    </SpacingBackground>
   );
 }
 
@@ -167,7 +155,7 @@ const formSchema = z.object({
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
 
 
 

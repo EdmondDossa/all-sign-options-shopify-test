@@ -70,10 +70,8 @@ export default function NcpcConfigurationLayout() {
   const handlePreview = () => {
     const previewConfigId = parseInt(configId, 10);
     if (Number.isNaN(previewConfigId)) return;
-
-    navigate(`/app/configuration/${previewConfigId}/preview`, {
-      state: { returnTo: `${location.pathname}${location.search}` },
-    });
+    const returnTo = encodeURIComponent(`${location.pathname}${location.search}`);
+    navigate(`/app/configuration/${previewConfigId}/preview?returnTo=${returnTo}`);
   };
 
   const backboardColorsCount = useMemo(() => {

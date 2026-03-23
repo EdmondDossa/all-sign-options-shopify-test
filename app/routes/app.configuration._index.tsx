@@ -25,6 +25,7 @@ import {
   Link,
   json,
   useLoaderData,
+  useLocation,
   useNavigate,
   useOutletContext,
   useSubmit,
@@ -53,6 +54,7 @@ import {
   EditIcon,
   MenuHorizontalIcon,
   PlusIcon,
+  SettingsIcon,
   ViewIcon,
 } from "@shopify/polaris-icons";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
@@ -164,6 +166,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function Configuration() {
   const submit = useSubmit();
+  const location = useLocation();
 
   // Récupération des données étendues du loader
   let { configurations, page, hasNextPage, hasPreviousPage } =
@@ -358,13 +361,20 @@ export default function Configuration() {
   const handlePreviews = (id: number) => {
     const safeConfigId = normalizeConfigId(id);
     if (!safeConfigId) return;
-    navigate(`${safeConfigId}/preview`);
+    const returnTo = encodeURIComponent(`${location.pathname}${location.search || ""}`);
+    navigate(`${safeConfigId}/preview?returnTo=${returnTo}`);
   };
 
   const handleNcpcInterface = (id: number) => {
     const safeConfigId = normalizeConfigId(id);
     if (!safeConfigId) return;
     navigate(`/app/ncpc/${safeConfigId}/required-options`);
+  };
+
+  const handleBuilderRoute = (id: number) => {
+    const safeConfigId = normalizeConfigId(id);
+    if (!safeConfigId) return;
+    navigate(`${safeConfigId}/required-options/sizes`);
   };
 
   configurations = configurations || [];
@@ -483,6 +493,15 @@ export default function Configuration() {
                     icon: ViewIcon,
                     onAction: () => handlePreviews(id),
                   },
+                  ...(!ncpcProductType
+                    ? [
+                        {
+                          content: "Configure",
+                          icon: SettingsIcon,
+                          onAction: () => handleBuilderRoute(id),
+                        },
+                      ]
+                    : []),
                   {
                     content: "Edit",
                     icon: EditIcon,

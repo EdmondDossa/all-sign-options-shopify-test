@@ -1,5 +1,5 @@
 import { InlineStack } from "@shopify/polaris";
-import { ReactSwitchCustom } from "./ReactSwitchCustom";
+import { ToggleButton } from "~/components/buttons";
 
 export const ActivatabaleItem = ({ title, status, toggleStatus, children, fillIcon = false, noTrokeIcon = false }: {
   title: string;
@@ -23,7 +23,7 @@ export const ActivatabaleItem = ({ title, status, toggleStatus, children, fillIc
         {title}
       </div>
       </div>
-       <ReactSwitchCustom  checked={status} setChecked={()=>toggleStatus(!status)}/>
+       <ToggleButton checked={status} onChange={(value) => toggleStatus(Boolean(value))} />
     </InlineStack>
   )
   }

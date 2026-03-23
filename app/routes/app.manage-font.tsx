@@ -1,13 +1,11 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import {
-  Box,
   Card,
   InlineStack,
   Page,
   Text,
 } from "@shopify/polaris";
-import { BoxBackground } from "~/components/layouts/BoxBackground";
 import { authenticate } from "~/shopify.server";
 import { subscriptionRequired } from "~/utils/pricing-server.server";
 
@@ -27,7 +25,7 @@ export default function ManageSize() {
       <Card>
           <InlineStack gap="100" align="start">
             <Text as="h2" variant="headingMd">
-              Manage Font
+              Manage Fonts
             </Text>
         </InlineStack>
       </Card>

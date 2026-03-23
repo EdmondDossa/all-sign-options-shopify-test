@@ -1,6 +1,5 @@
 import {
   Badge,
-  Banner,
   BlockStack,
   Box,
   Button,
@@ -20,10 +19,10 @@ import {
   useLoaderData,
   useNavigate,
   useNavigation,
-  useSubmit,
 } from "@remix-run/react";
 import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import TemplateService from "~/models/Template.service";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
@@ -33,7 +32,7 @@ import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { flashMessage, jFlashMessage } from "~/utils/message-flash";
 import { BackBtn } from "~/components/buttons/BackBtn";
-import { TemplateType } from "~/types/TemplateType";
+import type { TemplateType } from "~/types/TemplateType";
 import { FileInput } from "~/components/inputs/FileInput";
 import CategoryService from "~/models/Category.service";
 import ConfigurationService from "~/models/Configuration.service";
@@ -48,9 +47,11 @@ import {
 
 
 export const loader = async ({request, params }:LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
+  const preselectedConfigurationId = url.searchParams.get("configurationId");
+  const returnTo = url.searchParams.get("returnTo") || "";
   let template = null;
   let categories =  await  CategoryService.getCategorys(session.id);
   let configurations = await  ConfigurationService.getConfigurations(session.id);
@@ -59,17 +60,16 @@ export const loader = async ({request, params }:LoaderFunctionArgs) => {
     template = await TemplateService.getTemplate(parseInt(id),session.id)
   }
   
-  return json({template, categories, configurations})
+  return json({template, categories, configurations, preselectedConfigurationId, returnTo})
 }
 
 export default function TemplateEditComponent() {
-  const submit = useSubmit();
   const navigation = useNavigation()
   const actionData = useActionData<typeof action>();
   let [enableCategoryEdit, setEnableCategoryEdit]= useState<any>(false);
   useHandleFlashMessage();
   console.log('action data :', actionData);
-  let {template, categories, configurations} = useLoaderData<typeof loader>()
+  let {template, categories, configurations, preselectedConfigurationId, returnTo} = useLoaderData<typeof loader>()
   let [categoriesData, setCategoriesData] = useState<any>(categories||[])
   const [formData, setFormData] = useState<TemplateType>(template? (template as TemplateType) : {
       name:"", 
@@ -77,7 +77,7 @@ export default function TemplateEditComponent() {
       enabledAutoImgUpdate:false,
       basePrice:0,
       categoryId:categories?.length ? categories[0].id:0,
-      configurationId:configurations?.length ? configurations[0].id:0,
+      configurationId:preselectedConfigurationId ? parseInt(preselectedConfigurationId) : configurations?.length ? configurations[0].id:0,
       prevImg:"",
       realImg:""
   });
@@ -104,6 +104,10 @@ export default function TemplateEditComponent() {
   
   const navigate = useNavigate();
   const onBack = () => {
+    if (returnTo) {
+      navigate(returnTo);
+      return;
+    }
     navigate("..");
   };
 
@@ -145,7 +149,7 @@ export default function TemplateEditComponent() {
                   data={configurations?.map(configuration=>({label:configuration.name,value:`${configuration.id}` }))||[]}
                   setSelectedOption={ (value:any)=>handleInputChange('configurationId',parseInt(value))}
                   error={getError(actionData, "configurationId")}
-                  disable={template?true:false}
+                  disable={template ? true : Boolean(preselectedConfigurationId)}
                 ></ComboxSelect>
               </Grid.Cell>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
@@ -212,7 +216,7 @@ export default function TemplateEditComponent() {
               
             <Box paddingInline="300" paddingBlock="300">
               <InlineStack align="end" gap="600">
-                <BackBtn isLoading={isLoading} title="Back" />
+                <BackBtn isLoading={isLoading} title="Back" onClick={onBack} />
                 
                 {
                   template ?
@@ -278,11 +282,12 @@ const formSchema = z.object({
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
 
   const formData = await request.formData(); 
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
+  const returnTo = url.searchParams.get("returnTo") || "";
 
   const submission = parseWithZod(formData, {schema:formSchema});
 
@@ -296,12 +301,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     template.id = parseInt(id);
     let res = await TemplateService.updateTemplate(template, session.id)
     return res ? 
-      redirect(`..${flashMessage("Template updated successfully")}`)
+      redirect(`${returnTo || ".."}${flashMessage("Template updated successfully")}`)
       : json({ ...jFlashMessage("Error on template updating") });
   } else {
     let res =  await TemplateService.addTemplate(template, session.id)
-    return res ? redirect(`../preview/${res.id}/${flashMessage("Template added successfully. Please set up your template in the preview page by following these instructions.")}`)
+    return res ? redirect(`../preview/${res.id}?returnTo=${encodeURIComponent(returnTo)}${flashMessage("Template added successfully. Please set up your template in the preview page by following these instructions.")}`)
       : json({ ...jFlashMessage("Error on template adding") });
   } 
 };
-

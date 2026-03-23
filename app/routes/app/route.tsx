@@ -42,6 +42,7 @@ export default function App() {
   const hiddenRoutesRegex = [
     /^\/app$/, 
     /^\/app\/configuration(\/create)?$/,
+    /^\/app\/configuration\/[^/]+\/(builder|required-options|additional-options|settings|design-setup|templates)(\/.*)?$/,
     /^\/app\/ncpc(\/.*)?$/,
     /^\/app\/manage-font(\/edit)?$/,
     /^\/app\/manage-cliparts(\/.*)?$/, // match tout ce qui suit
@@ -251,7 +252,8 @@ const HeaderTopMenu = () => {
   }
 
   const handlePreviews = (id: number) => {
-    navigate(`/app/configuration/${id}/preview${location.search || ""}`);
+    const returnTo = encodeURIComponent(`${location.pathname}${location.search || ""}`);
+    navigate(`/app/configuration/${id}/preview?returnTo=${returnTo}`);
   };
 
 

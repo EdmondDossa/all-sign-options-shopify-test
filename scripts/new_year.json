@@ -279,17 +279,13 @@
               "colorsPrevImg": "",
               "enableClipart": {
                 "active": true,
-                "selectClipartGroups": [
-                  1
-                ]
+                "selectClipartGroups": [1]
               },
               "fileUploadScript": {
                 "uploadMaxWidth": 1000,
                 "uploadMinWidth": 10,
                 "customWithGraphical": false,
-                "allowedUploadsExtentions": [
-                  "png"
-                ]
+                "allowedUploadsExtentions": ["png"]
               },
               "enableCustomColor": true,
               "enableUploadImage": true,
@@ -3365,15 +3361,7 @@
               "enableStrike": true,
               "colorsPrevImg": "",
               "enableOpacity": true,
-              "selectedFonts": [
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7
-              ],
+              "selectedFonts": [1, 2, 3, 4, 5, 6, 7],
               "enableCurvedUp": false,
               "enableFontSize": {
                 "active": true,
@@ -3409,9 +3397,7 @@
                 "uploadMaxWidth": 100,
                 "uploadMinWidth": 100,
                 "customWithGraphical": false,
-                "allowedUploadsExtentions": [
-                  "png"
-                ]
+                "allowedUploadsExtentions": ["png"]
               },
               "enableCustomColor": true,
               "enableUploadImage": true,
@@ -5246,12 +5232,7 @@
                         "repeat": "no-repeat",
                         "source": {},
                         "patternTransform": [
-                          0.6702898550724636,
-                          0,
-                          0,
-                          1.380597014925373,
-                          0,
-                          0
+                          0.6702898550724636, 0, 0, 1.380597014925373, 0, 0
                         ]
                       },
                       "left": 768,
@@ -5738,12 +5719,7 @@
                         "offsetY": 0,
                         "crossOrigin": "",
                         "patternTransform": [
-                          1.08695652173913,
-                          0,
-                          0,
-                          1.492537313432836,
-                          0,
-                          0
+                          1.08695652173913, 0, 0, 1.492537313432836, 0, 0
                         ]
                       },
                       "left": 928,
@@ -5794,12 +5770,7 @@
                         "offsetY": 0,
                         "crossOrigin": "",
                         "patternTransform": [
-                          1.08695652173913,
-                          0,
-                          0,
-                          1.492537313432836,
-                          0,
-                          0
+                          1.08695652173913, 0, 0, 1.492537313432836, 0, 0
                         ]
                       },
                       "left": 933,
@@ -6115,12 +6086,7 @@
                         "repeat": "no-repeat",
                         "source": {},
                         "patternTransform": [
-                          1.08695652173913,
-                          0,
-                          0,
-                          1.492537313432836,
-                          0,
-                          0
+                          1.08695652173913, 0, 0, 1.492537313432836, 0, 0
                         ]
                       },
                       "left": 953,

@@ -1,5 +1,3 @@
-import { ShopifyShopService } from "~/models/ShopifyShop.service.server";
-
 export const fileUrl = (url: any) => {
     
     if (url && typeof  url === "string") {
@@ -81,5 +79,3 @@ export  const  getShopProxyUrlWithSlash = (shop:string)=>{
 
   return `https://${shop}/apps/aso-proxy/`;
 }
-
-

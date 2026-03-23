@@ -1158,7 +1158,7 @@
                   "title": "Reflective",
                   "options": [
                     {
-                      "icon": "http://localhost/wordpress-set/wp-content/plugins/all-signs-options/assets/images/demos/ic_none.svg",
+                      "icon": "/aso_default_files/demos/ic_none.svg",
                       "image": "",
                       "title": "Standard",
                       "popupImg": "",
@@ -1601,7 +1601,7 @@
               "additionalComponents": [
                 {
                   "data": {
-                    "icon": "http://localhost/wordpress-set/wp-content/plugins/all-signs-options/assets/images/demos/ic_none.svg",
+                    "icon": "/aso_default_files/demos/ic_none.svg",
                     "image": "",
                     "title": "Standard",
                     "popupImg": "",
@@ -3747,7 +3747,7 @@
               "additionalComponents": [
                 {
                   "data": {
-                    "icon": "http://localhost/wordpress-set/wp-content/plugins/all-signs-options/assets/images/demos/ic_none.svg",
+                    "icon": "/aso_default_files/demos/ic_none.svg",
                     "image": "",
                     "title": "Standard",
                     "popupImg": "",

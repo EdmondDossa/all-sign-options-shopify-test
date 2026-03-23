@@ -19,6 +19,8 @@ import {
   redirect,
   useActionData,
   useLoaderData,
+  useLocation,
+  useNavigate,
   useNavigation,
   useOutletContext,
   useSubmit
@@ -63,10 +65,12 @@ export const loader = async ({request, params }:LoaderFunctionArgs) => {
 export default function ClipartCreate() {
   const submit = useSubmit();
   const navigation = useNavigation()
+  const navigate = useNavigate();
   const actionData = useActionData<typeof action>();
   let { clipartsGroup } = useOutletContext<{ clipartsGroup: ClipartsGroupType }>();
   useHandleFlashMessage();
   let { clipart, clipartsResources, shop } =  useLoaderData<typeof loader>()
+  const location = useLocation();
   
   const [isApiUsed, setIsApiUsed] = useState(false);
   const [apiClipartGroup, setApiClipartGroup] = useState("animals");
@@ -255,6 +259,15 @@ export default function ClipartCreate() {
     submit({cliparts:JSON.stringify(formData.cliparts) }, { method: "POST" });
   };
 
+  const handleBack = () => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.delete("id");
+    navigate({
+      pathname: "..",
+      search: searchParams.toString() ? `?${searchParams.toString()}` : "",
+    });
+  };
+
   return (
     <div>
       <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
@@ -402,7 +415,7 @@ export default function ClipartCreate() {
 
               <Box paddingInline="300" paddingBlock="300">
                 <InlineStack align="end" gap="600">
-                <BackBtn isLoading={isLoading} title="Back"/>
+                <BackBtn isLoading={isLoading} title="Back" onClick={handleBack} />
 
                 { (!isApiUsed || saveSelectedCliparts) ?
                     <BiSaveBtn isLoading={isSubmitting} title="Save" />:
@@ -478,7 +491,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
+  const returnTo = url.searchParams.get("returnTo");
   const  clipartsGroupId = parseInt(params.id||"0");
+  const redirectSearchPrefix = returnTo
+    ? `?returnTo=${encodeURIComponent(returnTo)}&`
+    : "";
 
   const submission = parseWithZod(formData, {schema:formSchema});
 
@@ -493,14 +510,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     clipart.id = parseInt(id);
     let res = await ClipartService.updateClipart(clipart, clipartsGroupId) 
     return res ?
-      redirect(`..${flashMessage("Clipart updated successfully")}`)
+      redirect(`..${redirectSearchPrefix}${flashMessage("Clipart updated successfully", "success", false)}`)
       : json({ ...jFlashMessage("Error on clipart updating") });
   } else {
     let res: any = null;
     for(const clipart of cliparts){
       res =  await ClipartService.addClipart(clipart,clipartsGroupId)
     }
-    return res ? redirect(`..${flashMessage("Clipart added successfully")}`)
+    return res ? redirect(`..${redirectSearchPrefix}${flashMessage("Clipart added successfully", "success", false)}`)
       : json({ ...jFlashMessage("Error on font adding") });
   } 
 };

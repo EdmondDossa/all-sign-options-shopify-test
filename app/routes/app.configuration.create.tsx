@@ -2936,7 +2936,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return redirect(`/app/ncpc/${configId}/required-options${forwardedSearch}`);
     }
 
-    return redirect(`/app/configuration/${configId}/materials${forwardedSearch}`)
+    return redirect(`/app/configuration/${configId}/required-options/sizes${forwardedSearch}`)
   }
 };
 

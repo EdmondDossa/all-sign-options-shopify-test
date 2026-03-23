@@ -1,6 +1,3 @@
-import { redirect } from "@remix-run/react"
-
-export const loader = async () => {
-  
-  return redirect('theme');
+export default function ConfigurationSettingsThemeColorIndex() {
+  return null;
 }

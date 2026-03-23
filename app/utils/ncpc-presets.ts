@@ -1,8 +1,20 @@
-import type { ConfigColor, ConfigCustomSize, ConfigSize } from "~/types/ConfigDataType";
-import type { NcpcData, NcpcOptionGroup, NcpcOptionItem } from "~/types/NcpcDataType";
+import type {
+  ConfigColor,
+  ConfigCustomSize,
+  ConfigSize,
+} from "~/types/ConfigDataType";
+import type {
+  NcpcData,
+  NcpcOptionGroup,
+  NcpcOptionItem,
+} from "~/types/NcpcDataType";
 
 export type NcpcProductType = "neon" | "channel";
-export type NcpcPricingMode = "fixed-width" | "fixed-height" | "advanced" | "frame-fit";
+export type NcpcPricingMode =
+  | "fixed-width"
+  | "fixed-height"
+  | "advanced"
+  | "frame-fit";
 export type NcpcPresetKey =
   | "neon-letter-signs"
   | "neon-logo-signs"
@@ -429,7 +441,9 @@ const createEmptyNcpcData = (productType: NcpcProductType): NcpcData => ({
   settings: createDefaultNcpcSettings(productType),
 });
 
-const getAllowedPricingModesByPreset = (presetKey: NcpcPresetKey): NcpcPricingMode[] => {
+const getAllowedPricingModesByPreset = (
+  presetKey: NcpcPresetKey,
+): NcpcPricingMode[] => {
   if (presetKey === "neon-logo-signs") {
     return ["frame-fit"];
   }
@@ -449,7 +463,9 @@ export const getAllowedNcpcPricingModes = (
   return getAllowedPricingModesByPreset(presetKey as NcpcPresetKey);
 };
 
-export const getDefaultNcpcPresetKey = (productType: NcpcProductType): NcpcPresetKey => {
+export const getDefaultNcpcPresetKey = (
+  productType: NcpcProductType,
+): NcpcPresetKey => {
   return productType === "neon" ? "neon-letter-signs" : "acrylic-letter-signs";
 };
 
@@ -635,7 +651,9 @@ const getSizesForPricingMode = (pricingMode: NcpcPricingMode): ConfigSize[] => {
   ];
 };
 
-const getCustomSizeForPricingMode = (pricingMode: NcpcPricingMode): ConfigCustomSize => {
+const getCustomSizeForPricingMode = (
+  pricingMode: NcpcPricingMode,
+): ConfigCustomSize => {
   const active = pricingMode === "advanced" || pricingMode === "frame-fit";
 
   return {
@@ -679,7 +697,11 @@ const CHANNEL_FACE_COLORS: ConfigColor[] = [
 
 const CHANNEL_LETTER_TYPES: NcpcOptionItem[] = [
   toOption("2D non-lit", "Flat acrylic letters, non-illuminated.", 0, true),
-  toOption("3D illuminated (face/side/back-lit)", "Three-dimensional illuminated letters.", 0),
+  toOption(
+    "3D illuminated (face/side/back-lit)",
+    "Three-dimensional illuminated letters.",
+    0,
+  ),
 ];
 
 const NEON_BACKBOARDS: NcpcOptionItem[] = [
@@ -711,7 +733,12 @@ const MATERIALS: NcpcOptionItem[] = [
 ];
 
 const MOUNTINGS: NcpcOptionItem[] = [
-  toOption("Wall Mounting Kit", "Screws and spacers for wall mounting.", 0, true),
+  toOption(
+    "Wall Mounting Kit",
+    "Screws and spacers for wall mounting.",
+    0,
+    true,
+  ),
   toOption("Hanging Kit", "Wire hanging kit and screws.", 0),
 ];
 
@@ -725,7 +752,10 @@ const CUSTOM_ADDITIONAL_GROUPS: NcpcOptionGroup[] = [
     title: "Remote control (Dimmer)",
     description: "A remote control can be added for dimming.",
     icon: "",
-    options: [toOption("Yes", "Include remote control.", 0, true), toOption("No", "No remote control.", 0)],
+    options: [
+      toOption("Yes", "Include remote control.", 0, true),
+      toOption("No", "No remote control.", 0),
+    ],
   },
   {
     title: "Plug Type",
@@ -771,16 +801,28 @@ export const buildNcpcPresetData = ({
     return data;
   }
 
-  const safePreset = (presetKey || getDefaultNcpcPresetKey(productType)) as NcpcPresetKey;
-  const allowedPricingModes = getAllowedNcpcPricingModes(productType, safePreset);
-  const safePricingMode = (pricingMode as NcpcPricingMode) || getDefaultNcpcPricingMode(productType, safePreset);
+  const safePreset = (presetKey ||
+    getDefaultNcpcPresetKey(productType)) as NcpcPresetKey;
+  const allowedPricingModes = getAllowedNcpcPricingModes(
+    productType,
+    safePreset,
+  );
+  const safePricingMode =
+    (pricingMode as NcpcPricingMode) ||
+    getDefaultNcpcPricingMode(productType, safePreset);
   const normalizedPricingMode = allowedPricingModes.includes(safePricingMode)
     ? safePricingMode
     : allowedPricingModes[0];
 
-  data.requiredOptions.sizeOptions.allSizes = getSizesForPricingMode(normalizedPricingMode);
-  data.requiredOptions.sizeOptions.customSize = getCustomSizeForPricingMode(normalizedPricingMode);
-  data.requiredOptions.priceOptions = getPriceOptionsForPricingMode(normalizedPricingMode);
+  data.requiredOptions.sizeOptions.allSizes = getSizesForPricingMode(
+    normalizedPricingMode,
+  );
+  data.requiredOptions.sizeOptions.customSize = getCustomSizeForPricingMode(
+    normalizedPricingMode,
+  );
+  data.requiredOptions.priceOptions = getPriceOptionsForPricingMode(
+    normalizedPricingMode,
+  );
   data.requiredOptions.colorOptions.allColors =
     productType === "channel" ? CHANNEL_FACE_COLORS : NEON_COLORS;
 

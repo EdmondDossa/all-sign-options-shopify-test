@@ -1,6 +1,3 @@
-import { redirect } from "@remix-run/react"
-
-export const loader = async () => {
-  
-  return redirect('product');
+export default function ConfigurationSettingsGeneralIndex() {
+  return null;
 }
