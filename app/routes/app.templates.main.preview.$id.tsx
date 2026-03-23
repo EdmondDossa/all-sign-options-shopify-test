@@ -10,7 +10,7 @@ import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import TemplateService from "~/models/Template.service";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {Jwt} from "jsonwebtoken"
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 
@@ -34,9 +34,7 @@ export default function Preview() {
 
   const shopify = useAppBridge();
   useHandleFlashMessage();
-  
-
-
+  const cacheBuster = useMemo(() => Date.now(), []);
 
   return (
     <Page fullWidth>
@@ -52,7 +50,7 @@ export default function Preview() {
             templateId: template?.id,
             token: token
           })}
-          src="/preview.html"
+          src={`/preview.html?v=${cacheBuster}`}
           className="aso-preview"
           sandbox="allow-scripts allow-same-origin allow-forms"
         ></iframe>

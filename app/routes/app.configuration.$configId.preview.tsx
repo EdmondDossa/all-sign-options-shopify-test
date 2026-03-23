@@ -9,6 +9,7 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { ConfigurationType } from "~/types/ConfigurationType";
 import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import { useMemo } from "react";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -30,6 +31,7 @@ export default function Preview() {
     configuration: ConfigurationType;
   }>();
   const shopify = useAppBridge();
+  const cacheBuster = useMemo(() => Date.now(), []);
 
   return (
     <Page fullWidth>
@@ -45,7 +47,7 @@ export default function Preview() {
             templateId: "",
             token:token
           })}
-          src="/preview.html"
+          src={`/preview.html?v=${cacheBuster}`}
           className="aso-preview"
         ></iframe>
         <TitleBar title={configuration.name}></TitleBar>
