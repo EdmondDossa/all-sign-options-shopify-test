@@ -394,7 +394,14 @@ export const action = async (args: ActionFunctionArgs) => {
       managedShapes: Array.isArray(managedShapes) ? managedShapes : [],
     });
 
-    if (operation === "add-components" || operation === "update-components") {
+    if (operation === "save-components") {
+      const payload = parseJsonValue(formData.get("items"));
+      if (!Array.isArray(payload)) {
+        return json(jFlashMessage("Invalid components payload", "error"), { status: 400 });
+      }
+
+      currentState.items = ensureOneDefaultComponents(payload);
+    } else if (operation === "add-components" || operation === "update-components") {
       const payload = parseJsonValue(formData.get("item"));
       if (!payload || typeof payload !== "object") {
         return json(jFlashMessage("Invalid component payload", "error"), { status: 400 });
@@ -502,6 +509,31 @@ export const action = async (args: ActionFunctionArgs) => {
         shapeItems,
       );
 
+      if (operation === "save-fixing-methods") {
+        const payload = parseJsonValue(formData.get("items"));
+        if (!Array.isArray(payload)) {
+          return json(jFlashMessage("Invalid fixing methods payload", "error"), { status: 400 });
+        }
+        const nextData = syncStructuralIntoData(
+          data,
+          "fixing-methods",
+          ensureOneDefaultStructural(payload),
+        );
+        await ConfigurationService.updateConfiguration(
+          {
+            ...(configuration as any),
+            products: Array.isArray((configuration as any)?.product)
+              ? (configuration as any).product
+              : Array.isArray((configuration as any)?.products)
+                ? (configuration as any).products
+                : [],
+            data: nextData,
+          },
+          session.id,
+        );
+        return json(jFlashMessage("Fixing methods order updated successfully"));
+      }
+
       if (operation === "add-fixing-methods" || operation === "update-fixing-methods") {
         const payload = parseJsonValue(formData.get("item"));
         if (!payload || typeof payload !== "object") {
@@ -548,6 +580,26 @@ export const action = async (args: ActionFunctionArgs) => {
 
     if (section === "shapes") {
       const currentItems = getShapesState(data, Array.isArray(managedShapes) ? managedShapes : []);
+      if (operation === "save-shapes") {
+        const payload = parseJsonValue(formData.get("items"));
+        if (!Array.isArray(payload)) {
+          return json(jFlashMessage("Invalid shapes payload", "error"), { status: 400 });
+        }
+        const nextData = syncStructuralIntoData(data, "shapes", ensureOneDefaultStructural(payload));
+        await ConfigurationService.updateConfiguration(
+          {
+            ...(configuration as any),
+            products: Array.isArray((configuration as any)?.product)
+              ? (configuration as any).product
+              : Array.isArray((configuration as any)?.products)
+                ? (configuration as any).products
+                : [],
+            data: nextData,
+          },
+          session.id,
+        );
+        return json(jFlashMessage("Shapes order updated successfully"));
+      }
       if (operation === "add-shapes" || operation === "update-shapes") {
         const payload = parseJsonValue(formData.get("item"));
         if (!payload || typeof payload !== "object") {

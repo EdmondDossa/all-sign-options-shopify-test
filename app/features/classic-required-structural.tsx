@@ -1,6 +1,6 @@
-import { Box, Button, Card, IndexTable, InlineStack, Text } from "@shopify/polaris";
-import { DeleteIcon, EditIcon, PlusIcon } from "@shopify/polaris-icons";
-import { useEffect, useMemo, useState } from "react";
+import { Box, Button, Card, Icon, IndexTable, InlineStack, Text } from "@shopify/polaris";
+import { DeleteIcon, DragHandleIcon, EditIcon, PlusIcon } from "@shopify/polaris-icons";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { ToggleButton } from "~/components/buttons";
 import ClassicFixingMethodForm from "~/components/layouts/ClassicFixingMethodForm";
@@ -22,6 +22,7 @@ import {
   type StructuralSectionKey,
 } from "~/features/classic-required-structural.shared";
 import { fileUrl } from "~/utils/fileUrl";
+import Sortable from "~/utils/sortable-adapter";
 
 type LoaderData = {
   managedFixingMethods?: any[];
@@ -79,6 +80,8 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
   const loaderData = useLoaderData<LoaderData>();
   const submit = useSubmit();
   const navigation = useNavigation();
+  const tableWrapperRef = useRef<HTMLDivElement | null>(null);
+  const sortableRef = useRef<Sortable | null>(null);
 
   useHandleFlashMessage();
 
@@ -128,11 +131,13 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
   };
 
   const items = section === "fixing-methods" ? fixingItems : section === "shapes" ? shapeItems : borderItems;
+  const [displayItems, setDisplayItems] = useState(items);
+  const isSortableSection = section === "fixing-methods" || section === "shapes";
   const tableHeadings =
     section === "fixing-methods"
-      ? [{ title: "Preview" }, { title: "Label" }, { title: "Price" }, { title: "Default" }, { title: "Actions" }]
+      ? [{ title: "" }, { title: "Preview" }, { title: "Label" }, { title: "Price" }, { title: "Default" }, { title: "Actions" }]
       : section === "shapes"
-        ? [{ title: "Preview" }, { title: "Label" }, { title: "Price" }, { title: "Default" }, { title: "Surface pricing" }, { title: "Actions" }]
+        ? [{ title: "" }, { title: "Preview" }, { title: "Label" }, { title: "Price" }, { title: "Default" }, { title: "Surface pricing" }, { title: "Actions" }]
         : [{ title: "Preview" }, { title: "Label" }, { title: "Price" }, { title: "Default" }, { title: "Actions" }];
   const fixingMethodManagedOptions = useMemo(
     () => getManagedFixingMethodOptions(managedFixingMethods),
@@ -158,6 +163,61 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
     setShowForm(false);
     setEditingIndex(null);
   }, [section, configuration?.data]);
+
+  useEffect(() => {
+    setDisplayItems(items);
+  }, [items]);
+
+  useEffect(() => {
+    if (!isSortableSection || !tableWrapperRef.current || showForm || displayItems.length <= 1) return;
+    const tbody = tableWrapperRef.current.querySelector("tbody");
+    if (!tbody) return;
+
+    sortableRef.current?.destroy();
+    sortableRef.current = Sortable.create(tbody, {
+      handle: ".drag-handle",
+      animation: 120,
+      onEnd: (evt) => {
+        const oldIndex = evt.oldIndex ?? -1;
+        const newIndex = evt.newIndex ?? -1;
+        if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return;
+
+        setDisplayItems((current) => {
+          const orderedIds = Array.from(
+            tbody.querySelectorAll<HTMLElement>("tr[data-id], tr[id]"),
+          )
+            .map((element) => element.dataset.id || element.getAttribute("id"))
+            .filter((value): value is string => Boolean(value));
+
+          if (orderedIds.length !== current.length) return current;
+
+          const itemsMap = new Map(
+            current.map((item, index) => [String(item.id || String(index)), item]),
+          );
+          const nextItems = orderedIds
+            .map((id) => itemsMap.get(id))
+            .filter((item): item is any => Boolean(item));
+
+          if (nextItems.length !== current.length) return current;
+
+          submit(
+            {
+              operation: `save-${section}`,
+              items: JSON.stringify(nextItems),
+            },
+            { method: "POST" },
+          );
+
+          return nextItems;
+        });
+      },
+    });
+
+    return () => {
+      sortableRef.current?.destroy();
+      sortableRef.current = null;
+    };
+  }, [displayItems, isSortableSection, section, showForm, submit]);
 
   const openAddForm = () => {
     setEditingIndex(null);
@@ -328,15 +388,32 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
             {titleBySection[section]} List
           </Text>
           <Box paddingBlockStart="200" />
-          <IndexTable
-            resourceName={{ singular: titleBySection[section], plural: titleBySection[section] }}
-            itemCount={items.length}
-            selectable={false}
-            headings={tableHeadings}
-          >
-            {items.map((item: any, index: number) => (
-              <IndexTable.Row id={String(item.id || index)} key={String(item.id || index)} position={index}>
-                <IndexTable.Cell>
+          <div ref={tableWrapperRef}>
+            <IndexTable
+              resourceName={{ singular: titleBySection[section], plural: titleBySection[section] }}
+              itemCount={displayItems.length}
+              selectable={false}
+              headings={tableHeadings}
+            >
+              {displayItems.map((item: any, index: number) => (
+                <IndexTable.Row id={String(item.id || index)} key={String(item.id || index)} position={index} data-id={String(item.id || index)}>
+                  {isSortableSection ? (
+                    <IndexTable.Cell>
+                      <div
+                        className="drag-handle"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: displayItems.length > 1 ? "grab" : "default",
+                          color: "#6B7280",
+                        }}
+                      >
+                        <Icon source={DragHandleIcon} />
+                      </div>
+                    </IndexTable.Cell>
+                  ) : null}
+                  <IndexTable.Cell>
                   <div
                     style={{
                       width: 56,
@@ -362,14 +439,14 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
                       </Text>
                     )}
                   </div>
-                </IndexTable.Cell>
-                <IndexTable.Cell>
+                  </IndexTable.Cell>
+                  <IndexTable.Cell>
                   <Text as="span" fontWeight="semibold">
                     {item.label}
                   </Text>
-                </IndexTable.Cell>
-                <IndexTable.Cell>{item.additionalPrice ?? 0}</IndexTable.Cell>
-                <IndexTable.Cell>
+                  </IndexTable.Cell>
+                  <IndexTable.Cell>{item.additionalPrice ?? 0}</IndexTable.Cell>
+                  <IndexTable.Cell>
                   <InlineStack gap="200" blockAlign="center">
                     <Text as="span" tone="subdued">
                       No
@@ -385,11 +462,11 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
                       Yes
                     </Text>
                   </InlineStack>
-                </IndexTable.Cell>
-                {section === "shapes" ? (
-                  <IndexTable.Cell>{item.enablePricingBySurface ? `Yes (${item.surface || 0})` : "No"}</IndexTable.Cell>
-                ) : null}
-                <IndexTable.Cell>
+                  </IndexTable.Cell>
+                  {section === "shapes" ? (
+                    <IndexTable.Cell>{item.enablePricingBySurface ? `Yes (${item.surface || 0})` : "No"}</IndexTable.Cell>
+                  ) : null}
+                  <IndexTable.Cell>
                   <InlineStack gap="200">
                     <Button icon={EditIcon} onClick={() => openEditForm(index)}>
                       Edit
@@ -398,10 +475,11 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
                       Delete
                     </Button>
                   </InlineStack>
-                </IndexTable.Cell>
-              </IndexTable.Row>
-            ))}
-          </IndexTable>
+                  </IndexTable.Cell>
+                </IndexTable.Row>
+              ))}
+            </IndexTable>
+          </div>
         </Box>
       </Card>
     </div>

@@ -1,6 +1,6 @@
-import { Box, Button, Card, IndexTable, InlineGrid, InlineStack, Select, Text, TextField } from "@shopify/polaris";
-import { DeleteIcon, EditIcon, PlusIcon } from "@shopify/polaris-icons";
-import { useEffect, useMemo, useState } from "react";
+import { Box, Button, Card, Icon, IndexTable, InlineGrid, InlineStack, Select, Text, TextField } from "@shopify/polaris";
+import { ChevronDownIcon, ChevronUpIcon, DeleteIcon, DragHandleIcon, EditIcon, PlusIcon } from "@shopify/polaris-icons";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { MultiCombobox } from "~/components/inputs/MultiCombobox";
 import { SaveButton, ToggleButton } from "~/components/buttons";
@@ -15,6 +15,7 @@ import {
   type RequiredComponentOptionItem,
 } from "~/features/classic-required-components.shared";
 import { parseConfigData, getSizeOptions, getShapesState, getFixingMethodsState } from "~/features/classic-required-structural.shared";
+import Sortable from "~/utils/sortable-adapter";
 
 type LoaderData = {
   managedFixingMethods?: any[];
@@ -42,7 +43,27 @@ function ComponentForm({
   onSave: () => void;
   onCancel: () => void;
 }) {
-  const patch = (next: Partial<RequiredComponentItem>) => onChange({ ...value, ...next });
+  const [collapsedOptions, setCollapsedOptions] = useState<Record<string, boolean>>({});
+  const optionsWrapperRef = useRef<HTMLDivElement | null>(null);
+  const optionsSortableRef = useRef<Sortable | null>(null);
+
+  const getOptionKey = (option: RequiredComponentOptionItem, optionIndex: number) =>
+    String(option.id || `option-${optionIndex}`);
+
+  const getOptionSummary = (option: RequiredComponentOptionItem) =>
+    [
+      option.selection.sizeId ? "size selected" : "no size",
+      option.selection.shapeId ? "shape selected" : "no shape",
+      `${option.selection.fixingMethodIds.length} fixing`,
+    ].join(" · ");
+  const allOptionsCollapsed =
+    value.options.length > 1 &&
+    value.options.every((option, optionIndex) => Boolean(collapsedOptions[getOptionKey(option, optionIndex)]));
+
+  const patch = useCallback(
+    (next: Partial<RequiredComponentItem>) => onChange({ ...value, ...next }),
+    [onChange, value],
+  );
 
   const patchOption = (optionIndex: number, next: Partial<RequiredComponentOptionItem>) => {
     const nextOptions = [...value.options];
@@ -57,16 +78,66 @@ function ComponentForm({
   };
 
   const addOption = () => {
+    const nextOption = { ...emptyComponentOption(), isDefault: value.options.length === 0 };
     patch({
-      options: [...value.options, { ...emptyComponentOption(), isDefault: value.options.length === 0 }],
+      options: [...value.options, nextOption],
     });
+    setCollapsedOptions((current) => ({
+      ...current,
+      [getOptionKey(nextOption, value.options.length)]: false,
+    }));
   };
 
   const removeOption = (optionIndex: number) => {
+    const optionKey = getOptionKey(value.options[optionIndex], optionIndex);
     patch({
       options: ensureOneDefault(value.options.filter((_option, index) => index !== optionIndex)),
     });
+    setCollapsedOptions((current) => {
+      const next = { ...current };
+      delete next[optionKey];
+      return next;
+    });
   };
+
+  useEffect(() => {
+    if (!optionsWrapperRef.current || value.options.length <= 1 || !allOptionsCollapsed) return;
+
+    optionsSortableRef.current?.destroy();
+    optionsSortableRef.current = Sortable.create(optionsWrapperRef.current, {
+      handle: ".option-drag-handle",
+      animation: 120,
+      draggable: ".component-option-card",
+      onEnd: (evt) => {
+        const oldIndex = evt.oldIndex ?? -1;
+        const newIndex = evt.newIndex ?? -1;
+        if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return;
+
+        const orderedIds = Array.from(
+          optionsWrapperRef.current?.querySelectorAll<HTMLElement>(".component-option-card") || [],
+        )
+          .map((element) => element.dataset.id)
+          .filter((value): value is string => Boolean(value));
+
+        if (orderedIds.length !== value.options.length) return;
+
+        const optionsMap = new Map(
+          value.options.map((option, optionIndex) => [getOptionKey(option, optionIndex), option]),
+        );
+        const nextOptions = orderedIds
+          .map((id) => optionsMap.get(id))
+          .filter((option): option is RequiredComponentOptionItem => Boolean(option));
+
+        if (nextOptions.length !== value.options.length) return;
+        patch({ options: nextOptions });
+      },
+    });
+
+    return () => {
+      optionsSortableRef.current?.destroy();
+      optionsSortableRef.current = null;
+    };
+  }, [allOptionsCollapsed, patch, value.options]);
 
   return (
     <Card>
@@ -103,15 +174,52 @@ function ComponentForm({
             Component options
           </Text>
 
-          <div style={{ display: "grid", gap: 12 }}>
+          <div ref={optionsWrapperRef} style={{ display: "grid", gap: 12 }}>
             {value.options.map((option, optionIndex) => (
-              <Card key={option.id || optionIndex}>
+              <div
+                key={option.id || optionIndex}
+                className="component-option-card"
+                data-id={getOptionKey(option, optionIndex)}
+                data-collapsed={Boolean(collapsedOptions[getOptionKey(option, optionIndex)])}
+              >
+                <Card>
                 <Box padding="300">
                   <div style={{ display: "grid", gap: 12 }}>
+                    {(() => {
+                      const optionKey = getOptionKey(option, optionIndex);
+                      const isCollapsed = Boolean(collapsedOptions[optionKey]);
+                      return (
+                        <>
                     <InlineStack align="space-between" blockAlign="center">
-                      <Text as="h4" variant="headingSm">
-                        {option.label || `Option ${optionIndex + 1}`}
-                      </Text>
+                      <InlineStack gap="300" blockAlign="center">
+                        {allOptionsCollapsed ? (
+                          <div
+                            className="option-drag-handle"
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              cursor: value.options.length > 1 ? "grab" : "default",
+                              color: "#4B5563",
+                              border: "1px solid #D0D5DD",
+                              borderRadius: 999,
+                              padding: "6px 10px",
+                              background: "#F8F9FB",
+                              flexShrink: 0,
+                            }}
+                          >
+                            <Icon source={DragHandleIcon} />
+                          </div>
+                        ) : null}
+                        <div style={{ display: "grid", gap: 4 }}>
+                          <Text as="h4" variant="headingSm">
+                            {option.label || `Option ${optionIndex + 1}`}
+                          </Text>
+                          <Text as="span" tone="subdued" variant="bodySm">
+                            {getOptionSummary(option)}
+                          </Text>
+                        </div>
+                      </InlineStack>
                       <InlineStack gap="200" blockAlign="center">
                         <Text as="span" tone="subdued">Default</Text>
                         <ToggleButton
@@ -124,9 +232,22 @@ function ComponentForm({
                         <Button tone="critical" onClick={() => removeOption(optionIndex)}>
                           Remove
                         </Button>
+                        <Button
+                          icon={isCollapsed ? ChevronDownIcon : ChevronUpIcon}
+                          onClick={() =>
+                            setCollapsedOptions((current) => ({
+                              ...current,
+                              [optionKey]: !isCollapsed,
+                            }))
+                          }
+                        >
+                          {isCollapsed ? "Expand" : "Collapse"}
+                        </Button>
                       </InlineStack>
                     </InlineStack>
 
+                    {!isCollapsed ? (
+                      <>
                     <InlineGrid columns={{ xs: 1, md: 2 }} gap="400">
                       <TextField
                         label="Label"
@@ -216,9 +337,15 @@ function ComponentForm({
                         })
                       }
                     />
+                    </>
+                  ) : null}
+                        </>
+                      );
+                    })()}
                   </div>
                 </Box>
-              </Card>
+                </Card>
+              </div>
             ))}
           </div>
 
@@ -245,6 +372,8 @@ export function ClassicRequiredComponentsScreen() {
   const loaderData = useLoaderData<LoaderData>();
   const submit = useSubmit();
   const navigation = useNavigation();
+  const tableWrapperRef = useRef<HTMLDivElement | null>(null);
+  const sortableRef = useRef<Sortable | null>(null);
   useHandleFlashMessage();
 
   const data = useMemo(() => parseConfigData(configuration?.data) || {}, [configuration?.data]);
@@ -286,6 +415,7 @@ export function ClassicRequiredComponentsScreen() {
   const [showForm, setShowForm] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingItem, setEditingItem] = useState<RequiredComponentItem>(emptyComponent());
+  const [displayItems, setDisplayItems] = useState(state.items);
   const isSubmitting = navigation.state === "submitting";
 
   useEffect(() => {
@@ -293,6 +423,61 @@ export function ClassicRequiredComponentsScreen() {
     setEditingIndex(null);
     setEditingItem(emptyComponent());
   }, [configuration?.data]);
+
+  useEffect(() => {
+    setDisplayItems(state.items);
+  }, [state.items]);
+
+  useEffect(() => {
+    if (!tableWrapperRef.current || showForm || displayItems.length <= 1) return;
+    const tbody = tableWrapperRef.current.querySelector("tbody");
+    if (!tbody) return;
+
+    sortableRef.current?.destroy();
+    sortableRef.current = Sortable.create(tbody, {
+      handle: ".component-drag-handle",
+      animation: 120,
+      onEnd: (evt) => {
+        const oldIndex = evt.oldIndex ?? -1;
+        const newIndex = evt.newIndex ?? -1;
+        if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return;
+
+        setDisplayItems((current) => {
+          const orderedIds = Array.from(
+            tbody.querySelectorAll<HTMLElement>("tr[data-id], tr[id]"),
+          )
+            .map((element) => element.dataset.id || element.getAttribute("id"))
+            .filter((value): value is string => Boolean(value));
+
+          if (orderedIds.length !== current.length) return current;
+
+          const itemsMap = new Map(
+            current.map((item, index) => [String(item.id || String(index)), item]),
+          );
+          const nextItems = orderedIds
+            .map((id) => itemsMap.get(id))
+            .filter((item): item is RequiredComponentItem => Boolean(item));
+
+          if (nextItems.length !== current.length) return current;
+
+          submit(
+            {
+              operation: "save-components",
+              items: JSON.stringify(nextItems),
+            },
+            { method: "POST" },
+          );
+
+          return nextItems;
+        });
+      },
+    });
+
+    return () => {
+      sortableRef.current?.destroy();
+      sortableRef.current = null;
+    };
+  }, [displayItems, showForm, submit]);
 
   const openCreate = () => {
     setEditingIndex(null);
@@ -370,19 +555,39 @@ export function ClassicRequiredComponentsScreen() {
 
       <Card>
         <Box padding="300">
-          <IndexTable
-            resourceName={{ singular: "component", plural: "components" }}
-            itemCount={state.items.length}
-            selectable={false}
-            headings={[
-              { title: "Component" },
-              { title: "Options" },
-              { title: "Default" },
-              { title: "Actions" },
-            ]}
-          >
-            {state.items.map((item, index) => (
-              <IndexTable.Row id={item.id || String(index)} key={item.id || String(index)} position={index}>
+          <div ref={tableWrapperRef}>
+            <IndexTable
+              resourceName={{ singular: "component", plural: "components" }}
+              itemCount={displayItems.length}
+              selectable={false}
+              headings={[
+                { title: "Move" },
+                { title: "Component" },
+                { title: "Options" },
+                { title: "Default" },
+                { title: "Actions" },
+              ]}
+            >
+              {displayItems.map((item, index) => (
+                <IndexTable.Row id={item.id || String(index)} key={item.id || String(index)} position={index} data-id={item.id || String(index)}>
+                <IndexTable.Cell>
+                  <div
+                    className="component-drag-handle"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: displayItems.length > 1 ? "grab" : "default",
+                      color: "#4B5563",
+                      border: "1px solid #D0D5DD",
+                      borderRadius: 999,
+                      padding: "6px 8px",
+                      background: "#F8F9FB",
+                    }}
+                  >
+                    <Icon source={DragHandleIcon} />
+                  </div>
+                </IndexTable.Cell>
                 <IndexTable.Cell>
                   <div style={{ display: "grid", gap: 6 }}>
                     <Text as="span" fontWeight="semibold">
@@ -419,9 +624,10 @@ export function ClassicRequiredComponentsScreen() {
                     </Button>
                   </InlineStack>
                 </IndexTable.Cell>
-              </IndexTable.Row>
-            ))}
-          </IndexTable>
+                </IndexTable.Row>
+              ))}
+            </IndexTable>
+          </div>
         </Box>
       </Card>
     </div>

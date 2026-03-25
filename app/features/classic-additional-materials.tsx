@@ -1,6 +1,6 @@
-import { Box, Button, Card, IndexTable, InlineStack, Text } from "@shopify/polaris";
-import { DeleteIcon, EditIcon, PlusIcon } from "@shopify/polaris-icons";
-import { useEffect, useMemo, useState } from "react";
+import { Box, Button, Card, Icon, IndexTable, InlineStack, Text } from "@shopify/polaris";
+import { DeleteIcon, DragHandleIcon, EditIcon, PlusIcon } from "@shopify/polaris-icons";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { ToggleButton } from "~/components/buttons";
 import ClassicMaterialForm from "~/components/layouts/ClassicMaterialForm";
@@ -16,6 +16,7 @@ import {
   type MaterialItem,
 } from "~/features/classic-additional-materials.shared";
 import { getComponentsState } from "~/features/classic-required-components.shared";
+import Sortable from "~/utils/sortable-adapter";
 
 type LoaderData = {
   managedFixingMethods?: any[];
@@ -27,6 +28,8 @@ export function ClassicAdditionalMaterialsScreen() {
   const loaderData = useLoaderData<LoaderData>();
   const submit = useSubmit();
   const navigation = useNavigation();
+  const tableWrapperRef = useRef<HTMLDivElement | null>(null);
+  const sortableRef = useRef<Sortable | null>(null);
   useHandleFlashMessage();
 
   const data = useMemo(() => parseConfigData(configuration?.data) || {}, [configuration?.data]);
@@ -60,6 +63,7 @@ export function ClassicAdditionalMaterialsScreen() {
   const [showForm, setShowForm] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingMaterial, setEditingMaterial] = useState<MaterialItem>(emptyMaterial());
+  const [displayItems, setDisplayItems] = useState(materialState.items);
 
   const isSubmitting = navigation.state === "submitting";
   const currencySymbol = String(data?.currencySymbol || data?.settings?.currencySymbol || "$");
@@ -69,6 +73,61 @@ export function ClassicAdditionalMaterialsScreen() {
     setEditingIndex(null);
     setEditingMaterial(emptyMaterial());
   }, [configuration?.data]);
+
+  useEffect(() => {
+    setDisplayItems(materialState.items);
+  }, [materialState.items]);
+
+  useEffect(() => {
+    if (!tableWrapperRef.current || showForm || displayItems.length <= 1) return;
+    const tbody = tableWrapperRef.current.querySelector("tbody");
+    if (!tbody) return;
+
+    sortableRef.current?.destroy();
+    sortableRef.current = Sortable.create(tbody, {
+      handle: ".material-drag-handle",
+      animation: 120,
+      onEnd: (evt) => {
+        const oldIndex = evt.oldIndex ?? -1;
+        const newIndex = evt.newIndex ?? -1;
+        if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return;
+
+        setDisplayItems((current) => {
+          const orderedIds = Array.from(
+            tbody.querySelectorAll<HTMLElement>("tr[data-id], tr[id]"),
+          )
+            .map((element) => element.dataset.id || element.getAttribute("id"))
+            .filter((value): value is string => Boolean(value));
+
+          if (orderedIds.length !== current.length) return current;
+
+          const itemsMap = new Map(
+            current.map((item, index) => [String(item.id || String(index)), item]),
+          );
+          const nextItems = orderedIds
+            .map((id) => itemsMap.get(id))
+            .filter((item): item is MaterialItem => Boolean(item));
+
+          if (nextItems.length !== current.length) return current;
+
+          submit(
+            {
+              operation: "save-materials",
+              items: JSON.stringify(nextItems),
+            },
+            { method: "POST" },
+          );
+
+          return nextItems;
+        });
+      },
+    });
+
+    return () => {
+      sortableRef.current?.destroy();
+      sortableRef.current = null;
+    };
+  }, [displayItems, showForm, submit]);
 
   const openAddForm = () => {
     setEditingIndex(null);
@@ -166,21 +225,41 @@ export function ClassicAdditionalMaterialsScreen() {
             Materials List
           </Text>
           <Box paddingBlockStart="200" />
-          <IndexTable
-            resourceName={{ singular: "material", plural: "materials" }}
-            itemCount={materialState.items.length}
-            selectable={false}
-            headings={[
-              { title: "Preview" },
-              { title: "Label" },
-              { title: "Price" },
-              { title: "Pricing" },
-              { title: "Default" },
-              { title: "Actions" },
-            ]}
-          >
-            {materialState.items.map((item, index) => (
-              <IndexTable.Row id={item.id || String(index)} key={item.id || String(index)} position={index}>
+          <div ref={tableWrapperRef}>
+            <IndexTable
+              resourceName={{ singular: "material", plural: "materials" }}
+              itemCount={displayItems.length}
+              selectable={false}
+              headings={[
+                { title: "Move" },
+                { title: "Preview" },
+                { title: "Label" },
+                { title: "Price" },
+                { title: "Pricing" },
+                { title: "Default" },
+                { title: "Actions" },
+              ]}
+            >
+            {displayItems.map((item, index) => (
+              <IndexTable.Row id={item.id || String(index)} key={item.id || String(index)} position={index} data-id={item.id || String(index)}>
+                <IndexTable.Cell>
+                  <div
+                    className="material-drag-handle"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: displayItems.length > 1 ? "grab" : "default",
+                      color: "#4B5563",
+                      border: "1px solid #D0D5DD",
+                      borderRadius: 999,
+                      padding: "6px 8px",
+                      background: "#F8F9FB",
+                    }}
+                  >
+                    <Icon source={DragHandleIcon} />
+                  </div>
+                </IndexTable.Cell>
                 <IndexTable.Cell>
                   <div
                     style={{
@@ -246,7 +325,8 @@ export function ClassicAdditionalMaterialsScreen() {
                 </IndexTable.Cell>
               </IndexTable.Row>
             ))}
-          </IndexTable>
+            </IndexTable>
+          </div>
         </Box>
       </Card>
     </div>

@@ -107,7 +107,13 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
       managedShapes: Array.isArray(managedShapes) ? managedShapes : [],
     });
 
-    if (operation === "add-material" || operation === "update-material") {
+    if (operation === "save-materials") {
+      const payload = parseJsonValue(formData.get("items"));
+      if (!Array.isArray(payload)) {
+        return json(jFlashMessage("Invalid materials payload", "error"), { status: 400 });
+      }
+      currentState.items = ensureOneDefault(payload);
+    } else if (operation === "add-material" || operation === "update-material") {
       const payload = parseJsonValue(formData.get("material"));
       if (!payload || typeof payload !== "object") {
         return json(jFlashMessage("Invalid material payload", "error"), { status: 400 });

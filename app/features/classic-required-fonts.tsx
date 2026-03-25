@@ -12,13 +12,14 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import { DeleteIcon, PlusIcon, SearchIcon } from "@shopify/polaris-icons";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { DeleteIcon, DragHandleIcon, PlusIcon, SearchIcon } from "@shopify/polaris-icons";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { MultiCombobox } from "~/components/inputs/MultiCombobox";
 import { FileInput } from "~/components/inputs/FileInput";
 import { SaveButton, ToggleButton } from "~/components/buttons";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
+import Sortable from "~/utils/sortable-adapter";
 import {
   ensureSingleDefaultFont,
   getFontsState,
@@ -66,6 +67,8 @@ export function ClassicRequiredFontsScreen() {
   const loaderData = useLoaderData<LoaderData>();
   const submit = useSubmit();
   const navigation = useNavigation();
+  const tableWrapperRef = useRef<HTMLDivElement | null>(null);
+  const sortableRef = useRef<Sortable | null>(null);
 
   useHandleFlashMessage();
 
@@ -108,6 +111,61 @@ export function ClassicRequiredFontsScreen() {
   useEffect(() => {
     setSectionState(fontsState);
   }, [fontsState]);
+
+  useEffect(() => {
+    if (!tableWrapperRef.current || showAddForm || sectionState.items.length <= 1) return;
+    const tbody = tableWrapperRef.current.querySelector("tbody");
+    if (!tbody) return;
+
+    sortableRef.current?.destroy();
+    sortableRef.current = Sortable.create(tbody, {
+      handle: ".drag-handle",
+      animation: 120,
+      onEnd: (evt) => {
+        const oldIndex = evt.oldIndex ?? -1;
+        const newIndex = evt.newIndex ?? -1;
+        if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return;
+
+        setSectionState((current) => {
+          const orderedIds = Array.from(
+            tbody.querySelectorAll<HTMLElement>("tr[data-id], tr[id]"),
+          )
+            .map((element) => element.dataset.id || element.getAttribute("id"))
+            .filter((value): value is string => Boolean(value));
+
+          if (orderedIds.length !== current.items.length) return current;
+
+          const itemsMap = new Map(
+            current.items.map((item, index) => [String(item.id || String(item.managedFontId) || String(index)), item]),
+          );
+          const nextItems = orderedIds
+            .map((id) => itemsMap.get(id))
+            .filter((item): item is typeof current.items[number] => Boolean(item));
+
+          if (nextItems.length !== current.items.length) return current;
+          const nextState = {
+            ...current,
+            items: nextItems,
+          };
+
+          submit(
+            {
+              operation: "save-fonts",
+              state: JSON.stringify(nextState),
+            },
+            { method: "POST" },
+          );
+
+          return nextState;
+        });
+      },
+    });
+
+    return () => {
+      sortableRef.current?.destroy();
+      sortableRef.current = null;
+    };
+  }, [sectionState, showAddForm, submit]);
 
   const selectedCount = sectionState.items.length;
 
@@ -312,91 +370,109 @@ export function ClassicRequiredFontsScreen() {
                     Fonts List
                   </Text>
                   <Box paddingBlockStart="200" />
-                  <IndexTable
-                    resourceName={{ singular: "font", plural: "fonts" }}
-                    itemCount={sectionState.items.length}
-                    selectable={false}
-                    headings={[
-                      { title: "Preview" },
-                      { title: "Label" },
-                      { title: "Default" },
-                      { title: "Actions" },
-                    ]}
-                  >
-                    {sectionState.items.map((selectedItem, index) => (
-                      <IndexTable.Row
-                        id={String(selectedItem.managedFontId)}
-                        key={selectedItem.id || String(selectedItem.managedFontId)}
-                        position={index}
-                      >
-                        <IndexTable.Cell>
-                          <div
-                            style={{
-                              width: "72px",
-                              height: "44px",
-                              borderRadius: "8px",
-                              border: "1px solid #D0D5DD",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              background: "#F8F9FB",
-                            }}
-                          >
-                            <span
+                  <div ref={tableWrapperRef}>
+                    <IndexTable
+                      resourceName={{ singular: "font", plural: "fonts" }}
+                      itemCount={sectionState.items.length}
+                      selectable={false}
+                      headings={[
+                        { title: "" },
+                        { title: "Preview" },
+                        { title: "Label" },
+                        { title: "Default" },
+                        { title: "Actions" },
+                      ]}
+                    >
+                      {sectionState.items.map((selectedItem, index) => (
+                        <IndexTable.Row
+                          id={String(selectedItem.managedFontId)}
+                          key={selectedItem.id || String(selectedItem.managedFontId)}
+                          position={index}
+                          data-id={selectedItem.id || String(selectedItem.managedFontId)}
+                        >
+                          <IndexTable.Cell>
+                            <div
+                              className="drag-handle"
                               style={{
-                                fontFamily: `'${escapeCssValue(getPreviewFontFamily(selectedItem))}'`,
-                                fontSize: "20px",
-                                lineHeight: "20px",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: sectionState.items.length > 1 ? "grab" : "default",
+                                color: "#6B7280",
                               }}
                             >
-                              Ag
-                            </span>
-                          </div>
-                        </IndexTable.Cell>
-                        <IndexTable.Cell>
-                          <Text as="span" fontWeight="semibold">
-                            {selectedItem.label}
-                          </Text>
-                        </IndexTable.Cell>
-                        <IndexTable.Cell>
-                          <InlineStack gap="200" blockAlign="center">
-                            <Text as="span" tone="subdued">
-                              No
+                              <Icon source={DragHandleIcon} />
+                            </div>
+                          </IndexTable.Cell>
+                          <IndexTable.Cell>
+                            <div
+                              style={{
+                                width: "72px",
+                                height: "44px",
+                                borderRadius: "8px",
+                                border: "1px solid #D0D5DD",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "#F8F9FB",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontFamily: `'${escapeCssValue(getPreviewFontFamily(selectedItem))}'`,
+                                  fontSize: "20px",
+                                  lineHeight: "20px",
+                                }}
+                              >
+                                Ag
+                              </span>
+                            </div>
+                          </IndexTable.Cell>
+                          <IndexTable.Cell>
+                            <Text as="span" fontWeight="semibold">
+                              {selectedItem.label}
                             </Text>
-                            <ToggleButton
-                              type="radio"
-                              name="default-font"
-                              value={selectedItem.managedFontId}
-                              checked={Boolean(selectedItem.isDefault)}
-                              onChange={() => setDefaultFont(Number(selectedItem.managedFontId))}
-                            />
-                            <Text as="span" tone="subdued">
-                              Yes
-                            </Text>
-                          </InlineStack>
-                        </IndexTable.Cell>
-                        <IndexTable.Cell>
-                          <Button
-                            icon={DeleteIcon}
-                            tone="critical"
-                            onClick={() =>
-                              setSectionState((current) => ({
-                                ...current,
-                                items: ensureSingleDefaultFont(
-                                  current.items.filter(
-                                    (item) =>
-                                      item.managedFontId !== Number(selectedItem.managedFontId),
+                          </IndexTable.Cell>
+                          <IndexTable.Cell>
+                            <InlineStack gap="200" blockAlign="center">
+                              <Text as="span" tone="subdued">
+                                No
+                              </Text>
+                              <ToggleButton
+                                type="radio"
+                                name="default-font"
+                                value={selectedItem.managedFontId}
+                                checked={Boolean(selectedItem.isDefault)}
+                                onChange={() => setDefaultFont(Number(selectedItem.managedFontId))}
+                              />
+                              <Text as="span" tone="subdued">
+                                Yes
+                              </Text>
+                            </InlineStack>
+                          </IndexTable.Cell>
+                          <IndexTable.Cell>
+                            <Button
+                              icon={DeleteIcon}
+                              tone="critical"
+                              onClick={() =>
+                                setSectionState((current) => ({
+                                  ...current,
+                                  items: ensureSingleDefaultFont(
+                                    current.items.filter(
+                                      (item) =>
+                                        item.managedFontId !== Number(selectedItem.managedFontId),
+                                    ),
                                   ),
-                                ),
-                              }))
-                            }
-                          >
-                            Remove
-                          </Button>
-                        </IndexTable.Cell>
-                      </IndexTable.Row>
-                    ))}
-                  </IndexTable>
+                                }))
+                              }
+                            >
+                              Remove
+                            </Button>
+                          </IndexTable.Cell>
+                        </IndexTable.Row>
+                      ))}
+                    </IndexTable>
+                  </div>
                 </>
               )}
             </Box>
