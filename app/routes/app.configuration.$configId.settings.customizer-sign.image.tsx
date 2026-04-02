@@ -37,8 +37,6 @@ import { DeleteNowIconBtn } from "~/components/buttons/DeleteNowIconBtn";
 import { TextColorField } from "~/components/inputs/TextColorField";
 import { FileInput } from "~/components/inputs/FileInput";
 import { PRICING_PLANS } from "~/utils/pricing";
-import { CheckSpan } from "~/components/inputs/CheckSpan";
-import { DeleteIconBtn } from "~/components/buttons/DeleteIconBtn";
 import { FileUploader } from "./app.upload";
 import { DeleteIcon } from "@shopify/polaris-icons";
 
@@ -53,6 +51,7 @@ const DEFAULT_IMAGE_SETTINGS = {
   enableCustomColor: true,
   fileUploadScript: {
     customWithGraphical: false,
+    enableSizeRestriction: false,
     uploadMinWidth: 100,
     uploadMaxWidth: 200,
     allowedUploadsExtentions: ["png"] as string[],
@@ -98,6 +97,9 @@ function mergeWithDefaults(loaded: any): typeof DEFAULT_IMAGE_SETTINGS {
     enableCustomColor: loaded.enableCustomColor ?? DEFAULT_IMAGE_SETTINGS.enableCustomColor,
     fileUploadScript: {
       customWithGraphical: loaded.fileUploadScript?.customWithGraphical ?? DEFAULT_IMAGE_SETTINGS.fileUploadScript.customWithGraphical,
+      enableSizeRestriction:
+        loaded.fileUploadScript?.enableSizeRestriction ??
+        DEFAULT_IMAGE_SETTINGS.fileUploadScript.enableSizeRestriction,
       uploadMinWidth: loaded.fileUploadScript?.uploadMinWidth ?? DEFAULT_IMAGE_SETTINGS.fileUploadScript.uploadMinWidth,
       uploadMaxWidth: (() => {
         const v = loaded.fileUploadScript?.uploadMaxWidth;
@@ -165,6 +167,7 @@ const formSchema = z.object({
   enableCustomColor: z.any().transform(booleanTransform).pipe(z.boolean()),
   fileUploadScript:z.any().transform(jsonTransform).pipe(z.object({
     customWithGraphical:z.boolean(),
+    enableSizeRestriction:z.boolean(),
     uploadMinWidth:z.number(),
     uploadMaxWidth:z.number(),
     allowedUploadsExtentions:z.string().array()
@@ -467,6 +470,19 @@ export default function ConfigSettingsGeneral() {
                     </InlineStack>
                 </Grid.Cell>
 
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                <InlineStack gap="300" blockAlign="center">
+                      <Text as="strong" fontWeight="medium" variant="bodyMd" tone="subdued">Disable size restriction</Text>
+                      <ReactSwitchCustom  checked={formData.fileUploadScript.enableSizeRestriction} setChecked={(value:any) => {
+                        formData.fileUploadScript.enableSizeRestriction = value
+                      handleInputChange("fileUploadScript", formData.fileUploadScript )
+                    }} />
+                      <Text as="strong" fontWeight="medium" variant="bodyMd" tone="subdued">Enable size restriction</Text>
+                    </InlineStack>
+                </Grid.Cell>
+
+                {formData.fileUploadScript.enableSizeRestriction && (
+                <>
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                 <TextField
                     size="medium"
@@ -493,6 +509,8 @@ export default function ConfigSettingsGeneral() {
                   autoComplete="off"
                   />
                 </Grid.Cell>
+                </>
+                )}
                
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
                 <MultiCombobox
@@ -805,5 +823,3 @@ export const ClipartItem = ({
     </BlockStack>
   );
 };
-
-

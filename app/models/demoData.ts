@@ -162,6 +162,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -887,6 +888,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -2090,6 +2092,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -2939,6 +2942,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -4092,6 +4096,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 3000,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -4942,6 +4947,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 3000,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -7165,6 +7171,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -8339,6 +8346,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -10240,6 +10248,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -10942,6 +10951,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -12069,6 +12079,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -14544,6 +14555,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -16118,6 +16130,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -17493,6 +17506,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -19224,6 +19238,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -20389,6 +20404,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -21504,6 +21520,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",
@@ -23645,6 +23662,7 @@ export const configurationDemoData: ConfigurationType[] = [
                         fileUploadScript : {
                             uploadMinWidth : 100,
                             uploadMaxWidth : 100,
+                            enableSizeRestriction : false,
                             allowedUploadsExtentions : [
                                 "png",
                                 "jpeg",

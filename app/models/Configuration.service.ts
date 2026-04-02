@@ -274,6 +274,7 @@ const initialData = {
           uploadMaxWidth: 200,
           uploadMinWidth: 10,
           customWithGraphical: false,
+          enableSizeRestriction: false,
           allowedUploadsExtentions: ["png"],
         },
         enableCustomColor: true,
