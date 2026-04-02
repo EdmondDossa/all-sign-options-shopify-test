@@ -354,6 +354,7 @@ const initialData = {
         textOptionText: "Text",
         textAdditonnalOptionsHeader: 'Additionnals Options',
         textButtonAdditonnalOptions: 'Add Option',
+        phraseImageSizeRestrictionError: "The image size must be between",
         textBeforePrice: "",
         textCanvasClone: "Clone",
         textButtonFinish: "Finish",
