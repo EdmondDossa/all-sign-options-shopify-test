@@ -1,0 +1,111 @@
+import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
+import { parseConfigData } from "~/features/classic-required-colors.shared";
+
+export type ClassicCustomInputItem = Record<string, any> & {
+  id?: string | number;
+  type?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+};
+
+export type ClassicCustomInputsState = {
+  label: string;
+  description: string;
+  items: ClassicCustomInputItem[];
+};
+
+export const emptyClassicCustomInput = (): ClassicCustomInputItem => ({
+  type: "yes/no",
+  label: "",
+  description: "",
+  inputs: {
+    yes: "Yes",
+    no: "No",
+  },
+  default: "no",
+  popupImg: "",
+  price: {
+    type: "none",
+    value: 0,
+  },
+});
+
+const normalizeItem = (item: any, index: number): ClassicCustomInputItem => ({
+  ...JSON.parse(JSON.stringify(item || {})),
+  id: item?.id ?? `input-${index}`,
+  type: String(item?.type || "yes/no"),
+  label: String(item?.label || item?.title || ""),
+  description: String(item?.description || ""),
+});
+
+export const getClassicCustomInputsState = (rawData: any): ClassicCustomInputsState => {
+  const parsed = parseConfigData(rawData) || {};
+  const data = ensureClassicSimplifiedBuilderData({
+    data: parsed,
+    materialType: parsed?.simplifiedBuilder?.meta?.materialType || "",
+    productType: parsed?.simplifiedBuilder?.meta?.productType || "",
+    pricingMode: parsed?.simplifiedBuilder?.meta?.pricingMode || null,
+  });
+
+  const source = Array.isArray(data?.additionalOptions?.inputs?.items)
+    ? data.additionalOptions.inputs.items
+    : Array.isArray(data?.additionalOptions?.inputs)
+      ? data.additionalOptions.inputs
+      : Array.isArray(data?.additionalOptions)
+        ? data.additionalOptions
+        : [];
+
+  return {
+    label: String(data?.additionalOptions?.inputs?.label || "Inputs"),
+    description: String(
+      data?.additionalOptions?.inputs?.description ||
+        "Manage standalone customer inputs using the NCPC-style form blocks.",
+    ),
+    items: source.map((item: any, index: number) => normalizeItem(item, index)),
+  };
+};
+
+export const syncClassicCustomInputsIntoData = ({
+  data,
+  state,
+}: {
+  data: any;
+  state: ClassicCustomInputsState;
+}) => {
+  const nextData = ensureClassicSimplifiedBuilderData({
+    data,
+    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
+    productType: data?.simplifiedBuilder?.meta?.productType || "",
+    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+  });
+
+  const normalizedItems = state.items.map((item) => {
+    const clone = JSON.parse(JSON.stringify(item || {}));
+    delete clone.id;
+    return clone;
+  });
+
+  nextData.additionalOptions = {
+    ...(nextData.additionalOptions || {}),
+    inputs: {
+      label: String(state.label || "Inputs"),
+      description: String(state.description || ""),
+      items: normalizedItems,
+    },
+  };
+
+  nextData.simplifiedBuilder = {
+    ...(nextData.simplifiedBuilder || {}),
+    customizationOptions: {
+      ...(nextData.simplifiedBuilder?.customizationOptions || {}),
+      inputs: {
+        label: String(state.label || "Inputs"),
+        description: String(state.description || ""),
+        items: normalizedItems,
+      },
+    },
+  };
+
+  return nextData;
+};

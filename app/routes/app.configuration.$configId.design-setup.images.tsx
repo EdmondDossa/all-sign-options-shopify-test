@@ -6,9 +6,10 @@ import { useEffect, useState } from 'react';
 import {
   ImageSetupSection,
   mergeImageSettings,
+  resolveLegacyTextImages,
   type ImageSettingsState,
 } from '~/features/classic-design-setup.shared';
-import ConfigSettingsService from '~/models/ConfigSetttings.service';
+import ConfigurationService from '~/models/Configuration.service';
 import { authenticate } from '~/shopify.server';
 import { jFlashMessage } from '~/utils/message-flash';
 import { getPlan } from '~/utils/pricing-server.server';
@@ -41,13 +42,46 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return json({ ...jFlashMessage('Invalid image settings payload', 'error') }, { status: 400 });
   }
 
-  const result = await ConfigSettingsService.updateSettingsSection(
-    configId,
-    session.id,
-    'customizerSign',
-    'images',
-    parsed,
-  );
+  const configuration: any = await ConfigurationService.getConfiguration(configId, session.id);
+  if (!configuration) {
+    return json({ ...jFlashMessage('Unable to update image settings', 'error') }, { status: 500 });
+  }
+
+  const nextData = typeof configuration.data === "string"
+    ? JSON.parse(configuration.data || "{}")
+    : { ...(configuration.data || {}) };
+  const settings = { ...(nextData.settings || {}) };
+  const customizerSign = { ...(settings.customizerSign || {}) };
+  const configOptions = Array.isArray(customizerSign.configOptions)
+    ? [...customizerSign.configOptions]
+    : [];
+
+  const index = configOptions.findIndex((item: any) => item?.type === "images");
+  if (index >= 0) {
+    configOptions[index] = { ...configOptions[index], active: Boolean(parsed.active) };
+  } else {
+    configOptions.push({ type: "images", active: Boolean(parsed.active) });
+  }
+
+  const materials = Array.isArray(nextData.materials) ? nextData.materials : [];
+  nextData.materials = materials.map((material: any) => ({
+    ...material,
+    data: {
+      ...(material?.data || {}),
+      textImages: {
+        ...(material?.data?.textImages || {}),
+        enableImage: Boolean(parsed.active),
+      },
+    },
+  }));
+
+  customizerSign.images = parsed;
+  customizerSign.configOptions = configOptions;
+  settings.customizerSign = customizerSign;
+  nextData.settings = settings;
+
+  configuration.data = nextData;
+  const result = await ConfigurationService.updateConfiguration(configuration, session.id);
 
   if (!result) {
     return json({ ...jFlashMessage('Unable to update image settings', 'error') }, { status: 500 });
@@ -61,11 +95,12 @@ export default function ConfigurationDesignSetupImages() {
   const { plan } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const submit = useSubmit();
-  const [imageSettings, setImageSettings] = useState<ImageSettingsState>(mergeImageSettings(configuration?.data?.settings?.customizerSign?.images));
+  const legacyTextImages = resolveLegacyTextImages(configuration?.data);
+  const [imageSettings, setImageSettings] = useState<ImageSettingsState>(mergeImageSettings(configuration?.data?.settings?.customizerSign?.images, legacyTextImages));
 
   useEffect(() => {
     const section = configuration?.data?.settings?.customizerSign || {};
-    setImageSettings(mergeImageSettings(section?.images));
+    setImageSettings(mergeImageSettings(section?.images, resolveLegacyTextImages(configuration?.data)));
   }, [configuration]);
 
   const submitSection = () => {

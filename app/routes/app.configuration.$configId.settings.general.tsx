@@ -73,6 +73,22 @@ type QuantityLimitSettings = {
   maxQuantity?: number;
 };
 
+type DiscountType = "none" | "percent" | "fixed";
+
+type DiscountLot = {
+  id: string;
+  quantity: number | string;
+  discount: DiscountType;
+  discountValue: number | string;
+};
+
+type DiscountSettings = {
+  byQuantity: boolean;
+  discount: DiscountType;
+  discountValue: number | string;
+  lots: DiscountLot[];
+};
+
 type MobileSettings = {
   showNavigatorMenu: string;
   showNavigationMenuFirst: string;
@@ -226,6 +242,20 @@ const defaultQuantityLimits = (): QuantityLimitSettings => ({
   maxQuantity: undefined,
 });
 
+const defaultDiscount = (): DiscountSettings => ({
+  byQuantity: false,
+  discount: "none",
+  discountValue: 0,
+  lots: [
+    {
+      id: generateId(),
+      quantity: 1,
+      discount: "percent",
+      discountValue: 0,
+    },
+  ],
+});
+
 const defaultMobile = (): MobileSettings => ({
   showNavigatorMenu: "off",
   showNavigationMenuFirst: "yes",
@@ -320,6 +350,77 @@ const sanitizeQuantityLimits = (raw: any = {}): QuantityLimitSettings => ({
       : Number(raw.maxQuantity),
 });
 
+const sanitizeDiscountType = (value: any): DiscountType =>
+  value === "percent" || value === "fixed" ? value : "none";
+
+const resolveLegacyMaterialDiscounts = (configuration: any): DiscountLot[] => {
+  const data = configuration?.data || {};
+  const materials = Array.isArray(data?.materials) ? data.materials : [];
+  const source =
+    materials.find((material: any) => Array.isArray(material?.discounts) && material.discounts.length > 0) ||
+    materials.find((material: any) => Boolean(material?.isDefault)) ||
+    materials[0];
+  const discounts = Array.isArray(source?.discounts) ? source.discounts : [];
+
+  return discounts.map((item: any) => ({
+    id: generateId(),
+    quantity:
+      item?.quantity === undefined || item?.quantity === null || item?.quantity === ""
+        ? 0
+        : Number(item.quantity),
+    discount: "percent" as DiscountType,
+    discountValue:
+      item?.discountPercentage === undefined ||
+      item?.discountPercentage === null ||
+      item?.discountPercentage === ""
+        ? 0
+        : Number(item.discountPercentage),
+  }));
+};
+
+const sanitizeDiscount = (
+  raw: any = {},
+  legacyLots: DiscountLot[] = [],
+): DiscountSettings => {
+  const defaults = defaultDiscount();
+  const rawLots = Array.isArray(raw?.lots) ? raw.lots : [];
+  const lotsSource = rawLots.length > 0 ? rawLots : legacyLots;
+
+  return {
+    byQuantity:
+      typeof raw?.byQuantity === "boolean" ? raw.byQuantity : lotsSource.length > 0,
+    discount: sanitizeDiscountType(raw?.discount),
+    discountValue:
+      raw?.discountValue === undefined || raw?.discountValue === null || raw?.discountValue === ""
+        ? 0
+        : Number(raw.discountValue),
+    lots:
+      lotsSource.length > 0
+        ? lotsSource.map((lot: any) => ({
+            id: String(lot?.id || generateId()),
+            quantity:
+              lot?.quantity === undefined || lot?.quantity === null || lot?.quantity === ""
+                ? 0
+                : Number(lot.quantity),
+            discount:
+              rawLots.length > 0
+                ? sanitizeDiscountType(lot?.discount)
+                : "percent",
+            discountValue:
+              lot?.discountValue !== undefined &&
+              lot?.discountValue !== null &&
+              lot?.discountValue !== ""
+                ? Number(lot.discountValue)
+                : lot?.discountPercentage !== undefined &&
+                    lot?.discountPercentage !== null &&
+                    lot?.discountPercentage !== ""
+                  ? Number(lot.discountPercentage)
+                  : 0,
+          }))
+        : defaults.lots,
+  };
+};
+
 const sanitizeMobile = (raw: any = {}): MobileSettings => ({
   showNavigatorMenu: raw?.showNavigatorMenu === "on" ? "on" : "off",
   showNavigationMenuFirst: raw?.showNavigationMenuFirst === "no" ? "no" : "yes",
@@ -374,6 +475,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     output: { key: "output", sanitize: sanitizeOutput },
     upload: { key: "upload", sanitize: sanitizeUpload },
     quantityLimits: { key: "quantityLimits", sanitize: sanitizeQuantityLimits },
+    discount: { key: "discount", sanitize: sanitizeDiscount },
     mobile: { key: "mobile", sanitize: sanitizeMobile },
     requestQuote: { key: "requestQuote", sanitize: sanitizeRequestQuote },
     simpleOptions: { key: "simpleOptions", sanitize: sanitizeSimpleOptions },
@@ -631,6 +733,7 @@ export default function ConfigSettingsGeneral() {
   const [output, setOutput] = useState<OutputSettings>(defaultOutput());
   const [upload, setUpload] = useState<UploadSettings>(defaultUpload());
   const [quantityLimits, setQuantityLimits] = useState<QuantityLimitSettings>(defaultQuantityLimits());
+  const [discount, setDiscount] = useState<DiscountSettings>(defaultDiscount());
   const [mobile, setMobile] = useState<MobileSettings>(defaultMobile());
   const [requestQuote, setRequestQuote] = useState<RequestQuoteSettings>(defaultRequestQuote());
   const [simpleOptions, setSimpleOptions] = useState<SimpleOptionsSettings>(defaultSimpleOptions());
@@ -642,6 +745,7 @@ export default function ConfigSettingsGeneral() {
     setOutput(sanitizeOutput(generals.output || {}));
     setUpload(sanitizeUpload(generals.upload || {}));
     setQuantityLimits(sanitizeQuantityLimits(generals.quantityLimits || {}));
+    setDiscount(sanitizeDiscount(generals.discount || {}, resolveLegacyMaterialDiscounts(configuration)));
     setMobile(sanitizeMobile(generals.mobile || {}));
     setRequestQuote(sanitizeRequestQuote(generals.requestQuote || {}));
     setSimpleOptions(sanitizeSimpleOptions(generals.simpleOptions || {}));
@@ -745,12 +849,64 @@ export default function ConfigSettingsGeneral() {
     });
   };
 
+  const currencySymbol = String(
+    configuration?.data?.currencySymbol ||
+      configuration?.data?.settings?.currencySymbol ||
+      "$",
+  );
+
+  const addDiscountLot = () => {
+    setDiscount((current) => {
+      const lastQuantity =
+        current.lots.length > 0
+          ? Number(current.lots[current.lots.length - 1]?.quantity || 0)
+          : 0;
+      return {
+        ...current,
+        lots: [
+          ...current.lots,
+          {
+            id: generateId(),
+            quantity: lastQuantity + 1,
+            discount: "percent",
+            discountValue: 0,
+          },
+        ],
+      };
+    });
+  };
+
+  const removeDiscountLot = (lotId: string) => {
+    setDiscount((current) => ({
+      ...current,
+      lots:
+        current.lots.length > 1
+          ? current.lots.filter((lot) => lot.id !== lotId)
+          : current.lots,
+    }));
+  };
+
+  const updateDiscountLot = (lotId: string, patch: Partial<DiscountLot>) => {
+    setDiscount((current) => ({
+      ...current,
+      lots: current.lots.map((lot) =>
+        lot.id === lotId
+          ? {
+              ...lot,
+              ...patch,
+            }
+          : lot,
+      ),
+    }));
+  };
+
   const sectionMenu = [
     { id: "product", label: "Product" },
     { id: "mode", label: "Mode" },
     { id: "output", label: "Output" },
     { id: "upload", label: "Upload Design" },
     { id: "quantity-limits", label: "Quantity Limits" },
+    { id: "discount", label: "Discount" },
     { id: "mobile-option", label: "Mobile Option" },
     { id: "request-quote", label: "Request Quote" },
     { id: "simple-options", label: "Simple Options" },
@@ -1100,6 +1256,159 @@ export default function ConfigSettingsGeneral() {
             loading={navigation.state === "submitting" && activeSection === "quantityLimits"}
             onClick={() => submitSection("quantityLimits", quantityLimits)}
             label="Save Quantity Limits"
+          />
+        </SectionCard>
+
+        <SectionCard
+          id="discount"
+          title="Discount"
+          description="Choose between a simple discount or quantity-based discount lots."
+        >
+          <div style={{ display: "grid", gap: 16 }}>
+            <ToggleField
+              label="Discount by quantity"
+              description="Turn this on if discounts should depend on ordered quantity."
+              checked={Boolean(discount.byQuantity)}
+              onChange={(checked) =>
+                setDiscount((current) => ({
+                  ...current,
+                  byQuantity: checked,
+                }))
+              }
+            />
+
+            {!discount.byQuantity ? (
+              <div style={{ display: "grid", gap: 16 }}>
+                <Select
+                  label="Discount type"
+                  options={[
+                    { label: "None", value: "none" },
+                    { label: "Percentage", value: "percent" },
+                    { label: "Fixed amount", value: "fixed" },
+                  ]}
+                  value={discount.discount}
+                  onChange={(value) =>
+                    setDiscount((current) => ({
+                      ...current,
+                      discount: sanitizeDiscountType(value),
+                    }))
+                  }
+                />
+
+                {discount.discount !== "none" ? (
+                  <TextField
+                    label={
+                      discount.discount === "percent"
+                        ? "Discount percentage"
+                        : "Discount fixed amount"
+                    }
+                    type="number"
+                    autoComplete="off"
+                    prefix={discount.discount === "fixed" ? currencySymbol : undefined}
+                    suffix={discount.discount === "percent" ? "%" : undefined}
+                    value={String(discount.discountValue ?? 0)}
+                    onChange={(value) =>
+                      setDiscount((current) => ({
+                        ...current,
+                        discountValue: Number(value || 0),
+                      }))
+                    }
+                  />
+                ) : null}
+              </div>
+            ) : (
+              <div style={{ display: "grid", gap: 12 }}>
+                {discount.lots.map((lot, index) => (
+                  <div
+                    key={lot.id}
+                    style={{
+                      border: "1px solid #d1d5db",
+                      borderRadius: 12,
+                      padding: 16,
+                      display: "grid",
+                      gap: 12,
+                    }}
+                  >
+                    <InlineStack align="space-between" blockAlign="center">
+                      <Text as="strong">{`Lot ${index + 1}`}</Text>
+                      <Button
+                        tone="critical"
+                        variant="plain"
+                        onClick={() => removeDiscountLot(lot.id)}
+                        disabled={discount.lots.length <= 1}
+                      >
+                        Remove
+                      </Button>
+                    </InlineStack>
+
+                    <Grid>
+                      <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                        <TextField
+                          label="Minimum quantity"
+                          type="number"
+                          autoComplete="off"
+                          value={String(lot.quantity ?? 0)}
+                          onChange={(value) =>
+                            updateDiscountLot(lot.id, { quantity: Number(value || 0) })
+                          }
+                        />
+                      </Grid.Cell>
+                      <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                        <Select
+                          label="Discount type"
+                          options={[
+                            { label: "None", value: "none" },
+                            { label: "Percentage", value: "percent" },
+                            { label: "Fixed amount", value: "fixed" },
+                          ]}
+                          value={lot.discount}
+                          onChange={(value) =>
+                            updateDiscountLot(lot.id, {
+                              discount: sanitizeDiscountType(value),
+                            })
+                          }
+                        />
+                      </Grid.Cell>
+                      <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 4, xl: 4 }}>
+                        {lot.discount !== "none" ? (
+                          <TextField
+                            label={
+                              lot.discount === "percent"
+                                ? "Discount percentage"
+                                : "Discount fixed amount"
+                            }
+                            type="number"
+                            autoComplete="off"
+                            prefix={lot.discount === "fixed" ? currencySymbol : undefined}
+                            suffix={lot.discount === "percent" ? "%" : undefined}
+                            value={String(lot.discountValue ?? 0)}
+                            onChange={(value) =>
+                              updateDiscountLot(lot.id, {
+                                discountValue: Number(value || 0),
+                              })
+                            }
+                          />
+                        ) : (
+                          <div />
+                        )}
+                      </Grid.Cell>
+                    </Grid>
+                  </div>
+                ))}
+
+                <InlineStack align="start">
+                  <Button variant="secondary" onClick={addDiscountLot}>
+                    Add lot
+                  </Button>
+                </InlineStack>
+              </div>
+            )}
+          </div>
+
+          <SectionSave
+            loading={navigation.state === "submitting" && activeSection === "discount"}
+            onClick={() => submitSection("discount", discount)}
+            label="Save Discount"
           />
         </SectionCard>
 

@@ -379,9 +379,22 @@ export default function ConfigurationTemplatesPage() {
                   Manage only the templates linked to this configuration.
                 </Text>
               </div>
-              <Button variant="primary" tone="success" icon={PlusIcon} onClick={openCreate}>
-                Add new template
-              </Button>
+              <InlineStack gap="200" blockAlign="center">
+                <Button
+                  onClick={() =>
+                    navigate(
+                      `/app/templates/main?returnTo=${encodeURIComponent(
+                        `/app/configuration/${configId}/templates`,
+                      )}`,
+                    )
+                  }
+                >
+                  Open default templates route
+                </Button>
+                <Button variant="primary" tone="success" icon={PlusIcon} onClick={openCreate}>
+                  Add new template
+                </Button>
+              </InlineStack>
             </InlineStack>
 
             <InlineGrid columns={{ xs: 1, md: "2fr 1fr" }} gap="300">

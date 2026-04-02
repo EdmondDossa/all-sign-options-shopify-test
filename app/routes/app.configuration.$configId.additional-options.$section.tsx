@@ -4,6 +4,12 @@ import { useParams } from "@remix-run/react";
 import SectionScreen from "./app.configuration.$configId.builder.$section";
 import { ClassicAdditionalMaterialsScreen } from "~/features/classic-additional-materials";
 import { ClassicAdditionalClipartsScreen } from "~/features/classic-additional-cliparts";
+import {
+  ClassicAdditionalInputsScreen,
+} from "~/features/classic-additional-inputs";
+import {
+  ClassicAdditionalOptionInputsScreen,
+} from "~/features/classic-additional-option-inputs";
 import ConfigurationService from "~/models/Configuration.service";
 import { authenticate } from "~/shopify.server";
 import SettingFixingMethodService from "~/models/SettingFixingMethod.service";
@@ -24,8 +30,24 @@ import {
   getClipartsState,
   syncClipartsIntoData,
 } from "~/features/classic-additional-cliparts.shared";
+import {
+  emptyAdditionalInput,
+  getAdditionalInputsState,
+  syncAdditionalInputsIntoData,
+} from "~/features/classic-additional-inputs.shared";
+import {
+  emptyClassicCustomInput,
+  getClassicCustomInputsState,
+  syncClassicCustomInputsIntoData,
+} from "~/features/classic-additional-option-inputs.shared";
 
-const allowedSections = ["materials", "cliparts", "additional-inputs"];
+const allowedSections = [
+  "materials",
+  "cliparts",
+  "additional-components",
+  "inputs",
+  "additional-inputs",
+];
 
 const parseJsonValue = (value: FormDataEntryValue | null) => {
   try {
@@ -42,6 +64,12 @@ const parseIndex = (value: FormDataEntryValue | null) => {
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const section = String(params.section || "").trim();
+
+  if (section === "additional-inputs") {
+    const configId = String(params.configId || "").trim();
+    const search = new URL(request.url).search;
+    throw redirect(`/app/configuration/${configId}/additional-options/additional-components${search}`);
+  }
 
   if (section === "materials") {
     const { session } = await authenticate.admin(request);
@@ -189,6 +217,157 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     return json(jFlashMessage("Materials updated successfully"));
   }
 
+  if (section === "additional-components" || section === "additional-inputs") {
+    const currentState = getAdditionalInputsState(data);
+
+    if (operation === "add-additional-input" || operation === "update-additional-input") {
+      const payload = parseJsonValue(formData.get("item"));
+      if (!payload || typeof payload !== "object") {
+        return json(jFlashMessage("Invalid additional component payload", "error"), { status: 400 });
+      }
+
+      const normalized = {
+        ...emptyAdditionalInput(),
+        ...payload,
+        title: String((payload as any)?.title || "").trim(),
+        description: String((payload as any)?.description || ""),
+        icon: String((payload as any)?.icon || ""),
+        options: Array.isArray((payload as any)?.options) ? (payload as any).options : [],
+        rulesByMaterial:
+          (payload as any)?.rulesByMaterial && typeof (payload as any).rulesByMaterial === "object"
+            ? (payload as any).rulesByMaterial
+            : {},
+      };
+
+      if (!normalized.title) {
+        return json(jFlashMessage("Additional component title is required", "error"), { status: 400 });
+      }
+
+      const hasDuplicateTitle = currentState.items.some((item, itemIndex) => {
+        if (operation === "update-additional-input" && itemIndex === index) return false;
+        return String(item.title || "").trim().toLowerCase() === normalized.title.toLowerCase();
+      });
+
+      if (hasDuplicateTitle) {
+        return json(jFlashMessage("Additional component titles must be unique", "error"), { status: 400 });
+      }
+
+      if (operation === "add-additional-input") {
+        currentState.items.push({
+          ...normalized,
+          id: String((payload as any)?.id || ""),
+        });
+      } else if (index >= 0 && currentState.items[index]) {
+        currentState.items[index] = {
+          ...currentState.items[index],
+          ...normalized,
+        };
+      } else {
+        return json(jFlashMessage("Invalid additional component index", "error"), { status: 400 });
+      }
+    } else if (operation === "delete-additional-input") {
+      if (index < 0 || !currentState.items[index]) {
+        return json(jFlashMessage("Invalid additional component index", "error"), { status: 400 });
+      }
+      currentState.items = currentState.items.filter((_item, currentIndex) => currentIndex !== index);
+    } else {
+      return json(jFlashMessage("Unsupported operation", "error"), { status: 400 });
+    }
+
+    const nextData = syncAdditionalInputsIntoData({
+      data,
+      state: currentState,
+    });
+
+    await ConfigurationService.updateConfiguration(
+      {
+        ...(configuration as any),
+        products: Array.isArray((configuration as any)?.product)
+          ? (configuration as any).product
+          : Array.isArray((configuration as any)?.products)
+            ? (configuration as any).products
+            : [],
+        data: nextData,
+      },
+      session.id,
+    );
+
+    return json(jFlashMessage("Additional components updated successfully"));
+  }
+
+  if (section === "inputs") {
+    const currentState = getClassicCustomInputsState(data);
+
+    if (operation === "add-input" || operation === "update-input") {
+      const payload = parseJsonValue(formData.get("item"));
+      if (!payload || typeof payload !== "object") {
+        return json(jFlashMessage("Invalid input payload", "error"), { status: 400 });
+      }
+
+      const normalized = {
+        ...emptyClassicCustomInput(),
+        ...payload,
+        label: String((payload as any)?.label || (payload as any)?.title || "").trim(),
+        description: String((payload as any)?.description || ""),
+      };
+
+      if (!normalized.label) {
+        return json(jFlashMessage("Input label is required", "error"), { status: 400 });
+      }
+
+      const hasDuplicateLabel = currentState.items.some((item, itemIndex) => {
+        if (operation === "update-input" && itemIndex === index) return false;
+        return (
+          String(item.label || item.title || "")
+            .trim()
+            .toLowerCase() === normalized.label.toLowerCase()
+        );
+      });
+
+      if (hasDuplicateLabel) {
+        return json(jFlashMessage("Input labels must be unique", "error"), { status: 400 });
+      }
+
+      if (operation === "add-input") {
+        currentState.items.push(normalized);
+      } else if (index >= 0 && currentState.items[index]) {
+        currentState.items[index] = {
+          ...currentState.items[index],
+          ...normalized,
+        };
+      } else {
+        return json(jFlashMessage("Invalid input index", "error"), { status: 400 });
+      }
+    } else if (operation === "delete-input") {
+      if (index < 0 || !currentState.items[index]) {
+        return json(jFlashMessage("Invalid input index", "error"), { status: 400 });
+      }
+      currentState.items = currentState.items.filter((_item, currentIndex) => currentIndex !== index);
+    } else {
+      return json(jFlashMessage("Unsupported operation", "error"), { status: 400 });
+    }
+
+    const nextData = syncClassicCustomInputsIntoData({
+      data,
+      state: currentState,
+    });
+
+    await ConfigurationService.updateConfiguration(
+      {
+        ...(configuration as any),
+        products: Array.isArray((configuration as any)?.product)
+          ? (configuration as any).product
+          : Array.isArray((configuration as any)?.products)
+            ? (configuration as any).products
+            : [],
+        data: nextData,
+      },
+      session.id,
+    );
+
+    return json(jFlashMessage("Inputs updated successfully"));
+  }
+
   if (section === "cliparts") {
     const managedClipartGroups = (await ClipartsGroupService.getClipartsGroupsCliparts(session.id)) || [];
     const currentState = getClipartsState(data, Array.isArray(managedClipartGroups) ? managedClipartGroups : []);
@@ -309,6 +488,14 @@ export default function ClassicAdditionalOptionsSectionRoute() {
 
   if (section === "cliparts") {
     return <ClassicAdditionalClipartsScreen />;
+  }
+
+  if (section === "additional-components" || section === "additional-inputs") {
+    return <ClassicAdditionalInputsScreen />;
+  }
+
+  if (section === "inputs") {
+    return <ClassicAdditionalOptionInputsScreen />;
   }
 
   return <SectionScreen />;

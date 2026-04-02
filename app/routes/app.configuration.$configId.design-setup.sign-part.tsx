@@ -10,11 +10,7 @@ import {
   TextField,
 } from "@shopify/polaris";
 import { useEffect, useState } from "react";
-import {
-  useNavigation,
-  useOutletContext,
-  useSubmit,
-} from "@remix-run/react";
+import { useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import SaveButton from "~/components/buttons/SaveButton";
 import { ToggleButton } from "~/components/buttons";
 import ConfigSettingsService from "~/models/ConfigSetttings.service";
@@ -163,7 +159,7 @@ export default function ConfigurationDesignSetupSignPart() {
           </Text>
           <Box paddingBlockStart="100">
             <Text as="p" tone="subdued">
-              Configure double-sided sign behavior from Design Setup while
+              Configure double-sided sign behavior from Editor Setup while
               keeping the classic save location unchanged.
             </Text>
           </Box>
@@ -220,9 +216,7 @@ export default function ConfigurationDesignSetupSignPart() {
                       }
                     />
                   </Grid.Cell>
-                  <Grid.Cell
-                    columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-                  >
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                     <TextField
                       label="Part 1"
                       autoComplete="off"
@@ -235,9 +229,7 @@ export default function ConfigurationDesignSetupSignPart() {
                       }
                     />
                   </Grid.Cell>
-                  <Grid.Cell
-                    columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-                  >
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                     <TextField
                       label="Part 2"
                       autoComplete="off"
@@ -287,9 +279,7 @@ export default function ConfigurationDesignSetupSignPart() {
                       </Box>
                     </Box>
                   </Grid.Cell>
-                  <Grid.Cell
-                    columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}
-                  >
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 4, xl: 4 }}>
                     <Select
                       label="Pricing type"
                       options={pricingTypeOptions}

@@ -51,8 +51,53 @@ import { jFlashMessage } from "~/utils/message-flash";
 
 const allowedSections = ["sizes", "pricing", "fonts", "colors", "components", "fixing-methods", "shapes", "borders"];
 
+const parseConfigDataSafe = (rawData: any) => {
+  if (!rawData) return null;
+  if (typeof rawData === "string") {
+    try {
+      const parsed = JSON.parse(rawData);
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+  return typeof rawData === "object" ? rawData : null;
+};
+
+const hasAdvancedMaterials = (configuration: any) => {
+  const data = parseConfigDataSafe(configuration?.data) || {};
+  const metaType = String(data?.simplifiedBuilder?.meta?.materialType || "")
+    .trim()
+    .toLowerCase();
+  if (metaType === "advance" || metaType === "advanced") {
+    return true;
+  }
+
+  const legacyMaterials = Array.isArray(data?.materials) ? data.materials : [];
+  return legacyMaterials.some(
+    (material: any) =>
+      String(material?.type || "")
+        .trim()
+        .toLowerCase() === "advance",
+  );
+};
+
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const section = String(params.section || "").trim();
+  const configId = parseInt(params.configId ?? "", 10);
+  const search = new URL(request.url).search;
+
+  if (section === "components") {
+    const { session } = await authenticate.admin(request);
+    const configuration = Number.isFinite(configId)
+      ? await ConfigurationService.getConfiguration(configId, session.id)
+      : null;
+
+    if (!configuration || !hasAdvancedMaterials(configuration)) {
+      throw redirect(`/app/configuration/${String(params.configId || "").trim()}/required-options/sizes${search}`);
+    }
+  }
+
   if (section === "fonts") {
     const { session } = await authenticate.admin(request);
     const [managedFonts, googleFonts] = await Promise.all([
@@ -86,9 +131,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     return json(null);
   }
 
-  const configId = String(params.configId || "").trim();
-  const search = new URL(request.url).search;
-  throw redirect(`/app/configuration/${configId}/required-options/sizes${search}`);
+  throw redirect(`/app/configuration/${String(params.configId || "").trim()}/required-options/sizes${search}`);
 };
 
 export const action = async (args: ActionFunctionArgs) => {
