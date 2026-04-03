@@ -51,13 +51,29 @@ export function ClassicAdditionalMaterialsScreen() {
     [data, managedFixingMethods, managedShapes],
   );
   const pricingOptions = useMemo(() => getPricingOptions(data), [data]);
+  const hasAdvancedMaterials = useMemo(() => {
+    const metaType = String(data?.simplifiedBuilder?.meta?.materialType || "")
+      .trim()
+      .toLowerCase();
+    if (metaType === "advance" || metaType === "advanced") return true;
+
+    const legacyMaterials = Array.isArray(data?.materials) ? data.materials : [];
+    return legacyMaterials.some(
+      (material: any) =>
+        String(material?.type || "")
+          .trim()
+          .toLowerCase() === "advance",
+    );
+  }, [data]);
   const componentItems = useMemo(
     () =>
-      getComponentsState({ data, managedFixingMethods, managedShapes }).items.map((item) => ({
-        id: item.id,
-        label: item.label,
-      })),
-    [data, managedFixingMethods, managedShapes],
+      hasAdvancedMaterials
+        ? getComponentsState({ data, managedFixingMethods, managedShapes }).items.map((item) => ({
+            id: item.id,
+            label: item.label,
+          }))
+        : [],
+    [data, managedFixingMethods, managedShapes, hasAdvancedMaterials],
   );
 
   const [showForm, setShowForm] = useState(false);
@@ -189,6 +205,7 @@ export function ClassicAdditionalMaterialsScreen() {
         item={editingMaterial}
         pricingOptions={pricingOptions}
         componentItems={componentItems}
+        enableComponentExclusions={hasAdvancedMaterials}
         currencySymbol={currencySymbol}
         isEditing={editingIndex !== null}
         isSubmitting={isSubmitting}

@@ -138,10 +138,74 @@ const getMaterialEntries = (data: any) => {
       ? data.simplifiedBuilder.customizationOptions.materials.items
       : [];
 
-  return modularMaterials.map((item: any, index: number) => ({
+  if (modularMaterials.length > 0) {
+    return modularMaterials.map((item: any, index: number) => ({
+      id: String(item?.id || `material-${index}`),
+      sourceIndex: Number.isFinite(Number(item?.sourceIndex)) ? Number(item.sourceIndex) : index,
+    }));
+  }
+
+  const legacyMaterials = Array.isArray(data?.materials) ? data.materials : [];
+  return legacyMaterials.map((item: any, index: number) => ({
     id: String(item?.id || `material-${index}`),
-    sourceIndex: Number.isFinite(Number(item?.sourceIndex)) ? Number(item.sourceIndex) : index,
+    sourceIndex: index,
   }));
+};
+
+const getLegacyAdditionalInputs = ({
+  materials,
+  materialEntries,
+}: {
+  materials: any[];
+  materialEntries: Array<{ id: string; sourceIndex: number }>;
+}): AdditionalInputItem[] => {
+  const registry = new Map<string, AdditionalInputItem>();
+
+  materials.forEach((material, materialIndex) => {
+    const materialId =
+      materialEntries.find((entry) => entry.sourceIndex === materialIndex)?.id ||
+      String(material?.id || `material-${materialIndex}`);
+    const additionalOptions = Array.isArray(material?.data?.additionalOptions)
+      ? material.data.additionalOptions
+      : [];
+
+    additionalOptions.forEach((item: any, itemIndex: number) => {
+      const keyBase =
+        String(item?.title || item?.label || "").trim() ||
+        String(item?.description || "").trim() ||
+        `additional-input-${itemIndex}`;
+      const key = slugify(keyBase, `legacy-additional-input-${itemIndex}`);
+      const existing = registry.get(key);
+
+      if (existing) {
+        existing.rulesByMaterial[materialId] = { enabled: true };
+        return;
+      }
+
+      const normalized = normalizeItem({
+        item: {
+          ...item,
+          id: String(item?.id || key),
+          rulesByMaterial: {
+            [materialId]: { enabled: true },
+          },
+        },
+        index: itemIndex,
+        materialIds: materialEntries.map((entry) => entry.id),
+      });
+
+      normalized.rulesByMaterial = materialEntries.reduce<
+        Record<string, { enabled: boolean }>
+      >((acc, entry) => {
+        acc[entry.id] = { enabled: entry.id === materialId };
+        return acc;
+      }, {});
+
+      registry.set(key, normalized);
+    });
+  });
+
+  return Array.from(registry.values());
 };
 
 export const getAdditionalInputsState = (rawData: any): AdditionalInputsSectionState => {
@@ -153,22 +217,42 @@ export const getAdditionalInputsState = (rawData: any): AdditionalInputsSectionS
     pricingMode: parsed?.simplifiedBuilder?.meta?.pricingMode || null,
   });
 
-  const materialIds = getMaterialEntries(data).map((entry) => entry.id);
-  const additionalInputs = Array.isArray(data?.additionalOptions?.additionalInputs?.items)
-    ? data.additionalOptions.additionalInputs.items
-    : Array.isArray(data?.simplifiedBuilder?.customizationOptions?.additionalInputs?.items)
-      ? data.simplifiedBuilder.customizationOptions.additionalInputs.items
+  const materialEntries = getMaterialEntries(data);
+  const materialIds = materialEntries.map((entry) => entry.id);
+  const additionalInputs = Array.isArray(data?.additionalOptions?.components?.items)
+    ? data.additionalOptions.components.items
+    : Array.isArray(data?.simplifiedBuilder?.customizationOptions?.components?.items)
+      ? data.simplifiedBuilder.customizationOptions.components.items
+      : Array.isArray(data?.additionalOptions?.additionalInputs?.items)
+        ? data.additionalOptions.additionalInputs.items
+        : Array.isArray(data?.simplifiedBuilder?.customizationOptions?.additionalInputs?.items)
+          ? data.simplifiedBuilder.customizationOptions.additionalInputs.items
       : [];
+  const legacyInputs =
+    additionalInputs.length > 0
+      ? []
+      : getLegacyAdditionalInputs({
+          materials: Array.isArray(data?.materials) ? data.materials : [],
+          materialEntries,
+        });
 
   return {
-    label: String(data?.additionalOptions?.additionalInputs?.label || "Additional Components"),
+    label: String(
+      data?.additionalOptions?.components?.label ||
+        data?.additionalOptions?.additionalInputs?.label ||
+        "Additional Components",
+    ),
     description: String(
+      data?.additionalOptions?.components?.description ||
       data?.additionalOptions?.additionalInputs?.description ||
         "Manage the reusable additional components offered in this configuration.",
     ),
-    items: additionalInputs.map((item: any, index: number) =>
-      normalizeItem({ item, index, materialIds }),
-    ),
+    items:
+      additionalInputs.length > 0
+        ? additionalInputs.map((item: any, index: number) =>
+            normalizeItem({ item, index, materialIds }),
+          )
+        : legacyInputs,
   };
 };
 
@@ -224,7 +308,7 @@ export const syncAdditionalInputsIntoData = ({
 
   nextData.additionalOptions = {
     ...(nextData.additionalOptions || {}),
-    additionalInputs: {
+    components: {
       label: String(state.label || "Additional Components"),
       description: String(state.description || ""),
       items: normalizedItems,
@@ -235,7 +319,7 @@ export const syncAdditionalInputsIntoData = ({
     ...(nextData.simplifiedBuilder || {}),
     customizationOptions: {
       ...(nextData.simplifiedBuilder?.customizationOptions || {}),
-      additionalInputs: {
+      components: {
         label: String(state.label || "Additional Components"),
         description: String(state.description || ""),
         items: normalizedItems,

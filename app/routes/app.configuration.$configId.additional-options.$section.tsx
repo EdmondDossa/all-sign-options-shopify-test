@@ -62,13 +62,42 @@ const parseIndex = (value: FormDataEntryValue | null) => {
   return Number.isNaN(parsed) ? -1 : parsed;
 };
 
+const hasAdvancedMaterials = (data: any) => {
+  const metaType = String(data?.simplifiedBuilder?.meta?.materialType || "")
+    .trim()
+    .toLowerCase();
+  if (metaType === "advance" || metaType === "advanced") return true;
+
+  const legacyMaterials = Array.isArray(data?.materials) ? data.materials : [];
+  return legacyMaterials.some(
+    (material: any) =>
+      String(material?.type || "")
+        .trim()
+        .toLowerCase() === "advance",
+  );
+};
+
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const section = String(params.section || "").trim();
+  const configId = String(params.configId || "").trim();
+  const search = new URL(request.url).search;
 
   if (section === "additional-inputs") {
-    const configId = String(params.configId || "").trim();
-    const search = new URL(request.url).search;
     throw redirect(`/app/configuration/${configId}/additional-options/additional-components${search}`);
+  }
+
+  if (section === "additional-components") {
+    const { session } = await authenticate.admin(request);
+    const numericConfigId = parseInt(configId, 10);
+    const configuration =
+      Number.isFinite(numericConfigId)
+        ? await ConfigurationService.getConfiguration(numericConfigId, session.id)
+        : null;
+    const data = parseConfigData(configuration?.data) || {};
+
+    if (hasAdvancedMaterials(data)) {
+      throw redirect(`/app/configuration/${configId}/additional-options/inputs${search}`);
+    }
   }
 
   if (section === "materials") {
@@ -98,9 +127,6 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   if (allowedSections.includes(section)) {
     return json(null);
   }
-
-  const configId = String(params.configId || "").trim();
-  const search = new URL(request.url).search;
   throw redirect(`/app/configuration/${configId}/additional-options/materials${search}`);
 };
 
@@ -122,6 +148,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   }
 
   const data = parseConfigData(configuration.data) || {};
+  const advancedMaterials = hasAdvancedMaterials(data);
 
   if (section === "materials") {
     const [managedFixingMethods, managedShapes] = await Promise.all([
@@ -218,6 +245,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   }
 
   if (section === "additional-components" || section === "additional-inputs") {
+    if (advancedMaterials) {
+      return json(jFlashMessage("Additional components are only available for simple materials", "error"), { status: 400 });
+    }
+
     const currentState = getAdditionalInputsState(data);
 
     if (operation === "add-additional-input" || operation === "update-additional-input") {

@@ -72,6 +72,7 @@ export type ImageSettingsState = {
   enableCustomColor: boolean;
   fileUploadScript: {
     customWithGraphical: boolean;
+    enableSizeRestriction: boolean;
     uploadMinWidth: number;
     uploadMaxWidth: number;
     allowedUploadsExtentions: string[];
@@ -138,6 +139,7 @@ export const defaultImageSettings = (): ImageSettingsState => ({
   enableCustomColor: true,
   fileUploadScript: {
     customWithGraphical: false,
+    enableSizeRestriction: false,
     uploadMinWidth: 100,
     uploadMaxWidth: 200,
     allowedUploadsExtentions: ["png"],
@@ -1103,38 +1105,73 @@ export function ImageSetupSection({
               </InlineStack>
             </Grid.Cell>
 
-            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-              <TextField
-                label="Upload min width (px)"
-                autoComplete="off"
-                value={`${imageSettings.fileUploadScript.uploadMinWidth}`}
-                onChange={(value) =>
-                  setImageSettings((current) => ({
-                    ...current,
-                    fileUploadScript: {
-                      ...current.fileUploadScript,
-                      uploadMinWidth: Number(value) || 0,
-                    },
-                  }))
-                }
-              />
+            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+              <BlockStack gap="150">
+                <InlineStack gap="300" blockAlign="center">
+                  <Text as="strong" variant="bodyMd">
+                    Restrict uploaded image sizes
+                  </Text>
+                  <Text as="span" tone="subdued">
+                    No
+                  </Text>
+                  <ToggleButton
+                    checked={imageSettings.fileUploadScript.enableSizeRestriction}
+                    onChange={(value) =>
+                      setImageSettings((current) => ({
+                        ...current,
+                        fileUploadScript: {
+                          ...current.fileUploadScript,
+                          enableSizeRestriction: Boolean(value),
+                        },
+                      }))
+                    }
+                  />
+                  <Text as="span" tone="subdued">
+                    Yes
+                  </Text>
+                </InlineStack>
+                <Text as="p" tone="subdued">
+                  Enable this to enforce minimum and maximum width on uploaded images.
+                </Text>
+              </BlockStack>
             </Grid.Cell>
-            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-              <TextField
-                label="Upload Max width (px)"
-                autoComplete="off"
-                value={`${imageSettings.fileUploadScript.uploadMaxWidth}`}
-                onChange={(value) =>
-                  setImageSettings((current) => ({
-                    ...current,
-                    fileUploadScript: {
-                      ...current.fileUploadScript,
-                      uploadMaxWidth: Number(value) || 0,
-                    },
-                  }))
-                }
-              />
-            </Grid.Cell>
+
+            {imageSettings.fileUploadScript.enableSizeRestriction ? (
+              <>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="Upload min width (px)"
+                    autoComplete="off"
+                    value={`${imageSettings.fileUploadScript.uploadMinWidth}`}
+                    onChange={(value) =>
+                      setImageSettings((current) => ({
+                        ...current,
+                        fileUploadScript: {
+                          ...current.fileUploadScript,
+                          uploadMinWidth: Number(value) || 0,
+                        },
+                      }))
+                    }
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="Upload Max width (px)"
+                    autoComplete="off"
+                    value={`${imageSettings.fileUploadScript.uploadMaxWidth}`}
+                    onChange={(value) =>
+                      setImageSettings((current) => ({
+                        ...current,
+                        fileUploadScript: {
+                          ...current.fileUploadScript,
+                          uploadMaxWidth: Number(value) || 0,
+                        },
+                      }))
+                    }
+                  />
+                </Grid.Cell>
+              </>
+            ) : null}
 
             <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
               <MultiCombobox

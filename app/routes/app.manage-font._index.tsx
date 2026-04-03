@@ -17,9 +17,7 @@ import { PlusIcon, SearchIcon } from "@shopify/polaris-icons";
 import {
   useActionData,
   useLoaderData,
-  useNavigate,
   useNavigation,
-  useSearchParams,
   useSubmit,
 } from "@remix-run/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -87,15 +85,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function ManageFontIndex() {
   const submit = useSubmit();
-  const navigate = useNavigate();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
-  const [searchParams] = useSearchParams();
   const { fonts, googleFonts } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
 
-  const editingId = searchParams.get("id");
-  const isCreating = searchParams.get("new") === "1";
+  const [editingId, setEditingId] = useState<string>("");
+  const [isCreating, setIsCreating] = useState(false);
   const currentFont = useMemo(
     () =>
       editingId
@@ -139,6 +135,13 @@ export default function ManageFontIndex() {
       setSearchGoogleFontValue("");
     }
   }, [currentFont, isCreating]);
+
+  useEffect(() => {
+    if (actionData && "messageFlash" in actionData && (actionData as any).messageFlash?.status !== "error") {
+      setEditingId("");
+      setIsCreating(false);
+    }
+  }, [actionData]);
 
   useEffect(() => {
     if (sourceType !== "google") return;
@@ -240,9 +243,20 @@ export default function ManageFontIndex() {
     />
   );
 
-  const openCreate = () => navigate("?new=1");
-  const openEdit = (id: number) => navigate(`?id=${id}`);
-  const closeForm = () => navigate(".");
+  const isGoogleSource = sourceType === "google";
+
+  const openCreate = () => {
+    setEditingId("");
+    setIsCreating(true);
+  };
+  const openEdit = (id: number) => {
+    setIsCreating(false);
+    setEditingId(String(id));
+  };
+  const closeForm = () => {
+    setEditingId("");
+    setIsCreating(false);
+  };
 
   const saveFont = () => {
     submit(
@@ -339,20 +353,7 @@ export default function ManageFontIndex() {
                     </Grid.Cell>
                   ) : null}
                 </>
-              ) : (
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                  <FileInput
-                    type="font"
-                    helperText=".ttf, .otf Font File Type (Required)"
-                    error={getError(actionData, "url")}
-                    title="Upload font file"
-                    path={formData.url}
-                    handlePath={(value: string) =>
-                      setFormData((curr) => ({ ...curr, url: value }))
-                    }
-                  />
-                </Grid.Cell>
-              )}
+              ) : null}
 
               <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                 <TextField
@@ -370,21 +371,32 @@ export default function ManageFontIndex() {
                 />
               </Grid.Cell>
 
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                <TextField
-                  label="URL"
-                  value={String(formData.url || "")}
-                  onChange={(value) =>
-                    setFormData((curr) => ({
-                      ...curr,
-                      url: value,
-                      isGoogleFont: sourceType === "google",
-                    }))
-                  }
-                  autoComplete="off"
-                  error={getError(actionData, "url")}
-                />
-              </Grid.Cell>
+              {isGoogleSource ? (
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="URL"
+                    value={String(formData.url || "")}
+                    onChange={() => {}}
+                    autoComplete="off"
+                    error={getError(actionData, "url")}
+                    readOnly
+                    helpText="This URL is generated automatically from the selected Google Font and variant."
+                  />
+                </Grid.Cell>
+              ) : (
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <FileInput
+                    type="font"
+                    helperText=".ttf, .otf Font File Type (Required)"
+                    error={getError(actionData, "url")}
+                    title="Upload font file"
+                    path={formData.url}
+                    handlePath={(value: string) =>
+                      setFormData((curr) => ({ ...curr, url: value }))
+                    }
+                  />
+                </Grid.Cell>
+              )}
             </Grid>
           </Box>
 

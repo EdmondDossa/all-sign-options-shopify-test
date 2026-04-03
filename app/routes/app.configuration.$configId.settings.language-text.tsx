@@ -60,6 +60,7 @@ type VisualizerState = {
   textBorder: string;
   textProduct: string;
   textImage: string;
+  phraseImageSizeRestrictionError: string;
   textAdditonnalOptionsHeader: string;
   textButtonAdditonnalOptions: string;
   customSize: string;
@@ -137,6 +138,7 @@ const defaultVisualizer = (): VisualizerState => ({
   textBorder: "Border",
   textProduct: "Product",
   textImage: "Image",
+  phraseImageSizeRestrictionError: "The image size must be between",
   customSize: "Custom Size",
   customSizeButtonDone: "Done",
   thickness: "Thickness",
@@ -219,6 +221,7 @@ const visualizerOptionFields: Array<{ key: keyof VisualizerState; label: string 
   { key: "textBorder", label: "Text border" },
   { key: "textProduct", label: "Text product" },
   { key: "textImage", label: "Text image" },
+  { key: "phraseImageSizeRestrictionError", label: "Error message for image size restriction" },
   { key: "textButtonAdditonnalOptions", label: "Text additonnal options" },
   { key: "textAdditonnalOptionsHeader", label: "Text additonnal options header" },
 ];

@@ -2,13 +2,11 @@ import {
   BlockStack,
   Box,
   Card,
-  Divider,
   Grid,
   InlineStack,
   Text,
   TextField
 } from "@shopify/polaris";
-import { useCallback, useEffect, useState } from "react";
 
 import {
   Form,
@@ -17,23 +15,22 @@ import {
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
-import { SpacingBackground } from "~/components/layouts/SpacingBackground";
-import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
 import { authenticate } from "~/shopify.server";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import SettingOutputService from "~/models/SettingOutput.service";
-import { OutputType } from "~/types/SettingsType";
+import type { OutputType } from "~/types/SettingsType";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import { jFlashMessage } from "~/utils/message-flash";
-import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
-import { useForm, Controller, SubmitHandler } from "react-hook-form"
+import { SaveButton, ToggleButton } from "~/components/buttons";
+import { useForm, Controller } from "react-hook-form"
 import { getError } from "~/utils/error-getting";
 import { booleanTransform, stringTransform } from "~/utils/transfomerZod";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
 
   const output = await SettingOutputService.get(session.id);
   console.log(output);
@@ -51,7 +48,6 @@ export default function ManageSizeCreate() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
   } = useForm({
     mode: "onChange", 
     defaultValues: {
@@ -73,105 +69,143 @@ export default function ManageSizeCreate() {
 
 
   return (
-    <div>
-      <div style={{width:"100%", height:"auto", margin:"10px 0px"}}>
-        <Card>
-          <Form onSubmit={handleSubmit(onSubmit)} method="POST">
-            <div>
-              <Box paddingInline="300" paddingBlock="1200">
-                <Grid gap={{ lg: '30px' }}>
+    <div style={{ display: "grid", gap: 12, margin: "10px 0" }}>
+      <Card>
+        <Box padding="300">
+          <Text as="h2" variant="headingLg">
+            Output
+          </Text>
+          <Box paddingBlockStart="100">
+            <Text as="p" tone="subdued">
+              Configure exported file naming and output notification emails.
+            </Text>
+          </Box>
+        </Box>
+      </Card>
+
+      <Form onSubmit={handleSubmit(onSubmit)} method="POST">
+        <div style={{ display: "grid", gap: 12 }}>
+          <Card>
+            <Box padding="300">
+              <BlockStack gap="300">
+                <Text as="h3" variant="headingMd">
+                  File Naming
+                </Text>
+                <Grid gap={{ lg: "30px" }}>
                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                    <BlockStack gap="100">
+                    <BlockStack gap="150">
                       <InlineStack gap="300" blockAlign="center">
-                        <Text as="strong" fontWeight="bold" variant="bodyMd">
+                        <Text as="strong" variant="bodyMd">
                           Use order id as zip name
+                        </Text>
+                        <Text as="span" tone="subdued">
+                          No
                         </Text>
                         <Controller
                           name="zipName"
                           control={control}
                           render={({ field: { value, onChange } }) => (
-                            <ReactSwitchCustom checked={value} setChecked={onChange} />
+                            <ToggleButton checked={Boolean(value)} onChange={(next) => onChange(Boolean(next))} />
                           )}
                         />
+                        <Text as="span" tone="subdued">
+                          Yes
+                        </Text>
                       </InlineStack>
                       <Text as="span" tone="subdued">
-                        Use the command id as the name of the zip file that will
-                        contain the uploaded files during customization.
+                        Use the order id as the zip filename for uploaded customization assets.
                       </Text>
                     </BlockStack>
                   </Grid.Cell>
+                </Grid>
+              </BlockStack>
+            </Box>
+          </Card>
 
+          <Card>
+            <Box padding="300">
+              <BlockStack gap="300">
+                <Text as="h3" variant="headingMd">
+                  Notifications
+                </Text>
+                <Grid gap={{ lg: "30px" }}>
                   <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
-                    <BlockStack gap="300">
-                      <InlineStack gap="600" blockAlign="start">
-
-                        <InlineStack gap="300" blockAlign="center">
-                          <Text as="strong" fontWeight="bold" variant="bodyLg">
-                            Enable sending mail to customer
-                          </Text>
-                          <Controller
-                            name="enableSendMailToCustom"
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                              <ReactSwitchCustom checked={value} setChecked={onChange} />
-                            )}
-                          />
-                        </InlineStack>
-
-                        <InlineStack gap="300" blockAlign="center">
-                          <Text as="strong" fontWeight="bold" variant="bodyLg">
-                            Enable sending mail to admin
-                          </Text>
-                          <Controller
-                            name="enableSendMailToAdmin"
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                              <ReactSwitchCustom checked={value} setChecked={onChange} />
-                            )}
-                          />
-                        </InlineStack>
+                    <InlineStack gap="600" blockAlign="center">
+                      <InlineStack gap="300" blockAlign="center">
+                        <Text as="strong" variant="bodyMd">
+                          Send email to customer
+                        </Text>
+                        <Text as="span" tone="subdued">
+                          No
+                        </Text>
+                        <Controller
+                          name="enableSendMailToCustom"
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <ToggleButton checked={Boolean(value)} onChange={(next) => onChange(Boolean(next))} />
+                          )}
+                        />
+                        <Text as="span" tone="subdued">
+                          Yes
+                        </Text>
                       </InlineStack>
 
+                      <InlineStack gap="300" blockAlign="center">
+                        <Text as="strong" variant="bodyMd">
+                          Send email to admin
+                        </Text>
+                        <Text as="span" tone="subdued">
+                          No
+                        </Text>
+                        <Controller
+                          name="enableSendMailToAdmin"
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <ToggleButton checked={Boolean(value)} onChange={(next) => onChange(Boolean(next))} />
+                          )}
+                        />
+                        <Text as="span" tone="subdued">
+                          Yes
+                        </Text>
+                      </InlineStack>
+                    </InlineStack>
+                  </Grid.Cell>
 
-                      <Controller
-                        name="ouputReceiverMails"
-                        control={control}
-                        rules={{
-                          pattern: {
-                            value: /^([\w.-]+@[\w.-]+\.\w{2,},\s*)*([\w.-]+@[\w.-]+\.\w{2,})$/,
-                            message: "List of email invalide (separate comma)",
-                          },
-                        }}
-                        render={({ field , fieldState}) => (
-                          <TextField
-                            label="List of mails to send output"
-                            {...field}
-                            error= {
-                              fieldState.error?.message ||
-                              getError(actionData, 'ouputReceiverMails')
-                            }
-                            autoComplete="off"
-                          />
-                        )}
-                      />
-                    </BlockStack>
+                  <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
+                    <Controller
+                      name="ouputReceiverMails"
+                      control={control}
+                      rules={{
+                        pattern: {
+                          value: /^([\w.-]+@[\w.-]+\.\w{2,},\s*)*([\w.-]+@[\w.-]+\.\w{2,})$/,
+                          message: "List of email invalide (separate comma)",
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          label="Admin recipient emails"
+                          {...field}
+                          error={fieldState.error?.message || getError(actionData, "ouputReceiverMails")}
+                          autoComplete="off"
+                          helpText="Separate multiple emails with commas."
+                        />
+                      )}
+                    />
                   </Grid.Cell>
                 </Grid>
-              </Box>
-            </div>
+              </BlockStack>
+            </Box>
+          </Card>
 
-            <Divider borderWidth="100" />
-
-            <div>
-              <Box paddingInline="300" paddingBlock="300">
-                <InlineStack align="end" gap="600">
-                  <BiSaveBtn isLoading={isSubmitting} title="Save" />
-                </InlineStack>
-              </Box>
-            </div>
-          </Form>
-        </Card>
-      </div>
+          <Box>
+            <InlineStack align="end">
+              <SaveButton submit loading={isSubmitting}>
+                Save Output
+              </SaveButton>
+            </InlineStack>
+          </Box>
+        </div>
+      </Form>
     </div>
   );
 }
@@ -187,7 +221,7 @@ const formSchema = z.object({
 });
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const formData = await request.formData();
 
   const submission = parseWithZod(formData, { schema: formSchema });

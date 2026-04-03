@@ -212,6 +212,8 @@ export default function ManageFontCreate() {
     />
   );
 
+  const isGoogleSource = sourceType === "google";
+
   return (
     <div style={{ width: "100%", height: "auto", margin: "10px 0px" }}>
       <Card>
@@ -287,7 +289,29 @@ export default function ManageFontCreate() {
                 </>
               )}
 
-              {sourceType === "upload" && (
+              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                <TextField
+                  label="Label"
+                  value={String(formData.label || "")}
+                  onChange={handleLabel}
+                  autoComplete="off"
+                  error={getError(actionData, "label")}
+                />
+              </Grid.Cell>
+
+              {isGoogleSource ? (
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="URL"
+                    value={String(formData.url || "")}
+                    onChange={() => {}}
+                    autoComplete="off"
+                    error={getError(actionData, "url")}
+                    readOnly
+                    helpText="This URL is generated automatically from the selected Google Font and variant."
+                  />
+                </Grid.Cell>
+              ) : (
                 <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                   <FileInput
                     type="font"
@@ -301,26 +325,6 @@ export default function ManageFontCreate() {
                   />
                 </Grid.Cell>
               )}
-
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                <TextField
-                  label="Label"
-                  value={String(formData.label || "")}
-                  onChange={handleLabel}
-                  autoComplete="off"
-                  error={getError(actionData, "label")}
-                />
-              </Grid.Cell>
-
-              <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
-                <TextField
-                  label="URL"
-                  value={String(formData.url || "")}
-                  onChange={handleUrl}
-                  autoComplete="off"
-                  error={getError(actionData, "url")}
-                />
-              </Grid.Cell>
             </Grid>
           </Box>
 

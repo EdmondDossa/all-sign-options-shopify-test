@@ -1,4 +1,4 @@
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Box,
@@ -12,17 +12,17 @@ import {
 } from "@shopify/polaris";
 import { PlusIcon } from "@shopify/polaris-icons";
 import {
+  useActionData,
   useLoaderData,
   useNavigate,
   useNavigation,
-  useSearchParams,
   useSubmit,
 } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
 import ClipartsGroupService from "~/models/ClipartsGroup.service";
 import { authenticate } from "~/shopify.server";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-import { flashMessage, jFlashMessage } from "~/utils/message-flash";
+import { jFlashMessage } from "~/utils/message-flash";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
@@ -33,7 +33,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const formData = await request.formData();
-  const url = new URL(request.url);
   const operation = String(formData.get("operation") || "");
   const id = parseInt(String(formData.get("id") || ""), 10);
 
@@ -55,14 +54,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         { id, title, description } as any,
         session.id,
       );
-      return redirect(`${url.pathname}${flashMessage("Clipart group updated successfully")}`);
+      return json(jFlashMessage("Clipart group updated successfully"));
     }
 
     await ClipartsGroupService.addClipartsGroup(
       { title, description } as any,
       session.id,
     );
-    return redirect(`${url.pathname}${flashMessage("Clipart group added successfully")}`);
+    return json(jFlashMessage("Clipart group added successfully"));
   }
 
   return null;
@@ -72,12 +71,12 @@ export default function ManageClipartIndex() {
   const submit = useSubmit();
   const navigate = useNavigate();
   const navigation = useNavigation();
-  const [searchParams] = useSearchParams();
+  const actionData = useActionData<typeof action>();
   const { clipartsGroups } = useLoaderData<typeof loader>();
   useHandleFlashMessage();
 
-  const editingId = searchParams.get("id");
-  const isCreating = searchParams.get("new") === "1";
+  const [editingId, setEditingId] = useState<string>("");
+  const [isCreating, setIsCreating] = useState(false);
   const currentGroup = useMemo(
     () =>
       editingId
@@ -102,6 +101,13 @@ export default function ManageClipartIndex() {
     }
   }, [currentGroup, isCreating]);
 
+  useEffect(() => {
+    if (actionData && "messageFlash" in actionData && (actionData as any).messageFlash?.status !== "error") {
+      setEditingId("");
+      setIsCreating(false);
+    }
+  }, [actionData]);
+
   const isEditing = Boolean(currentGroup || isCreating);
   const isSubmitting = navigation.state === "submitting";
   const resourceName = {
@@ -109,9 +115,18 @@ export default function ManageClipartIndex() {
     plural: "Clipart Groups",
   };
 
-  const openCreate = () => navigate("?new=1");
-  const openEdit = (id: number) => navigate(`?id=${id}`);
-  const closeForm = () => navigate(".");
+  const openCreate = () => {
+    setEditingId("");
+    setIsCreating(true);
+  };
+  const openEdit = (id: number) => {
+    setIsCreating(false);
+    setEditingId(String(id));
+  };
+  const closeForm = () => {
+    setEditingId("");
+    setIsCreating(false);
+  };
 
   const saveGroup = () => {
     submit(

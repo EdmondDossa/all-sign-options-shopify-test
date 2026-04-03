@@ -81,10 +81,14 @@ export default function SimplifiedBuilderSectionRoute() {
       : Array.isArray(simplifiedBuilder?.customizationOptions?.borders?.items)
         ? simplifiedBuilder.customizationOptions.borders.items.length
       : 0,
-    additionalInputs: Array.isArray(additionalOptions?.additionalInputs?.items)
-      ? additionalOptions.additionalInputs.items.length
-      : Array.isArray(simplifiedBuilder?.customizationOptions?.additionalInputs?.items)
-        ? simplifiedBuilder.customizationOptions.additionalInputs.items.length
+    additionalInputs: Array.isArray(additionalOptions?.components?.items)
+      ? additionalOptions.components.items.length
+      : Array.isArray(simplifiedBuilder?.customizationOptions?.components?.items)
+        ? simplifiedBuilder.customizationOptions.components.items.length
+        : Array.isArray(additionalOptions?.additionalInputs?.items)
+          ? additionalOptions.additionalInputs.items.length
+          : Array.isArray(simplifiedBuilder?.customizationOptions?.additionalInputs?.items)
+            ? simplifiedBuilder.customizationOptions.additionalInputs.items.length
       : 0,
     customSizes: 0,
   };

@@ -180,7 +180,7 @@ export type SimplifiedBuilderData = {
         rulesByMaterial: Record<string, BuilderBorderRule>;
       }>;
     };
-    additionalInputs: {
+    components: {
       items: Array<{
         id: string;
         title: string;
@@ -189,6 +189,11 @@ export type SimplifiedBuilderData = {
         options: any[];
         rulesByMaterial: Record<string, BuilderAdditionalInputRule>;
       }>;
+    };
+    inputs: {
+      label?: string;
+      description?: string;
+      items: any[];
     };
   };
 };
@@ -315,7 +320,12 @@ export const createEmptySimplifiedBuilderData = ({
     borders: {
       items: [],
     },
-    additionalInputs: {
+    components: {
+      items: [],
+    },
+    inputs: {
+      label: "Inputs",
+      description: "",
       items: [],
     },
   },
@@ -409,7 +419,7 @@ export const migrateLegacyClassicDataToSimplifiedBuilder = ({
   >();
   const additionalInputMap = new Map<
     string,
-    SimplifiedBuilderData["customizationOptions"]["additionalInputs"]["items"][number]
+    SimplifiedBuilderData["customizationOptions"]["components"]["items"][number]
   >();
 
   materials.forEach((material: any, materialIndex: number) => {
@@ -624,7 +634,7 @@ export const migrateLegacyClassicDataToSimplifiedBuilder = ({
   base.customizationOptions.fixingMethods.items = Array.from(fixingMethodMap.values());
   base.customizationOptions.shapes.items = Array.from(shapeMap.values());
   base.customizationOptions.borders.items = Array.from(borderMap.values());
-  base.customizationOptions.additionalInputs.items = Array.from(additionalInputMap.values());
+  base.customizationOptions.components.items = Array.from(additionalInputMap.values());
 
   return base;
 };
@@ -642,6 +652,10 @@ export const ensureClassicSimplifiedBuilderData = ({
 }) => {
   const safeData = data && typeof data === "object" ? cloneObject(data) : {};
   const existing = safeData?.simplifiedBuilder;
+  const isAdvancedMaterialType = (value: unknown) => {
+    const normalized = normalizeText(value).toLowerCase();
+    return normalized === "advance" || normalized === "advanced";
+  };
 
   if (existing && typeof existing === "object") {
     const normalizedBuilder = {
@@ -702,6 +716,10 @@ export const ensureClassicSimplifiedBuilderData = ({
             : existing?.meta?.pricingMode || null,
       },
     };
+    const normalizedMaterialType = normalizeText(
+      materialType || normalizedBuilder?.meta?.materialType,
+    );
+    const exposeComponents = !isAdvancedMaterialType(normalizedMaterialType);
 
     return {
       ...safeData,
@@ -719,7 +737,14 @@ export const ensureClassicSimplifiedBuilderData = ({
         fixingMethods: normalizedBuilder.customizationOptions.fixingMethods,
         shapes: normalizedBuilder.customizationOptions.shapes,
         borders: normalizedBuilder.customizationOptions.borders,
-        additionalInputs: normalizedBuilder.customizationOptions.additionalInputs,
+        ...(exposeComponents
+          ? {
+              components:
+                normalizedBuilder.customizationOptions.components ||
+                normalizedBuilder.customizationOptions.additionalInputs,
+            }
+          : {}),
+        inputs: normalizedBuilder.customizationOptions.inputs,
       },
       configuratorMeta: {
         version: 1,
@@ -734,6 +759,10 @@ export const ensureClassicSimplifiedBuilderData = ({
     productType,
     pricingMode,
   });
+  const normalizedMaterialType = normalizeText(
+    materialType || migratedBuilder?.meta?.materialType,
+  );
+  const exposeComponents = !isAdvancedMaterialType(normalizedMaterialType);
 
   return {
     ...safeData,
@@ -751,7 +780,14 @@ export const ensureClassicSimplifiedBuilderData = ({
       fixingMethods: migratedBuilder.customizationOptions.fixingMethods,
       shapes: migratedBuilder.customizationOptions.shapes,
       borders: migratedBuilder.customizationOptions.borders,
-      additionalInputs: migratedBuilder.customizationOptions.additionalInputs,
+      ...(exposeComponents
+        ? {
+            components:
+              migratedBuilder.customizationOptions.components ||
+              migratedBuilder.customizationOptions.additionalInputs,
+          }
+        : {}),
+      inputs: migratedBuilder.customizationOptions.inputs,
     },
     configuratorMeta: {
       version: 1,

@@ -79,6 +79,12 @@ export const syncClassicCustomInputsIntoData = ({
     productType: data?.simplifiedBuilder?.meta?.productType || "",
     pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
   });
+  const materialType = String(
+    data?.simplifiedBuilder?.meta?.materialType || nextData?.simplifiedBuilder?.meta?.materialType || "",
+  )
+    .trim()
+    .toLowerCase();
+  const isAdvancedMaterialType = materialType === "advance" || materialType === "advanced";
 
   const normalizedItems = state.items.map((item) => {
     const clone = JSON.parse(JSON.stringify(item || {}));
@@ -88,17 +94,23 @@ export const syncClassicCustomInputsIntoData = ({
 
   nextData.additionalOptions = {
     ...(nextData.additionalOptions || {}),
+    ...(isAdvancedMaterialType ? { components: undefined } : {}),
     inputs: {
       label: String(state.label || "Inputs"),
       description: String(state.description || ""),
       items: normalizedItems,
     },
   };
+  if (isAdvancedMaterialType && nextData.additionalOptions) {
+    delete (nextData.additionalOptions as any).components;
+    delete (nextData.additionalOptions as any).additionalInputs;
+  }
 
   nextData.simplifiedBuilder = {
     ...(nextData.simplifiedBuilder || {}),
     customizationOptions: {
       ...(nextData.simplifiedBuilder?.customizationOptions || {}),
+      ...(isAdvancedMaterialType ? { components: undefined } : {}),
       inputs: {
         label: String(state.label || "Inputs"),
         description: String(state.description || ""),
@@ -106,6 +118,10 @@ export const syncClassicCustomInputsIntoData = ({
       },
     },
   };
+  if (isAdvancedMaterialType && nextData.simplifiedBuilder?.customizationOptions) {
+    delete (nextData.simplifiedBuilder.customizationOptions as any).components;
+    delete (nextData.simplifiedBuilder.customizationOptions as any).additionalInputs;
+  }
 
   return nextData;
 };

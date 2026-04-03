@@ -280,18 +280,24 @@ export default function ClassicConfiguratorLayout() {
       {
         title: "Additional Options",
         items: [
-          {
-            label: "Additional Components",
-            path: `/app/configuration/${configId}/additional-options/additional-components${search}`,
-            icon: PlusCircleIcon,
-            keywords: [
-              "additional component",
-              "additional components",
-              "component option",
-              "option group",
-              "extras",
-            ],
-          },
+          ...(!hasAdvancedMaterials
+            ? [
+                {
+                  label: "Components",
+                  path: `/app/configuration/${configId}/additional-options/additional-components${search}`,
+                  icon: PlusCircleIcon,
+                  keywords: [
+                    "additional component",
+                    "additional components",
+                    "component",
+                    "components",
+                    "component option",
+                    "option group",
+                    "extras",
+                  ],
+                } satisfies LayoutItem,
+              ]
+            : []),
           {
             label: "Inputs",
             path: `/app/configuration/${configId}/additional-options/inputs${search}`,
@@ -640,6 +646,9 @@ export default function ClassicConfiguratorLayout() {
                             display: "flex",
                             flexDirection: "column",
                             gap: "4px",
+                            marginLeft: "12px",
+                            paddingLeft: "10px",
+                            borderLeft: "1px solid #e5e7eb",
                           }}
                         >
                           {group.items.map((item) => (
@@ -714,10 +723,10 @@ export default function ClassicConfiguratorLayout() {
                             gap: "12px",
                             padding: "10px 12px",
                             borderRadius: "10px",
-                            background: active ? "#eef2ff" : "#ffffff",
+                            background: active ? "#eef2ff" : "transparent",
                             border: active
                               ? "1px solid #c7d2fe"
-                              : "1px solid #e5e7eb",
+                              : "1px solid transparent",
                             color: "#111827",
                           }}
                         >
@@ -791,7 +800,16 @@ export default function ClassicConfiguratorLayout() {
 
                     {groupIsExpanded ? (
                       <Box paddingBlockStart="150">
-                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "4px",
+                            marginLeft: "12px",
+                            paddingLeft: "10px",
+                            borderLeft: "1px solid #e5e7eb",
+                          }}
+                        >
                           {group.items.map((item) => (
                             <NavLink key={item.path} to={item.path} style={{ textDecoration: "none" }}>
                               {({ isActive }) => {

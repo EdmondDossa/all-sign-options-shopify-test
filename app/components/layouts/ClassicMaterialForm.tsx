@@ -10,6 +10,7 @@ type Props = {
   item: MaterialItem;
   pricingOptions: NamedOption[];
   componentItems: NamedOption[];
+  enableComponentExclusions?: boolean;
   currencySymbol: string;
   isEditing: boolean;
   isSubmitting?: boolean;
@@ -22,6 +23,7 @@ export default function ClassicMaterialForm({
   item,
   pricingOptions,
   componentItems,
+  enableComponentExclusions = true,
   currencySymbol,
   isEditing,
   isSubmitting = false,
@@ -117,30 +119,34 @@ export default function ClassicMaterialForm({
             helpText="This pricing profile is applied when this material is selected."
           />
 
-          <div style={{ display: "grid", gap: 12 }}>
-            <Text as="h3" variant="headingMd">
-              Exclude components
-            </Text>
-            <Text as="p" tone="subdued">
-              Hide any components that should not be available for this material.
-            </Text>
-          </div>
+          {enableComponentExclusions ? (
+            <>
+              <div style={{ display: "grid", gap: 12 }}>
+                <Text as="h3" variant="headingMd">
+                  Exclude components
+                </Text>
+                <Text as="p" tone="subdued">
+                  Hide any components that should not be available for this material.
+                </Text>
+              </div>
 
-          <div style={{ display: "grid", gap: 8 }}>
-            <MultiCombobox
-              label="Components excluded for this material"
-              placeholder="Select excluded components"
-              helpText="Components selected here will be unavailable when this material is chosen."
-              data={componentItems.map((item) => ({ label: item.label, value: item.id }))}
-              selectedOptions={item.excludeComponentIds}
-              setSelectedOptions={(value: string[]) => patch({ excludeComponentIds: value })}
-            />
-            <Text as="p" tone="subdued">
-              {selectedComponentLabels.length > 0
-                ? `Excluded components: ${selectedComponentLabels.join(", ")}`
-                : "No components excluded."}
-            </Text>
-          </div>
+              <div style={{ display: "grid", gap: 8 }}>
+                <MultiCombobox
+                  label="Components excluded for this material"
+                  placeholder="Select excluded components"
+                  helpText="Components selected here will be unavailable when this material is chosen."
+                  data={componentItems.map((item) => ({ label: item.label, value: item.id }))}
+                  selectedOptions={item.excludeComponentIds}
+                  setSelectedOptions={(value: string[]) => patch({ excludeComponentIds: value })}
+                />
+                <Text as="p" tone="subdued">
+                  {selectedComponentLabels.length > 0
+                    ? `Excluded components: ${selectedComponentLabels.join(", ")}`
+                    : "No components excluded."}
+                </Text>
+              </div>
+            </>
+          ) : null}
 
           <InlineStack align="end" gap="200" blockAlign="center">
             <Button onClick={onCancel}>Back to materials</Button>
