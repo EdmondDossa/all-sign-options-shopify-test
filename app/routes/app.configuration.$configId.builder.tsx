@@ -17,6 +17,7 @@ import {
   SIMPLIFIED_BUILDER_GROUPS,
   type SimplifiedBuilderSectionKey,
 } from "~/utils/simplified-builder";
+import { getClassicMaterialTypeLabel } from "~/utils/classic-config-data";
 
 type ConfigurationOutletContext = {
   configuration: any;
@@ -140,7 +141,7 @@ export default function SimplifiedClassicBuilderLayout() {
             <Box paddingBlockStart="050">
               <InlineStack gap="100">
                 <Badge>ID: {configuration?.id}</Badge>
-                {materialType ? <Badge>{materialType}</Badge> : null}
+                {materialType ? <Badge>{getClassicMaterialTypeLabel(materialType)}</Badge> : null}
                 {pricingMode ? <Badge tone="info">{pricingMode}</Badge> : null}
               </InlineStack>
             </Box>

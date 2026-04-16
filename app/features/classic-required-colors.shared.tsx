@@ -4,6 +4,11 @@ import type {
   ClassicColorMaterialOption,
 } from "~/components/layouts/ClassicColorForm";
 import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
+import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+  getClassicDataProductType,
+} from "~/utils/classic-config-data";
 
 export type MaterialOption = ClassicColorMaterialOption;
 export type ColorItem = ClassicColorFormItem;
@@ -141,49 +146,6 @@ export const normalizeLegacyColor = (
   excludeMaterials: Array.isArray(item?.excludeMaterials) ? item.excludeMaterials.map(String) : [],
 });
 
-export const normalizeBuilderColor = (item: any, materialIds: string[]): ColorItem => {
-  const rulesByMaterial = item?.rulesByMaterial || {};
-  const enabledMaterials = materialIds.filter(
-    (materialId) => rulesByMaterial?.[materialId]?.enabled !== false,
-  );
-  const firstRule = rulesByMaterial?.[enabledMaterials[0]] || {};
-
-  return {
-    id: String(
-      item?.id ||
-        createColorId(item?.name || item?.label || "", firstRule?.textColor?.codeHex || ""),
-    ),
-    name: String(item?.name || item?.label || "Color"),
-    additionalPrice: Number(
-      item?.additionalPrice ?? item?.price?.value ?? firstRule?.additionalPrice ?? 0,
-    ),
-    isDefault: materialIds.some((materialId) => Boolean(rulesByMaterial?.[materialId]?.isDefault)),
-    textColor: {
-      active: Boolean(item?.textColor?.active ?? firstRule?.textColor?.active),
-      sameForBorder: Boolean(
-        item?.textColor?.sameForBorder ?? firstRule?.textColor?.sameForBorder,
-      ),
-      codeHex: normalizeHex(
-        item?.textColor?.codeHex || firstRule?.textColor?.codeHex || "#000000",
-      ),
-      name: String(
-        item?.textColor?.name ||
-          firstRule?.textColor?.name ||
-          item?.name ||
-          item?.label ||
-          "",
-      ),
-    },
-    pattern: {
-      active: Boolean(item?.pattern?.active ?? firstRule?.pattern?.active),
-      codeHex: normalizeHex(item?.pattern?.codeHex || firstRule?.pattern?.codeHex || "#000000"),
-      url: String(item?.pattern?.url || firstRule?.pattern?.url || ""),
-    },
-    prevImg: String(item?.prevImg || firstRule?.previewImage || ""),
-    excludeMaterials: materialIds.filter((materialId) => !enabledMaterials.includes(materialId)),
-  };
-};
-
 export const getColorsState = (data: any): ColorSectionState => {
   const materialIds = getMaterialOptions(data).map((item) => item.id);
   const requiredColors = data?.requiredOptions?.colors;
@@ -195,19 +157,6 @@ export const getColorsState = (data: any): ColorSectionState => {
         ...(requiredColors?.customColors || {}),
       },
       items: ensureOneDefault(requiredColors.items.map(normalizeLegacyColor)),
-    };
-  }
-
-  const builderColors = data?.simplifiedBuilder?.coreSetup?.colors;
-  if (builderColors && Array.isArray(builderColors?.items)) {
-    return {
-      customColors: {
-        ...defaultCustomColors(),
-        ...(builderColors?.customColors || {}),
-      },
-      items: ensureOneDefault(
-        builderColors.items.map((item: any) => normalizeBuilderColor(item, materialIds)),
-      ),
     };
   }
 
@@ -295,13 +244,12 @@ export const validateColor = (item: ColorItem, items: ColorItem[], editingIndex:
 export const syncColorsIntoData = (
   data: any,
   state: ColorSectionState,
-  materialOptions: MaterialOption[],
 ) => {
   const nextData = ensureClassicSimplifiedBuilderData({
     data,
-    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
-    productType: data?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(data),
+    productType: getClassicDataProductType(data),
+    pricingMode: getClassicDataPricingMode(data),
   });
 
   const normalizedItems = ensureOneDefault(
@@ -333,38 +281,6 @@ export const syncColorsIntoData = (
   nextData.requiredOptions = {
     ...(nextData.requiredOptions || {}),
     colors: nextRequiredColors,
-  };
-
-  nextData.simplifiedBuilder = {
-    ...(nextData.simplifiedBuilder || {}),
-    coreSetup: {
-      ...(nextData.simplifiedBuilder?.coreSetup || {}),
-      colors: {
-        customColors: nextRequiredColors.customColors,
-        items: normalizedItems.map((item) => ({
-          id: item.id,
-          name: item.name,
-          additionalPrice: item.additionalPrice,
-          isDefault: item.isDefault,
-          textColor: item.textColor,
-          pattern: item.pattern,
-          prevImg: item.prevImg,
-          rulesByMaterial: Object.fromEntries(
-            materialOptions.map((material) => [
-              material.id,
-              {
-                enabled: !item.excludeMaterials.includes(material.id),
-                isDefault: Boolean(item.isDefault),
-                additionalPrice: Number(item.additionalPrice || 0),
-                previewImage: item.prevImg || "",
-                textColor: item.textColor,
-                pattern: item.pattern,
-              },
-            ]),
-          ),
-        })),
-      },
-    },
   };
 
   return nextData;

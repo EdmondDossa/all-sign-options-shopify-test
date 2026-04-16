@@ -23,12 +23,25 @@ const parseConfigData = (rawData: any) => {
 };
 
 const isNcpcConfiguration = (configuration: any) => {
+  const data = parseConfigData(configuration?.data);
+  const hasClassicModularShape =
+    String(data?.configuratorMeta?.structure || "").trim().toLowerCase() ===
+      "modular-classic" ||
+    Boolean(String(data?.materialType || "").trim()) ||
+    (Boolean(String(data?.productType || "").trim()) &&
+      !["neon", "channel"].includes(
+        String(data?.productType || "").trim().toLowerCase(),
+      ));
+
+  if (hasClassicModularShape) {
+    return false;
+  }
+
   const productType = normalizeProductType(configuration?.productType);
   if (productType === "neon" || productType === "channel") {
     return true;
   }
 
-  const data = parseConfigData(configuration?.data);
   const dataProductType = normalizeProductType(data?.productType);
   if (dataProductType === "neon" || dataProductType === "channel") {
     return true;

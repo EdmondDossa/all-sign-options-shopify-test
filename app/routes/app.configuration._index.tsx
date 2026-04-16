@@ -58,6 +58,7 @@ import {
   ViewIcon,
 } from "@shopify/polaris-icons";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
+import { getClassicProductTypeLabel } from "~/utils/classic-config-data";
 
 // export const loader = async ({ request }: LoaderFunctionArgs) => {
 //   const { session } = await authenticate.admin(request);
@@ -317,15 +318,33 @@ export default function Configuration() {
       return normalizedWrappedProductType;
     }
 
-    const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
+    const hasClassicModularShape =
+      String(data?.configuratorMeta?.structure || "").trim().toLowerCase() ===
+        "modular-classic" ||
+      Boolean(String(data?.materialType || "").trim()) ||
+      (Boolean(String(data?.productType || "").trim()) &&
+        !["neon", "channel"].includes(
+          String(data?.productType || "").trim().toLowerCase(),
+        ));
+
+    if (hasClassicModularShape) {
+      return null;
+    }
+
+    const hasNcpcShape =
+      Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
     const hasClassicMaterials = Array.isArray(data?.materials);
     const hasWrappedNcpcShape =
-      Boolean(wrappedNcpcData?.requiredOptions) && Boolean(wrappedNcpcData?.additionalOptions);
+      Boolean(wrappedNcpcData?.requiredOptions) &&
+      Boolean(wrappedNcpcData?.additionalOptions);
 
     // Fallback legacy-safe:
     // treat as NCPC only if NCPC blocks exist and classic materials are absent.
     if (hasNcpcShape && !hasClassicMaterials) {
-      if (data?.requiredOptions?.letterTypesOptions || data?.requiredOptions?.letterTypeOptions) {
+      if (
+        data?.requiredOptions?.letterTypesOptions ||
+        data?.requiredOptions?.letterTypeOptions
+      ) {
         return "channel";
       }
       return "neon";
@@ -355,13 +374,15 @@ export default function Configuration() {
       navigate(`/app/ncpc/${safeConfigId}/required-options`);
       return;
     }
-    navigate(`${safeConfigId}/materials`);
+    navigate(`${safeConfigId}/required-options/sizes`);
   };
 
   const handlePreviews = (id: number) => {
     const safeConfigId = normalizeConfigId(id);
     if (!safeConfigId) return;
-    const returnTo = encodeURIComponent(`${location.pathname}${location.search || ""}`);
+    const returnTo = encodeURIComponent(
+      `${location.pathname}${location.search || ""}`,
+    );
     navigate(`${safeConfigId}/preview?returnTo=${returnTo}`);
   };
 
@@ -391,13 +412,17 @@ export default function Configuration() {
     const configData = parseConfigData(config?.data);
     const wrappedNcpcData = parseConfigData(configData?.ncpc);
     const pricingModeLabel = formatPricingModeLabel(
-      config?.pricingMode || configData?.pricingMode || wrappedNcpcData?.pricingMode,
+      config?.pricingMode ||
+        configData?.pricingMode ||
+        wrappedNcpcData?.pricingMode,
     );
     const materialBadgeLabel = ncpcProductType
       ? ncpcProductType === "neon"
         ? "Neon"
         : "Channel"
-      : (materialType ?? "none");
+      : getClassicProductTypeLabel(
+          productType || configData?.productType,
+        );
     const materialBadgeTone = ncpcProductType
       ? "attention"
       : materialType === "simple"
@@ -565,7 +590,7 @@ export default function Configuration() {
                 { title: "Name configuration" },
                 { title: "Desciption" },
                 { title: "Icon", alignment: "center" },
-                { title: "Material Type", alignment: "center" },
+                { title: "Product Type", alignment: "center" },
                 { title: "Pricing mode", alignment: "center" },
                 { title: "Action", alignment: "center" },
               ]}

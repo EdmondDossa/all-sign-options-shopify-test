@@ -2,6 +2,8 @@ import prisma from "~/db.server";
 import type { ConfigurationType } from "~/types/ConfigurationType";
 import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
 
+const cloneObject = <T>(value: T): T => JSON.parse(JSON.stringify(value));
+
 const initialData = {
   settings: {
     generals: {
@@ -1143,6 +1145,29 @@ const getObjectData = (value: any) => {
   return typeof value === "object" ? value : null;
 };
 
+const sortObjectDeep = (value: any): any => {
+  if (Array.isArray(value)) {
+    return value.map(sortObjectDeep);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.keys(value)
+      .sort()
+      .reduce(
+        (acc, key) => {
+          acc[key] = sortObjectDeep(value[key]);
+          return acc;
+        },
+        {} as Record<string, any>,
+      );
+  }
+
+  return value;
+};
+
+const hasSameDataShape = (left: any, right: any) =>
+  JSON.stringify(sortObjectDeep(left)) === JSON.stringify(sortObjectDeep(right));
+
 const withReadNcpcMeta = (configuration: any) => {
   if (!configuration) return configuration;
   const data = getObjectData(configuration.data);
@@ -1157,9 +1182,9 @@ const withReadNcpcMeta = (configuration: any) => {
         data,
         materialType: configuration?.materialType,
         productType: configuration?.productType,
-        pricingMode: configuration?.pricingMode || null,
+        pricingMode: configuration?.pricingMode || "frame-fit",
       }),
-      pricingMode: null,
+      pricingMode: "frame-fit",
     };
   }
 
@@ -1172,6 +1197,108 @@ const withReadNcpcMeta = (configuration: any) => {
     ...configuration,
     productType: resolvedProductType,
     pricingMode: resolvedPricingMode,
+  };
+};
+
+const withReadAndPersistConfiguration = async (
+  configuration: any,
+  sessionId: string,
+) => {
+  if (!configuration) return configuration;
+
+  const rawData = getObjectData(configuration.data);
+  const hasClassicModularShape =
+    String(rawData?.configuratorMeta?.structure || "").trim().toLowerCase() ===
+      "modular-classic" ||
+    Boolean(String(rawData?.materialType || "").trim()) ||
+    (Boolean(String(rawData?.productType || "").trim()) &&
+      !["neon", "channel"].includes(
+        String(rawData?.productType || "").trim().toLowerCase(),
+      ));
+
+  if (hasClassicModularShape) {
+    const normalizedData = ensureClassicSimplifiedBuilderData({
+      data: rawData || {},
+      materialType: rawData?.materialType || configuration?.materialType,
+      productType: rawData?.productType || configuration?.productType,
+      pricingMode: "frame-fit",
+    });
+    const normalizedProductType =
+      String(rawData?.productType || configuration?.productType || "").trim() ||
+      null;
+
+    const needsPersistence =
+      !hasSameDataShape(rawData || {}, normalizedData) ||
+      configuration?.productType !== normalizedProductType ||
+      configuration?.pricingMode !== "frame-fit";
+
+    if (needsPersistence) {
+      try {
+        await prisma.configuration.update({
+          where: {
+            id: configuration.id,
+            sessionId,
+          },
+          data: {
+            data: normalizedData,
+            productType: normalizedProductType,
+            pricingMode: "frame-fit",
+          },
+        });
+      } catch (error) {
+        console.error(
+          "Error persisting normalized classic configuration:",
+          error,
+        );
+      }
+    }
+
+    return {
+      ...configuration,
+      data: normalizedData,
+      productType: normalizedProductType,
+      pricingMode: "frame-fit",
+    };
+  }
+
+  const resolvedProductType =
+    normalizeNcpcProductType(configuration.productType) ||
+    normalizeNcpcProductType(rawData?.productType);
+
+  if (resolvedProductType) {
+    return withReadNcpcMeta(configuration);
+  }
+
+  const normalizedData = ensureClassicSimplifiedBuilderData({
+    data: rawData || {},
+    materialType: configuration?.materialType,
+    productType: configuration?.productType,
+    pricingMode: configuration?.pricingMode || "frame-fit",
+  });
+
+  if (!hasSameDataShape(rawData || {}, normalizedData)) {
+    try {
+      await prisma.configuration.update({
+        where: {
+          id: configuration.id,
+          sessionId,
+        },
+        data: {
+          data: normalizedData,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Error persisting migrated classic configuration:",
+        error,
+      );
+    }
+  }
+
+  return {
+    ...configuration,
+    data: normalizedData,
+    pricingMode: "frame-fit",
   };
 };
 
@@ -1195,7 +1322,11 @@ export default class ConfigurationService {
         },
       });
 
-      return configurations.map(withReadNcpcMeta);
+      return await Promise.all(
+        configurations.map((configuration) =>
+          withReadAndPersistConfiguration(configuration, sessionId),
+        ),
+      );
     } catch (error) {
       console.error("Error retrieving configurations:", error);
       return Promise.reject(null);
@@ -1215,7 +1346,7 @@ export default class ConfigurationService {
         include: { templates: true },
       });
 
-      return withReadNcpcMeta(configuration);
+      return await withReadAndPersistConfiguration(configuration, sessionId);
     } catch (error) {
       console.error("Error retrieving configuration:", error);
       return Promise.reject(null);
@@ -1234,7 +1365,7 @@ export default class ConfigurationService {
         },
       });
 
-      return withReadNcpcMeta(configuration);
+      return await withReadAndPersistConfiguration(configuration, sessionId);
     } catch (error) {
       console.error("Error retrieving configuration:", error);
       return Promise.reject(null);
@@ -1292,6 +1423,7 @@ export default class ConfigurationService {
       products,
       templates,
       materialType,
+      productFamily,
       productType,
       pricingMode,
       ...configData
@@ -1316,19 +1448,22 @@ export default class ConfigurationService {
     }
     try {
       const normalizedData = isNcpcConfiguration
-        ? getObjectData((configData as any).data)
+        ? {
+            ...(getObjectData((configData as any).data) || {}),
+          }
         : ensureClassicSimplifiedBuilderData({
             data: getObjectData((configData as any).data) || {},
             materialType: materialType as any,
+            productFamily: productFamily as any,
             productType: productType as any,
-            pricingMode: null,
+            pricingMode: "frame-fit",
           });
 
       const normalizedPricingMode = isNcpcConfiguration
         ? normalizeNcpcPricingMode(
             pricingMode || (normalizedData as any)?.pricingMode,
           ) || "fixed-height"
-        : null;
+        : "frame-fit";
 
       console.log("updateConfiguration - Saving materialType:", materialType);
       console.log("updateConfiguration - Saving productType:", productType);
@@ -1343,6 +1478,8 @@ export default class ConfigurationService {
         },
         data: {
           ...configData,
+          icon: String((configData as any)?.icon ?? ""),
+          popupImg: String((configData as any)?.popupImg ?? ""),
           data: normalizedData,
           product: products, // Save products array in DB field 'product' (legacy column name)
           materialType: materialType, // Explicitly preserve materialType
@@ -1352,7 +1489,7 @@ export default class ConfigurationService {
       });
     } catch (error) {
       console.error("Error updating configuration:", error);
-      return Promise.reject(null);
+      return Promise.reject(error);
     }
   }
 
@@ -1381,6 +1518,7 @@ export default class ConfigurationService {
       products,
       templates,
       materialType,
+      productFamily,
       productType,
       pricingMode,
       ...configData
@@ -1409,28 +1547,30 @@ export default class ConfigurationService {
             pricingMode ||
               (getObjectData((configData as any).data) as any)?.pricingMode,
           ) || "fixed-height"
-        : null;
+        : "frame-fit";
 
       if (isNcpcConfiguration) {
         const incomingData = getObjectData((configData as any).data);
-        dataForCreate = incomingData || {};
+        dataForCreate = {
+          ...(incomingData || {}),
+        };
       } else {
-        if (configuration.materialType == "simple") {
-          initialData.materials = simpleMaterials;
-        } else if (configuration.materialType == "advance") {
-          initialData.materials = advanceMaterials;
-        }
         dataForCreate = ensureClassicSimplifiedBuilderData({
-          data: (configData as any).data || initialData,
+          data: getObjectData((configData as any).data) || {
+            settings: cloneObject(initialData.settings),
+          },
           materialType: materialType as any,
+          productFamily: productFamily as any,
           productType: productType as any,
-          pricingMode: null,
+          pricingMode: "frame-fit",
         });
       }
 
       return await prisma.configuration.create({
         data: {
           ...configData,
+          icon: String((configData as any)?.icon ?? ""),
+          popupImg: String((configData as any)?.popupImg ?? ""),
           product: products, // Save products array in DB field 'product' (legacy column name)
           materialType: materialType, // Save materialType
           productType: normalizedNcpcProductType || productType, // Save productType
@@ -1441,7 +1581,7 @@ export default class ConfigurationService {
       });
     } catch (error) {
       console.error("Error adding configuration:", error);
-      return Promise.reject(null);
+      return Promise.reject(error);
     }
   }
 

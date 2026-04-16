@@ -1,4 +1,9 @@
 import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
+import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+  getClassicDataProductType,
+} from "~/utils/classic-config-data";
 
 export type ManagedClipart = {
   id?: number;
@@ -96,9 +101,9 @@ export const getClipartsState = (data: any, managedGroups: ManagedClipartGroup[]
 export const syncClipartsIntoData = (data: any, state: ClipartsSectionState) => {
   const nextData = ensureClassicSimplifiedBuilderData({
     data,
-    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
-    productType: data?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(data),
+    productType: getClassicDataProductType(data),
+    pricingMode: getClassicDataPricingMode(data),
   });
 
   const normalizedItems = state.items

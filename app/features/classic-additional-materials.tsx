@@ -17,6 +17,7 @@ import {
 } from "~/features/classic-additional-materials.shared";
 import { getComponentsState } from "~/features/classic-required-components.shared";
 import Sortable from "~/utils/sortable-adapter";
+import { hasAdvancedClassicMaterials } from "~/utils/classic-config-data";
 
 type LoaderData = {
   managedFixingMethods?: any[];
@@ -51,20 +52,10 @@ export function ClassicAdditionalMaterialsScreen() {
     [data, managedFixingMethods, managedShapes],
   );
   const pricingOptions = useMemo(() => getPricingOptions(data), [data]);
-  const hasAdvancedMaterials = useMemo(() => {
-    const metaType = String(data?.simplifiedBuilder?.meta?.materialType || "")
-      .trim()
-      .toLowerCase();
-    if (metaType === "advance" || metaType === "advanced") return true;
-
-    const legacyMaterials = Array.isArray(data?.materials) ? data.materials : [];
-    return legacyMaterials.some(
-      (material: any) =>
-        String(material?.type || "")
-          .trim()
-          .toLowerCase() === "advance",
-    );
-  }, [data]);
+  const hasAdvancedMaterials = useMemo(
+    () => hasAdvancedClassicMaterials(data),
+    [data],
+  );
   const componentItems = useMemo(
     () =>
       hasAdvancedMaterials

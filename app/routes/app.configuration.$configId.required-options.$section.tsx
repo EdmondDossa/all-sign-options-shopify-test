@@ -48,6 +48,7 @@ import {
   syncComponentsIntoData,
 } from "~/features/classic-required-components.shared";
 import { jFlashMessage } from "~/utils/message-flash";
+import { hasAdvancedClassicMaterials } from "~/utils/classic-config-data";
 
 const allowedSections = ["sizes", "pricing", "fonts", "colors", "components", "fixing-methods", "shapes", "borders"];
 
@@ -66,20 +67,7 @@ const parseConfigDataSafe = (rawData: any) => {
 
 const hasAdvancedMaterials = (configuration: any) => {
   const data = parseConfigDataSafe(configuration?.data) || {};
-  const metaType = String(data?.simplifiedBuilder?.meta?.materialType || "")
-    .trim()
-    .toLowerCase();
-  if (metaType === "advance" || metaType === "advanced") {
-    return true;
-  }
-
-  const legacyMaterials = Array.isArray(data?.materials) ? data.materials : [];
-  return legacyMaterials.some(
-    (material: any) =>
-      String(material?.type || "")
-        .trim()
-        .toLowerCase() === "advance",
-  );
+  return hasAdvancedClassicMaterials(data);
 };
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
@@ -392,7 +380,7 @@ export const action = async (args: ActionFunctionArgs) => {
       return json(jFlashMessage("Unsupported operation", "error"), { status: 400 });
     }
 
-    const nextData = syncColorsIntoData(data, currentState, materialOptions);
+    const nextData = syncColorsIntoData(data, currentState);
     await ConfigurationService.updateConfiguration(
       {
         ...(configuration as any),

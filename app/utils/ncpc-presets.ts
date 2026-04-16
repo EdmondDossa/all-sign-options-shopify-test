@@ -394,7 +394,7 @@ const toColor = (
   prevImg: "",
 });
 
-const createEmptyNcpcData = (productType: NcpcProductType): NcpcData => ({
+export const createEmptyNcpcData = (productType: NcpcProductType): NcpcData => ({
   version: 1,
   requiredOptions: {
     sizeOptions: {

@@ -29,6 +29,10 @@ import {
   TextFontIcon,
   ViewIcon,
 } from "@shopify/polaris-icons";
+import {
+  getClassicMaterialTypeLabel,
+  hasAdvancedClassicMaterials,
+} from "~/utils/classic-config-data";
 
 type ConfigurationOutletContext = {
   configuration: any;
@@ -90,24 +94,10 @@ export default function ClassicConfiguratorLayout() {
     () => parseConfigData(configuration?.data) || {},
     [configuration?.data],
   );
-  const hasAdvancedMaterials = useMemo(() => {
-    const metaType = String(
-      configData?.simplifiedBuilder?.meta?.materialType || "",
-    )
-      .trim()
-      .toLowerCase();
-    if (metaType === "advance" || metaType === "advanced") return true;
-
-    const legacyMaterials = Array.isArray(configData?.materials)
-      ? configData.materials
-      : [];
-    return legacyMaterials.some(
-      (material: any) =>
-        String(material?.type || "")
-          .trim()
-          .toLowerCase() === "advance",
-    );
-  }, [configData]);
+  const hasAdvancedMaterials = useMemo(
+    () => hasAdvancedClassicMaterials(configData),
+    [configData],
+  );
 
   const handlePreview = () => {
     const previewConfigId = parseInt(configId, 10);
@@ -527,7 +517,7 @@ export default function ClassicConfiguratorLayout() {
               <InlineStack gap="100">
                 <Badge>ID: {configuration?.id}</Badge>
                 {configuration?.materialType ? (
-                  <Badge>{configuration.materialType}</Badge>
+                  <Badge>{getClassicMaterialTypeLabel(configuration.materialType)}</Badge>
                 ) : null}
                 {configuration?.productType ? (
                   <Badge tone="info">{configuration.productType}</Badge>

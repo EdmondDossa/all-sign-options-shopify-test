@@ -1,5 +1,10 @@
 import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
 import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+  getClassicDataProductType,
+} from "~/utils/classic-config-data";
+import {
   getFixingMethodsState,
   getShapesState,
   getSizeOptions,
@@ -109,9 +114,7 @@ export const getPricingOptions = (data: any) => {
 const getSizeReferenceItems = (data: any): Array<RequiredSizeOption & { width?: number | string; height?: number | string }> => {
   const requiredSizes = Array.isArray(data?.requiredOptions?.sizes?.items)
     ? data.requiredOptions.sizes.items
-    : Array.isArray(data?.simplifiedBuilder?.coreSetup?.sizes?.items)
-      ? data.simplifiedBuilder.coreSetup.sizes.items
-      : [];
+    : [];
 
   if (requiredSizes.length > 0) {
     return requiredSizes.map((size: any, index: number) => ({
@@ -283,9 +286,7 @@ export const getComponentsState = ({
   const fixingItems = getFixingMethodsState(data, managedFixingMethods, getSizeOptions(data), shapeItems);
   const storedItems = Array.isArray(data?.requiredOptions?.components?.items)
     ? data.requiredOptions.components.items
-    : Array.isArray(data?.simplifiedBuilder?.coreSetup?.components?.items)
-      ? data.simplifiedBuilder.coreSetup.components.items
-      : [];
+    : [];
 
   if (storedItems.length > 0) {
     return {
@@ -316,9 +317,9 @@ export const getComponentsState = ({
 export const syncComponentsIntoData = (data: any, state: RequiredComponentsState) => {
   const nextData = ensureClassicSimplifiedBuilderData({
     data,
-    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
-    productType: data?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(data),
+    productType: getClassicDataProductType(data),
+    pricingMode: getClassicDataPricingMode(data),
   });
 
   const normalizedItems = ensureOneDefault(
@@ -357,18 +358,6 @@ export const syncComponentsIntoData = (data: any, state: RequiredComponentsState
       label: String(state.label || "Components"),
       description: String(state.description || ""),
       items: normalizedItems,
-    },
-  };
-
-  nextData.simplifiedBuilder = {
-    ...(nextData.simplifiedBuilder || {}),
-    coreSetup: {
-      ...(nextData.simplifiedBuilder?.coreSetup || {}),
-      components: {
-        label: String(state.label || "Components"),
-        description: String(state.description || ""),
-        items: normalizedItems,
-      },
     },
   };
 

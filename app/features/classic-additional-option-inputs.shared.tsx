@@ -1,5 +1,10 @@
 import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
 import { parseConfigData } from "~/features/classic-required-colors.shared";
+import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+  getClassicDataProductType,
+} from "~/utils/classic-config-data";
 
 export type ClassicCustomInputItem = Record<string, any> & {
   id?: string | number;
@@ -43,9 +48,9 @@ export const getClassicCustomInputsState = (rawData: any): ClassicCustomInputsSt
   const parsed = parseConfigData(rawData) || {};
   const data = ensureClassicSimplifiedBuilderData({
     data: parsed,
-    materialType: parsed?.simplifiedBuilder?.meta?.materialType || "",
-    productType: parsed?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: parsed?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(parsed),
+    productType: getClassicDataProductType(parsed),
+    pricingMode: getClassicDataPricingMode(parsed),
   });
 
   const source = Array.isArray(data?.additionalOptions?.inputs?.items)
@@ -75,12 +80,12 @@ export const syncClassicCustomInputsIntoData = ({
 }) => {
   const nextData = ensureClassicSimplifiedBuilderData({
     data,
-    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
-    productType: data?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(data),
+    productType: getClassicDataProductType(data),
+    pricingMode: getClassicDataPricingMode(data),
   });
   const materialType = String(
-    data?.simplifiedBuilder?.meta?.materialType || nextData?.simplifiedBuilder?.meta?.materialType || "",
+    getClassicDataMaterialType(data) || getClassicDataMaterialType(nextData) || "",
   )
     .trim()
     .toLowerCase();
@@ -104,23 +109,6 @@ export const syncClassicCustomInputsIntoData = ({
   if (isAdvancedMaterialType && nextData.additionalOptions) {
     delete (nextData.additionalOptions as any).components;
     delete (nextData.additionalOptions as any).additionalInputs;
-  }
-
-  nextData.simplifiedBuilder = {
-    ...(nextData.simplifiedBuilder || {}),
-    customizationOptions: {
-      ...(nextData.simplifiedBuilder?.customizationOptions || {}),
-      ...(isAdvancedMaterialType ? { components: undefined } : {}),
-      inputs: {
-        label: String(state.label || "Inputs"),
-        description: String(state.description || ""),
-        items: normalizedItems,
-      },
-    },
-  };
-  if (isAdvancedMaterialType && nextData.simplifiedBuilder?.customizationOptions) {
-    delete (nextData.simplifiedBuilder.customizationOptions as any).components;
-    delete (nextData.simplifiedBuilder.customizationOptions as any).additionalInputs;
   }
 
   return nextData;

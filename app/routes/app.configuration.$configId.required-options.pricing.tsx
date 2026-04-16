@@ -20,6 +20,11 @@ import ConfigurationService from "~/models/Configuration.service";
 import { authenticate } from "~/shopify.server";
 import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
 import { jFlashMessage } from "~/utils/message-flash";
+import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+  getClassicDataProductType,
+} from "~/utils/classic-config-data";
 
 type ClassicCustomPricing = {
   type: "unit" | "range";
@@ -95,7 +100,6 @@ const getCustomSizeConfig = (data: any) => {
   return (
     data?.requiredOptions?.sizes?.customSize ||
     data?.requiredOptions?.sizes?.settings?.customSize ||
-    data?.simplifiedBuilder?.coreSetup?.sizes?.settings?.customSize ||
     null
   );
 };
@@ -186,9 +190,9 @@ const validateCustomPricing = (pricing: ClassicCustomPricing): string | null => 
 const syncPricingIntoData = (data: any, pricingSettings: PricingSectionSettings) => {
   const nextData = ensureClassicSimplifiedBuilderData({
     data,
-    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
-    productType: data?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(data),
+    productType: getClassicDataProductType(data),
+    pricingMode: getClassicDataPricingMode(data),
   });
 
   const primaryPricing = pricingSettings.priceOptions[0] || buildFallbackPricingOption(nextData);
@@ -213,29 +217,6 @@ const syncPricingIntoData = (data: any, pricingSettings: PricingSectionSettings)
       label: pricingSettings.label,
       description: pricingSettings.description,
       priceOptions: pricingSettings.priceOptions,
-    },
-  };
-
-  nextData.simplifiedBuilder = {
-    ...(nextData.simplifiedBuilder || {}),
-    coreSetup: {
-      ...(nextData.simplifiedBuilder?.coreSetup || {}),
-      sizes: {
-        ...(nextData.simplifiedBuilder?.coreSetup?.sizes || {}),
-        settings: {
-          ...(nextData.simplifiedBuilder?.coreSetup?.sizes?.settings || {}),
-          customSize: {
-            ...(nextData.simplifiedBuilder?.coreSetup?.sizes?.settings?.customSize || {}),
-            pricings: primaryPricing.customPricing,
-          },
-        },
-      },
-      pricing: {
-        ...(nextData.simplifiedBuilder?.coreSetup?.pricing || {}),
-        label: pricingSettings.label,
-        description: pricingSettings.description,
-        priceOptions: pricingSettings.priceOptions,
-      },
     },
   };
 

@@ -137,9 +137,7 @@ export const ensureOneDefault = <T extends { isDefault?: boolean }>(
 export const getSizeOptions = (data: any): RequiredSizeOption[] => {
   const requiredSizes = Array.isArray(data?.requiredOptions?.sizes?.items)
     ? data.requiredOptions.sizes.items
-    : Array.isArray(data?.simplifiedBuilder?.coreSetup?.sizes?.items)
-      ? data.simplifiedBuilder.coreSetup.sizes.items
-      : [];
+    : [];
 
   if (requiredSizes.length > 0) {
     return requiredSizes.map((size: any, index: number) => ({

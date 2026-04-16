@@ -1,3 +1,5 @@
+import { getAsoClassicFamilyForProductType } from "~/models/asoClassicCreationCatalog";
+
 type BuilderMaterial = {
   id: string;
   sourceIndex: number;
@@ -269,10 +271,12 @@ const createDefaultRequiredSizeSettings = (): RequiredSizeSettings => ({
 
 export const createEmptySimplifiedBuilderData = ({
   materialType = "",
+  productFamily = "",
   productType = "",
-  pricingMode = null,
+  pricingMode = "frame-fit",
 }: {
   materialType?: string | null;
+  productFamily?: string | null;
   productType?: string | null;
   pricingMode?: string | null;
 } = {}): SimplifiedBuilderData => ({
@@ -642,22 +646,53 @@ export const migrateLegacyClassicDataToSimplifiedBuilder = ({
 export const ensureClassicSimplifiedBuilderData = ({
   data,
   materialType = "",
+  productFamily = "",
   productType = "",
   pricingMode = null,
 }: {
   data: any;
   materialType?: string | null;
+  productFamily?: string | null;
   productType?: string | null;
   pricingMode?: string | null;
 }) => {
   const safeData = data && typeof data === "object" ? cloneObject(data) : {};
+  const {
+    simplifiedBuilder: _simplifiedBuilder,
+    productFamily: _legacyProductFamily,
+    ...safeDataWithoutBuilder
+  } = safeData || {};
+  const candidateProductType = normalizeText(
+    productType || safeDataWithoutBuilder?.productType,
+  );
+  const normalizedProductFamily = normalizeText(
+    productFamily ||
+      safeDataWithoutBuilder?.productFamily ||
+      getAsoClassicFamilyForProductType(candidateProductType)?.key,
+  );
   const existing = safeData?.simplifiedBuilder;
   const isAdvancedMaterialType = (value: unknown) => {
     const normalized = normalizeText(value).toLowerCase();
     return normalized === "advance" || normalized === "advanced";
   };
+  const hasStructuredClassicBlocks =
+    Boolean(safeDataWithoutBuilder?.requiredOptions) ||
+    Boolean(safeDataWithoutBuilder?.additionalOptions) ||
+    String(safeDataWithoutBuilder?.configuratorMeta?.structure || "")
+      .trim()
+      .toLowerCase() === "modular-classic";
 
   if (existing && typeof existing === "object") {
+    const normalizedMetaMaterialType = normalizeText(
+      materialType || existing?.meta?.materialType,
+    );
+    const normalizedMetaProductType = normalizeText(
+      productType || existing?.meta?.productType,
+    );
+    const normalizedMetaPricingMode =
+      pricingMode != null
+        ? normalizeText(pricingMode)
+        : existing?.meta?.pricingMode || "frame-fit";
     const normalizedBuilder = {
       ...existing,
       version: 1,
@@ -708,12 +743,9 @@ export const ensureClassicSimplifiedBuilderData = ({
       },
       meta: {
         ...(existing?.meta || {}),
-        materialType: normalizeText(materialType || existing?.meta?.materialType),
-        productType: normalizeText(productType || existing?.meta?.productType),
-        pricingMode:
-          pricingMode != null
-            ? normalizeText(pricingMode)
-            : existing?.meta?.pricingMode || null,
+        materialType: normalizedMetaMaterialType,
+        productType: normalizedMetaProductType,
+        pricingMode: normalizedMetaPricingMode,
       },
     };
     const normalizedMaterialType = normalizeText(
@@ -722,17 +754,19 @@ export const ensureClassicSimplifiedBuilderData = ({
     const exposeComponents = !isAdvancedMaterialType(normalizedMaterialType);
 
     return {
-      ...safeData,
-      simplifiedBuilder: normalizedBuilder,
+      ...safeDataWithoutBuilder,
+      materialType: normalizedMetaMaterialType,
+      productType: normalizedMetaProductType,
+      pricingMode: normalizedMetaPricingMode,
       requiredOptions: {
-        ...(safeData?.requiredOptions || {}),
+        ...(safeDataWithoutBuilder?.requiredOptions || {}),
         pricing: normalizedBuilder.coreSetup.pricing,
         sizes: normalizedBuilder.coreSetup.sizes,
         fonts: normalizedBuilder.coreSetup.fonts,
         colors: normalizedBuilder.coreSetup.colors,
       },
       additionalOptions: {
-        ...(safeData?.additionalOptions || {}),
+        ...(safeDataWithoutBuilder?.additionalOptions || {}),
         materials: normalizedBuilder.customizationOptions.materials,
         fixingMethods: normalizedBuilder.customizationOptions.fixingMethods,
         shapes: normalizedBuilder.customizationOptions.shapes,
@@ -753,6 +787,205 @@ export const ensureClassicSimplifiedBuilderData = ({
     };
   }
 
+  if (hasStructuredClassicBlocks) {
+    const normalizedMaterialType = normalizeText(
+      materialType || safeDataWithoutBuilder?.materialType,
+    );
+    const normalizedProductType = normalizeText(
+      productType || safeDataWithoutBuilder?.productType,
+    );
+    const normalizedPricingMode =
+      pricingMode != null
+        ? normalizeText(pricingMode)
+        : normalizeText(
+            safeDataWithoutBuilder?.pricingMode ||
+              safeDataWithoutBuilder?.requiredOptions?.pricing?.mode,
+          ) || "frame-fit";
+    const exposeComponents = !isAdvancedMaterialType(normalizedMaterialType);
+
+    return {
+      ...safeDataWithoutBuilder,
+      materialType: normalizedMaterialType,
+      productType: normalizedProductType,
+      pricingMode: normalizedPricingMode,
+      requiredOptions: {
+        pricing: {
+          label: "Pricing",
+          description: "",
+          mode: normalizedPricingMode,
+          priceOptions: [],
+          items: [],
+          ...(safeDataWithoutBuilder?.requiredOptions?.pricing || {}),
+          mode:
+            normalizeText(
+              safeDataWithoutBuilder?.requiredOptions?.pricing?.mode,
+            ) || normalizedPricingMode,
+          priceOptions: Array.isArray(
+            safeDataWithoutBuilder?.requiredOptions?.pricing?.priceOptions,
+          )
+            ? safeDataWithoutBuilder.requiredOptions.pricing.priceOptions
+            : [],
+          items: Array.isArray(
+            safeDataWithoutBuilder?.requiredOptions?.pricing?.items,
+          )
+            ? safeDataWithoutBuilder.requiredOptions.pricing.items
+            : [],
+        },
+        sizes: {
+          label: "Sizes",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.requiredOptions?.sizes || {}),
+          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.sizes?.items)
+            ? safeDataWithoutBuilder.requiredOptions.sizes.items
+            : [],
+        },
+        fixingMethods: {
+          label: "Fixing Methods",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.requiredOptions?.fixingMethods || {}),
+          items: Array.isArray(
+            safeDataWithoutBuilder?.requiredOptions?.fixingMethods?.items,
+          )
+            ? safeDataWithoutBuilder.requiredOptions.fixingMethods.items
+            : [],
+        },
+        shapes: {
+          label: "Shapes",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.requiredOptions?.shapes || {}),
+          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.shapes?.items)
+            ? safeDataWithoutBuilder.requiredOptions.shapes.items
+            : [],
+        },
+        borders: {
+          label: "Borders",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.requiredOptions?.borders || {}),
+          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.borders?.items)
+            ? safeDataWithoutBuilder.requiredOptions.borders.items
+            : [],
+        },
+        fonts: {
+          label: "Fonts",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.requiredOptions?.fonts || {}),
+          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.fonts?.items)
+            ? safeDataWithoutBuilder.requiredOptions.fonts.items
+            : [],
+        },
+        colors: {
+          label: "Colors",
+          description: "",
+          customColors: {
+            active: false,
+            label: "Custom Colors",
+            prevImg: "",
+          },
+          items: [],
+          ...(safeDataWithoutBuilder?.requiredOptions?.colors || {}),
+          customColors: {
+            active: false,
+            label: "Custom Colors",
+            prevImg: "",
+            ...(safeDataWithoutBuilder?.requiredOptions?.colors?.customColors || {}),
+          },
+          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.colors?.items)
+            ? safeDataWithoutBuilder.requiredOptions.colors.items
+            : [],
+        },
+        ...(exposeComponents
+          ? {}
+          : {
+              components: {
+                label: "Components",
+                description: "",
+                items: [],
+                ...(safeDataWithoutBuilder?.requiredOptions?.components || {}),
+                items: Array.isArray(
+                  safeDataWithoutBuilder?.requiredOptions?.components?.items,
+                )
+                  ? safeDataWithoutBuilder.requiredOptions.components.items
+                  : [],
+              },
+            }),
+      },
+      additionalOptions: {
+        materials: {
+          label: "Materials",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.additionalOptions?.materials || {}),
+          items: Array.isArray(safeDataWithoutBuilder?.additionalOptions?.materials?.items)
+            ? safeDataWithoutBuilder.additionalOptions.materials.items
+            : [],
+        },
+        fixingMethods: {
+          label: "Fixing Methods",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.additionalOptions?.fixingMethods || {}),
+          items: Array.isArray(
+            safeDataWithoutBuilder?.additionalOptions?.fixingMethods?.items,
+          )
+            ? safeDataWithoutBuilder.additionalOptions.fixingMethods.items
+            : [],
+        },
+        shapes: {
+          label: "Shapes",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.additionalOptions?.shapes || {}),
+          items: Array.isArray(safeDataWithoutBuilder?.additionalOptions?.shapes?.items)
+            ? safeDataWithoutBuilder.additionalOptions.shapes.items
+            : [],
+        },
+        borders: {
+          label: "Borders",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.additionalOptions?.borders || {}),
+          items: Array.isArray(safeDataWithoutBuilder?.additionalOptions?.borders?.items)
+            ? safeDataWithoutBuilder.additionalOptions.borders.items
+            : [],
+        },
+        ...(exposeComponents
+          ? {
+              components: {
+                label: "Additional Components",
+                description: "",
+                items: [],
+                ...(safeDataWithoutBuilder?.additionalOptions?.components || {}),
+                items: Array.isArray(
+                  safeDataWithoutBuilder?.additionalOptions?.components?.items,
+                )
+                  ? safeDataWithoutBuilder.additionalOptions.components.items
+                  : [],
+              },
+            }
+          : {}),
+        inputs: {
+          label: "Inputs",
+          description: "",
+          items: [],
+          ...(safeDataWithoutBuilder?.additionalOptions?.inputs || {}),
+          items: Array.isArray(safeDataWithoutBuilder?.additionalOptions?.inputs?.items)
+            ? safeDataWithoutBuilder.additionalOptions.inputs.items
+            : [],
+        },
+      },
+      configuratorMeta: {
+        version: 1,
+        structure: "modular-classic",
+        ...(safeDataWithoutBuilder?.configuratorMeta || {}),
+      },
+    };
+  }
+
   const migratedBuilder = migrateLegacyClassicDataToSimplifiedBuilder({
     data: safeData,
     materialType,
@@ -762,20 +995,29 @@ export const ensureClassicSimplifiedBuilderData = ({
   const normalizedMaterialType = normalizeText(
     materialType || migratedBuilder?.meta?.materialType,
   );
+  const normalizedProductType = normalizeText(
+    productType || migratedBuilder?.meta?.productType,
+  );
+  const normalizedPricingMode =
+    pricingMode != null
+      ? normalizeText(pricingMode)
+      : migratedBuilder?.meta?.pricingMode || "frame-fit";
   const exposeComponents = !isAdvancedMaterialType(normalizedMaterialType);
 
   return {
-    ...safeData,
-    simplifiedBuilder: migratedBuilder,
+    ...safeDataWithoutBuilder,
+    materialType: normalizedMaterialType,
+    productType: normalizedProductType,
+    pricingMode: normalizedPricingMode,
     requiredOptions: {
-      ...(safeData?.requiredOptions || {}),
+      ...(safeDataWithoutBuilder?.requiredOptions || {}),
       pricing: migratedBuilder.coreSetup.pricing,
       sizes: migratedBuilder.coreSetup.sizes,
       fonts: migratedBuilder.coreSetup.fonts,
       colors: migratedBuilder.coreSetup.colors,
     },
     additionalOptions: {
-      ...(safeData?.additionalOptions || {}),
+      ...(safeDataWithoutBuilder?.additionalOptions || {}),
       materials: migratedBuilder.customizationOptions.materials,
       fixingMethods: migratedBuilder.customizationOptions.fixingMethods,
       shapes: migratedBuilder.customizationOptions.shapes,

@@ -27,6 +27,11 @@ import { authenticate } from "~/shopify.server";
 import Sortable from "~/utils/sortable-adapter";
 import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
 import { jFlashMessage } from "~/utils/message-flash";
+import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+  getClassicDataProductType,
+} from "~/utils/classic-config-data";
 
 type MaterialOption = ClassicSizeMaterialOption;
 type SizeItem = ClassicSizeFormItem;
@@ -180,24 +185,6 @@ const getMaterialOptions = (data: any): MaterialOption[] => {
     id: String(material?.id || material?.name || `material-${index}`),
     label: String(material?.name || `Material ${index + 1}`),
   }));
-};
-
-const normalizeLegacyBuilderSize = (item: any, materialIds: string[]): SizeItem => {
-  const presentMaterials = Object.keys(item?.rulesByMaterial || {});
-  const firstRule = item?.rulesByMaterial?.[presentMaterials[0]] || {};
-  return {
-    id: String(item?.id || createSizeId(item?.label, toNumber(item?.width), toNumber(item?.height))),
-    label: String(item?.label || ""),
-    width: toNumber(item?.width),
-    height: toNumber(item?.height),
-    textNumber: toNumber(firstRule?.textNumber, 0),
-    maxTextChar: toNumber(firstRule?.maxTextChar, 0),
-    charPrice: toNumber(firstRule?.charPrice, 0),
-    basePrice: toNumber(firstRule?.basePrice, 0),
-    startPriceAtChar: toNumber(firstRule?.startPriceAtChar, 0),
-    isDefault: Boolean(firstRule?.isDefault),
-    excludeMaterials: materialIds.filter((materialId) => !presentMaterials.includes(materialId)),
-  };
 };
 
 const getLegacyAdvancedSizes = (data: any, materialOptions: MaterialOption[]): SizeItem[] => {
@@ -410,35 +397,6 @@ const getStoredSizes = (data: any, materialOptions: MaterialOption[]): SizeItem[
     );
   }
 
-  const builderItems = data?.simplifiedBuilder?.coreSetup?.sizes?.items;
-  if (Array.isArray(builderItems) && builderItems.length > 0) {
-    const materialIds = materialOptions.map((item) => item.id);
-    return ensureOneDefault(
-      builderItems.map((item: any) =>
-        item?.rulesByMaterial
-          ? normalizeLegacyBuilderSize(item, materialIds)
-          : {
-              id: String(
-                item?.id ||
-                  createSizeId(item?.label, toNumber(item?.width), toNumber(item?.height)),
-              ),
-              label: String(item?.label || ""),
-              width: toNumber(item?.width),
-              height: toNumber(item?.height),
-              textNumber: toNumber(item?.textNumber, 0),
-              maxTextChar: toNumber(item?.maxTextChar, 0),
-              charPrice: toNumber(item?.charPrice, 0),
-              basePrice: toNumber(item?.basePrice, 0),
-              startPriceAtChar: toNumber(item?.startPriceAtChar, 0),
-              isDefault: Boolean(item?.isDefault),
-              excludeMaterials: Array.isArray(item?.excludeMaterials)
-                ? item.excludeMaterials.map(String)
-                : [],
-            },
-      ),
-    );
-  }
-
   return getLegacyAdvancedSizes(data, materialOptions);
 };
 
@@ -498,9 +456,9 @@ const validateThicknessValues = (
 const syncSizesIntoData = (data: any, settings: SizeSectionSettings, sizes: SizeItem[]) => {
   const nextData = ensureClassicSimplifiedBuilderData({
     data,
-    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
-    productType: data?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(data),
+    productType: getClassicDataProductType(data),
+    pricingMode: getClassicDataPricingMode(data),
   });
 
   nextData.requiredOptions = {
@@ -512,22 +470,6 @@ const syncSizesIntoData = (data: any, settings: SizeSectionSettings, sizes: Size
       thickness: settings.thickness,
       customSize: settings.customSize,
       items: sizes,
-    },
-  };
-
-  nextData.simplifiedBuilder = {
-    ...(nextData.simplifiedBuilder || {}),
-    coreSetup: {
-      ...(nextData.simplifiedBuilder?.coreSetup || {}),
-      sizes: {
-        settings: {
-          label: settings.label,
-          description: settings.description,
-          thickness: settings.thickness,
-          customSize: settings.customSize,
-        },
-        items: sizes,
-      },
     },
   };
 

@@ -89,13 +89,8 @@ export const getFontsState = (
   });
 
   const requiredFonts = data?.requiredOptions?.fonts;
-  const builderFonts = data?.simplifiedBuilder?.coreSetup?.fonts;
   const storedFontBlock =
-    requiredFonts && typeof requiredFonts === "object"
-      ? requiredFonts
-      : builderFonts && typeof builderFonts === "object"
-        ? builderFonts
-        : {};
+    requiredFonts && typeof requiredFonts === "object" ? requiredFonts : {};
 
   const selectedFontIds = Array.isArray(data?.settings?.customizerSign?.text?.selectedFonts)
     ? data.settings.customizerSign.text.selectedFonts
@@ -154,14 +149,6 @@ export const syncFontsIntoData = (data: any, state: FontSectionState) => {
 
   safeData.requiredOptions = safeData.requiredOptions || {};
   safeData.requiredOptions.fonts = {
-    label: String(state?.label || "Fonts"),
-    description: String(state?.description || ""),
-    items: normalizedItems,
-  };
-
-  safeData.simplifiedBuilder = safeData.simplifiedBuilder || {};
-  safeData.simplifiedBuilder.coreSetup = safeData.simplifiedBuilder.coreSetup || {};
-  safeData.simplifiedBuilder.coreSetup.fonts = {
     label: String(state?.label || "Fonts"),
     description: String(state?.description || ""),
     items: normalizedItems,

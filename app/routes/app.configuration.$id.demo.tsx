@@ -38,6 +38,7 @@ import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
 import FontService from "~/models/Font.service";
 import { configFilter } from "~/utils/config-filter";
 import { PRICING_PLANS } from "~/utils/pricing";
+import { getClassicDataMaterialType } from "~/utils/classic-config-data";
 import { getPlan } from "~/utils/pricing-server.server";
 
 
@@ -224,7 +225,7 @@ const DemoList = ({ handleOnBack }: { handleOnBack: any }) => {
       value: `${index}`,
       description: item.description,
       image: item.icon,
-      hide: !PRICING_PLANS.STARTER_RULES.materialTypes.includes(item.data.materials[0].type) && plan == PRICING_PLANS.STARTER ? true : false,
+      hide: !PRICING_PLANS.STARTER_RULES.materialTypes.includes(getClassicDataMaterialType(item.data) || "") && plan == PRICING_PLANS.STARTER ? true : false,
     };
   });
 

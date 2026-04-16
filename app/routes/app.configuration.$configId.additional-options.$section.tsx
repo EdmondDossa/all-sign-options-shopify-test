@@ -40,6 +40,7 @@ import {
   getClassicCustomInputsState,
   syncClassicCustomInputsIntoData,
 } from "~/features/classic-additional-option-inputs.shared";
+import { hasAdvancedClassicMaterials } from "~/utils/classic-config-data";
 
 const allowedSections = [
   "materials",
@@ -63,18 +64,7 @@ const parseIndex = (value: FormDataEntryValue | null) => {
 };
 
 const hasAdvancedMaterials = (data: any) => {
-  const metaType = String(data?.simplifiedBuilder?.meta?.materialType || "")
-    .trim()
-    .toLowerCase();
-  if (metaType === "advance" || metaType === "advanced") return true;
-
-  const legacyMaterials = Array.isArray(data?.materials) ? data.materials : [];
-  return legacyMaterials.some(
-    (material: any) =>
-      String(material?.type || "")
-        .trim()
-        .toLowerCase() === "advance",
-  );
+  return hasAdvancedClassicMaterials(data);
 };
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {

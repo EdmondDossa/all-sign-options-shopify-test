@@ -7,6 +7,10 @@ import {
   SIMPLIFIED_BUILDER_SECTIONS,
   type SimplifiedBuilderSectionKey,
 } from "~/utils/simplified-builder";
+import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+} from "~/utils/classic-config-data";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const section = String(params.section || "").trim();
@@ -47,48 +51,31 @@ export default function SimplifiedBuilderSectionRoute() {
   const data = parseConfigData(configuration?.data);
   const requiredOptions = data?.requiredOptions || {};
   const additionalOptions = data?.additionalOptions || {};
-  const simplifiedBuilder = data?.simplifiedBuilder || {};
   const materials = Array.isArray(additionalOptions?.materials?.items)
     ? additionalOptions.materials.items
-    : Array.isArray(simplifiedBuilder?.customizationOptions?.materials?.items)
-      ? simplifiedBuilder.customizationOptions.materials.items
     : [];
   const simpleMaterials = materials.filter((material: any) => material?.type === "simple");
   const advancedMaterials = materials.filter((material: any) => material?.type === "advance");
   const snapshot = {
-    sizes: Array.isArray(simplifiedBuilder?.coreSetup?.sizes?.items)
-      ? simplifiedBuilder.coreSetup.sizes.items.length
-      : Array.isArray(requiredOptions?.sizes?.items)
-        ? requiredOptions.sizes.items.length
+    sizes: Array.isArray(requiredOptions?.sizes?.items)
+      ? requiredOptions.sizes.items.length
       : 0,
-    colors: Array.isArray(simplifiedBuilder?.coreSetup?.colors?.items)
-      ? simplifiedBuilder.coreSetup.colors.items.length
-      : Array.isArray(requiredOptions?.colors?.items)
-        ? requiredOptions.colors.items.length
+    colors: Array.isArray(requiredOptions?.colors?.items)
+      ? requiredOptions.colors.items.length
       : 0,
     shapes: Array.isArray(additionalOptions?.shapes?.items)
       ? additionalOptions.shapes.items.length
-      : Array.isArray(simplifiedBuilder?.customizationOptions?.shapes?.items)
-        ? simplifiedBuilder.customizationOptions.shapes.items.length
       : 0,
     fixingMethods: Array.isArray(additionalOptions?.fixingMethods?.items)
       ? additionalOptions.fixingMethods.items.length
-      : Array.isArray(simplifiedBuilder?.customizationOptions?.fixingMethods?.items)
-        ? simplifiedBuilder.customizationOptions.fixingMethods.items.length
       : 0,
     borders: Array.isArray(additionalOptions?.borders?.items)
       ? additionalOptions.borders.items.length
-      : Array.isArray(simplifiedBuilder?.customizationOptions?.borders?.items)
-        ? simplifiedBuilder.customizationOptions.borders.items.length
       : 0,
     additionalInputs: Array.isArray(additionalOptions?.components?.items)
       ? additionalOptions.components.items.length
-      : Array.isArray(simplifiedBuilder?.customizationOptions?.components?.items)
-        ? simplifiedBuilder.customizationOptions.components.items.length
-        : Array.isArray(additionalOptions?.additionalInputs?.items)
-          ? additionalOptions.additionalInputs.items.length
-          : Array.isArray(simplifiedBuilder?.customizationOptions?.additionalInputs?.items)
-            ? simplifiedBuilder.customizationOptions.additionalInputs.items.length
+      : Array.isArray(additionalOptions?.additionalInputs?.items)
+        ? additionalOptions.additionalInputs.items.length
       : 0,
     customSizes: 0,
   };
@@ -161,7 +148,7 @@ export default function SimplifiedBuilderSectionRoute() {
         label: "Pricing mode",
         value: String(
           requiredOptions?.pricing?.mode ||
-            simplifiedBuilder?.coreSetup?.pricing?.mode ||
+            getClassicDataPricingMode(data) ||
             configuration?.pricingMode ||
             "-",
         ),
@@ -173,7 +160,11 @@ export default function SimplifiedBuilderSectionRoute() {
     ],
     fonts: [
       { label: "Products", value: String(productsCount), tone: "info" },
-      { label: "Material type", value: String(configuration?.materialType || "-"), tone: "success" },
+      {
+        label: "Material type",
+        value: String(getClassicDataMaterialType(data) || configuration?.materialType || "-"),
+        tone: "success",
+      },
       { label: "Product type", value: String(configuration?.productType || "-") },
       { label: "Config name", value: String(configuration?.name || "-") },
     ],
@@ -215,7 +206,11 @@ export default function SimplifiedBuilderSectionRoute() {
     ],
     general: [
       { label: "Products", value: String(productsCount), tone: "info" },
-      { label: "Material type", value: String(configuration?.materialType || "-"), tone: "success" },
+      {
+        label: "Material type",
+        value: String(getClassicDataMaterialType(data) || configuration?.materialType || "-"),
+        tone: "success",
+      },
       { label: "Product type", value: String(configuration?.productType || "-") },
       { label: "Pricing mode", value: String(configuration?.pricingMode || "-") },
     ],
@@ -228,7 +223,10 @@ export default function SimplifiedBuilderSectionRoute() {
     "theme-color": [
       { label: "Products", value: String(productsCount), tone: "info" },
       { label: "Materials", value: String(materials.length), tone: "success" },
-      { label: "Material type", value: String(configuration?.materialType || "-") },
+      {
+        label: "Material type",
+        value: String(getClassicDataMaterialType(data) || configuration?.materialType || "-"),
+      },
       { label: "Pricing mode", value: String(configuration?.pricingMode || "-") },
     ],
     "sort-options": [

@@ -1,5 +1,10 @@
 import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-data";
 import { parseConfigData } from "~/features/classic-required-colors.shared";
+import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+  getClassicDataProductType,
+} from "~/utils/classic-config-data";
 
 export type AdditionalInputOptionItem = {
   title: string;
@@ -134,9 +139,7 @@ const normalizeItem = ({
 const getMaterialEntries = (data: any) => {
   const modularMaterials = Array.isArray(data?.additionalOptions?.materials?.items)
     ? data.additionalOptions.materials.items
-    : Array.isArray(data?.simplifiedBuilder?.customizationOptions?.materials?.items)
-      ? data.simplifiedBuilder.customizationOptions.materials.items
-      : [];
+    : [];
 
   if (modularMaterials.length > 0) {
     return modularMaterials.map((item: any, index: number) => ({
@@ -212,21 +215,17 @@ export const getAdditionalInputsState = (rawData: any): AdditionalInputsSectionS
   const parsed = parseConfigData(rawData) || {};
   const data = ensureClassicSimplifiedBuilderData({
     data: parsed,
-    materialType: parsed?.simplifiedBuilder?.meta?.materialType || "",
-    productType: parsed?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: parsed?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(parsed),
+    productType: getClassicDataProductType(parsed),
+    pricingMode: getClassicDataPricingMode(parsed),
   });
 
   const materialEntries = getMaterialEntries(data);
   const materialIds = materialEntries.map((entry) => entry.id);
   const additionalInputs = Array.isArray(data?.additionalOptions?.components?.items)
     ? data.additionalOptions.components.items
-    : Array.isArray(data?.simplifiedBuilder?.customizationOptions?.components?.items)
-      ? data.simplifiedBuilder.customizationOptions.components.items
-      : Array.isArray(data?.additionalOptions?.additionalInputs?.items)
-        ? data.additionalOptions.additionalInputs.items
-        : Array.isArray(data?.simplifiedBuilder?.customizationOptions?.additionalInputs?.items)
-          ? data.simplifiedBuilder.customizationOptions.additionalInputs.items
+    : Array.isArray(data?.additionalOptions?.additionalInputs?.items)
+      ? data.additionalOptions.additionalInputs.items
       : [];
   const legacyInputs =
     additionalInputs.length > 0
@@ -265,9 +264,9 @@ export const syncAdditionalInputsIntoData = ({
 }) => {
   const nextData = ensureClassicSimplifiedBuilderData({
     data,
-    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
-    productType: data?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(data),
+    productType: getClassicDataProductType(data),
+    pricingMode: getClassicDataPricingMode(data),
   });
 
   const materialEntries = getMaterialEntries(nextData);
@@ -312,18 +311,6 @@ export const syncAdditionalInputsIntoData = ({
       label: String(state.label || "Additional Components"),
       description: String(state.description || ""),
       items: normalizedItems,
-    },
-  };
-
-  nextData.simplifiedBuilder = {
-    ...(nextData.simplifiedBuilder || {}),
-    customizationOptions: {
-      ...(nextData.simplifiedBuilder?.customizationOptions || {}),
-      components: {
-        label: String(state.label || "Additional Components"),
-        description: String(state.description || ""),
-        items: normalizedItems,
-      },
     },
   };
 

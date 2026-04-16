@@ -8,6 +8,7 @@
      products?: Array<{id: string, title: string}>;
      templates?: any;
      materialType?: string;
+     productFamily?: string;
      productType?: string;
      pricingMode?: string | null;
 }

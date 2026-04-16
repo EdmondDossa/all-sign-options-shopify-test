@@ -22,6 +22,7 @@ import {
   Text,
   Thumbnail,
 } from "@shopify/polaris";
+import { getClassicProductTypeLabel } from "~/utils/classic-config-data";
 import {
   StoreIcon,
   ExternalIcon,
@@ -188,6 +189,19 @@ export default function Index() {
       return wrappedDataProductType;
     }
 
+    const hasClassicModularShape =
+      String(data?.configuratorMeta?.structure || "").trim().toLowerCase() ===
+        "modular-classic" ||
+      Boolean(String(data?.materialType || "").trim()) ||
+      (Boolean(String(data?.productType || "").trim()) &&
+        !["neon", "channel"].includes(
+          String(data?.productType || "").trim().toLowerCase(),
+        ));
+
+    if (hasClassicModularShape) {
+      return null;
+    }
+
     const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
     const hasClassicMaterials = Array.isArray(data?.materials);
     const hasWrappedNcpcShape =
@@ -228,7 +242,7 @@ export default function Index() {
       navigate(`/app/ncpc/${safeConfigId}/required-options`);
       return;
     }
-    navigate(`configuration/${safeConfigId}/materials`);
+    navigate(`configuration/${safeConfigId}/required-options/sizes`);
   };
 
   const updates = [
@@ -700,7 +714,10 @@ export default function Index() {
                                           .toLowerCase() === "neon"
                                         ? "Neon"
                                         : "Channel"
-                                      : customiser.materialType || "none"}
+                                      : getClassicProductTypeLabel(
+                                          customiser.productType ||
+                                            parseConfigData(customiser?.data)?.productType,
+                                        )}
                                   </Badge>
                                 </Box>
                               </div>

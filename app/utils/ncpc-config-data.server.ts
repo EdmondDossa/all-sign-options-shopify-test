@@ -29,7 +29,9 @@ const normalizeDemoFontUrl = (input: unknown, isGoogleFont: boolean) => {
   if (!raw || isGoogleFont) return raw;
 
   const normalized = raw.replace(/\\/g, "/");
-  const directMatch = normalized.match(/\/aso_default_files/\/fonts\/([^/?#]+)$/i);
+  const directMatch = normalized.match(
+    /\/aso_default_files\/\/fonts\/([^/?#]+)$/i,
+  );
   if (directMatch?.[1]) {
     return `/aso_default_files/fonts/${directMatch[1]}`;
   }
@@ -42,8 +44,7 @@ const normalizeDemoFontUrl = (input: unknown, isGoogleFont: boolean) => {
   return raw;
 };
 
-const deepClone = <T>(value: T): T =>
-  JSON.parse(JSON.stringify(value ?? null));
+const deepClone = <T>(value: T): T => JSON.parse(JSON.stringify(value ?? null));
 
 const normalizePricingMode = (value?: string | null) => {
   const normalized = String(value || "")
@@ -105,7 +106,9 @@ const loadNcpcConfigData = async () => {
   );
 
   cachedConfigData = {
-    configs: Array.isArray(context.result.configs) ? context.result.configs : [],
+    configs: Array.isArray(context.result.configs)
+      ? context.result.configs
+      : [],
   };
 
   return cachedConfigData;
@@ -119,14 +122,19 @@ const pickPresetConfig = (
   const targetName = PRESET_NAME_BY_KEY[String(presetKey || "").trim()];
 
   if (targetName) {
-    const byName = configs.find((entry) => String(entry?.name || "").trim() === targetName);
+    const byName = configs.find(
+      (entry) => String(entry?.name || "").trim() === targetName,
+    );
     if (byName) {
       return byName;
     }
   }
 
   const byType = configs.find(
-    (entry) => String(entry?.type || "").trim().toLowerCase() === productType,
+    (entry) =>
+      String(entry?.type || "")
+        .trim()
+        .toLowerCase() === productType,
   );
 
   return byType || null;
@@ -136,7 +144,8 @@ const pickPricingData = (
   preset: NcpcConfigEntry,
   pricingMode?: string | null,
 ) => {
-  const pricingData = preset?.data && typeof preset.data === "object" ? preset.data : null;
+  const pricingData =
+    preset?.data && typeof preset.data === "object" ? preset.data : null;
   if (!pricingData) return null;
 
   const entries = Object.entries(pricingData);
@@ -191,7 +200,8 @@ export const getNcpcPresetConfigurationData = async ({
   delete (cleanData as any).productType;
   delete (cleanData as any).pricingMode;
 
-  const sceneImages = (cleanData as any)?.settings?.languageImages?.images?.manageImages;
+  const sceneImages = (cleanData as any)?.settings?.languageImages?.images
+    ?.manageImages;
   const normalizedSceneImages = Array.isArray(sceneImages)
     ? sceneImages.map((img: any) => String(img || "").trim()).filter(Boolean)
     : [];

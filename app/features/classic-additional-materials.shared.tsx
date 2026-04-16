@@ -6,6 +6,11 @@ import {
   type RequiredComponentsState,
 } from "~/features/classic-required-components.shared";
 import type { FixingMethodType, ShapeType } from "~/types/SettingsType";
+import {
+  getClassicDataMaterialType,
+  getClassicDataPricingMode,
+  getClassicDataProductType,
+} from "~/utils/classic-config-data";
 
 export type MaterialItem = {
   id: string;
@@ -130,9 +135,7 @@ const getBaseMaterials = ({
 }): MaterialItem[] => {
   const modularItems = Array.isArray(data?.additionalOptions?.materials?.items)
     ? data.additionalOptions.materials.items
-    : Array.isArray(data?.simplifiedBuilder?.customizationOptions?.materials?.items)
-      ? data.simplifiedBuilder.customizationOptions.materials.items
-      : [];
+    : [];
 
   if (modularItems.length > 0) {
     return ensureOneDefault(
@@ -201,9 +204,9 @@ export const syncMaterialsIntoData = ({
 }) => {
   const nextData = ensureClassicSimplifiedBuilderData({
     data,
-    materialType: data?.simplifiedBuilder?.meta?.materialType || "",
-    productType: data?.simplifiedBuilder?.meta?.productType || "",
-    pricingMode: data?.simplifiedBuilder?.meta?.pricingMode || null,
+    materialType: getClassicDataMaterialType(data),
+    productType: getClassicDataProductType(data),
+    pricingMode: getClassicDataPricingMode(data),
   });
 
   const normalizedItems = ensureOneDefault(
@@ -228,31 +231,6 @@ export const syncMaterialsIntoData = ({
       label: String(state.label || "Materials"),
       description: String(state.description || ""),
       items: normalizedItems,
-    },
-  };
-
-  nextData.simplifiedBuilder = {
-    ...(nextData.simplifiedBuilder || {}),
-    customizationOptions: {
-      ...(nextData.simplifiedBuilder?.customizationOptions || {}),
-      materials: {
-        label: String(state.label || "Materials"),
-        description: String(state.description || ""),
-        items: normalizedItems.map((item) => ({
-          id: item.id,
-          sourceIndex: item.sourceIndex ?? 0,
-          label: item.label,
-          description: item.description,
-          image: item.previewImg,
-          popupImage: item.popupImg,
-          type: "simple",
-          active: item.active !== false,
-          additionalPrice: Number(item.additionalPrice || 0),
-          pricingId: item.pricingId,
-          excludeComponentIds: item.excludeComponentIds,
-          isDefault: Boolean(item.isDefault),
-        })),
-      },
     },
   };
 
