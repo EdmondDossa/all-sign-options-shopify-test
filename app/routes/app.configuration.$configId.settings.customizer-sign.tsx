@@ -37,6 +37,7 @@ import type { ClipartsGroupType, FontType } from "~/types/ManagePropertyType";
 import type { ShapeType } from "~/types/SettingsType";
 import { getPlan } from "~/utils/pricing-server.server";
 import { jFlashMessage } from "~/utils/message-flash";
+import CollapsibleSectionCard from "~/components/settings/CollapsibleSectionCard";
 
 type ConfigOption = { type: string; active: boolean };
 
@@ -48,6 +49,8 @@ type CustomizerOptionsState = {
   finishButtonPosition: string | null;
   allowNextButton: boolean;
   showThicknessPricing: boolean;
+  expandThicknessByDefault: boolean;
+  expandPredefinedSizesByDefault: boolean;
 };
 
 const defaultConfigOptions = (): ConfigOption[] => [
@@ -72,6 +75,8 @@ const defaultCustomizerOptions = (): CustomizerOptionsState => ({
   finishButtonPosition: "bottom",
   allowNextButton: false,
   showThicknessPricing: false,
+  expandThicknessByDefault: false,
+  expandPredefinedSizesByDefault: false,
 });
 
 const optionsIcon = (type: string) => {
@@ -152,22 +157,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   return json({ ok: true, section, ...jFlashMessage(`${section} settings updated successfully`) });
 };
-
-function SectionCard({ id, title, description, children }: { id: string; title: string; description: string; children: React.ReactNode }) {
-  return (
-    <section id={id} style={{ scrollMarginTop: 16 }}>
-      <Card>
-        <Box padding="300">
-          <Text as="h3" variant="headingMd">{title}</Text>
-          <Box paddingBlockStart="100">
-            <Text as="p" tone="subdued">{description}</Text>
-          </Box>
-          <Box paddingBlockStart="300">{children}</Box>
-        </Box>
-      </Card>
-    </section>
-  );
-}
 
 function SectionSave({ loading, onClick, label }: { loading: boolean; onClick: () => void; label: string }) {
   return (
@@ -295,7 +284,7 @@ export default function ConfigSettingsCustomizerSign() {
           </Box>
         </Card>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="config-options"
           title="Config Options"
           description="Show, hide and order configuration blocks displayed in the customizer."
@@ -368,9 +357,9 @@ export default function ConfigSettingsCustomizerSign() {
             onClick={() => submitSection("configOptions", getSortedConfigOptions())}
             label="Save Config Options"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="customizer-options"
           title="Customizer Options"
           description="Measurement, layout and flow options for the classic customizer."
@@ -400,13 +389,25 @@ export default function ConfigSettingsCustomizerSign() {
                 <ToggleButton checked={customizerOptions.showThicknessPricing} onChange={(value) => setCustomizerOptions((current) => ({ ...current, showThicknessPricing: Boolean(value) }))} />
               </InlineStack>
             </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+              <InlineStack blockAlign="center" gap="200">
+                <Text as="p" variant="bodyMd">Expand thickness by default in configurator</Text>
+                <ToggleButton checked={customizerOptions.expandThicknessByDefault} onChange={(value) => setCustomizerOptions((current) => ({ ...current, expandThicknessByDefault: Boolean(value) }))} />
+              </InlineStack>
+            </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+              <InlineStack blockAlign="center" gap="200">
+                <Text as="p" variant="bodyMd">Expand predefined sizes by default in configurator</Text>
+                <ToggleButton checked={customizerOptions.expandPredefinedSizesByDefault} onChange={(value) => setCustomizerOptions((current) => ({ ...current, expandPredefinedSizesByDefault: Boolean(value) }))} />
+              </InlineStack>
+            </Grid.Cell>
           </Grid>
           <SectionSave
             loading={navigation.state === "submitting" && activeSection === "customizerOptions"}
             onClick={() => submitSection("customizerOptions", customizerOptions)}
             label="Save Customizer Options"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
       </div>
 

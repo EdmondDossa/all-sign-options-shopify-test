@@ -1,7 +1,7 @@
 import { json, redirect } from "@remix-run/node";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { NavLink, Outlet, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge, Box, Card, Icon, InlineStack, Text, TextField } from "@shopify/polaris";
 import {
   MeasurementSizeIcon,
@@ -14,6 +14,8 @@ import {
   PlusCircleIcon,
   SettingsIcon,
   ArrowLeftIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
   ViewIcon,
 } from "@shopify/polaris-icons";
 import NcpcConfigurationService from "~/models/NcpcConfiguration.service";
@@ -207,6 +209,23 @@ export default function NcpcConfigurationLayout() {
     return currentPath === basePath || currentPath.startsWith(`${basePath}/`);
   };
 
+  const activeGroupTitle = useMemo(() => {
+    const activeGroup = groups.find((group) =>
+      group.items.some((item) => {
+        const basePath = normalizePath(item.path);
+        return currentPath === basePath || currentPath.startsWith(`${basePath}/`);
+      }),
+    );
+
+    return activeGroup?.title || "";
+  }, [groups, currentPath]);
+
+  const [expandedGroup, setExpandedGroup] = useState(activeGroupTitle);
+
+  useEffect(() => {
+    setExpandedGroup(activeGroupTitle);
+  }, [activeGroupTitle]);
+
   const sidebarActionButtonStyle = {
     display: "inline-flex",
     alignItems: "center",
@@ -232,7 +251,17 @@ export default function NcpcConfigurationLayout() {
         margin: "0 auto",
       }}
     >
-      <div style={{ width: 220, position: "sticky", top: 12 }}>
+      <div
+        style={{
+          width: 240,
+          position: "sticky",
+          top: 12,
+          maxHeight: "calc(100vh - 24px)",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
         <Card>
           <Box padding="250">
             <InlineStack align="space-between" blockAlign="center">
@@ -283,70 +312,149 @@ export default function NcpcConfigurationLayout() {
           </Box>
         </Card>
 
-        <Box paddingBlockStart="200">
+        <Box
+          paddingBlockStart="200"
+          className="aso-scrollbar-hidden"
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            overscrollBehavior: "contain",
+            paddingRight: 4,
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
           <Card>
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
+                gap: "8px",
                 background: "#ffffff",
                 borderRadius: "12px",
               }}
             >
-              {filteredGroups.map((group, groupIndex) => (
-                <Box
-                  key={group.title}
-                  padding="250"
-                  borderBlockStartWidth={groupIndex === 0 ? "0" : "025"}
-                  borderColor="border"
-                >
-                  <Text as="h3" variant="headingSm" tone="subdued">
-                    {group.title}
-                  </Text>
+              {filteredGroups.map((group) => {
+                const groupIsActive = activeGroupTitle === group.title;
+                const groupIsExpanded =
+                  searchMenu.trim().length > 0 || expandedGroup === group.title;
 
-                  <Box paddingBlockStart="150">
-                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                      {group.items.map((item) => (
-                        <NavLink key={item.path} to={item.path} style={{ textDecoration: "none" }}>
-                          {({ isActive }) => {
-                            const active = isActive || isItemActive(item.path);
-                            return (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  gap: "8px",
-                                  borderRadius: "10px",
-                                  padding: "8px 10px",
-                                  background: active ? "#eef2ff" : "transparent",
-                                  color: active ? "#1e3a8a" : "#4b5563",
-                                  border: active ? "1px solid #c7d2fe" : "1px solid transparent",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "10px",
-                                    minWidth: 0,
-                                  }}
-                                >
-                                  <Icon source={item.icon} tone="subdued" />
-                                  <Text as="span" variant="bodyMd" truncate>
-                                    {item.label}
-                                  </Text>
-                                </div>
-                                {item.badge ? <Badge tone="info">{item.badge}</Badge> : null}
-                              </div>
-                            );
+                return (
+                  <Box key={group.title} padding="250">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedGroup((current) =>
+                          current === group.title ? "" : group.title,
+                        )
+                      }
+                      style={{
+                        width: "100%",
+                        display: "grid",
+                        gridTemplateColumns: "minmax(0, 1fr) 20px",
+                        alignItems: "center",
+                        gap: 12,
+                        background:
+                          groupIsExpanded || groupIsActive ? "#f3f4f6" : "#ffffff",
+                        border:
+                          groupIsExpanded || groupIsActive
+                            ? "1px solid #d1d5db"
+                            : "1px solid transparent",
+                        borderRadius: "10px",
+                        padding: "8px 10px",
+                        boxSizing: "border-box",
+                        cursor: "pointer",
+                        textAlign: "left",
+                      }}
+                    >
+                      <div style={{ minWidth: 0 }}>
+                        <Text
+                          as="span"
+                          variant="bodyMd"
+                          fontWeight={
+                            groupIsExpanded || groupIsActive ? "semibold" : "medium"
+                          }
+                          tone="subdued"
+                        >
+                          {group.title}
+                        </Text>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Icon
+                          source={groupIsExpanded ? ChevronDownIcon : ChevronRightIcon}
+                          tone="subdued"
+                        />
+                      </div>
+                    </button>
+
+                    {groupIsExpanded ? (
+                      <Box paddingBlockStart="150">
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "4px",
+                            marginLeft: "12px",
+                            paddingLeft: "10px",
+                            borderLeft: "1px solid #e5e7eb",
                           }}
-                        </NavLink>
-                      ))}
-                    </div>
+                        >
+                          {group.items.map((item) => (
+                            <NavLink
+                              key={item.path}
+                              to={item.path}
+                              style={{ textDecoration: "none" }}
+                            >
+                              {({ isActive }) => {
+                                const active = isActive || isItemActive(item.path);
+                                return (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                      gap: "12px",
+                                      padding: "10px 12px",
+                                      borderRadius: "10px",
+                                      background: active ? "#eef2ff" : "transparent",
+                                      border: active
+                                        ? "1px solid #c7d2fe"
+                                        : "1px solid transparent",
+                                      color: "#111827",
+                                    }}
+                                  >
+                                    <InlineStack gap="200" blockAlign="center" wrap={false}>
+                                      <Icon
+                                        source={item.icon}
+                                        tone={active ? "base" : "subdued"}
+                                      />
+                                      <Text
+                                        as="span"
+                                        variant="bodyMd"
+                                        fontWeight={active ? "semibold" : "regular"}
+                                      >
+                                        {item.label}
+                                      </Text>
+                                    </InlineStack>
+                                    {item.badge ? <Badge tone="info">{item.badge}</Badge> : null}
+                                  </div>
+                                );
+                              }}
+                            </NavLink>
+                          ))}
+                        </div>
+                      </Box>
+                    ) : null}
                   </Box>
-                </Box>
-              ))}
+                );
+              })}
             </div>
           </Card>
         </Box>

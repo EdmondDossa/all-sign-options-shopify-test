@@ -240,16 +240,38 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
       const pricings = base.pricings;
       const hasPricings = pricings && typeof pricings === "object" && pricings.type && pricings.unit && Array.isArray(pricings.range);
       return hasPricings
-        ? base
+        ? {
+            ...base,
+            hideSizes: base.hideSizes ?? false,
+            pricings: {
+              ...pricings,
+              unit: {
+                basePrice: pricings.unit?.basePrice ?? 0,
+                surface: pricings.unit?.surface ?? 0,
+                charPrice: pricings.unit?.charPrice ?? 0,
+                areaConversionFactor: pricings.unit?.areaConversionFactor ?? 1,
+              },
+              range: Array.isArray(pricings.range)
+                ? pricings.range.map((r: any) => ({
+                    surface: r?.surface ?? 0,
+                    basePrice: r?.basePrice ?? 0,
+                    charPrice: r?.charPrice ?? 0,
+                  }))
+                : [],
+            },
+          }
         : {
           ...base,
           active: base.active ?? false,
+          hideSizes: base.hideSizes ?? false,
           width: base.width ?? { label: "Custom width", min: 0, max: 0 },
           height: base.height ?? { label: "Custom height", min: 0, max: 0 },
           pricings: {
             type: pricings?.type ?? "unit",
-            unit: pricings?.unit ?? { basePrice: 0, surface: 0, charPrice: 0 },
-            range: Array.isArray(pricings?.range) ? pricings.range : [],
+            unit: pricings?.unit ?? { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 },
+            range: Array.isArray(pricings?.range)
+              ? pricings.range.map((r: any) => ({ surface: r?.surface ?? 0, basePrice: r?.basePrice ?? 0, charPrice: r?.charPrice ?? 0 }))
+              : [],
             rangePricingPerUnit: pricings?.rangePricingPerUnit ?? false,
           },
         };
@@ -309,14 +331,14 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
     if (!formData.customSize.pricings) {
       formData.customSize.pricings = {
         type: "unit",
-        unit: { basePrice: 0, surface: 0, charPrice: 0 },
+        unit: { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 },
         range: [],
         rangePricingPerUnit: false,
       };
     }
     const range = formData.customSize.pricings.range ?? [];
     const lastSurface = range.length > 0
-      ? range[range.length - 1].surface
+      ? (range[range.length - 1]?.surface ?? 0)
       : 0;
     formData.customSize.pricings.range = [...range, {
       basePrice: 0,
@@ -382,7 +404,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
       range.forEach((pricing: any, index: number) => {
         if (
           index > 0 &&
-          parseFloat(`${range[index - 1].surface}`) >= parseFloat(`${pricing.surface}`)
+          parseFloat(`${range[index - 1]?.surface ?? 0}`) >= parseFloat(`${pricing?.surface ?? 0}`)
         ) {
           pricingErrors.push({
             id: index,
@@ -403,23 +425,47 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
       const configId = parseInt(params.configId ?? "");
       const finalMaterialId = materialId ?? 0;
 
-      const requestBody: any = {
-        operation: 'add-custom',
-        configId: configId, // Convertir en string
-        materialId: finalMaterialId, // Convertir en string
-        sizeData: formData.customSize, // Sérialiser en JSON string
-        thickness: formData.thickness // Sérialiser en JSON string
+      const sizeDataToSave = {
+        ...formData.customSize,
+        active: formData.customSize.active,
+        hideSizes: formData.customSize.hideSizes ?? false,
+        width: { ...formData.customSize.width, default: formData.customSize.width.default ?? formData.customSize.width.min },
+        height: { ...formData.customSize.height, default: formData.customSize.height.default ?? formData.customSize.height.min },
+        pricings: formData.customSize.pricings ? {
+          type: formData.customSize.pricings.type,
+          unit: formData.customSize.pricings.unit ? {
+            basePrice: formData.customSize.pricings.unit.basePrice ?? 0,
+            surface: formData.customSize.pricings.unit.surface ?? 0,
+            charPrice: formData.customSize.pricings.unit.charPrice ?? 0,
+            areaConversionFactor: formData.customSize.pricings.unit.areaConversionFactor ?? 1,
+          } : { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 },
+          range: Array.isArray(formData.customSize.pricings.range)
+            ? formData.customSize.pricings.range.map((r: any) => ({
+                surface: r?.surface ?? 0,
+                basePrice: r?.basePrice ?? 0,
+                charPrice: r?.charPrice ?? 0,
+              }))
+            : [],
+          rangePricingPerUnit: formData.customSize.pricings.rangePricingPerUnit ?? false,
+        } : {
+          type: "unit",
+          unit: { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 },
+          range: [],
+          rangePricingPerUnit: false,
+        },
       };
 
-      console.log("=== Sending request body ===");
-      console.log("Request body:", requestBody);
+      const formDataToSubmit = new FormData();
+      formDataToSubmit.append("operation", "add-custom");
+      formDataToSubmit.append("configId", String(configId));
+      formDataToSubmit.append("materialId", String(finalMaterialId));
+      formDataToSubmit.append("sizeData", JSON.stringify(sizeDataToSave));
+      formDataToSubmit.append("thickness", JSON.stringify(formData.thickness));
 
-      settingfetcher.submit(requestBody, {
+      settingfetcher.submit(formDataToSubmit, {
         action: "/api/size-manager",
         method: "POST",
-        encType: "application/json"
       });
-
     } catch (error) {
       console.error('Network error:', error);
       showNotification('Network error occurred', 'error');
@@ -530,6 +576,17 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
       thickness: thickness,
     })
   }, [customSize, thickness, materialId])
+
+  useEffect(() => {
+    if (settingfetcher.state === "idle" && settingfetcher.data?.success && refreshMaterial && settingfetcher.data?.data) {
+      const savedSizes = settingfetcher.data.data;
+      refreshMaterial("sizes", {
+        customSize: savedSizes.customSize ?? formData.customSize,
+        thickness: savedSizes.thickness ?? formData.thickness,
+        allSizes: savedSizes.allSizes ?? localSizes,
+      });
+    }
+  }, [settingfetcher.state, settingfetcher.data])
   return (
     <div>
       {!showEditSection ? (
@@ -705,6 +762,23 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                             }}
                           />
                         </InlineStack>
+                        {formData.customSize.active && (
+                        <Box paddingBlockStart="400" paddingBlockEnd="400">
+                          <InlineStack blockAlign="center" gap="200">
+                            <Text as="p" variant="bodyMd">Hide Sizes</Text>
+                            <ReactSwitchCustom
+                              checked={formData.customSize.hideSizes === true}
+                              setChecked={(value: boolean) => {
+                                formData.customSize.hideSizes = value;
+                                handleInputChange("customSize", formData.customSize);
+                              }}
+                            />
+                            <Text as="span" variant="bodySm" tone="subdued">
+                              {formData.customSize.hideSizes ? "Predefined sizes hidden in configurator" : "Predefined sizes visible in configurator"}
+                            </Text>
+                          </InlineStack>
+                        </Box>
+                        )}
                       </Box>
                       {formData.customSize.active && (
                         <Grid gap={{ lg: "30px" }}>
@@ -755,6 +829,24 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                 }}
                                 autoComplete="on"
                                 error={getError(actionData, "customSize.width.max")}
+                              />
+                              <TextField
+                                size="medium"
+                                label="Default width"
+                                pattern="[0-9]+([,.][0-9]+)?"
+                                value={`${formData.customSize.width.default ?? formData.customSize.width.min}`}
+                                onChange={(value) => {
+                                  formData.customSize.width.default = value;
+                                  handleInputChange("customSize", formData.customSize);
+                                }}
+                                onBlur={(value) => {
+                                  formData.customSize.width.default = parseFloat(
+                                    `${formData.customSize.width.default ?? formData.customSize.width.min}`,
+                                  );
+                                  handleInputChange("customSize", formData.customSize);
+                                }}
+                                autoComplete="on"
+                                helpText="Default value in configurator when Custom size is used"
                               />
                             </BlockStack>
                           </Grid.Cell>
@@ -807,6 +899,24 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                 autoComplete="on"
                                 error={getError(actionData, "customSize.height.max")}
                               />
+                              <TextField
+                                size="medium"
+                                label="Default height"
+                                pattern="[0-9]+([,.][0-9]+)?"
+                                value={`${formData.customSize.height.default ?? formData.customSize.height.min}`}
+                                onChange={(value) => {
+                                  formData.customSize.height.default = value;
+                                  handleInputChange("customSize", formData.customSize);
+                                }}
+                                onBlur={(value) => {
+                                  formData.customSize.height.default = parseFloat(
+                                    `${formData.customSize.height.default ?? formData.customSize.height.min}`,
+                                  );
+                                  handleInputChange("customSize", formData.customSize);
+                                }}
+                                autoComplete="on"
+                                helpText="Default value in configurator when Custom size is used"
+                              />
                             </BlockStack>
                           </Grid.Cell>
                           <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 12, xl: 12 }}>
@@ -826,7 +936,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                       if (!formData.customSize.pricings) {
                                         formData.customSize.pricings = {
                                           type: "unit",
-                                          unit: { basePrice: 0, surface: 0, charPrice: 0 },
+                                          unit: { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 },
                                           range: [],
                                           rangePricingPerUnit: false,
                                         };
@@ -848,7 +958,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                       if (!formData.customSize.pricings) {
                                         formData.customSize.pricings = {
                                           type: "unit",
-                                          unit: { basePrice: 0, surface: 0, charPrice: 0 },
+                                          unit: { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 },
                                           range: [],
                                           rangePricingPerUnit: false,
                                         };
@@ -939,26 +1049,26 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                               autoComplete="off"
                                               min={0}
                                               onChange={(value) => {
-                                                formData.customSize.pricings.range[
-                                                  index
-                                                ].surface = value;
+                                                const range = formData.customSize.pricings.range ?? [];
+                                                if (!range[index]) range[index] = { basePrice: 0, surface: 0, charPrice: 0 };
+                                                range[index].surface = value;
                                                 handleInputChange(
                                                   "customSize",
                                                   formData.customSize,
                                                 );
                                               }}
                                               onBlur={(value) => {
-                                                formData.customSize.pricings.range[
-                                                  index
-                                                ].surface = parseFloat(
-                                                  `${formData.customSize.pricings.range[index].surface || "0"}`,
+                                                const range = formData.customSize.pricings.range ?? [];
+                                                if (!range[index]) range[index] = { basePrice: 0, surface: 0, charPrice: 0 };
+                                                range[index].surface = parseFloat(
+                                                  `${range[index]?.surface || "0"}`,
                                                 );
                                                 handleInputChange(
                                                   "customSize",
                                                   formData.customSize,
                                                 );
                                               }}
-                                              value={`${pricing.surface}`}
+                                              value={`${pricing?.surface ?? ""}`}
                                               suffix={<Text as="span">
                                                 {configuration.data?.settings?.customizerSign?.customizerOptions?.measurementUnit}<sup>2</sup>
                                               </Text>}
@@ -1001,7 +1111,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                                   formData.customSize,
                                                 );
                                               }}
-                                              value={`${pricing.basePrice}`}
+                                              value={`${pricing?.basePrice ?? ""}`}
                                             />
                                           </Grid.Cell>
                                           <Grid.Cell
@@ -1037,7 +1147,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                                   formData.customSize,
                                                 );
                                               }}
-                                              value={`${pricing.charPrice}`}
+                                              value={`${pricing?.charPrice ?? ""}`}
                                             />
                                           </Grid.Cell>
                                         </Grid>
@@ -1074,10 +1184,11 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                       }}
                                     >
                                       <TextField
-                                        label="Surface"
+                                        label="Area (sq)"
                                         pattern="[0-9]+([,.][0-9]+)?"
                                         autoComplete="off"
                                         onChange={(value) => {
+                                          if (!formData.customSize.pricings.unit) formData.customSize.pricings.unit = { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 };
                                           formData.customSize.pricings.unit.surface = value;
                                           handleInputChange(
                                             "customSize",
@@ -1085,6 +1196,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                           );
                                         }}
                                         onBlur={(value) => {
+                                          if (!formData.customSize.pricings.unit) formData.customSize.pricings.unit = { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 };
                                           formData.customSize.pricings.unit.surface = parseFloat(
                                             `${formData.customSize.pricings.unit.surface || "0"}`,
                                           );
@@ -1093,7 +1205,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                             formData.customSize,
                                           );
                                         }}
-                                        value={`${formData.customSize.pricings.unit.surface}`}
+                                        value={`${formData.customSize.pricings?.unit?.surface ?? ""}`}
                                         suffix={<Text as="span">
                                           {configuration.data?.settings?.customizerSign?.customizerOptions?.measurementUnit}<sup>2</sup>
                                         </Text>}
@@ -1109,10 +1221,11 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                       }}
                                     >
                                       <TextField
-                                        label="Base price"
+                                        label="Price per Square"
                                         pattern="[0-9]+([,.][0-9]+)?"
                                         autoComplete="off"
                                         onChange={(value) => {
+                                          if (!formData.customSize.pricings.unit) formData.customSize.pricings.unit = { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 };
                                           formData.customSize.pricings.unit.basePrice = value;
                                           handleInputChange(
                                             "customSize",
@@ -1120,6 +1233,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                           );
                                         }}
                                         onBlur={(value) => {
+                                          if (!formData.customSize.pricings.unit) formData.customSize.pricings.unit = { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 };
                                           formData.customSize.pricings.unit.basePrice = parseFloat(
                                             `${formData.customSize.pricings.unit.basePrice || "0"}`,
                                           );
@@ -1128,7 +1242,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                             formData.customSize,
                                           );
                                         }}
-                                        value={`${formData.customSize.pricings.unit.basePrice}`}
+                                        value={`${formData.customSize.pricings?.unit?.basePrice ?? ""}`}
                                       />
                                     </Grid.Cell>
                                     <Grid.Cell
@@ -1145,6 +1259,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                         pattern="[0-9]+([,.][0-9]+)?"
                                         autoComplete="off"
                                         onChange={(value) => {
+                                          if (!formData.customSize.pricings.unit) formData.customSize.pricings.unit = { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 };
                                           formData.customSize.pricings.unit.charPrice = value;
                                           handleInputChange(
                                             "customSize",
@@ -1152,6 +1267,7 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                           );
                                         }}
                                         onBlur={(value) => {
+                                          if (!formData.customSize.pricings.unit) formData.customSize.pricings.unit = { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 };
                                           formData.customSize.pricings.unit.charPrice = parseFloat(
                                             `${formData.customSize.pricings.unit.charPrice || "0"}`,
                                           );
@@ -1160,7 +1276,42 @@ export default function MaterialSizeIndex({ materialId, customSize, allSizes, th
                                             formData.customSize,
                                           );
                                         }}
-                                        value={`${formData.customSize.pricings.unit.charPrice}`}
+                                              value={`${formData.customSize.pricings?.unit?.charPrice ?? ""}`}
+                                      />
+                                    </Grid.Cell>
+                                    <Grid.Cell
+                                      columnSpan={{
+                                        xs: 6,
+                                        sm: 6,
+                                        md: 2,
+                                        lg: 4,
+                                        xl: 4,
+                                      }}
+                                    >
+                                      <TextField
+                                        label="Area Conversion Factor"
+                                        pattern="[0-9]+([,.][0-9]+)?"
+                                        autoComplete="off"
+                                        onChange={(value) => {
+                                          if (!formData.customSize.pricings.unit) formData.customSize.pricings.unit = { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 };
+                                          formData.customSize.pricings.unit.areaConversionFactor = value;
+                                          handleInputChange(
+                                            "customSize",
+                                            formData.customSize,
+                                          );
+                                        }}
+                                        onBlur={(value) => {
+                                          if (!formData.customSize.pricings.unit) formData.customSize.pricings.unit = { basePrice: 0, surface: 0, charPrice: 0, areaConversionFactor: 1 };
+                                          formData.customSize.pricings.unit.areaConversionFactor = parseFloat(
+                                            `${formData.customSize.pricings.unit.areaConversionFactor ?? "1"}`,
+                                          ) || 1;
+                                          handleInputChange(
+                                            "customSize",
+                                            formData.customSize,
+                                          );
+                                        }}
+                                        value={`${formData.customSize.pricings?.unit?.areaConversionFactor ?? 1}`}
+                                        helpText="Default: 1. Formula: (Width × Height) ÷ Area Conversion Factor × Price per Square"
                                       />
                                     </Grid.Cell>
                                   </Grid>

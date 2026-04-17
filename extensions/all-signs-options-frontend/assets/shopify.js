@@ -4,6 +4,32 @@ var urlParams = new URLSearchParams(window.location.search);
 var paramAsoConfigurationId = urlParams.get('aso-config-id');
 var asoTemplateId = urlParams.get('aso-template-id');
 
+function getAsoProxyAbsoluteUrl(path = '') {
+  const normalizedPath = String(path || '').replace(/^\/+/, '');
+  return `${window.Shopify?.routes?.root || '/'}apps/aso-proxy/api/${normalizedPath}`;
+}
+
+async function asoFetchJson(url, options = {}) {
+  const response = await fetch(url, options);
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch (error) {
+    data = null;
+  }
+
+  if (!response.ok) {
+    const message =
+      data?.message ||
+      data?.error ||
+      `ASO request failed with status ${response.status}`;
+    throw new Error(message);
+  }
+
+  return data;
+}
+
 
 
 
@@ -482,6 +508,67 @@ function getAsoUrl_shopify() {
   return "/apps/aso-proxy";
 }
 
+function registerAsoNcpcShopifyBridge() {
+  window.asoShopifyNcpcApi = {
+    mode: 'shopify',
+    getProxyBaseUrl() {
+      return getAsoProxyAbsoluteUrl('');
+    },
+    async addToCart(recaps, redirectToCheckOut = false) {
+      const safeRecaps = recaps && typeof recaps === 'object' ? recaps : {};
+      const customPrice =
+        Number(
+          safeRecaps?.custom_price ??
+          safeRecaps?.customPrice ??
+          safeRecaps?.recaps?.custom_price ??
+          0
+        ) || 0;
+
+      return asoCreateVariantAndAddToCart(
+        customPrice,
+        { recaps: safeRecaps },
+        asoProductId,
+        asoRegularPrice,
+        redirectToCheckOut,
+      );
+    },
+    async shareConfiguration(configData) {
+      return asoFetchJson(getAsoProxyAbsoluteUrl('aso-config-share'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          configId: String(window.asoConfigurationId || ''),
+          productId: String(window.asoProductId || ''),
+          configuration: configData,
+        }),
+      });
+    },
+    async getSharedConfiguration(shareId) {
+      return asoFetchJson(
+        getAsoProxyAbsoluteUrl(`aso-config-share/${encodeURIComponent(shareId)}`),
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    },
+    async addRequestQuote(formData) {
+      return asoFetchJson(getAsoProxyAbsoluteUrl('aso-request-quotes'), {
+        method: 'POST',
+        body: formData,
+      });
+    },
+  };
+
+  window.asoNcpcBridge = window.asoShopifyNcpcApi;
+}
+
+registerAsoNcpcShopifyBridge();
+
 
 async function asoUpdateTemplate_shopify(template_id, template_data) {
 
@@ -880,29 +967,6 @@ function getDefaultConfig() {
     "templates": []
   }
 }
-
-
-function defaultStyle(baseUrl) {
-  if (baseUrl) {
-    const fontUrl = baseUrl;
-  } else {
-    const fontUrl = window.location.origin;
-  }
-  let defaulStyle = document.createElement('style');
-  defaulStyle.textContent = `
-            
-    @font-face {
-      font-family: "Arial";
-      font-display: swap;
-      src: url('${fontUrl}/assets/fonts/arial.ttf') format('truetype');
-    }
-        
-        `;
-  document.body.appendChild(defaulStyle);
-}
-
-
-
 function defaultStyle(baseUrl) {
   let fontUrl = "";
   if (baseUrl) {

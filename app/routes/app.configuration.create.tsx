@@ -4088,6 +4088,15 @@ const createClassicEmptyConfigurationData = ({
     },
     settings: {
       customizerSign: {
+        customizerOptions: {
+          measurementUnit: "mm",
+          desktopColumnOrder: "right",
+          showHideMeasurements: "both",
+          decimalFormatMeasurements: "with-decimal",
+          showThicknessPricing: false,
+          expandThicknessByDefault: false,
+          expandPredefinedSizesByDefault: false,
+        },
         text: {
           selectedFonts: [],
         },

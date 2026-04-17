@@ -93,10 +93,88 @@
 
 <!-- Affichage normal du configurateur -->
 {% if block.settings.useIframe == false %}
-  <link rel="stylesheet"  href="{{'index.css' |asset_url }}">
-  <script src="{{'shopify.js'|asset_url}}" defer></script>
-  <script src="{{'fabric.min.js'|asset_url}}" defer></script>
-  <script id="design-js" type="module"  src="{{'index.js' |asset_url }}"></script>
+  <script src="{{'shopify.js'|asset_url}}"></script>
+  <script>
+    (function() {
+      const classicAssets = {
+        css: "{{ 'index.css' | asset_url }}",
+        js: "{{ 'index.js' | asset_url }}",
+        fabric: "{{ 'fabric.min.js' | asset_url }}",
+      };
+      const ncpcAssets = {
+        css: "{{ 'nc-configurator.css' | asset_url }}",
+        js: "{{ 'nc-configurator.js' | asset_url }}",
+      };
+
+      function appendStylesheet(href) {
+        if (!href || document.querySelector(`link[data-aso-asset="${href}"]`)) return;
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = href;
+        link.dataset.asoAsset = href;
+        document.head.appendChild(link);
+      }
+
+      function appendScript(src, options) {
+        if (!src || document.querySelector(`script[data-aso-asset="${src}"]`)) return;
+        const script = document.createElement("script");
+        script.src = src;
+        script.dataset.asoAsset = src;
+        if (options?.type) script.type = options.type;
+        if (options?.defer) script.defer = true;
+        document.body.appendChild(script);
+      }
+
+      function resolveProductType(configuration) {
+        const direct = String(configuration?.productType || "").trim().toLowerCase();
+        if (direct === "neon" || direct === "channel") return direct;
+
+        const nested = String(configuration?.data?.productType || "").trim().toLowerCase();
+        if (nested === "neon" || nested === "channel") return nested;
+
+        const wrapped = String(configuration?.data?.ncpc?.productType || "").trim().toLowerCase();
+        if (wrapped === "neon" || wrapped === "channel") return wrapped;
+
+        return "";
+      }
+
+      function loadClassicConfigurator() {
+        appendStylesheet(classicAssets.css);
+        appendScript(classicAssets.fabric, { defer: true });
+        appendScript(classicAssets.js, { type: "module" });
+      }
+
+      function loadNcpcConfigurator() {
+        appendStylesheet(ncpcAssets.css);
+        appendScript(ncpcAssets.js, { type: "module" });
+      }
+
+      async function bootstrapConfigurator() {
+        const configId = String(window.asoConfigurationId || "").trim();
+
+        if (!configId || typeof window.getAsoConfiguration !== "function") {
+          loadClassicConfigurator();
+          return;
+        }
+
+        try {
+          const configuration = await window.getAsoConfiguration(configId);
+          const productType = resolveProductType(configuration);
+
+          if (productType === "neon" || productType === "channel") {
+            loadNcpcConfigurator();
+            return;
+          }
+        } catch (error) {
+          console.error("[ASO] Failed to resolve configuration type for storefront loader:", error);
+        }
+
+        loadClassicConfigurator();
+      }
+
+      bootstrapConfigurator();
+    })();
+  </script>
 
 {% else %} 
 

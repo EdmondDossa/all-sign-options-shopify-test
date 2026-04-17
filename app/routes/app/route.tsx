@@ -43,6 +43,7 @@ export default function App() {
     /^\/app$/, 
     /^\/app\/configuration(\/create)?$/,
     /^\/app\/configuration\/[^/]+\/(builder|required-options|additional-options|settings|design-setup|templates)(\/.*)?$/,
+    /^\/app\/configuration\/[^/]+\/preview$/,
     /^\/app\/ncpc(\/.*)?$/,
     /^\/app\/manage-font(\/edit)?$/,
     /^\/app\/manage-cliparts(\/.*)?$/, // match tout ce qui suit
@@ -159,14 +160,7 @@ const HeaderTopMenu = () => {
     if (wrappedProductType === "neon" || wrappedProductType === "channel") {
       return true;
     }
-
-    const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
-    const hasWrappedNcpcShape =
-      Boolean(wrappedNcpcData?.requiredOptions) &&
-      Boolean(wrappedNcpcData?.additionalOptions);
-    const hasClassicMaterials = Array.isArray(data?.materials);
-
-    return (hasNcpcShape || hasWrappedNcpcShape) && !hasClassicMaterials;
+    return false;
   };
 
 
@@ -270,11 +264,11 @@ const HeaderTopMenu = () => {
               gap: "6px",
               cursor: "pointer"
             }}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style={{
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" style={{
                 width: "1.2rem",
                 height: "1.2rem"
               }}>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
               </svg>
               <p style={{
                 fontSize: '16px',
@@ -306,11 +300,11 @@ const HeaderTopMenu = () => {
                     <span className="">Setting</span>
                   </button>}
                   {!isNcpcConfiguration && currentTopMenu != "addditonal-options" && <button onClick={() => navigateToMenu("addditonal-options", configId)} className="aso-additonal-btn" >
-                    <svg width="18" height="18" viewBox="0 0 26 28" fill="#f0bb1b" xmlns="http://www.w3.org/2000/svg"><path d="M25 4H1M25 14H1M25 24H1M21 1V7M5 11V17M17 21V27" stroke="#f0bb1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    <svg width="18" height="18" viewBox="0 0 26 28" fill="#f0bb1b" xmlns="http://www.w3.org/2000/svg"><path d="M25 4H1M25 14H1M25 24H1M21 1V7M5 11V17M17 21V27" stroke="#f0bb1b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
                     <span className="additonal-options-text">Additionals options</span>
                   </button>}
                   {isNcpcConfiguration && currentTopMenu != "additional-options" && <button onClick={() => navigateToMenu("additional-options", configId)} className="aso-additonal-btn" >
-                    <svg width="18" height="18" viewBox="0 0 26 28" fill="#f0bb1b" xmlns="http://www.w3.org/2000/svg"><path d="M25 4H1M25 14H1M25 24H1M21 1V7M5 11V17M17 21V27" stroke="#f0bb1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    <svg width="18" height="18" viewBox="0 0 26 28" fill="#f0bb1b" xmlns="http://www.w3.org/2000/svg"><path d="M25 4H1M25 14H1M25 24H1M21 1V7M5 11V17M17 21V27" stroke="#f0bb1b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
                     <span className="additonal-options-text">Additional options</span>
                   </button>}
 

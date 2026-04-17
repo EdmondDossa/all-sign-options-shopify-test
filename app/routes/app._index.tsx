@@ -202,30 +202,6 @@ export default function Index() {
       return null;
     }
 
-    const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
-    const hasClassicMaterials = Array.isArray(data?.materials);
-    const hasWrappedNcpcShape =
-      Boolean(wrappedNcpcData?.requiredOptions) && Boolean(wrappedNcpcData?.additionalOptions);
-
-    // Fallback legacy-safe:
-    // treat as NCPC only if NCPC blocks exist and classic materials are absent.
-    if (hasNcpcShape && !hasClassicMaterials) {
-      if (data?.requiredOptions?.letterTypesOptions || data?.requiredOptions?.letterTypeOptions) {
-        return "channel";
-      }
-      return "neon";
-    }
-
-    if (hasWrappedNcpcShape && !hasClassicMaterials) {
-      if (
-        wrappedNcpcData?.requiredOptions?.letterTypesOptions ||
-        wrappedNcpcData?.requiredOptions?.letterTypeOptions
-      ) {
-        return "channel";
-      }
-      return "neon";
-    }
-
     return null;
   };
 

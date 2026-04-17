@@ -51,6 +51,7 @@ type SizeSectionSettings = {
   };
   customSize: {
     active: boolean;
+    hideSizes?: boolean;
     width: {
       label: string;
       min: number;
@@ -87,6 +88,7 @@ const defaultSizeSectionSettings = (): SizeSectionSettings => ({
   },
   customSize: {
     active: false,
+    hideSizes: false,
     width: {
       label: "Width",
       min: 0,
@@ -256,6 +258,7 @@ const getSizesSettings = (data: any): SizeSectionSettings => {
       customSize: {
         ...defaults.customSize,
         ...(requiredOptionsSettings?.customSize || {}),
+        hideSizes: Boolean(requiredOptionsSettings?.customSize?.hideSizes),
         width: {
           ...defaults.customSize.width,
           ...(requiredOptionsSettings?.customSize?.width || {}),
@@ -318,6 +321,7 @@ const getSizesSettings = (data: any): SizeSectionSettings => {
     customSize: {
       ...defaults.customSize,
       ...(legacyMaterial?.data?.sizes?.customSize || {}),
+      hideSizes: Boolean(legacyMaterial?.data?.sizes?.customSize?.hideSizes),
       width: {
         ...defaults.customSize.width,
         ...(legacyMaterial?.data?.sizes?.customSize?.width || {}),
@@ -577,6 +581,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     };
     currentSettings.customSize = {
       active: Boolean(nextSettings?.customSize?.active),
+      hideSizes: Boolean(nextSettings?.customSize?.hideSizes),
       width: {
         label: String(nextSettings?.customSize?.width?.label || "Width"),
         min: toNumber(nextSettings?.customSize?.width?.min, 0),
@@ -1129,6 +1134,28 @@ export default function ClassicRequiredSizesRoute() {
 
                   {sizesSettings.customSize.active ? (
                     <div style={{ display: "grid", gap: 12 }}>
+                      <InlineStack align="space-between" blockAlign="center">
+                        <div>
+                          <Text as="h5" variant="headingSm">
+                            Predefined Sizes Visibility
+                          </Text>
+                          <Text as="p" tone="subdued" variant="bodySm">
+                            Choose whether predefined sizes stay visible in the configurator when custom size is enabled.
+                          </Text>
+                        </div>
+                        <ToggleButton
+                          checked={!sizesSettings.customSize.hideSizes}
+                          onChange={(checked) =>
+                            setSizesSettings((current) => ({
+                              ...current,
+                              customSize: {
+                                ...current.customSize,
+                                hideSizes: !checked,
+                              },
+                            }))
+                          }
+                        />
+                      </InlineStack>
                       <InlineGrid columns={{ xs: 1, md: 2, lg: 3 }} gap="400">
                         <TextField
                           label="Width label"

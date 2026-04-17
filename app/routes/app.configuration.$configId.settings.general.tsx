@@ -18,6 +18,7 @@ import SaveButton from "~/components/buttons/SaveButton";
 import { ToggleButton } from "~/components/buttons";
 import { FileInput } from "~/components/inputs/FileInput";
 import { MultiCombobox } from "~/components/inputs";
+import CollapsibleSectionCard from "~/components/settings/CollapsibleSectionCard";
 import ModeSettingsSection from "~/components/settings/ModeSettingsSection";
 import RequestQuoteSettingsSection from "~/components/settings/RequestQuoteSettingsSection";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
@@ -501,36 +502,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   return json({ ok: true, section, ...jFlashMessage(`${target.key} settings updated successfully`) });
 };
 
-function SectionCard({
-  id,
-  title,
-  description,
-  children,
-}: {
-  id: string;
-  title: string;
-  description: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} style={{ scrollMarginTop: 16 }}>
-      <Card>
-        <Box padding="300">
-          <Text as="h3" variant="headingMd">
-            {title}
-          </Text>
-          <Box paddingBlockStart="100">
-            <Text as="p" tone="subdued">
-              {description}
-            </Text>
-          </Box>
-          <Box paddingBlockStart="300">{children}</Box>
-        </Box>
-      </Card>
-    </section>
-  );
-}
-
 function SectionSave({ loading, onClick, label }: { loading: boolean; onClick: () => void; label: string }) {
   return (
     <Box paddingBlockStart="300">
@@ -939,7 +910,7 @@ export default function ConfigSettingsGeneral() {
           </Box>
         </Card>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="product"
           title="Product"
           description="Storefront and add-to-cart behavior, aligned with the standard ASO product settings."
@@ -1035,9 +1006,13 @@ export default function ConfigSettingsGeneral() {
             onClick={() => submitSection("product", product)}
             label="Save Product"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <section id="mode" style={{ scrollMarginTop: 16 }}>
+        <CollapsibleSectionCard
+          id="mode"
+          title="Mode"
+          description="Single or multi-selection behavior and share/save capabilities."
+        >
           <ModeSettingsSection
             value={mode}
             saving={navigation.state === "submitting" && activeSection === "mode"}
@@ -1045,9 +1020,9 @@ export default function ConfigSettingsGeneral() {
             onChange={setMode}
             onSave={() => submitSection("mode", mode)}
           />
-        </section>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="output"
           title="Output"
           description="Output formats, watermark and generated file settings."
@@ -1113,9 +1088,9 @@ export default function ConfigSettingsGeneral() {
             onClick={() => submitSection("output", output)}
             label="Save Output"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="upload"
           title="Upload Design"
           description="Allowed upload formats, size limits and archive rules."
@@ -1201,9 +1176,9 @@ export default function ConfigSettingsGeneral() {
             onClick={() => submitSection("upload", upload)}
             label="Save Upload"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="quantity-limits"
           title="Quantity Limits"
           description="Minimum and maximum quantities allowed for this configuration."
@@ -1257,9 +1232,9 @@ export default function ConfigSettingsGeneral() {
             onClick={() => submitSection("quantityLimits", quantityLimits)}
             label="Save Quantity Limits"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="discount"
           title="Discount"
           description="Choose between a simple discount or quantity-based discount lots."
@@ -1410,9 +1385,9 @@ export default function ConfigSettingsGeneral() {
             onClick={() => submitSection("discount", discount)}
             label="Save Discount"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="mobile-option"
           title="Mobile Option"
           description="Mobile navigation and selection display preferences."
@@ -1446,18 +1421,22 @@ export default function ConfigSettingsGeneral() {
             onClick={() => submitSection("mobile", mobile)}
             label="Save Mobile"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <section id="request-quote" style={{ scrollMarginTop: 16 }}>
+        <CollapsibleSectionCard
+          id="request-quote"
+          title="Request Quote"
+          description="Quote request workflow, recipient emails and upload rules."
+        >
           <RequestQuoteSettingsSection
             value={requestQuote}
             saving={navigation.state === "submitting" && activeSection === "requestQuote"}
             onChange={setRequestQuote}
             onSave={() => submitSection("requestQuote", requestQuote)}
           />
-        </section>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="simple-options"
           title="Simple Options"
           description="Replace the full customizer with native product option groups when needed."
@@ -1516,7 +1495,7 @@ export default function ConfigSettingsGeneral() {
             onClick={() => submitSection("simpleOptions", simpleOptions)}
             label="Save Simple Options"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
       </div>
 
       <div style={{ position: "sticky", top: 12 }}>

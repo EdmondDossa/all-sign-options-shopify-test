@@ -4,6 +4,7 @@ import {
   InlineStack,
   Select,
   Text,
+  TextField,
 } from "@shopify/polaris";
 import {  useState } from "react";
 import { ReactSwitchCustom } from "~/components/inputs/ReactSwitchCustom";
@@ -32,10 +33,13 @@ const formSchema = z.object({
   measurementUnit: z.string(),
   showHideMeasurements: z.string(),
   decimalFormatMeasurements: z.string(),
+  minimumOrderPrice: z.string().optional().default("0"),
   desktopColumnOrder: z.string(),
   finishButtonPosition: z.string().nullable(),
   allowNextButton: z.any().transform(booleanTransform),
   showThicknessPricing: z.any().transform(booleanTransform),
+  expandThicknessByDefault: z.any().transform(booleanTransform),
+  expandPredefinedSizesByDefault: z.any().transform(booleanTransform),
 });
 
 export const loader = async (agrs: LoaderFunctionArgs) => {
@@ -93,17 +97,21 @@ export default function ConfigSettingsGeneral() {
 
 
 
-  const [formData, setFormData] = useState<any>(
-    settingData || {
-         measurementUnit: "mm",
-         showHideMeasurements: showMeasurementOptions[0].value,
-         decimalFormatMeasurements: measurementDecimalFormatOptions[0].value,
-         desktopColumnOrder: 'left',
-         finishButtonPosition:'bottom',
-         allowNextButton:false,
-         showThicknessPricing: false,
-    },
-  );
+  const [formData, setFormData] = useState<any>(() => {
+    const data = settingData || {};
+    return {
+         measurementUnit: data.measurementUnit ?? "mm",
+         showHideMeasurements: data.showHideMeasurements ?? showMeasurementOptions[0].value,
+         decimalFormatMeasurements: data.decimalFormatMeasurements ?? measurementDecimalFormatOptions[0].value,
+         minimumOrderPrice: data.minimumOrderPrice ?? "0",
+         desktopColumnOrder: data.desktopColumnOrder ?? 'left',
+         finishButtonPosition: data.finishButtonPosition ?? 'bottom',
+         allowNextButton: data.allowNextButton ?? false,
+         showThicknessPricing: data.showThicknessPricing ?? false,
+         expandThicknessByDefault: data.expandThicknessByDefault ?? false,
+         expandPredefinedSizesByDefault: data.expandPredefinedSizesByDefault ?? false,
+    };
+  });
 
   const handleInputChange = (inputName: string, value: any) => {
     setFormData((prevData: any) => ({
@@ -171,6 +179,17 @@ export default function ConfigSettingsGeneral() {
                  />
                
                 </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <TextField
+                    label="Minimum Order Price"
+                    type="number"
+                    value={formData.minimumOrderPrice}
+                    onChange={(value) => handleInputChange("minimumOrderPrice", value)}
+                    autoComplete="off"
+                    helpText="If total price is lower, this minimum will be applied. Use 0 to disable."
+                    error={getError(actionData, "minimumOrderPrice")}
+                  />
+                </Grid.Cell>
                 <Grid.Cell  columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
                  
                  <Select
@@ -214,6 +233,28 @@ export default function ConfigSettingsGeneral() {
                       checked={formData.showThicknessPricing ?? false}
                       setChecked={(value: boolean) =>
                         handleInputChange("showThicknessPricing", value)
+                      }
+                    />
+                  </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <InlineStack blockAlign="center" gap="200">
+                    <Text as="p" variant="bodyMd">Expand thickness by default in configurator</Text>
+                    <ReactSwitchCustom
+                      checked={formData.expandThicknessByDefault ?? false}
+                      setChecked={(value: boolean) =>
+                        handleInputChange("expandThicknessByDefault", value)
+                      }
+                    />
+                  </InlineStack>
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <InlineStack blockAlign="center" gap="200">
+                    <Text as="p" variant="bodyMd">Expand predefined sizes by default in configurator</Text>
+                    <ReactSwitchCustom
+                      checked={formData.expandPredefinedSizesByDefault ?? false}
+                      setChecked={(value: boolean) =>
+                        handleInputChange("expandPredefinedSizesByDefault", value)
                       }
                     />
                   </InlineStack>

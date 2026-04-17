@@ -546,12 +546,15 @@ export default function ClassicConfiguratorLayout() {
 
         <Box
           paddingBlockStart="200"
+          className="aso-scrollbar-hidden"
           style={{
             flex: 1,
             minHeight: 0,
             overflowY: "auto",
             overscrollBehavior: "contain",
             paddingRight: 4,
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
           }}
         >
           <Card>

@@ -52,24 +52,6 @@ const resolveNcpcProductType = (configuration: any): "neon" | "channel" | null =
   if (wrappedProductType === "neon" || wrappedProductType === "channel") {
     return wrappedProductType;
   }
-
-  const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
-  const hasWrappedNcpcShape =
-    Boolean(wrappedNcpcData?.requiredOptions) && Boolean(wrappedNcpcData?.additionalOptions);
-  const hasClassicMaterials = Array.isArray(data?.materials);
-
-  if ((hasNcpcShape || hasWrappedNcpcShape) && !hasClassicMaterials) {
-    if (
-      data?.requiredOptions?.letterTypesOptions ||
-      data?.requiredOptions?.letterTypeOptions ||
-      wrappedNcpcData?.requiredOptions?.letterTypesOptions ||
-      wrappedNcpcData?.requiredOptions?.letterTypeOptions
-    ) {
-      return "channel";
-    }
-    return "neon";
-  }
-
   return null;
 };
 

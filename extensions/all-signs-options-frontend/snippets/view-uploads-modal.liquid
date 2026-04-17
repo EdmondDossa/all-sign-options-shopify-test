@@ -96,10 +96,14 @@
     var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
     var items = list.map(function(file) {
       var fileName = (file.fileName || '').split('/').pop() || ('File ' + file.id);
+      var fileUrl = file.fileUrl ? (file.fileUrl.includes('http') ? file.fileUrl : window.location.origin + '/apps/aso-proxy/' + file.fileUrl) : '';
       return {
         id: parseInt(asoVariantId, 10),
         quantity: 1,
-        properties: { 'Uploaded file': fileName }
+        properties: { 
+          'File Name': fileName,
+          'Uploaded File': fileUrl || fileName
+        }
       };
     });
     try {

@@ -8,8 +8,9 @@ import { json } from "@remix-run/node";
 import { authenticate } from "~/shopify.server";
 import { Modal, TitleBar } from "@shopify/app-bridge-react";
 import TemplateService from "~/models/Template.service";
+import { useEffect, useMemo } from "react";
+import { Jwt } from "jsonwebtoken";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
-
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
@@ -17,23 +18,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   let template = null;
 
   if (id) {
-    template = await TemplateService.getTemplate(id,session.id);
+    template = await TemplateService.getTemplate(id, session.id);
   }
 
- 
-  return json({ template, token:session.accessToken });
+  return json({ template, token: session.accessToken });
 };
 
 export default function Preview() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  let { template , token} = useLoaderData<typeof loader>();
+  let { template, token } = useLoaderData<typeof loader>();
   const returnTo = searchParams.get("returnTo");
 
   useHandleFlashMessage();
-  
-
-
+  const cacheBuster = useMemo(() => Date.now(), []);
 
   return (
     <Page fullWidth>
@@ -44,13 +42,15 @@ export default function Preview() {
         onHide={() => navigate(returnTo || `../..`)}
       >
         <iframe
-          title={template?.name ? `${template.name} preview` : "Template preview"}
+          title={
+            template?.name ? `${template.name} preview` : "Template preview"
+          }
           name={JSON.stringify({
             configId: template?.configurationId,
             templateId: template?.id,
-            token: token
+            token: token,
           })}
-          src="/preview.html"
+          src={`/preview.html?v=${cacheBuster}`}
           className="aso-preview"
           sandbox="allow-scripts allow-same-origin allow-forms"
         ></iframe>

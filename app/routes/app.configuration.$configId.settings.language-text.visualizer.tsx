@@ -55,6 +55,7 @@ const formSchema = z.object({
   textBorder: z.string().nullish().transform(stringTransform),
   textProduct: z.string().nullish().transform(stringTransform),
   textImage: z.string().nullish().transform(stringTransform),
+  phraseImageSizeRestrictionError: z.string().nullish().transform(stringTransform),
   textAdditonnalOptionsHeader: z.string().nullish().transform(stringTransform),
   textButtonAdditonnalOptions: z.string().nullish().transform(stringTransform),
   customSize: z.string().nullish().transform(stringTransform),
@@ -118,6 +119,7 @@ export default function ConfigSettingsGeneral() {
       textBorder: "Border",
       textProduct: "Product",
       textImage: "Image",
+      phraseImageSizeRestrictionError: "The image size must be between",
       customSize: "Custom Size",
       customSizeButtonDone: "Done",
       thickness: "Thickness",
@@ -666,6 +668,18 @@ export default function ConfigSettingsGeneral() {
                     value={formData.textImage}
                     onChange={(value) => handleInputChange("textImage", value)}
                     error={getError(actionData, "textImage")}
+                    autoComplete="on"
+                  />
+                </Grid.Cell>
+                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 6, xl: 6 }}>
+                  <TextField
+                    size="medium"
+                    label="Error message for image size restriction"
+                    value={formData.phraseImageSizeRestrictionError}
+                    onChange={(value) =>
+                      handleInputChange("phraseImageSizeRestrictionError", value)
+                    }
+                    error={getError(actionData, "phraseImageSizeRestrictionError")}
                     autoComplete="on"
                   />
                 </Grid.Cell>

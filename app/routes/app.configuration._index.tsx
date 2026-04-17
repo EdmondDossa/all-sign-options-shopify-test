@@ -54,7 +54,6 @@ import {
   EditIcon,
   MenuHorizontalIcon,
   PlusIcon,
-  SettingsIcon,
   ViewIcon,
 } from "@shopify/polaris-icons";
 import ManageFontIcon from "~/components/icons/ManageFontIcon";
@@ -331,35 +330,6 @@ export default function Configuration() {
       return null;
     }
 
-    const hasNcpcShape =
-      Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
-    const hasClassicMaterials = Array.isArray(data?.materials);
-    const hasWrappedNcpcShape =
-      Boolean(wrappedNcpcData?.requiredOptions) &&
-      Boolean(wrappedNcpcData?.additionalOptions);
-
-    // Fallback legacy-safe:
-    // treat as NCPC only if NCPC blocks exist and classic materials are absent.
-    if (hasNcpcShape && !hasClassicMaterials) {
-      if (
-        data?.requiredOptions?.letterTypesOptions ||
-        data?.requiredOptions?.letterTypeOptions
-      ) {
-        return "channel";
-      }
-      return "neon";
-    }
-
-    if (hasWrappedNcpcShape && !hasClassicMaterials) {
-      if (
-        wrappedNcpcData?.requiredOptions?.letterTypesOptions ||
-        wrappedNcpcData?.requiredOptions?.letterTypeOptions
-      ) {
-        return "channel";
-      }
-      return "neon";
-    }
-
     return null;
   };
 
@@ -390,12 +360,6 @@ export default function Configuration() {
     const safeConfigId = normalizeConfigId(id);
     if (!safeConfigId) return;
     navigate(`/app/ncpc/${safeConfigId}/required-options`);
-  };
-
-  const handleBuilderRoute = (id: number) => {
-    const safeConfigId = normalizeConfigId(id);
-    if (!safeConfigId) return;
-    navigate(`${safeConfigId}/required-options/sizes`);
   };
 
   configurations = configurations || [];
@@ -518,15 +482,6 @@ export default function Configuration() {
                     icon: ViewIcon,
                     onAction: () => handlePreviews(id),
                   },
-                  ...(!ncpcProductType
-                    ? [
-                        {
-                          content: "Configure",
-                          icon: SettingsIcon,
-                          onAction: () => handleBuilderRoute(id),
-                        },
-                      ]
-                    : []),
                   {
                     content: "Edit",
                     icon: EditIcon,

@@ -15,6 +15,7 @@ import SaveButton from "~/components/buttons/SaveButton";
 import { ToggleButton } from "~/components/buttons";
 import { FileInput } from "~/components/inputs/FileInput";
 import { CustomTinymce } from "~/components/inputs/CustomTinymce";
+import CollapsibleSectionCard from "~/components/settings/CollapsibleSectionCard";
 import ConfigSettingsService from "~/models/ConfigSetttings.service";
 import { authenticate } from "~/shopify.server";
 import { jFlashMessage } from "~/utils/message-flash";
@@ -296,22 +297,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   return json({ ok: true, section, ...jFlashMessage(`${section} settings updated successfully`) });
 };
 
-function SectionCard({ id, title, description, children }: { id: string; title: string; description: string; children: React.ReactNode }) {
-  return (
-    <section id={id} style={{ scrollMarginTop: 16 }}>
-      <Card>
-        <Box padding="300">
-          <Text as="h3" variant="headingMd">{title}</Text>
-          <Box paddingBlockStart="100">
-            <Text as="p" tone="subdued">{description}</Text>
-          </Box>
-          <Box paddingBlockStart="300">{children}</Box>
-        </Box>
-      </Card>
-    </section>
-  );
-}
-
 function SectionSave({ loading, onClick, label }: { loading: boolean; onClick: () => void; label: string }) {
   return (
     <Box paddingBlockStart="300">
@@ -410,7 +395,7 @@ export default function ConfigSettingsLanguageText() {
           </Box>
         </Card>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="upload-design"
           title="Upload Design"
           description="Texts and help content used for the upload design flow."
@@ -464,9 +449,9 @@ export default function ConfigSettingsLanguageText() {
             onClick={() => submitSection("uploadDesign", uploadDesign)}
             label="Save Upload Design"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="visualizer"
           title="Visualizer"
           description="Texts and labels used inside the visualizer interface."
@@ -518,9 +503,9 @@ export default function ConfigSettingsLanguageText() {
             onClick={() => submitSection("visualizer", visualizer)}
             label="Save Visualizer"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard
+        <CollapsibleSectionCard
           id="images"
           title="Images"
           description="Icons and system images used across the configurator UI."
@@ -556,7 +541,7 @@ export default function ConfigSettingsLanguageText() {
             onClick={() => submitSection("images", images)}
             label="Save Images"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
       </div>
 
       <div style={{ position: "sticky", top: 12 }}>

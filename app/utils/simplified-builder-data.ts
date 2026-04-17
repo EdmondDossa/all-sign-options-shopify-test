@@ -44,6 +44,7 @@ type RequiredSizeSettings = {
   };
   customSize: {
     active: boolean;
+    hideSizes?: boolean;
     width: {
       label: string;
       min: number | string;
@@ -246,6 +247,7 @@ const createDefaultRequiredSizeSettings = (): RequiredSizeSettings => ({
   },
   customSize: {
     active: false,
+    hideSizes: false,
     width: {
       label: "Width",
       min: 0,
@@ -370,6 +372,7 @@ export const migrateLegacyClassicDataToSimplifiedBuilder = ({
       customSize: {
         ...base.coreSetup.sizes.settings.customSize,
         ...(firstMaterialSizes?.customSize || {}),
+        hideSizes: Boolean(firstMaterialSizes?.customSize?.hideSizes),
         width: {
           ...base.coreSetup.sizes.settings.customSize.width,
           ...(firstMaterialSizes?.customSize?.width || {}),

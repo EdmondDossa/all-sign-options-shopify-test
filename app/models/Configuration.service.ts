@@ -277,6 +277,7 @@ const initialData = {
           uploadMaxWidth: 200,
           uploadMinWidth: 10,
           customWithGraphical: false,
+          enableSizeRestriction: false,
           allowedUploadsExtentions: ["png"],
         },
         enableCustomColor: true,
@@ -298,6 +299,9 @@ const initialData = {
         desktopColumnOrder: "right",
         showHideMeasurements: "both",
         decimalFormatMeasurements: "with-decimal",
+        showThicknessPricing: false,
+        expandThicknessByDefault: false,
+        expandPredefinedSizesByDefault: false,
       },
     },
     languageImages: {
@@ -356,6 +360,7 @@ const initialData = {
         textOptionText: "Text",
         textAdditonnalOptionsHeader: "Additionnals Options",
         textButtonAdditonnalOptions: "Add Option",
+        phraseImageSizeRestrictionError: "The image size must be between",
         textBeforePrice: "",
         textCanvasClone: "Clone",
         textButtonFinish: "Finish",
@@ -1166,7 +1171,8 @@ const sortObjectDeep = (value: any): any => {
 };
 
 const hasSameDataShape = (left: any, right: any) =>
-  JSON.stringify(sortObjectDeep(left)) === JSON.stringify(sortObjectDeep(right));
+  JSON.stringify(sortObjectDeep(left)) ===
+  JSON.stringify(sortObjectDeep(right));
 
 const withReadNcpcMeta = (configuration: any) => {
   if (!configuration) return configuration;
@@ -1208,12 +1214,15 @@ const withReadAndPersistConfiguration = async (
 
   const rawData = getObjectData(configuration.data);
   const hasClassicModularShape =
-    String(rawData?.configuratorMeta?.structure || "").trim().toLowerCase() ===
-      "modular-classic" ||
+    String(rawData?.configuratorMeta?.structure || "")
+      .trim()
+      .toLowerCase() === "modular-classic" ||
     Boolean(String(rawData?.materialType || "").trim()) ||
     (Boolean(String(rawData?.productType || "").trim()) &&
       !["neon", "channel"].includes(
-        String(rawData?.productType || "").trim().toLowerCase(),
+        String(rawData?.productType || "")
+          .trim()
+          .toLowerCase(),
       ));
 
   if (hasClassicModularShape) {
@@ -1288,10 +1297,7 @@ const withReadAndPersistConfiguration = async (
         },
       });
     } catch (error) {
-      console.error(
-        "Error persisting migrated classic configuration:",
-        error,
-      );
+      console.error("Error persisting migrated classic configuration:", error);
     }
   }
 

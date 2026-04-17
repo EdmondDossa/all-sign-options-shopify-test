@@ -24,19 +24,6 @@ const parseConfigData = (rawData: any) => {
 
 const isNcpcConfiguration = (configuration: any) => {
   const data = parseConfigData(configuration?.data);
-  const hasClassicModularShape =
-    String(data?.configuratorMeta?.structure || "").trim().toLowerCase() ===
-      "modular-classic" ||
-    Boolean(String(data?.materialType || "").trim()) ||
-    (Boolean(String(data?.productType || "").trim()) &&
-      !["neon", "channel"].includes(
-        String(data?.productType || "").trim().toLowerCase(),
-      ));
-
-  if (hasClassicModularShape) {
-    return false;
-  }
-
   const productType = normalizeProductType(configuration?.productType);
   if (productType === "neon" || productType === "channel") {
     return true;
@@ -52,13 +39,7 @@ const isNcpcConfiguration = (configuration: any) => {
   if (wrappedProductType === "neon" || wrappedProductType === "channel") {
     return true;
   }
-
-  const hasNcpcShape = Boolean(data?.requiredOptions) && Boolean(data?.additionalOptions);
-  const hasWrappedNcpcShape =
-    Boolean(wrappedNcpcData?.requiredOptions) && Boolean(wrappedNcpcData?.additionalOptions);
-  const hasClassicMaterials = Array.isArray(data?.materials);
-
-  return (hasNcpcShape || hasWrappedNcpcShape) && !hasClassicMaterials;
+  return false;
 };
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
