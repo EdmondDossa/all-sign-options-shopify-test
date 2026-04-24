@@ -766,6 +766,7 @@ export default function Index() {
                                   if (isCrispLoaded()) {
                                     try {
                                       Crisp.setHideOnAway(false);
+                                      Crisp.chat.show();
                                       
                                       if (Crisp && Crisp.chat && typeof Crisp.chat.open === "function") {
                                         Crisp.chat.open();
@@ -773,7 +774,6 @@ export default function Index() {
                                       
                                       if ((window as any).$crisp) {
                                         (window as any).$crisp.push(["do", "chat:open"]);
-                                        (window as any).$crisp.push(["config", "hide:on:away", [false]]);
                                         (window as any).$crisp.push(["do", "chat:show"]);
                                       }
                                       
@@ -781,18 +781,6 @@ export default function Index() {
                                         alert("Le service de chat n'est pas disponible. Veuillez rafraîchir la page.");
                                         return;
                                       }
-                                      
-                                      setTimeout(() => {
-                                        const crispWidget = document.querySelector('#crisp-chatbox') as HTMLElement;
-                                        if (crispWidget) {
-                                          crispWidget.setAttribute('data-force-show', 'true');
-                                          crispWidget.setAttribute('data-hidden', 'false');
-                                          crispWidget.style.display = 'block';
-                                          crispWidget.style.visibility = 'visible';
-                                          crispWidget.style.opacity = '1';
-                                          crispWidget.style.zIndex = '999999';
-                                        }
-                                      }, 100);
                                     } catch (error) {
                                       alert("Une erreur est survenue lors de l'ouverture du chat. Veuillez réessayer.");
                                     }

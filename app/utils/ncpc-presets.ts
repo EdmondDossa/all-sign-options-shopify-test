@@ -60,7 +60,7 @@ const DEFAULT_RANGE_PRICING = [
 
 const DEFAULT_SCENE_IMAGES = Array.from(
   { length: 7 },
-  (_item, index) => `/aso_default_files/scenes/${index + 1}.jpg`,
+  (_item, index) => `/aso_default_files/scenes/${index + 1}.webp`,
 );
 
 export const DEFAULT_THEME_COLORS = {
@@ -394,7 +394,9 @@ const toColor = (
   prevImg: "",
 });
 
-export const createEmptyNcpcData = (productType: NcpcProductType): NcpcData => ({
+export const createEmptyNcpcData = (
+  productType: NcpcProductType,
+): NcpcData => ({
   version: 1,
   requiredOptions: {
     sizeOptions: {

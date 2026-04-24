@@ -201,7 +201,34 @@ export type SimplifiedBuilderData = {
   };
 };
 
-const normalizeText = (value: unknown) => String(value || "").trim();
+const extractScalarText = (value: unknown): string => {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value).trim();
+  }
+  if (Array.isArray(value)) {
+    return extractScalarText(value[0]);
+  }
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const candidates = [
+      record.value,
+      record.label,
+      record.name,
+      record.key,
+      record.type,
+      record.id,
+      record.slug,
+    ];
+    for (const candidate of candidates) {
+      const normalized = extractScalarText(candidate);
+      if (normalized) return normalized;
+    }
+  }
+  return "";
+};
+
+const normalizeText = (value: unknown) => extractScalarText(value);
 
 const slugify = (value: unknown, fallback = "item") => {
   const normalized = normalizeText(value)
@@ -269,6 +296,241 @@ const createDefaultRequiredSizeSettings = (): RequiredSizeSettings => ({
       range: [],
     },
   },
+});
+
+const createDefaultClassicCustomizerConfigOptions = () => [
+  { type: "materials", active: true },
+  { type: "sizes", active: true },
+  { type: "shapes", active: true },
+  { type: "fixing-methodes", active: true },
+  { type: "borders", active: true },
+  { type: "colors", active: true },
+  { type: "texts", active: true },
+  { type: "qrcodes", active: true },
+  { type: "images", active: true },
+  { type: "additional-options", active: true },
+  { type: "additional-components", active: true },
+];
+
+const createDefaultClassicCustomizerSignSettings = () => ({
+  text: {
+    colors: [
+      { name: "black", codeHex: "#000000" },
+      { name: "White", codeHex: "#FFFFFF" },
+      { name: "Blue", codeHex: "#004f86" },
+      { name: "Red", codeHex: "#c4271d" },
+      { name: "Pink", codeHex: "#eb3f77" },
+      { name: "Green", codeHex: "#009251" },
+      { name: "Yellow", codeHex: "#fee900" },
+      { name: "Gray", codeHex: "#4f575b" },
+      { name: "Orange", codeHex: "#e15616" },
+      { name: "Purple", codeHex: "#554585" },
+      { name: "Brown", codeHex: "#523d2a" },
+    ],
+    enableBold: true,
+    colorsLabel: "Text  Colors",
+    enableBorder: true,
+    enableItalic: true,
+    enableStrike: true,
+    colorsPrevImg: "",
+    enableOpacity: true,
+    selectedFonts: [],
+    enableCurvedUp: false,
+    enableFontSize: {
+      active: true,
+      defaultFontSize: 16,
+      maximumFontSize: 100,
+      minimumFontSize: 4,
+    },
+    enableOverline: true,
+    enableUnderline: true,
+    enableCurvedDown: false,
+    enableCustomColor: true,
+    enableTextAlignment: true,
+    textType: "normal",
+  },
+  images: {
+    colors: [],
+    filter: {
+      active: true,
+      enableBlur: true,
+      enableSepia: true,
+      enableEmbross: true,
+      enableOpacity: true,
+      enableSharpen: true,
+      enableGreyscale: false,
+    },
+    colorsLabel: "Image Colors",
+    colorsPrevImg: "",
+    enableClipart: {
+      active: true,
+      selectClipartGroups: [1],
+    },
+    fileUploadScript: {
+      uploadMaxWidth: 200,
+      uploadMinWidth: 10,
+      customWithGraphical: false,
+      enableSizeRestriction: false,
+      allowedUploadsExtentions: ["png"],
+    },
+    enableCustomColor: true,
+    enableUploadImage: true,
+    enableDownloadImage: true,
+    scenes: [],
+  },
+  signPart: {
+    doublePart: {
+      label: "Switch Face",
+      part1: "Face A",
+      part2: "Face B",
+      active: false,
+      enableCopyDesignFromSide: true,
+    },
+  },
+  configOptions: createDefaultClassicCustomizerConfigOptions(),
+  customizerOptions: {
+    measurementUnit: "mm",
+    desktopColumnOrder: "right",
+    showHideMeasurements: "both",
+    decimalFormatMeasurements: "with-decimal",
+    finishButtonPosition: "bottom",
+    allowNextButton: false,
+    showThicknessPricing: false,
+    expandThicknessByDefault: false,
+    expandPredefinedSizesByDefault: false,
+  },
+});
+
+const normalizeClassicCustomizerConfigOptions = (value: any) => {
+  if (!Array.isArray(value) || value.length === 0) {
+    return createDefaultClassicCustomizerConfigOptions();
+  }
+
+  const normalized = value
+    .filter((item) => item && typeof item === "object")
+    .map((item) => ({
+      type: normalizeText(item?.type),
+      active: item?.active !== false,
+    }))
+    .filter((item) => item.type);
+
+  return normalized.length > 0
+    ? normalized
+    : createDefaultClassicCustomizerConfigOptions();
+};
+
+const normalizeClassicCustomizerSignSettings = (value: any = {}) => {
+  const defaults = createDefaultClassicCustomizerSignSettings();
+  const safeValue = value && typeof value === "object" ? value : {};
+
+  return {
+    ...defaults,
+    ...safeValue,
+    text: {
+      ...defaults.text,
+      ...(safeValue?.text || {}),
+      colors: Array.isArray(safeValue?.text?.colors)
+        ? safeValue.text.colors
+        : defaults.text.colors,
+      selectedFonts: Array.isArray(safeValue?.text?.selectedFonts)
+        ? safeValue.text.selectedFonts
+        : defaults.text.selectedFonts,
+      enableFontSize: {
+        ...defaults.text.enableFontSize,
+        ...(safeValue?.text?.enableFontSize || {}),
+      },
+    },
+    images: {
+      ...defaults.images,
+      ...(safeValue?.images || {}),
+      colors: Array.isArray(safeValue?.images?.colors)
+        ? safeValue.images.colors
+        : defaults.images.colors,
+      scenes: Array.isArray(safeValue?.images?.scenes)
+        ? safeValue.images.scenes
+        : defaults.images.scenes,
+      filter: {
+        ...defaults.images.filter,
+        ...(safeValue?.images?.filter || {}),
+      },
+      enableClipart: {
+        ...defaults.images.enableClipart,
+        ...(safeValue?.images?.enableClipart || {}),
+        selectClipartGroups: Array.isArray(
+          safeValue?.images?.enableClipart?.selectClipartGroups,
+        )
+          ? safeValue.images.enableClipart.selectClipartGroups
+          : defaults.images.enableClipart.selectClipartGroups,
+      },
+      fileUploadScript: {
+        ...defaults.images.fileUploadScript,
+        ...(safeValue?.images?.fileUploadScript || {}),
+        allowedUploadsExtentions: Array.isArray(
+          safeValue?.images?.fileUploadScript?.allowedUploadsExtentions,
+        )
+          ? safeValue.images.fileUploadScript.allowedUploadsExtentions
+          : defaults.images.fileUploadScript.allowedUploadsExtentions,
+      },
+    },
+    signPart: {
+      ...defaults.signPart,
+      ...(safeValue?.signPart || {}),
+      doublePart: {
+        ...defaults.signPart.doublePart,
+        ...(safeValue?.signPart?.doublePart || {}),
+      },
+    },
+    configOptions: normalizeClassicCustomizerConfigOptions(
+      safeValue?.configOptions,
+    ),
+    customizerOptions: {
+      ...defaults.customizerOptions,
+      ...(safeValue?.customizerOptions || {}),
+    },
+  };
+};
+
+const normalizeStructuredBlock = (
+  value: any,
+  {
+    label,
+    description = "",
+    items = [],
+  }: {
+    label: string;
+    description?: string;
+    items?: any[];
+  },
+) => ({
+  label,
+  description,
+  ...(value && typeof value === "object" ? value : {}),
+  items: Array.isArray(value?.items) ? value.items : items,
+});
+
+const normalizeStructuredPricingBlock = (
+  value: any,
+  normalizedPricingMode: string,
+) => ({
+  label: "Pricing",
+  description: "",
+  ...(value && typeof value === "object" ? value : {}),
+  mode: normalizeText(value?.mode) || normalizedPricingMode,
+  priceOptions: Array.isArray(value?.priceOptions) ? value.priceOptions : [],
+  items: Array.isArray(value?.items) ? value.items : [],
+});
+
+const normalizeStructuredColorsBlock = (value: any) => ({
+  label: "Colors",
+  description: "",
+  ...(value && typeof value === "object" ? value : {}),
+  customColors: {
+    active: false,
+    label: "Custom Colors",
+    prevImg: "",
+    ...(value?.customColors || {}),
+  },
+  items: Array.isArray(value?.items) ? value.items : [],
 });
 
 export const createEmptySimplifiedBuilderData = ({
@@ -761,6 +1023,12 @@ export const ensureClassicSimplifiedBuilderData = ({
       materialType: normalizedMetaMaterialType,
       productType: normalizedMetaProductType,
       pricingMode: normalizedMetaPricingMode,
+      settings: {
+        ...(safeDataWithoutBuilder?.settings || {}),
+        customizerSign: normalizeClassicCustomizerSignSettings(
+          safeDataWithoutBuilder?.settings?.customizerSign,
+        ),
+      },
       requiredOptions: {
         ...(safeDataWithoutBuilder?.requiredOptions || {}),
         pricing: normalizedBuilder.coreSetup.pricing,
@@ -811,175 +1079,78 @@ export const ensureClassicSimplifiedBuilderData = ({
       materialType: normalizedMaterialType,
       productType: normalizedProductType,
       pricingMode: normalizedPricingMode,
+      settings: {
+        ...(safeDataWithoutBuilder?.settings || {}),
+        customizerSign: normalizeClassicCustomizerSignSettings(
+          safeDataWithoutBuilder?.settings?.customizerSign,
+        ),
+      },
       requiredOptions: {
-        pricing: {
-          label: "Pricing",
-          description: "",
-          mode: normalizedPricingMode,
-          priceOptions: [],
-          items: [],
-          ...(safeDataWithoutBuilder?.requiredOptions?.pricing || {}),
-          mode:
-            normalizeText(
-              safeDataWithoutBuilder?.requiredOptions?.pricing?.mode,
-            ) || normalizedPricingMode,
-          priceOptions: Array.isArray(
-            safeDataWithoutBuilder?.requiredOptions?.pricing?.priceOptions,
-          )
-            ? safeDataWithoutBuilder.requiredOptions.pricing.priceOptions
-            : [],
-          items: Array.isArray(
-            safeDataWithoutBuilder?.requiredOptions?.pricing?.items,
-          )
-            ? safeDataWithoutBuilder.requiredOptions.pricing.items
-            : [],
-        },
-        sizes: {
-          label: "Sizes",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.requiredOptions?.sizes || {}),
-          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.sizes?.items)
-            ? safeDataWithoutBuilder.requiredOptions.sizes.items
-            : [],
-        },
-        fixingMethods: {
-          label: "Fixing Methods",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.requiredOptions?.fixingMethods || {}),
-          items: Array.isArray(
-            safeDataWithoutBuilder?.requiredOptions?.fixingMethods?.items,
-          )
-            ? safeDataWithoutBuilder.requiredOptions.fixingMethods.items
-            : [],
-        },
-        shapes: {
-          label: "Shapes",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.requiredOptions?.shapes || {}),
-          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.shapes?.items)
-            ? safeDataWithoutBuilder.requiredOptions.shapes.items
-            : [],
-        },
-        borders: {
-          label: "Borders",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.requiredOptions?.borders || {}),
-          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.borders?.items)
-            ? safeDataWithoutBuilder.requiredOptions.borders.items
-            : [],
-        },
-        fonts: {
-          label: "Fonts",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.requiredOptions?.fonts || {}),
-          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.fonts?.items)
-            ? safeDataWithoutBuilder.requiredOptions.fonts.items
-            : [],
-        },
-        colors: {
-          label: "Colors",
-          description: "",
-          customColors: {
-            active: false,
-            label: "Custom Colors",
-            prevImg: "",
-          },
-          items: [],
-          ...(safeDataWithoutBuilder?.requiredOptions?.colors || {}),
-          customColors: {
-            active: false,
-            label: "Custom Colors",
-            prevImg: "",
-            ...(safeDataWithoutBuilder?.requiredOptions?.colors?.customColors || {}),
-          },
-          items: Array.isArray(safeDataWithoutBuilder?.requiredOptions?.colors?.items)
-            ? safeDataWithoutBuilder.requiredOptions.colors.items
-            : [],
-        },
+        pricing: normalizeStructuredPricingBlock(
+          safeDataWithoutBuilder?.requiredOptions?.pricing,
+          normalizedPricingMode,
+        ),
+        sizes: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.requiredOptions?.sizes,
+          { label: "Sizes" },
+        ),
+        fixingMethods: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.requiredOptions?.fixingMethods,
+          { label: "Fixing Methods" },
+        ),
+        shapes: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.requiredOptions?.shapes,
+          { label: "Shapes" },
+        ),
+        borders: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.requiredOptions?.borders,
+          { label: "Borders" },
+        ),
+        fonts: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.requiredOptions?.fonts,
+          { label: "Fonts" },
+        ),
+        colors: normalizeStructuredColorsBlock(
+          safeDataWithoutBuilder?.requiredOptions?.colors,
+        ),
         ...(exposeComponents
           ? {}
           : {
-              components: {
-                label: "Components",
-                description: "",
-                items: [],
-                ...(safeDataWithoutBuilder?.requiredOptions?.components || {}),
-                items: Array.isArray(
-                  safeDataWithoutBuilder?.requiredOptions?.components?.items,
-                )
-                  ? safeDataWithoutBuilder.requiredOptions.components.items
-                  : [],
-              },
+              components: normalizeStructuredBlock(
+                safeDataWithoutBuilder?.requiredOptions?.components,
+                { label: "Components" },
+              ),
             }),
       },
       additionalOptions: {
-        materials: {
-          label: "Materials",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.additionalOptions?.materials || {}),
-          items: Array.isArray(safeDataWithoutBuilder?.additionalOptions?.materials?.items)
-            ? safeDataWithoutBuilder.additionalOptions.materials.items
-            : [],
-        },
-        fixingMethods: {
-          label: "Fixing Methods",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.additionalOptions?.fixingMethods || {}),
-          items: Array.isArray(
-            safeDataWithoutBuilder?.additionalOptions?.fixingMethods?.items,
-          )
-            ? safeDataWithoutBuilder.additionalOptions.fixingMethods.items
-            : [],
-        },
-        shapes: {
-          label: "Shapes",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.additionalOptions?.shapes || {}),
-          items: Array.isArray(safeDataWithoutBuilder?.additionalOptions?.shapes?.items)
-            ? safeDataWithoutBuilder.additionalOptions.shapes.items
-            : [],
-        },
-        borders: {
-          label: "Borders",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.additionalOptions?.borders || {}),
-          items: Array.isArray(safeDataWithoutBuilder?.additionalOptions?.borders?.items)
-            ? safeDataWithoutBuilder.additionalOptions.borders.items
-            : [],
-        },
+        materials: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.additionalOptions?.materials,
+          { label: "Materials" },
+        ),
+        fixingMethods: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.additionalOptions?.fixingMethods,
+          { label: "Fixing Methods" },
+        ),
+        shapes: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.additionalOptions?.shapes,
+          { label: "Shapes" },
+        ),
+        borders: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.additionalOptions?.borders,
+          { label: "Borders" },
+        ),
         ...(exposeComponents
           ? {
-              components: {
-                label: "Additional Components",
-                description: "",
-                items: [],
-                ...(safeDataWithoutBuilder?.additionalOptions?.components || {}),
-                items: Array.isArray(
-                  safeDataWithoutBuilder?.additionalOptions?.components?.items,
-                )
-                  ? safeDataWithoutBuilder.additionalOptions.components.items
-                  : [],
-              },
+              components: normalizeStructuredBlock(
+                safeDataWithoutBuilder?.additionalOptions?.components,
+                { label: "Additional Components" },
+              ),
             }
           : {}),
-        inputs: {
-          label: "Inputs",
-          description: "",
-          items: [],
-          ...(safeDataWithoutBuilder?.additionalOptions?.inputs || {}),
-          items: Array.isArray(safeDataWithoutBuilder?.additionalOptions?.inputs?.items)
-            ? safeDataWithoutBuilder.additionalOptions.inputs.items
-            : [],
-        },
+        inputs: normalizeStructuredBlock(
+          safeDataWithoutBuilder?.additionalOptions?.inputs,
+          { label: "Inputs" },
+        ),
       },
       configuratorMeta: {
         version: 1,
@@ -1012,6 +1183,12 @@ export const ensureClassicSimplifiedBuilderData = ({
     materialType: normalizedMaterialType,
     productType: normalizedProductType,
     pricingMode: normalizedPricingMode,
+    settings: {
+      ...(safeDataWithoutBuilder?.settings || {}),
+      customizerSign: normalizeClassicCustomizerSignSettings(
+        safeDataWithoutBuilder?.settings?.customizerSign,
+      ),
+    },
     requiredOptions: {
       ...(safeDataWithoutBuilder?.requiredOptions || {}),
       pricing: migratedBuilder.coreSetup.pricing,

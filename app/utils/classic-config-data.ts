@@ -1,4 +1,31 @@
-const normalizeText = (value: unknown) => String(value || "").trim();
+const extractScalarText = (value: unknown): string => {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value).trim();
+  }
+  if (Array.isArray(value)) {
+    return extractScalarText(value[0]);
+  }
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const candidates = [
+      record.value,
+      record.label,
+      record.name,
+      record.key,
+      record.type,
+      record.id,
+      record.slug,
+    ];
+    for (const candidate of candidates) {
+      const normalized = extractScalarText(candidate);
+      if (normalized) return normalized;
+    }
+  }
+  return "";
+};
+
+const normalizeText = (value: unknown) => extractScalarText(value);
 
 export const getClassicDataMaterialType = (data: any) => {
   const directValue = normalizeText(data?.materialType);

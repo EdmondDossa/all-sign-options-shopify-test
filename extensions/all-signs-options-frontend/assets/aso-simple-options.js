@@ -1,6 +1,102 @@
 (function () {
   if (!window.asoConfigurationId) return;
 
+  function asoGetStorefrontProxyBase() {
+    var root =
+      window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+        ? window.Shopify.routes.root
+        : '/';
+    var normalizedRoot = /\/$/.test(root) ? root : root + '/';
+    return window.location.origin + normalizedRoot + 'apps/aso-proxy/';
+  }
+
+  function asoNormalizeProxyAssetUrl(value) {
+    var raw = String(value || '').trim();
+    if (!raw) return raw;
+
+    var proxyBase = asoGetStorefrontProxyBase();
+    function normalizePath(path, search, hash) {
+      var cleanedPath = String(path || '').replace(/^\/+/, '');
+      search = search || '';
+      hash = hash || '';
+      if (!cleanedPath) return raw;
+
+      if (/^apps\/aso-proxy\//.test(cleanedPath)) {
+        return proxyBase + cleanedPath.replace(/^apps\/aso-proxy\//, '') + search + hash;
+      }
+
+      if (/^uploads\//.test(cleanedPath)) {
+        return proxyBase + cleanedPath + search + hash;
+      }
+
+      if (/^aso_default_files\//.test(cleanedPath)) {
+        return proxyBase + cleanedPath + search + hash;
+      }
+
+      return raw;
+    }
+
+    if (/^https?:\/\//i.test(raw)) {
+      try {
+        var parsed = new URL(raw);
+        return normalizePath(parsed.pathname, parsed.search, parsed.hash);
+      } catch (error) {
+        return raw;
+      }
+    }
+
+    if (/^https?:\/\/[^/]+\/apps\/aso-proxy\//i.test(raw)) {
+      var proxyPath = raw.split(/\/apps\/aso-proxy\//i)[1] || '';
+      return proxyBase + proxyPath.replace(/^\/+/, '');
+    }
+
+    if (/^\/apps\/aso-proxy\//.test(raw)) {
+      return proxyBase + raw.replace(/^\/apps\/aso-proxy\//, '');
+    }
+
+    if (/^apps\/aso-proxy\//.test(raw)) {
+      return proxyBase + raw.replace(/^apps\/aso-proxy\//, '');
+    }
+
+    if (/^\/uploads\//.test(raw)) {
+      return proxyBase + raw.replace(/^\/+/, '');
+    }
+
+    if (/^uploads\//.test(raw)) {
+      return proxyBase + raw;
+    }
+
+    if (/^\/aso_default_files\//.test(raw)) {
+      return proxyBase + raw.replace(/^\/+/, '');
+    }
+
+    if (/^aso_default_files\//.test(raw)) {
+      return proxyBase + raw;
+    }
+
+    return normalizePath(raw);
+  }
+
+  function asoNormalizeProxyAssetTree(input) {
+    if (typeof input === 'string') {
+      return asoNormalizeProxyAssetUrl(input);
+    }
+
+    if (Array.isArray(input)) {
+      return input.map(asoNormalizeProxyAssetTree);
+    }
+
+    if (input && typeof input === 'object') {
+      var normalized = {};
+      Object.keys(input).forEach(function (key) {
+        normalized[key] = asoNormalizeProxyAssetTree(input[key]);
+      });
+      return normalized;
+    }
+
+    return input;
+  }
+
   // Hide configurator immediately to avoid flash
   var initStyle = document.createElement('style');
   initStyle.id = 'aso-simple-init-style';
@@ -24,6 +120,7 @@
       return r.json();
     })
     .then(function (config) {
+      config = asoNormalizeProxyAssetTree(config);
       var simpleOptions =
         config &&
         config.data &&

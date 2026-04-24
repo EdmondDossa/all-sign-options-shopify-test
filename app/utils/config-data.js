@@ -5,8 +5,7 @@ const configs = [
     description: "Neon and Flex LED Neon Letter Signs.",
     demoLink: "https://demos.signsdesigner.us/design-page/design/57/#/",
     pricings: ["fixing-height", "fixing-width", "advanced", "frame-fit"],
-    previewImage:
-      ncpcData.ncpc_assets_url + "/images/configs-previews/neon.webp",
+    previewImage: "/images/configs-previews/neon.webp",
     data: {
       "fixing-width": {
         title: "Fixed Width Neon",
@@ -260,7 +259,7 @@ const configs = [
               fonts: [
                 {
                   label: "Outline",
-                  url: ncpcData.ncpc_assets_url + "/fonts/outline.ttf",
+                  url: "/aso_default_files/fonts/outline.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: true,
@@ -274,7 +273,7 @@ const configs = [
                 },
                 {
                   label: "Allura",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Allura-Regular.ttf",
+                  url: "/aso_default_files/fonts/Allura-Regular.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -288,7 +287,7 @@ const configs = [
                 },
                 {
                   label: "Avante",
-                  url: ncpcData.ncpc_assets_url + "/fonts/avante.ttf",
+                  url: "/aso_default_files/fonts/avante.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -302,8 +301,7 @@ const configs = [
                 },
                 {
                   label: "Corinthia",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/Corinthia-Regular.ttf",
+                  url: "/aso_default_files/fonts/Corinthia-Regular.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -317,7 +315,7 @@ const configs = [
                 },
                 {
                   label: "Melbourne",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Melbourne_reg.ttf",
+                  url: "/aso_default_files/fonts/Melbourne_reg.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -331,7 +329,7 @@ const configs = [
                 },
                 {
                   label: "Monaco",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Monaco-Regular.ttf",
+                  url: "/aso_default_files/fonts/Monaco-Regular.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -345,7 +343,7 @@ const configs = [
                 },
                 {
                   label: "Signature",
-                  url: ncpcData.ncpc_assets_url + "/fonts/signature.ttf",
+                  url: "/aso_default_files/fonts/signature.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -359,7 +357,7 @@ const configs = [
                 },
                 {
                   label: "Neon",
-                  url: ncpcData.ncpc_assets_url + "/fonts/neon.ttf",
+                  url: "/aso_default_files/fonts/neon.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -411,9 +409,7 @@ const configs = [
                     "Backboard is cut closely around the outside of your wording",
                   type: "cut-to-shape",
                   isDefault: true,
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/cut-to-shape.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/cut-to-shape.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -439,8 +435,7 @@ const configs = [
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -465,8 +460,7 @@ const configs = [
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -493,8 +487,7 @@ const configs = [
                   type: "raceway-double",
                   isDefault: false,
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -520,9 +513,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -557,11 +548,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -576,11 +565,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -595,11 +582,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -614,9 +599,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -627,9 +610,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -648,8 +629,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -664,9 +644,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -719,9 +697,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -735,9 +711,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -746,9 +720,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -757,9 +729,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -768,9 +738,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -779,9 +747,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -790,9 +756,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -801,9 +765,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -821,11 +783,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -836,11 +796,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -960,12 +918,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -1435,7 +1394,7 @@ const configs = [
               fonts: [
                 {
                   label: "Outline",
-                  url: ncpcData.ncpc_assets_url + "/fonts/outline.ttf",
+                  url: "/aso_default_files/fonts/outline.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: true,
@@ -1449,7 +1408,7 @@ const configs = [
                 },
                 {
                   label: "Allura",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Allura-Regular.ttf",
+                  url: "/aso_default_files/fonts/Allura-Regular.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -1463,7 +1422,7 @@ const configs = [
                 },
                 {
                   label: "Avante",
-                  url: ncpcData.ncpc_assets_url + "/fonts/avante.ttf",
+                  url: "/aso_default_files/fonts/avante.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -1477,8 +1436,7 @@ const configs = [
                 },
                 {
                   label: "Corinthia",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/Corinthia-Regular.ttf",
+                  url: "/aso_default_files/fonts/Corinthia-Regular.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -1492,7 +1450,7 @@ const configs = [
                 },
                 {
                   label: "Melbourne",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Melbourne_reg.ttf",
+                  url: "/aso_default_files/fonts/Melbourne_reg.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -1506,7 +1464,7 @@ const configs = [
                 },
                 {
                   label: "Monaco",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Monaco-Regular.ttf",
+                  url: "/aso_default_files/fonts/Monaco-Regular.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -1520,7 +1478,7 @@ const configs = [
                 },
                 {
                   label: "Signature",
-                  url: ncpcData.ncpc_assets_url + "/fonts/signature.ttf",
+                  url: "/aso_default_files/fonts/signature.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -1534,7 +1492,7 @@ const configs = [
                 },
                 {
                   label: "Neon",
-                  url: ncpcData.ncpc_assets_url + "/fonts/neon.ttf",
+                  url: "/aso_default_files/fonts/neon.ttf",
                   pricing: 0,
                   previewImg: "",
                   isDefault: false,
@@ -1586,9 +1544,7 @@ const configs = [
                     "Backboard is cut closely around the outside of your wording",
                   type: "cut-to-shape",
                   isDefault: true,
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/cut-to-shape.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/cut-to-shape.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -1614,8 +1570,7 @@ const configs = [
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -1640,8 +1595,7 @@ const configs = [
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -1668,8 +1622,7 @@ const configs = [
                   type: "raceway-double",
                   isDefault: false,
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -1695,9 +1648,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -1732,11 +1683,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -1751,11 +1700,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -1770,11 +1717,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -1789,9 +1734,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -1802,9 +1745,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -1823,8 +1764,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -1839,9 +1779,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -1894,9 +1832,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -1910,9 +1846,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -1921,9 +1855,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -1932,9 +1864,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -1943,9 +1873,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -1954,9 +1882,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -1965,9 +1891,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -1976,9 +1900,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -1996,11 +1918,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -2011,11 +1931,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -2135,12 +2053,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -2379,30 +2298,30 @@ const configs = [
               customSize: {
                 activate: true,
                 customs: {
-                label: "Custom",
-                maxRange: 300,
-                step: 2,
-                showCustomSizeInput: "selected",
-                hideOtherSizes: false,
-                initialDimensions: {
-                  width: 50,
-                  height: 50,
-                },
-                minDimensions: {
-                  width: 50,
-                  height: 50,
+                  label: "Custom",
+                  maxRange: 300,
+                  step: 2,
+                  showCustomSizeInput: "selected",
+                  hideOtherSizes: false,
+                  initialDimensions: {
+                    width: 50,
+                    height: 50,
+                  },
+                  minDimensions: {
+                    width: 50,
+                    height: 50,
+                  },
                 },
               },
+              maxTextCharacters: {
+                unlimited: true,
+                value: 0,
               },
-              maxTextCharacters:{
-                unlimited:true,
-                value:0
-            },
-            maxNumberOfLines:{
-                unlimited:true,
-                value:0
-            },
-            sizes: [
+              maxNumberOfLines: {
+                unlimited: true,
+                value: 0,
+              },
+              sizes: [
                 {
                   label: "Small",
                   scaleMultiplier: 1,
@@ -2522,7 +2441,7 @@ const configs = [
               fonts: [
                 {
                   label: "Outline",
-                  url: ncpcData.ncpc_assets_url + "/fonts/outline.ttf",
+                  url: "/aso_default_files/fonts/outline.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: true,
@@ -2539,7 +2458,7 @@ const configs = [
                 },
                 {
                   label: "Allura",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Allura-Regular.ttf",
+                  url: "/aso_default_files/fonts/Allura-Regular.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -2556,7 +2475,7 @@ const configs = [
                 },
                 {
                   label: "Avante",
-                  url: ncpcData.ncpc_assets_url + "/fonts/avante.ttf",
+                  url: "/aso_default_files/fonts/avante.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -2573,8 +2492,7 @@ const configs = [
                 },
                 {
                   label: "Corinthia",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/Corinthia-Regular.ttf",
+                  url: "/aso_default_files/fonts/Corinthia-Regular.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -2591,7 +2509,7 @@ const configs = [
                 },
                 {
                   label: "Melbourne",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Melbourne_reg.ttf",
+                  url: "/aso_default_files/fonts/Melbourne_reg.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -2608,7 +2526,7 @@ const configs = [
                 },
                 {
                   label: "Monaco",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Monaco-Regular.ttf",
+                  url: "/aso_default_files/fonts/Monaco-Regular.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -2625,7 +2543,7 @@ const configs = [
                 },
                 {
                   label: "Signature",
-                  url: ncpcData.ncpc_assets_url + "/fonts/signature.ttf",
+                  url: "/aso_default_files/fonts/signature.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -2642,7 +2560,7 @@ const configs = [
                 },
                 {
                   label: "Neon",
-                  url: ncpcData.ncpc_assets_url + "/fonts/neon.ttf",
+                  url: "/aso_default_files/fonts/neon.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -2779,9 +2697,7 @@ const configs = [
                     "Backboard is cut closely around the outside of your wording",
                   type: "cut-to-shape",
                   isDefault: true,
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/cut-to-shape.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/cut-to-shape.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -2807,8 +2723,7 @@ const configs = [
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -2833,8 +2748,7 @@ const configs = [
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -2861,8 +2775,7 @@ const configs = [
                   type: "raceway-double",
                   isDefault: false,
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -2888,9 +2801,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
                   isDefault: false,
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -2925,11 +2836,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -2944,11 +2853,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -2963,11 +2870,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -2982,9 +2887,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -2995,9 +2898,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -3016,8 +2917,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -3032,9 +2932,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -3087,9 +2985,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -3103,9 +2999,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -3114,9 +3008,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -3125,9 +3017,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -3136,9 +3026,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -3147,9 +3035,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -3158,9 +3044,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -3169,9 +3053,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -3189,11 +3071,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -3204,11 +3084,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -3328,12 +3206,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -3559,8 +3438,7 @@ const configs = [
     description: "2D / 3D acrylic letter signs",
     demoLink: "https://demos.signsdesigner.us/acrylic-letter-signs/#/",
     pricings: ["fixing-height", "fixing-width", "advanced", "frame-fit"],
-    previewImage:
-      ncpcData.ncpc_assets_url + "/images/configs-previews/acrylic.webp",
+    previewImage: "/images/configs-previews/acrylic.webp",
 
     data: {
       "fixed-width": {
@@ -4035,7 +3913,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   pricing: 0,
                   isDefault: true,
                   limitFont: [],
@@ -4049,7 +3927,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -4063,8 +3941,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -4078,7 +3955,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -4129,8 +4006,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -4155,8 +4031,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -4183,8 +4058,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -4210,9 +4084,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -4248,11 +4120,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -4267,11 +4137,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -4286,11 +4154,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -4305,9 +4171,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -4318,9 +4182,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -4339,8 +4201,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -4355,9 +4216,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -4410,9 +4269,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -4426,9 +4283,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -4437,9 +4292,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -4448,9 +4301,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -4459,9 +4310,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -4470,9 +4319,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -4481,9 +4328,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -4492,9 +4337,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -4512,11 +4355,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -4527,11 +4368,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -4651,12 +4490,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -5343,7 +5183,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   pricing: 0,
                   isDefault: true,
                   limitFont: [],
@@ -5357,7 +5197,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -5371,8 +5211,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -5386,7 +5225,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -5437,8 +5276,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -5463,8 +5301,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -5491,8 +5328,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -5518,9 +5354,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -5556,11 +5390,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -5575,11 +5407,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -5594,11 +5424,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -5613,9 +5441,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -5626,9 +5452,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -5647,8 +5471,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -5663,9 +5486,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -5718,9 +5539,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -5734,9 +5553,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -5745,9 +5562,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -5756,9 +5571,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -5767,9 +5580,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -5778,9 +5589,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -5789,9 +5598,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -5800,9 +5607,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -5820,11 +5625,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -5835,11 +5638,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -5959,12 +5760,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -6203,30 +6005,30 @@ const configs = [
               customSize: {
                 activate: true,
                 customs: {
-                label: "Custom",
-                maxRange: 300,
-                step: 2,
-                showCustomSizeInput: "selected",
-                hideOtherSizes: false,
-                initialDimensions: {
-                  width: 50,
-                  height: 50,
-                },
-                minDimensions: {
-                  width: 50,
-                  height: 50,
+                  label: "Custom",
+                  maxRange: 300,
+                  step: 2,
+                  showCustomSizeInput: "selected",
+                  hideOtherSizes: false,
+                  initialDimensions: {
+                    width: 50,
+                    height: 50,
+                  },
+                  minDimensions: {
+                    width: 50,
+                    height: 50,
+                  },
                 },
               },
+              maxTextCharacters: {
+                unlimited: true,
+                value: 0,
               },
-              maxTextCharacters:{
-                unlimited:true,
-                value:0
-            },
-            maxNumberOfLines:{
-                unlimited:true,
-                value:0
-            },
-            sizes: [
+              maxNumberOfLines: {
+                unlimited: true,
+                value: 0,
+              },
+              sizes: [
                 {
                   label: "Small",
                   scaleMultiplier: 1,
@@ -6346,7 +6148,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: true,
@@ -6363,7 +6165,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -6380,8 +6182,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -6398,7 +6199,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -6754,8 +6555,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -6780,8 +6580,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -6808,8 +6607,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -6835,9 +6633,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -6873,11 +6669,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -6892,11 +6686,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -6911,11 +6703,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -6930,9 +6720,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -6943,9 +6731,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -6965,8 +6751,7 @@ const configs = [
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   previewImg: "",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   isDefault: true,
                   excludedBackboards: [],
                   excludedColors: [],
@@ -6981,9 +6766,7 @@ const configs = [
                   description:
                     "Your sign will come with a wire hanging kit and screws",
                   previewImg: "",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   isDefault: false,
                   excludedBackboards: [],
                   excludedColors: [],
@@ -7035,9 +6818,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -7051,9 +6832,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -7062,9 +6841,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -7073,9 +6850,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -7084,9 +6859,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -7095,9 +6868,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -7106,9 +6877,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -7117,9 +6886,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -7137,11 +6904,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -7152,11 +6917,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -7276,12 +7039,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -7507,8 +7271,7 @@ const configs = [
     description: "2D / 3D metal letter signs",
     demoLink: "https://demos.signsdesigner.us/metal-letter-signs/#/",
     pricings: ["fixing-height", "fixing-width", "advanced", "frame-fit"],
-    previewImage:
-      ncpcData.ncpc_assets_url + "/images/configs-previews/metal.webp",
+    previewImage: "/images/configs-previews/metal.webp",
 
     data: {
       "fixed-width": {
@@ -7983,7 +7746,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   pricing: 0,
                   isDefault: true,
                   limitFont: [],
@@ -7997,7 +7760,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -8011,8 +7774,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -8026,7 +7788,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -8077,8 +7839,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -8103,8 +7864,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -8131,8 +7891,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -8158,9 +7917,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -8196,11 +7953,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -8215,11 +7970,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -8234,11 +7987,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -8253,9 +8004,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -8266,9 +8015,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -8287,8 +8034,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -8303,9 +8049,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -8358,9 +8102,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -8374,9 +8116,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -8385,9 +8125,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -8396,9 +8134,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -8407,9 +8143,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -8418,9 +8152,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -8429,9 +8161,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -8440,9 +8170,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -8460,11 +8188,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -8475,11 +8201,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -8599,12 +8323,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -9291,7 +9016,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   pricing: 0,
                   isDefault: true,
                   limitFont: [],
@@ -9305,7 +9030,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -9319,8 +9044,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -9334,7 +9058,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -9385,8 +9109,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -9411,8 +9134,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -9439,8 +9161,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -9466,9 +9187,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -9504,11 +9223,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -9523,11 +9240,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -9542,11 +9257,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -9561,9 +9274,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -9574,9 +9285,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -9595,8 +9304,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -9611,9 +9319,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -9666,9 +9372,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -9682,9 +9386,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -9693,9 +9395,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -9704,9 +9404,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -9715,9 +9413,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -9726,9 +9422,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -9737,9 +9431,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -9748,9 +9440,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -9768,11 +9458,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -9783,11 +9471,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -9907,12 +9593,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -10151,30 +9838,30 @@ const configs = [
               customSize: {
                 activate: true,
                 customs: {
-                label: "Custom",
-                maxRange: 300,
-                step: 2,
-                showCustomSizeInput: "selected",
-                hideOtherSizes: false,
-                initialDimensions: {
-                  width: 50,
-                  height: 50,
-                },
-                minDimensions: {
-                  width: 50,
-                  height: 50,
+                  label: "Custom",
+                  maxRange: 300,
+                  step: 2,
+                  showCustomSizeInput: "selected",
+                  hideOtherSizes: false,
+                  initialDimensions: {
+                    width: 50,
+                    height: 50,
+                  },
+                  minDimensions: {
+                    width: 50,
+                    height: 50,
+                  },
                 },
               },
+              maxTextCharacters: {
+                unlimited: true,
+                value: 0,
               },
-              maxTextCharacters:{
-                unlimited:true,
-                value:0
-            },
-            maxNumberOfLines:{
-                unlimited:true,
-                value:0
-            },
-            sizes: [
+              maxNumberOfLines: {
+                unlimited: true,
+                value: 0,
+              },
+              sizes: [
                 {
                   label: "Small",
                   scaleMultiplier: 1,
@@ -10294,7 +9981,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: true,
@@ -10311,7 +9998,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -10328,8 +10015,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -10346,7 +10032,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -10702,8 +10388,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -10728,8 +10413,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -10756,8 +10440,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -10783,9 +10466,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -10821,11 +10502,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -10840,11 +10519,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -10859,11 +10536,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -10878,9 +10553,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -10891,9 +10564,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -10913,8 +10584,7 @@ const configs = [
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   previewImg: "",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   isDefault: true,
                   excludedBackboards: [],
                   excludedColors: [],
@@ -10929,9 +10599,7 @@ const configs = [
                   description:
                     "Your sign will come with a wire hanging kit and screws",
                   previewImg: "",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   isDefault: false,
                   excludedBackboards: [],
                   excludedColors: [],
@@ -10983,9 +10651,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -10999,9 +10665,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -11010,9 +10674,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -11021,9 +10683,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -11032,9 +10692,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -11043,9 +10701,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -11054,9 +10710,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -11065,9 +10719,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -11085,11 +10737,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -11100,11 +10750,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -11224,12 +10872,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -11455,8 +11104,7 @@ const configs = [
     description: "Flat or 3D wood letters signs",
     demoLink: "https://demos.signsdesigner.us/wood-sign/#/",
     pricings: ["fixing-height", "fixing-width", "advanced", "frame-fit"],
-    previewImage:
-      ncpcData.ncpc_assets_url + "/images/configs-previews/wood.webp",
+    previewImage: "/images/configs-previews/wood.webp",
 
     data: {
       "fixed-width": {
@@ -11931,7 +11579,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   pricing: 0,
                   isDefault: true,
                   limitFont: [],
@@ -11945,7 +11593,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -11959,8 +11607,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -11974,7 +11621,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -12025,8 +11672,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -12051,8 +11697,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -12079,8 +11724,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -12106,9 +11750,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -12144,11 +11786,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -12163,11 +11803,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -12182,11 +11820,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -12201,9 +11837,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -12214,9 +11848,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -12235,8 +11867,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -12251,9 +11882,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -12306,9 +11935,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -12322,9 +11949,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -12333,9 +11958,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -12344,9 +11967,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -12355,9 +11976,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -12366,9 +11985,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -12377,9 +11994,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -12388,9 +12003,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -12408,11 +12021,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -12423,11 +12034,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -12547,12 +12156,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -13239,7 +12849,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   pricing: 0,
                   isDefault: true,
                   limitFont: [],
@@ -13253,7 +12863,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -13267,8 +12877,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -13282,7 +12891,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   pricing: 0,
                   isDefault: false,
                   limitFont: [],
@@ -13333,8 +12942,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -13359,8 +12967,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -13387,8 +12994,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -13414,9 +13020,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -13452,11 +13056,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -13471,11 +13073,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -13490,11 +13090,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -13509,9 +13107,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -13522,9 +13118,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -13543,8 +13137,7 @@ const configs = [
                   description:
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   previewImg: "",
                   isDefault: true,
                   excludedBackboards: [],
@@ -13559,9 +13152,7 @@ const configs = [
                   label: "Hanging Kit",
                   description:
                     "Your sign will come with a wire hanging kit and screws",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   previewImg: "",
                   isDefault: false,
                   excludedBackboards: [],
@@ -13614,9 +13205,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -13630,9 +13219,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -13641,9 +13228,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -13652,9 +13237,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -13663,9 +13246,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -13674,9 +13255,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -13685,9 +13264,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -13696,9 +13273,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -13716,11 +13291,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -13731,11 +13304,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -13855,12 +13426,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -14099,30 +13671,30 @@ const configs = [
               customSize: {
                 activate: true,
                 customs: {
-                label: "Custom",
-                maxRange: 300,
-                step: 2,
-                showCustomSizeInput: "selected",
-                hideOtherSizes: false,
-                initialDimensions: {
-                  width: 50,
-                  height: 50,
-                },
-                minDimensions: {
-                  width: 50,
-                  height: 50,
+                  label: "Custom",
+                  maxRange: 300,
+                  step: 2,
+                  showCustomSizeInput: "selected",
+                  hideOtherSizes: false,
+                  initialDimensions: {
+                    width: 50,
+                    height: 50,
+                  },
+                  minDimensions: {
+                    width: 50,
+                    height: 50,
+                  },
                 },
               },
+              maxTextCharacters: {
+                unlimited: true,
+                value: 0,
               },
-              maxTextCharacters:{
-                unlimited:true,
-                value:0
-            },
-            maxNumberOfLines:{
-                unlimited:true,
-                value:0
-            },
-            sizes: [
+              maxNumberOfLines: {
+                unlimited: true,
+                value: 0,
+              },
+              sizes: [
                 {
                   label: "Small",
                   scaleMultiplier: 1,
@@ -14242,7 +13814,7 @@ const configs = [
               fonts: [
                 {
                   label: "Urfa",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Urfa-Heavy.ttf",
+                  url: "/aso_default_files/fonts/Urfa-Heavy.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: true,
@@ -14259,7 +13831,7 @@ const configs = [
                 },
                 {
                   label: "TypeWriter",
-                  url: ncpcData.ncpc_assets_url + "/fonts/Type-Machine.ttf",
+                  url: "/aso_default_files/fonts/Type-Machine.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -14276,8 +13848,7 @@ const configs = [
                 },
                 {
                   label: "Standard",
-                  url:
-                    ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Regular.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Regular.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -14294,7 +13865,7 @@ const configs = [
                 },
                 {
                   label: "Italic",
-                  url: ncpcData.ncpc_assets_url + "/fonts/ChangaOne-Italic.ttf",
+                  url: "/aso_default_files/fonts/ChangaOne-Italic.ttf",
                   previewImg: "",
                   pricing: 0,
                   isDefault: false,
@@ -14650,8 +14221,7 @@ const configs = [
                   description:
                     "Backboard cut in a Rectangle around the outside of your wording",
                   type: "board",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -14676,8 +14246,7 @@ const configs = [
                   label: "Box",
                   description: "Your sign will be inside a 6 sided perspex box",
                   type: "box",
-                  popupImg:
-                    ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -14704,8 +14273,7 @@ const configs = [
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "raceway-double",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/raceway-double.jpg",
+                    "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                   previewImg: "",
                   isDefault: false,
                   backboardLength: {
@@ -14731,9 +14299,7 @@ const configs = [
                   description:
                     "Self supporting stand, great for office desks or table tops etc",
                   type: "stand",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/stand.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                   previewImg: "",
                   backboardLength: {
                     shapeLength: 8,
@@ -14769,11 +14335,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Clear-Acrylic.webp",
+                    "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -14788,11 +14352,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/black-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/black-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -14807,11 +14369,9 @@ const configs = [
                   minHeight: 0,
                   visibilityRule: "one-of-two",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/gold-backboard.webp",
+                    "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                   price: {
                     type: "base",
                     value: 10,
@@ -14826,9 +14386,7 @@ const configs = [
                 {
                   label: "Indoor (Free)",
                   description: "For indoor use only",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/indoor.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                   previewImg: "",
                   isDefault: true,
                   price: {
@@ -14839,9 +14397,7 @@ const configs = [
                 {
                   label: "Waterproof",
                   description: "Outdoor waterproof sign",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Waterproof.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                   previewImg: "",
                   isDefault: false,
                   price: {
@@ -14861,8 +14417,7 @@ const configs = [
                     "Your sign will come with screws and spacers to safely mount on the wall",
                   previewImg: "",
                   popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Wall-Mounting-Kit.webp",
+                    "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                   isDefault: true,
                   excludedBackboards: [],
                   excludedColors: [],
@@ -14877,9 +14432,7 @@ const configs = [
                   description:
                     "Your sign will come with a wire hanging kit and screws",
                   previewImg: "",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Hanging-Kit.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                   isDefault: false,
                   excludedBackboards: [],
                   excludedColors: [],
@@ -14931,9 +14484,7 @@ const configs = [
                   no: "no",
                 },
                 default: "yes",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Remote-control.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
                 price: {
                   type: "none",
                   value: 0,
@@ -14947,9 +14498,7 @@ const configs = [
                   {
                     label: "USA/CAN",
                     value: "usa/can",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -14958,9 +14507,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -14969,9 +14516,7 @@ const configs = [
                   {
                     label: "AZ/NZ",
                     value: "az/nz",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -14980,9 +14525,7 @@ const configs = [
                   {
                     label: "EU",
                     value: "eu",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -14991,9 +14534,7 @@ const configs = [
                   {
                     label: "UK",
                     value: "uk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -15002,9 +14543,7 @@ const configs = [
                   {
                     label: "JAP",
                     value: "jap",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -15013,9 +14552,7 @@ const configs = [
                   {
                     label: "HK",
                     value: "hk",
-                    popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/Plug-Type.jpg",
+                    popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                     price: {
                       type: "none",
                       value: 0,
@@ -15033,11 +14570,9 @@ const configs = [
                     value: "black",
                     color: "#000000",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-black.webp",
+                      "/assets/images/ncpc-include-imgs/cable-black.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -15048,11 +14583,9 @@ const configs = [
                     value: "white",
                     color: "#FFFFFF",
                     previewImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     popupImg:
-                      ncpcData.ncpc_assets_url +
-                      "/images/include-imgs/cable-white.webp",
+                      "/assets/images/ncpc-include-imgs/cable-white.webp",
                     price: {
                       type: "none",
                       value: 0,
@@ -15172,12 +14705,13 @@ const configs = [
                   displayDefaultBackgroundImage: false,
                 },
                 manageImages: [
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                  "/aso_default_files/scenes/1.webp",
+                  "/aso_default_files/scenes/2.webp",
+                  "/aso_default_files/scenes/3.webp",
+                  "/aso_default_files/scenes/4.webp",
+                  "/aso_default_files/scenes/5.webp",
+                  "/aso_default_files/scenes/6.webp",
+                  "/aso_default_files/scenes/7.webp",
                 ],
               },
               main: {
@@ -15403,8 +14937,7 @@ const configs = [
     description: "AI-powered custom logo signs",
     demoLink: "https://demos.signsdesigner.us/neon-logo-signs/",
     pricings: ["frame-fit"],
-    previewImage:
-      ncpcData.ncpc_assets_url + "/images/configs-previews/ai-design.webp",
+    previewImage: "/images/configs-previews/ai-design.webp",
     data: {
       title: "Neon Logo Signs",
       pricingMode: "frame-fit",
@@ -15441,13 +14974,13 @@ const configs = [
                 },
               },
             },
-            maxTextCharacters:{
-                unlimited:true,
-                value:0
+            maxTextCharacters: {
+              unlimited: true,
+              value: 0,
             },
-            maxNumberOfLines:{
-                unlimited:true,
-                value:0
+            maxNumberOfLines: {
+              unlimited: true,
+              value: 0,
             },
             sizes: [
               {
@@ -15589,7 +15122,7 @@ const configs = [
             fonts: [
               {
                 label: "Outline",
-                url: ncpcData.ncpc_assets_url + "/fonts/outline.ttf",
+                url: "/aso_default_files/fonts/outline.ttf",
 
                 previewImg: "",
                 isDefault: true,
@@ -15602,7 +15135,7 @@ const configs = [
               },
               {
                 label: "Allura",
-                url: ncpcData.ncpc_assets_url + "/fonts/Allura-Regular.ttf",
+                url: "/aso_default_files/fonts/Allura-Regular.ttf",
 
                 previewImg: "",
                 isDefault: false,
@@ -15615,7 +15148,7 @@ const configs = [
               },
               {
                 label: "Avante",
-                url: ncpcData.ncpc_assets_url + "/fonts/avante.ttf",
+                url: "/aso_default_files/fonts/avante.ttf",
                 previewImg: "",
                 isDefault: false,
                 lineHeight: {
@@ -15627,7 +15160,7 @@ const configs = [
               },
               {
                 label: "Corinthia",
-                url: ncpcData.ncpc_assets_url + "/fonts/Corinthia-Regular.ttf",
+                url: "/aso_default_files/fonts/Corinthia-Regular.ttf",
 
                 previewImg: "",
                 isDefault: false,
@@ -15640,7 +15173,7 @@ const configs = [
               },
               {
                 label: "Melbourne",
-                url: ncpcData.ncpc_assets_url + "/fonts/Melbourne_reg.ttf",
+                url: "/aso_default_files/fonts/Melbourne_reg.ttf",
                 previewImg: "",
                 isDefault: false,
                 lineHeight: {
@@ -15652,7 +15185,7 @@ const configs = [
               },
               {
                 label: "Monaco",
-                url: ncpcData.ncpc_assets_url + "/fonts/Monaco-Regular.ttf",
+                url: "/aso_default_files/fonts/Monaco-Regular.ttf",
                 previewImg: "",
                 isDefault: false,
                 lineHeight: {
@@ -15664,7 +15197,7 @@ const configs = [
               },
               {
                 label: "Signature",
-                url: ncpcData.ncpc_assets_url + "/fonts/signature.ttf",
+                url: "/aso_default_files/fonts/signature.ttf",
                 previewImg: "",
                 isDefault: false,
                 lineHeight: {
@@ -15676,7 +15209,7 @@ const configs = [
               },
               {
                 label: "Neon",
-                url: ncpcData.ncpc_assets_url + "/fonts/neon.ttf",
+                url: "/aso_default_files/fonts/neon.ttf",
                 previewImg: "",
                 isDefault: false,
                 lineHeight: {
@@ -15807,8 +15340,7 @@ const configs = [
                 description:
                   "Backboard cut in a Rectangle around the outside of your wording",
                 type: "board",
-                popupImg:
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                 previewImg: "",
                 backboardLength: {
                   shapeLength: 8,
@@ -15833,8 +15365,7 @@ const configs = [
                 label: "Box",
                 description: "Your sign will be inside a 6 sided perspex box",
                 type: "box",
-                popupImg:
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/board.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/board.jpg",
                 previewImg: "",
                 backboardLength: {
                   shapeLength: 8,
@@ -15860,9 +15391,7 @@ const configs = [
                 description:
                   "Self supporting stand, great for office desks or table tops etc",
                 type: "raceway-double",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/raceway-double.jpg",
+                popupImg: "/assets/images/ncpc-include-imgs/raceway-double.jpg",
                 previewImg: "",
                 isDefault: false,
                 backboardLength: {
@@ -15888,8 +15417,7 @@ const configs = [
                 description:
                   "Self supporting stand, great for office desks or table tops etc",
                 type: "stand",
-                popupImg:
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/stand.webp",
+                popupImg: "/assets/images/ncpc-include-imgs/stand.webp",
                 previewImg: "",
                 backboardLength: {
                   shapeLength: 8,
@@ -15925,11 +15453,8 @@ const configs = [
                 minHeight: 0,
                 visibilityRule: "one-of-two",
                 previewImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Clear-Acrylic.webp",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Clear-Acrylic.webp",
+                  "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
+                popupImg: "/assets/images/ncpc-include-imgs/Clear-Acrylic.webp",
                 price: {
                   type: "none",
                   value: 0,
@@ -15944,11 +15469,9 @@ const configs = [
                 minHeight: 0,
                 visibilityRule: "one-of-two",
                 previewImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/black-backboard.webp",
+                  "/assets/images/ncpc-include-imgs/black-backboard.webp",
                 popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/black-backboard.webp",
+                  "/assets/images/ncpc-include-imgs/black-backboard.webp",
                 price: {
                   type: "base",
                   value: 10,
@@ -15963,11 +15486,9 @@ const configs = [
                 minHeight: 0,
                 visibilityRule: "one-of-two",
                 previewImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/gold-backboard.webp",
+                  "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                 popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/gold-backboard.webp",
+                  "/assets/images/ncpc-include-imgs/gold-backboard.webp",
                 price: {
                   type: "base",
                   value: 10,
@@ -15982,8 +15503,7 @@ const configs = [
               {
                 label: "Indoor (Free)",
                 description: "For indoor use only",
-                popupImg:
-                  ncpcData.ncpc_assets_url + "/images/include-imgs/indoor.webp",
+                popupImg: "/assets/images/ncpc-include-imgs/indoor.webp",
                 previewImg: "",
                 isDefault: true,
                 price: {
@@ -15994,9 +15514,7 @@ const configs = [
               {
                 label: "Waterproof",
                 description: "Outdoor waterproof sign",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Waterproof.webp",
+                popupImg: "/assets/images/ncpc-include-imgs/Waterproof.webp",
                 previewImg: "",
                 isDefault: false,
                 price: {
@@ -16016,8 +15534,7 @@ const configs = [
                   "Your sign will come with screws and spacers to safely mount on the wall",
                 previewImg: "",
                 popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Wall-Mounting-Kit.webp",
+                  "/assets/images/ncpc-include-imgs/Wall-Mounting-Kit.webp",
                 isDefault: true,
                 excludedBackboards: [],
                 excludedColors: [],
@@ -16032,9 +15549,7 @@ const configs = [
                 description:
                   "Your sign will come with a wire hanging kit and screws",
                 previewImg: "",
-                popupImg:
-                  ncpcData.ncpc_assets_url +
-                  "/images/include-imgs/Hanging-Kit.webp",
+                popupImg: "/assets/images/ncpc-include-imgs/Hanging-Kit.webp",
                 isDefault: false,
                 excludedBackboards: [],
                 excludedColors: [],
@@ -16085,9 +15600,7 @@ const configs = [
                 no: "no",
               },
               default: "yes",
-              popupImg:
-                ncpcData.ncpc_assets_url +
-                "/images/include-imgs/Remote-control.jpg",
+              popupImg: "/assets/images/ncpc-include-imgs/Remote-control.jpg",
               price: {
                 type: "none",
                 value: 0,
@@ -16101,9 +15614,7 @@ const configs = [
                 {
                   label: "USA/CAN",
                   value: "usa/can",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Plug-Type.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                   price: {
                     type: "none",
                     value: 0,
@@ -16112,9 +15623,7 @@ const configs = [
                 {
                   label: "AZ/NZ",
                   value: "az/nz",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Plug-Type.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                   price: {
                     type: "none",
                     value: 0,
@@ -16123,9 +15632,7 @@ const configs = [
                 {
                   label: "AZ/NZ",
                   value: "az/nz",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Plug-Type.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                   price: {
                     type: "none",
                     value: 0,
@@ -16134,9 +15641,7 @@ const configs = [
                 {
                   label: "EU",
                   value: "eu",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Plug-Type.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                   price: {
                     type: "none",
                     value: 0,
@@ -16145,9 +15650,7 @@ const configs = [
                 {
                   label: "UK",
                   value: "uk",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Plug-Type.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                   price: {
                     type: "none",
                     value: 0,
@@ -16156,9 +15659,7 @@ const configs = [
                 {
                   label: "JAP",
                   value: "jap",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Plug-Type.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                   price: {
                     type: "none",
                     value: 0,
@@ -16167,9 +15668,7 @@ const configs = [
                 {
                   label: "HK",
                   value: "hk",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/Plug-Type.jpg",
+                  popupImg: "/assets/images/ncpc-include-imgs/Plug-Type.jpg",
                   price: {
                     type: "none",
                     value: 0,
@@ -16187,11 +15686,8 @@ const configs = [
                   value: "black",
                   color: "#000000",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/cable-black.webp",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/cable-black.webp",
+                    "/assets/images/ncpc-include-imgs/cable-black.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/cable-black.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -16202,11 +15698,8 @@ const configs = [
                   value: "white",
                   color: "#FFFFFF",
                   previewImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/cable-white.webp",
-                  popupImg:
-                    ncpcData.ncpc_assets_url +
-                    "/images/include-imgs/cable-white.webp",
+                    "/assets/images/ncpc-include-imgs/cable-white.webp",
+                  popupImg: "/assets/images/ncpc-include-imgs/cable-white.webp",
                   price: {
                     type: "none",
                     value: 0,
@@ -16326,12 +15819,17 @@ const configs = [
                 displayDefaultBackgroundImage: false,
               },
               manageImages: [
-                ncpcData.ncpc_assets_url + "/images/include-imgs/img13.jpg",
-                ncpcData.ncpc_assets_url + "/images/include-imgs/img14.jpg",
-                ncpcData.ncpc_assets_url + "/images/include-imgs/img15.jpg",
-                ncpcData.ncpc_assets_url + "/images/include-imgs/img21.jpg",
-                ncpcData.ncpc_assets_url + "/images/include-imgs/img24.jpg",
-                ncpcData.ncpc_assets_url + "/images/include-imgs/img27.jpg",
+                "/assets/images/ncpc-include-imgs/img13.jpg",
+
+                "/assets/images/ncpc-include-imgs/img14.jpg",
+
+                "/assets/images/ncpc-include-imgs/img15.jpg",
+
+                "/assets/images/ncpc-include-imgs/img21.jpg",
+
+                "/assets/images/ncpc-include-imgs/img24.jpg",
+
+                "/assets/images/ncpc-include-imgs/img27.jpg",
               ],
             },
             main: {
@@ -16555,18 +16053,14 @@ const pricings = [
   {
     name: "Fixed height per size",
     value: "fixed-height",
-    previewImg:
-      ncpcData.ncpc_assets_url +
-      "/images/configs-previews/pricing-previews/fixed-height.svg",
+    previewImg: "/images/configs-previews/pricing-previews/fixed-height.svg",
     description: [
       {
         icon: "info",
         text: "Letter height is fixed for each size tier, width adjusts based on text.",
       },
       {
-        icon:
-          ncpcData.ncpc_assets_url +
-          "/images/configs-previews/pricing-previews/sizes.svg",
+        icon: "/images/configs-previews/pricing-previews/sizes.svg",
         text: "Best for standard height constraints.",
       },
     ],
@@ -16574,18 +16068,14 @@ const pricings = [
   {
     name: "Fixed width per size",
     value: "fixed-width",
-    previewImg:
-      ncpcData.ncpc_assets_url +
-      "/images/configs-previews/pricing-previews/fixed-witdh.svg",
+    previewImg: "/images/configs-previews/pricing-previews/fixed-witdh.svg",
     description: [
       {
         icon: "info",
         text: "Letter width is fixed for each size tier, height adjusts based on text.",
       },
       {
-        icon:
-          ncpcData.ncpc_assets_url +
-          "/images/configs-previews/pricing-previews/sizes.svg",
+        icon: "/images/configs-previews/pricing-previews/sizes.svg",
         text: "Best for standard width constraints.",
       },
     ],
@@ -16593,18 +16083,14 @@ const pricings = [
   {
     name: "Price by material length",
     value: "advanced",
-    previewImg:
-      ncpcData.ncpc_assets_url +
-      "/images/configs-previews/pricing-previews/advanced.svg",
+    previewImg: "/images/configs-previews/pricing-previews/advanced.svg",
     description: [
       {
         icon: "info",
         text: "Price is calculated based on the total length of material used in the sign.",
       },
       {
-        icon:
-          ncpcData.ncpc_assets_url +
-          "/images/configs-previews/pricing-previews/sizes.svg",
+        icon: "/images/configs-previews/pricing-previews/sizes.svg",
         text: "Most accurate for neon and LED tube signs.",
       },
     ],
@@ -16612,18 +16098,14 @@ const pricings = [
   {
     name: "Price per square meter/foot",
     value: "frame-fit",
-    previewImg:
-      ncpcData.ncpc_assets_url +
-      "/images/configs-previews/pricing-previews/frame-fit.svg",
+    previewImg: "/images/configs-previews/pricing-previews/frame-fit.svg",
     description: [
       {
         icon: "info",
         text: "Price is calculated based on the total area (width x height) of the sign.",
       },
       {
-        icon:
-          ncpcData.ncpc_assets_url +
-          "/images/configs-previews/pricing-previews/sizes.svg",
+        icon: "/images/configs-previews/pricing-previews/sizes.svg",
         text: "Best for frame-focused signs.",
       },
     ],

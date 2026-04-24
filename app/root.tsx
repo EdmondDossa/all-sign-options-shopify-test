@@ -6,7 +6,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { useEffect } from "react";
-import { Crisp } from "crisp-sdk-web";
+import { ChatboxPosition, Crisp } from "crisp-sdk-web";
 
 export default function App() {
   useEffect(() => {
@@ -17,11 +17,14 @@ export default function App() {
         }
         
         Crisp.configure("119b2249-75d7-428e-9822-47c33b453759", { autoload: true });
+        Crisp.setPosition(ChatboxPosition.Left);
+        Crisp.setAvailabilityTooltip(false);
+        Crisp.setZIndex(900);
         
-        // Désactiver le masquage automatique quand l'agent est absent
         const configureCrispSettings = () => {
           if ((window as any).$crisp && (window as any).$crisp.is) {
-            Crisp.setHideOnAway(false);
+            Crisp.setHideOnAway(true);
+            Crisp.chat.hide();
           } else {
             setTimeout(configureCrispSettings, 200);
           }

@@ -1,6 +1,318 @@
 import type { FontType } from "~/types/ManagePropertyType";
 import type { ConfigurationType } from "~/types/ConfigurationType";
 
+const defaultClassicCustomizerConfigOptions = () => [
+  { type: "materials", active: true },
+  { type: "sizes", active: true },
+  { type: "shapes", active: true },
+  { type: "fixing-methodes", active: true },
+  { type: "borders", active: true },
+  { type: "colors", active: true },
+  { type: "texts", active: true },
+  { type: "qrcodes", active: true },
+  { type: "images", active: true },
+  { type: "additional-options", active: true },
+  { type: "additional-components", active: true },
+];
+
+const defaultClassicCustomizerSignSettings = () => ({
+  text: {
+    selectedFonts: [],
+  },
+  images: {
+    colors: [],
+    scenes: [],
+    enableClipart: {
+      active: true,
+      selectClipartGroups: [1],
+    },
+    fileUploadScript: {
+      uploadMaxWidth: 200,
+      uploadMinWidth: 10,
+      customWithGraphical: false,
+      enableSizeRestriction: false,
+      allowedUploadsExtentions: ["png"],
+    },
+    enableCustomColor: true,
+    enableUploadImage: true,
+    enableDownloadImage: true,
+  },
+  signPart: {
+    doublePart: {
+      label: "Switch Face",
+      part1: "Face A",
+      part2: "Face B",
+      active: false,
+      enableCopyDesignFromSide: true,
+    },
+  },
+  configOptions: defaultClassicCustomizerConfigOptions(),
+  customizerOptions: {
+    measurementUnit: "mm",
+    desktopColumnOrder: "right",
+    showHideMeasurements: "both",
+    decimalFormatMeasurements: "with-decimal",
+    finishButtonPosition: "bottom",
+    allowNextButton: false,
+    showThicknessPricing: false,
+    expandThicknessByDefault: false,
+    expandPredefinedSizesByDefault: false,
+  },
+});
+
+const defaultClassicBorderSettings = () => ({
+  colors: [],
+  enableBorderWidth: true,
+  enableBorderColor: true,
+  borderColorsLabel: "Borders Colors",
+  customColorsPrevImg: "",
+});
+
+const defaultClassicGeneralSettings = () => ({
+  product: {
+    designFromScratch: true,
+    redirectAfterAddingToCart: true,
+    redirectToCheckOutPage: false,
+    hideAddToCartButtonOnShopPage: false,
+    hidePricing: false,
+    showRecapAfterFinish: true,
+    uploadFileOnFinish: false,
+  },
+  mode: {
+    type: "simple",
+    allowMultiFonts: false,
+    allowMultiColors: false,
+    shareAndSave: {
+      allowShare: false,
+      shareSignLocation: "options_review",
+      allowSave: false,
+    },
+  },
+  output: {
+    filesFormat: "png",
+    waterMark: "",
+    zipOutputFiles: {
+      active: false,
+      zipOutFolderPrefix: "aso_",
+    },
+    designComposition: false,
+    pdfDpi: 300,
+  },
+  upload: {
+    allowFormat: "jpg,jpeg,png,gif,bmp,tiff,webp,psd,ai,svg,eps,pdf",
+    maxUploadSize: 100,
+    maxUploadNumber: 5,
+    zipFiles: {
+      active: false,
+      zipOutFolderPrefix: "aso_",
+    },
+  },
+  quantityLimits: {
+    enableQuantityLimits: false,
+    minQuantity: 1,
+    maxQuantity: undefined,
+  },
+  discount: {
+    byQuantity: false,
+    discount: "none",
+    discountValue: 0,
+    lots: [
+      {
+        id: "lot-1",
+        quantity: 1,
+        discount: "percent",
+        discountValue: 0,
+      },
+    ],
+  },
+  mobile: {
+    showNavigatorMenu: "off",
+    showNavigationMenuFirst: "yes",
+    mobileSelectionOptionsDisplay: "horizontally",
+  },
+  requestQuote: {
+    enableRequestQuote: false,
+    receiversEmail: [],
+    sendToCustomer: false,
+    allowUploadFiles: false,
+    acceptExtensions: [".jpg", ".png", ".svg", ".pdf"],
+    maxFileSize: 10,
+    maxFilesNumber: 5,
+    emailSubject: "Request A Quote",
+  },
+  simpleOptions: {
+    enabled: false,
+    optionGroups: [
+      {
+        id: "size",
+        name: "Size",
+        required: true,
+        options: [
+          { label: '18" x 24" - Set of 8', value: "18x24-set8" },
+          { label: '12" x 18" - Set of 20', value: "12x18-set20" },
+          { label: '24" x 36" - Set of 5', value: "24x36-set5" },
+        ],
+      },
+      {
+        id: "material",
+        name: "mm",
+        required: true,
+        options: [
+          { label: "4mm Single-Sided", value: "4mm-single" },
+          { label: "10mm Single-Sided", value: "10mm-single" },
+        ],
+      },
+    ],
+  },
+});
+
+const mergeClassicDemoSettings = (settings: any = {}) => {
+  const defaultGenerals = defaultClassicGeneralSettings();
+  const defaultCustomizerSign = defaultClassicCustomizerSignSettings();
+
+  return {
+    ...settings,
+    generals: {
+      ...defaultGenerals,
+      ...(settings?.generals || {}),
+      product: {
+        ...defaultGenerals.product,
+        ...(settings?.generals?.product || {}),
+      },
+      mode: {
+        ...defaultGenerals.mode,
+        ...(settings?.generals?.mode || {}),
+        shareAndSave: {
+          ...defaultGenerals.mode.shareAndSave,
+          ...(settings?.generals?.mode?.shareAndSave || {}),
+        },
+      },
+      output: {
+        ...defaultGenerals.output,
+        ...(settings?.generals?.output || {}),
+        zipOutputFiles: {
+          ...defaultGenerals.output.zipOutputFiles,
+          ...(settings?.generals?.output?.zipOutputFiles || {}),
+        },
+      },
+      upload: {
+        ...defaultGenerals.upload,
+        ...(settings?.generals?.upload || {}),
+        zipFiles: {
+          ...defaultGenerals.upload.zipFiles,
+          ...(settings?.generals?.upload?.zipFiles || {}),
+        },
+      },
+      quantityLimits: {
+        ...defaultGenerals.quantityLimits,
+        ...(settings?.generals?.quantityLimits || {}),
+      },
+      discount: {
+        ...defaultGenerals.discount,
+        ...(settings?.generals?.discount || {}),
+        lots: Array.isArray(settings?.generals?.discount?.lots)
+          ? settings.generals.discount.lots
+          : defaultGenerals.discount.lots,
+      },
+      mobile: {
+        ...defaultGenerals.mobile,
+        ...(settings?.generals?.mobile || {}),
+      },
+      requestQuote: {
+        ...defaultGenerals.requestQuote,
+        ...(settings?.generals?.requestQuote || {}),
+        receiversEmail: Array.isArray(settings?.generals?.requestQuote?.receiversEmail)
+          ? settings.generals.requestQuote.receiversEmail
+          : defaultGenerals.requestQuote.receiversEmail,
+        acceptExtensions: Array.isArray(settings?.generals?.requestQuote?.acceptExtensions)
+          ? settings.generals.requestQuote.acceptExtensions
+          : defaultGenerals.requestQuote.acceptExtensions,
+      },
+      simpleOptions: {
+        ...defaultGenerals.simpleOptions,
+        ...(settings?.generals?.simpleOptions || {}),
+        optionGroups: Array.isArray(settings?.generals?.simpleOptions?.optionGroups)
+          ? settings.generals.simpleOptions.optionGroups
+          : defaultGenerals.simpleOptions.optionGroups,
+      },
+    },
+    customizerSign: {
+      ...defaultCustomizerSign,
+      ...(settings?.customizerSign || {}),
+      text: {
+        ...defaultCustomizerSign.text,
+        ...(settings?.customizerSign?.text || {}),
+        selectedFonts: Array.isArray(settings?.customizerSign?.text?.selectedFonts)
+          ? settings.customizerSign.text.selectedFonts
+          : defaultCustomizerSign.text.selectedFonts,
+      },
+      images: {
+        ...defaultCustomizerSign.images,
+        ...(settings?.customizerSign?.images || {}),
+        colors: Array.isArray(settings?.customizerSign?.images?.colors)
+          ? settings.customizerSign.images.colors
+          : defaultCustomizerSign.images.colors,
+        scenes: Array.isArray(settings?.customizerSign?.images?.scenes)
+          ? settings.customizerSign.images.scenes
+          : defaultCustomizerSign.images.scenes,
+        enableClipart: {
+          ...defaultCustomizerSign.images.enableClipart,
+          ...(settings?.customizerSign?.images?.enableClipart || {}),
+          selectClipartGroups: Array.isArray(
+            settings?.customizerSign?.images?.enableClipart?.selectClipartGroups,
+          )
+            ? settings.customizerSign.images.enableClipart.selectClipartGroups
+            : defaultCustomizerSign.images.enableClipart.selectClipartGroups,
+        },
+        fileUploadScript: {
+          ...defaultCustomizerSign.images.fileUploadScript,
+          ...(settings?.customizerSign?.images?.fileUploadScript || {}),
+          allowedUploadsExtentions: Array.isArray(
+            settings?.customizerSign?.images?.fileUploadScript?.allowedUploadsExtentions,
+          )
+            ? settings.customizerSign.images.fileUploadScript.allowedUploadsExtentions
+            : defaultCustomizerSign.images.fileUploadScript.allowedUploadsExtentions,
+        },
+      },
+      signPart: {
+        ...defaultCustomizerSign.signPart,
+        ...(settings?.customizerSign?.signPart || {}),
+        doublePart: {
+          ...defaultCustomizerSign.signPart.doublePart,
+          ...(settings?.customizerSign?.signPart?.doublePart || {}),
+        },
+      },
+      customizerOptions: {
+        ...defaultCustomizerSign.customizerOptions,
+        ...(settings?.customizerSign?.customizerOptions || {}),
+      },
+      configOptions: Array.isArray(settings?.customizerSign?.configOptions)
+        ? settings.customizerSign.configOptions
+        : defaultCustomizerSign.configOptions,
+    },
+  };
+};
+
+const applyClassicDemoDefaults = (configuration: ConfigurationType): ConfigurationType => ({
+  ...configuration,
+  data: {
+    ...(configuration?.data || {}),
+    settings: mergeClassicDemoSettings(configuration?.data?.settings || {}),
+    requiredOptions: {
+      ...(configuration?.data?.requiredOptions || {}),
+      borders: {
+        label: "Borders",
+        description: "",
+        ...(configuration?.data?.requiredOptions?.borders || {}),
+        settings: {
+          ...defaultClassicBorderSettings(),
+          ...(configuration?.data?.requiredOptions?.borders?.settings || {}),
+        },
+      },
+    },
+  },
+});
+
 export const classicBuildByOptionsStarterData = {
   requiredOptions: {
     pricing: {
@@ -26,6 +338,7 @@ export const classicBuildByOptionsStarterData = {
     borders: {
       label: "Borders",
       description: "",
+      settings: defaultClassicBorderSettings(),
       items: [],
     },
     fonts: {
@@ -62,11 +375,7 @@ export const classicBuildByOptionsStarterData = {
     },
   },
   settings: {
-    customizerSign: {
-      text: {
-        selectedFonts: [],
-      },
-    },
+    customizerSign: defaultClassicCustomizerSignSettings(),
   },
 };
 
@@ -95,6 +404,7 @@ export const classicPresetComponentsStarterData = {
     borders: {
       label: "Borders",
       description: "",
+      settings: defaultClassicBorderSettings(),
       items: [],
     },
     fonts: {
@@ -131,11 +441,7 @@ export const classicPresetComponentsStarterData = {
     },
   },
   settings: {
-    customizerSign: {
-      text: {
-        selectedFonts: [],
-      },
-    },
+    customizerSign: defaultClassicCustomizerSignSettings(),
   },
 };
 
@@ -2564,7 +2870,7 @@ export const classicStarterFamilyContent = {
   },
 } as const;
 
-export const configurationDemoData: ConfigurationType[] = [
+const rawConfigurationDemoData: ConfigurationType[] = [
   {
     id: 240,
     name: "Contour-cut / die-cut",
@@ -30729,6 +31035,9 @@ export const configurationDemoData: ConfigurationType[] = [
     materialType: "simple",
   },
 ];
+
+export const configurationDemoData: ConfigurationType[] =
+  rawConfigurationDemoData.map(applyClassicDemoDefaults);
 export const fontData: FontType[] = [
   {
     id: 8,

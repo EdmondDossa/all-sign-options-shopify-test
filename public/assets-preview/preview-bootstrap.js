@@ -12,9 +12,60 @@ const previewHeaders = {
 };
 
 const previewStage = document.getElementById("aso-preview-stage");
-const previewLoaderLabel = document.getElementById("aso-preview-loader-label");
-const previewLoader = document.querySelector(".aso-preview-loader");
+const previewLoader = document.getElementById("aso-configurator-loader");
 const shopifyProxyURL = "/api/";
+
+function previewLogConfiguratorDebug(label, payload) {
+  try {
+    console.groupCollapsed(`[ASO Preview] ${label}`);
+    console.log(payload);
+    console.groupEnd();
+  } catch {
+    console.log(`[ASO Preview] ${label}`, payload);
+  }
+}
+
+function getPreviewConfiguratorDebugSnapshot(asoData, configuration) {
+  const currentConfig = asoData?.currentConfig || {};
+  const currentData = currentConfig?.data || {};
+  const settings = currentData?.settings || {};
+  const themes = settings?.themes || {};
+  const requiredOptions = currentData?.requiredOptions || {};
+  const additionalOptions = currentData?.additionalOptions || {};
+
+  return {
+    mountNodeFound: !!document.getElementById("aso-frontend-app"),
+    configurationId: configuration?.id || null,
+    configurationName: configuration?.name || configuration?.title || "",
+    productType: currentConfig?.productType || null,
+    pricingMode: currentConfig?.pricingMode || null,
+    skin: asoData?.skin || null,
+    themeSkin: themes?.skin || null,
+    hasCurrentConfig: !!asoData?.currentConfig,
+    hasCurrentConfigData: !!currentData && Object.keys(currentData).length > 0,
+    hasSettings: Object.keys(settings).length > 0,
+    hasThemes: Object.keys(themes).length > 0,
+    hasLanguageImages: !!settings?.languageImages,
+    iconCount: Array.isArray(settings?.languageImages?.icons?.listIcons)
+      ? settings.languageImages.icons.listIcons.length
+      : 0,
+    fontCount: Array.isArray(requiredOptions?.fontOptions?.fonts)
+      ? requiredOptions.fontOptions.fonts.length
+      : 0,
+    sizeCount: Array.isArray(requiredOptions?.sizeOptions?.sizes)
+      ? requiredOptions.sizeOptions.sizes.length
+      : 0,
+    colorCount: Array.isArray(requiredOptions?.colorOptions?.colors)
+      ? requiredOptions.colorOptions.colors.length
+      : 0,
+    priceOptionCount: Array.isArray(requiredOptions?.priceOptions)
+      ? requiredOptions.priceOptions.length
+      : 0,
+    materialCount: Array.isArray(additionalOptions?.materialOptions?.materials)
+      ? additionalOptions.materialOptions.materials.length
+      : 0,
+  };
+}
 
 function getPreviewApiUrl(path = "") {
   const normalizedPath = String(path || "").replace(/^\/+/, "");
@@ -22,14 +73,17 @@ function getPreviewApiUrl(path = "") {
 }
 
 function setLoaderLabel(message) {
-  if (previewLoaderLabel) {
-    previewLoaderLabel.textContent = message;
-  }
+  console.info("[ASO Preview] loader:", message);
 }
 
 function hideLoader() {
   if (previewLoader) {
-    previewLoader.setAttribute("hidden", "hidden");
+    const loaderWrapper = previewLoader.closest(".bg-loader");
+    if (loaderWrapper) {
+      loaderWrapper.remove();
+      return;
+    }
+    previewLoader.remove();
   }
 }
 
@@ -60,6 +114,64 @@ function normalizeNumber(value, fallback = 0) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function getPreviewProxyBase() {
+  return `${window.location.origin}/`;
+}
+
+function normalizePreviewProxyAssetUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return raw;
+
+  const proxyBase = getPreviewProxyBase();
+  const normalizePath = (path = "", search = "", hash = "") => {
+    const cleanedPath = String(path || "").replace(/^\/+/, "");
+    if (!cleanedPath) return raw;
+
+    if (cleanedPath.startsWith("apps/aso-proxy/")) {
+      return `${proxyBase}${cleanedPath.replace(/^apps\/aso-proxy\//, "")}${search}${hash}`;
+    }
+
+    if (cleanedPath.startsWith("uploads/")) {
+      return `${proxyBase}${cleanedPath}${search}${hash}`;
+    }
+
+    if (cleanedPath.startsWith("aso_default_files/")) {
+      return `${proxyBase}${cleanedPath}${search}${hash}`;
+    }
+
+    return raw;
+  };
+
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const parsed = new URL(raw);
+      return normalizePath(parsed.pathname, parsed.search, parsed.hash);
+    } catch {
+      return raw;
+    }
+  }
+
+  return normalizePath(raw);
+}
+
+function normalizePreviewProxyAssetTree(input) {
+  if (typeof input === "string") {
+    return normalizePreviewProxyAssetUrl(input);
+  }
+
+  if (Array.isArray(input)) {
+    return input.map((entry) => normalizePreviewProxyAssetTree(entry));
+  }
+
+  if (input && typeof input === "object") {
+    return Object.fromEntries(
+      Object.entries(input).map(([key, value]) => [key, normalizePreviewProxyAssetTree(value)]),
+    );
+  }
+
+  return input;
+}
+
 function detectNcpcConfiguration(configuration) {
   const productType = normalizeProductType(configuration?.productType);
   if (productType === "neon" || productType === "channel") {
@@ -84,6 +196,8 @@ function normalizeClassicLikeAssets(data) {
   if (!data || typeof data !== "object") {
     return {};
   }
+
+  data = normalizePreviewProxyAssetTree(data);
 
   if (data.settings?.themeColors && typeof data.settings.themeColors === "object") {
     data.settings.themeColors.customCss = normalizeText(
@@ -281,7 +395,7 @@ function setPreviewRoot(id) {
 }
 
 async function loadClassicPreview() {
-  setLoaderLabel("Chargement du configurateur classique...");
+  setLoaderLabel("Loading classic configurator...");
   setPreviewRoot("app");
   await appendStylesheet(`/assets-preview/index.css?v=${Date.now()}`);
   await appendScript(`/assets-preview/shopify.js?v=${Date.now()}`);
@@ -291,8 +405,10 @@ async function loadClassicPreview() {
 }
 
 async function loadNcpcPreview(configuration) {
-  setLoaderLabel("Chargement du configurateur neon/channel...");
-  window.ncpcData = buildNcpcPreviewData(configuration);
+  setLoaderLabel("Loading neon/channel configurator...");
+  const asoData = buildNcpcPreviewData(configuration);
+  window.asoData = asoData;
+  window.asoNcpcData = asoData;
   window.asoShopifyNcpcApi = {
     mode: "preview",
     getProxyBaseUrl() {
@@ -330,21 +446,42 @@ async function loadNcpcPreview(configuration) {
     },
   };
   window.asoNcpcBridge = window.asoShopifyNcpcApi;
-  setPreviewRoot("ncpc-frontend-app");
-  await appendStylesheet(`/assets-preview/nc-configurator.css?v=${Date.now()}`);
-  await appendScript(`/assets-preview/nc-configurator.js?v=${Date.now()}`, { module: true });
+  setPreviewRoot("aso-frontend-app");
+  previewLogConfiguratorDebug("Prepared preview data", {
+    snapshot: getPreviewConfiguratorDebugSnapshot(asoData, configuration),
+    asoData,
+    configuration,
+  });
+  await appendStylesheet(`/assets-preview/aso-configurator.css?v=${Date.now()}`);
+  await appendScript(`/assets-preview/aso-configurator.js?v=${Date.now()}`, { module: true });
   hideLoader();
+}
+
+if (!window.__asoPreviewDebugListenersAttached) {
+  window.__asoPreviewDebugListenersAttached = true;
+  window.addEventListener("error", (event) => {
+    console.error("[ASO Preview] window error", {
+      message: event.message,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+      error: event.error,
+    });
+  });
+  window.addEventListener("unhandledrejection", (event) => {
+    console.error("[ASO Preview] unhandled rejection", event.reason);
+  });
 }
 
 async function bootstrapPreview() {
   const configId = parseInt(previewParams?.configId || "", 10);
   if (!configId) {
-    setLoaderLabel("Configuration introuvable.");
+    setLoaderLabel("Configuration not found.");
     return;
   }
 
   try {
-    setLoaderLabel("Récupération de la configuration...");
+    setLoaderLabel("Loading configuration...");
     const configuration = await getConfiguration(configId);
 
     if (detectNcpcConfiguration(configuration)) {
@@ -355,7 +492,7 @@ async function bootstrapPreview() {
     await loadClassicPreview();
   } catch (error) {
     console.error("Unable to bootstrap preview:", error);
-    setLoaderLabel("Impossible de charger le preview.");
+    setLoaderLabel("Unable to load preview.");
     if (previewStage) {
       previewStage.innerHTML = `
         <div class="aso-preview-error">

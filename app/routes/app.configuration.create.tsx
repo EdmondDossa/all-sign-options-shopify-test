@@ -1382,9 +1382,11 @@ export default function ConfigurationEdit() {
               </p>
             </div>
 
-            <Grid columns={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4 }}>
+            <Grid columns={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2 }}>
               {ASO_CLASSIC_FAMILIES.map((family) => {
                 const selected = selectedClassicFamilyKey === family.key;
+                const cardImage =
+                  family.previewImages?.[0] || DEFAULT_PRODUCT_IMAGE;
                 return (
                   <Grid.Cell key={family.key}>
                     <div
@@ -1392,8 +1394,6 @@ export default function ConfigurationEdit() {
                         selectClassicFamily(family.key);
                       }}
                       style={{
-                        display: "flex",
-                        flexDirection: "column",
                         width: "100%",
                         cursor: "pointer",
                         backgroundColor: "#FFFFFF",
@@ -1405,181 +1405,169 @@ export default function ConfigurationEdit() {
                         boxShadow: selected
                           ? "0 0 0 3px rgba(15, 139, 141, 0.12), 0 14px 32px rgba(16, 24, 40, 0.08)"
                           : "0 10px 24px rgba(16, 24, 40, 0.05)",
-                        transition: "all 120ms",
+                        transition: "all 180ms",
                         overflow: "hidden",
-                        height: "100%",
+                        minHeight: "100%",
+                        position: "relative",
+                        padding: "14px",
+                        display: "flex",
+                        flexDirection: "column",
                       }}
                     >
-                      <div
-                        style={{
-                          position: "relative",
-                          background: "#FFF",
-                          width: "100%",
-                          height: "126px",
-                        }}
-                      >
-                        <img
-                          src={family.previewImages[0]}
-                          alt={`${family.label} example`}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            objectPosition: "center",
-                          }}
-                        />
-
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setPreviewFamily(family);
-                          }}
+                      {selected && (
+                        <div
                           style={{
                             position: "absolute",
-                            top: "14px",
-                            right: "14px",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "38px",
-                            height: "38px",
-                            borderRadius: "999px",
-                            border: "1px solid rgba(255,255,255,0.9)",
-                            background: "rgba(255,255,255,0.95)",
-                            boxShadow: "0 4px 14px rgba(16, 24, 40, 0.12)",
-                            cursor: "pointer",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: "2px",
+                            background:
+                              "linear-gradient(90deg, rgba(1, 100, 100, 0.85), rgba(1, 100, 100, 0.35))",
                           }}
-                          aria-label={`Preview ${family.label}`}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.8"
-                            stroke="currentColor"
-                            width="18"
-                            height="18"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.644C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .638C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
+                        />
+                      )}
 
                       <div
                         style={{
                           display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                          padding: "12px 12px 8px 12px",
+                          gap: "14px",
+                          alignItems: "flex-start",
                           flex: 1,
                         }}
                       >
-                        <InlineStack
-                          gap="200"
-                          blockAlign="center"
-                          align="space-between"
+                        <div
+                          style={{
+                            width: "62px",
+                            height: "62px",
+                            borderRadius: "12px",
+                            backgroundColor: "#EEF3F6",
+                            border: "1px solid #D6DEE3",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            overflow: "hidden",
+                            flexShrink: 0,
+                            boxShadow: selected
+                              ? "0 0 0 2px rgba(1, 100, 100, 0.22)"
+                              : "inset 0 0 0 1px rgba(255,255,255,0.45)",
+                          }}
                         >
-                          <p style={{ fontSize: "16px", fontWeight: 700 }}>
-                            {family.label}
-                          </p>
-                          {selected && (
-                            <span
-                              style={{
-                                display: "flex",
-                                width: "fit-content",
-                                background: "rgba(1, 100, 100, 0.12)",
-                                color: "rgba(1, 100, 100, 0.92)",
-                                fontSize: "11px",
-                                borderRadius: "20px",
-                                padding: "3px 8px",
-                                fontWeight: 600,
-                              }}
-                            >
-                              Selected
-                            </span>
-                          )}
-                        </InlineStack>
+                          <img
+                            src={cardImage}
+                            alt={`${family.label} example`}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              objectPosition: "center",
+                            }}
+                          />
+                        </div>
 
                         <div
                           style={{
                             display: "flex",
                             flexDirection: "column",
-                            gap: "5px",
+                            gap: "6px",
                             flex: 1,
+                            minWidth: 0,
                           }}
                         >
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              gap: "8px",
+                              alignItems: "center",
+                            }}
+                          >
+                            <p
+                              style={{
+                                fontSize: "17px",
+                                fontWeight: 700,
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {family.label}
+                            </p>
+                            {selected && (
+                              <span
+                                style={{
+                                  display: "flex",
+                                  width: "fit-content",
+                                  background: "rgba(1, 100, 100, 0.14)",
+                                  color: "rgba(1, 100, 100, 0.9)",
+                                  fontSize: "10px",
+                                  borderRadius: "20px",
+                                  padding: "1px 7px",
+                                  height: "fit-content",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                selected
+                              </span>
+                            )}
+                          </div>
+
                           <p
                             style={{
-                              color: "#475467",
-                              fontWeight: "normal",
-                              lineHeight: 1.35,
-                              fontSize: "12px",
+                              color: "#5F6368",
+                              fontSize: "14px",
+                              marginTop: "1px",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
                             }}
                           >
                             {family.description}
                           </p>
-                        </div>
-                      </div>
 
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "10px",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          padding: "0 14px 14px 14px",
-                          marginTop: "auto",
-                        }}
-                      >
-                        <p
-                          style={{
-                            color: "#667085",
-                            fontSize: "11px",
-                            fontWeight: "normal",
-                          }}
-                        >
-                          Click to choose this family
-                        </p>
-
-                        <span
-                          style={{
-                            display: "flex",
-                            padding: "7px",
-                            border: selected
-                              ? "1.5px solid rgba(1, 100, 100, 0.8)"
-                              : "1.5px solid #D0D5DD",
-                            borderRadius: "12px",
-                            background: selected
-                              ? "rgba(1, 100, 100, 0.08)"
-                              : "#fff",
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            width="20"
-                            height="20"
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              marginTop: "auto",
+                            }}
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                            />
-                          </svg>
-                        </span>
+                            <p
+                              style={{
+                                color: "#9EA6AD",
+                                fontSize: "12px",
+                                fontWeight: 500,
+                              }}
+                            >
+                              Click to select
+                            </p>
+
+                            <div
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setPreviewFamily(family);
+                              }}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                                width: "fit-content",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  color: "rgba(1, 100, 100, 0.8)",
+                                  fontSize: "12px",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                Preview
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </Grid.Cell>
@@ -1611,7 +1599,7 @@ export default function ConfigurationEdit() {
                   </p>
                 </div>
 
-                <Grid columns={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4 }}>
+                <Grid columns={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2 }}>
                   {classicMaterials.map((material) => {
                     const isSelected = selectedClassicMaterialKeys.includes(
                       material.key,
@@ -1635,97 +1623,168 @@ export default function ConfigurationEdit() {
                             padding: "14px",
                             display: "flex",
                             flexDirection: "column",
-                            overflow: "hidden",
-                            height: "100%",
+                            minHeight: "100%",
+                            position: "relative",
                           }}
                         >
-                          <div
-                            style={{
-                              height: "200px",
-                              margin: "-14px -14px 12px",
-                              background: "#eef2f7",
-                              borderBottom: "1px solid #E2E8F0",
-                              overflow: "hidden",
-                              position: "relative",
-                            }}
-                          >
-                            <img
-                              src={material.image}
-                              alt={`${material.label} material`}
-                              style={{
-                                width: "100%",
-                                height: "auto",
-                                objectFit: "cover",
-                                objectPosition: "center",
-                              }}
-                            />
-                            <button
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                setPreviewMaterial(material);
-                              }}
+                          {isSelected && (
+                            <div
                               style={{
                                 position: "absolute",
-                                top: "10px",
-                                right: "10px",
-                                width: "34px",
-                                height: "34px",
-                                borderRadius: "999px",
-                                border: "1px solid rgba(203, 213, 225, 0.9)",
-                                background: "rgba(255,255,255,0.92)",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: "2px",
+                                background:
+                                  "linear-gradient(90deg, rgba(1, 100, 100, 0.85), rgba(1, 100, 100, 0.35))",
+                              }}
+                            />
+                          )}
+
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "14px",
+                              alignItems: "flex-start",
+                              flex: 1,
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: "62px",
+                                height: "62px",
+                                borderRadius: "12px",
+                                backgroundColor: "#EEF3F6",
+                                border: "1px solid #D6DEE3",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                cursor: "pointer",
-                                boxShadow: "0 6px 16px rgba(15, 23, 42, 0.12)",
+                                overflow: "hidden",
+                                flexShrink: 0,
+                                boxShadow: isSelected
+                                  ? "0 0 0 2px rgba(1, 100, 100, 0.22)"
+                                  : "inset 0 0 0 1px rgba(255,255,255,0.45)",
                               }}
-                              aria-label={`Preview ${material.label}`}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.6"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                width="18"
-                                height="18"
-                                style={{ color: "#1f2937" }}
+                              <img
+                                src={material.image}
+                                alt={`${material.label} material`}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  objectPosition: "center",
+                                }}
+                              />
+                            </div>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "6px",
+                                flex: 1,
+                                minWidth: 0,
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  gap: "8px",
+                                  alignItems: "center",
+                                }}
                               >
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" />
-                                <circle cx="12" cy="12" r="3.5" />
-                              </svg>
-                            </button>
+                                <p
+                                  style={{
+                                    fontSize: "17px",
+                                    fontWeight: 700,
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                  }}
+                                >
+                                  {material.label}
+                                </p>
+                                {isSelected && (
+                                  <span
+                                    style={{
+                                      display: "flex",
+                                      width: "fit-content",
+                                      background: "rgba(1, 100, 100, 0.14)",
+                                      color: "rgba(1, 100, 100, 0.9)",
+                                      fontSize: "10px",
+                                      borderRadius: "20px",
+                                      padding: "1px 7px",
+                                      height: "fit-content",
+                                      flexShrink: 0,
+                                    }}
+                                  >
+                                    selected
+                                  </span>
+                                )}
+                              </div>
+
+                              <p
+                                style={{
+                                  color: "#5F6368",
+                                  fontSize: "14px",
+                                  marginTop: "1px",
+                                  display: "-webkit-box",
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: "vertical",
+                                  overflow: "hidden",
+                                }}
+                              >
+                                Include {material.label.toLowerCase()} in this{" "}
+                                {selectedClassicFamily?.label?.toLowerCase() ||
+                                  "product"}{" "}
+                                setup.
+                              </p>
+
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  marginTop: "auto",
+                                }}
+                              >
+                                <p
+                                  style={{
+                                    color: "#9EA6AD",
+                                    fontSize: "12px",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  Click to toggle
+                                </p>
+
+                                <div
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    setPreviewMaterial(material);
+                                  }}
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    cursor: "pointer",
+                                    width: "fit-content",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: "rgba(1, 100, 100, 0.8)",
+                                      fontSize: "12px",
+                                      fontWeight: 600,
+                                    }}
+                                  >
+                                    Preview
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <InlineStack
-                            align="space-between"
-                            blockAlign="center"
-                          >
-                            <p style={{ fontSize: "16px", fontWeight: 700 }}>
-                              {material.label}
-                            </p>
-                            {isSelected ? (
-                              <Badge tone="success">Selected</Badge>
-                            ) : null}
-                          </InlineStack>
-
-                          <p style={{ color: "#5F6368", fontSize: "12px" }}>
-                            Include {material.label.toLowerCase()} in this
-                            product setup.
-                          </p>
-
-                          <p
-                            style={{
-                              color: "#9EA6AD",
-                              fontSize: "11px",
-                              fontWeight: 500,
-                              marginTop: "auto",
-                            }}
-                          >
-                            Click to toggle
-                          </p>
                         </div>
                       </Grid.Cell>
                     );
@@ -2328,6 +2387,18 @@ export default function ConfigurationEdit() {
                   <Grid columns={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2 }}>
                     {orderedClassicConfigModels.map((model) => {
                       const isSelected = materialType === model.key;
+                      const preview =
+                        model.key === "simple"
+                          ? {
+                              image:
+                                "/images/configuration-examples/pricing-previews/fixed-width.svg",
+                              tag: "Flexible",
+                            }
+                          : {
+                              image:
+                                "/images/configuration-examples/pricing-previews/advanced.svg",
+                              tag: "Structured",
+                            };
                       const bulletPoints =
                         model.key === "simple"
                           ? [
@@ -2357,108 +2428,123 @@ export default function ConfigurationEdit() {
                                 ? "0 0 0 3px rgba(15, 139, 141, 0.12), 0 14px 30px rgba(15, 23, 42, 0.08)"
                                 : "0 10px 24px rgba(15, 23, 42, 0.05)",
                               padding: "18px",
-                              minHeight: "250px",
+                              minHeight: "100%",
                               display: "flex",
                               flexDirection: "column",
                               gap: "14px",
                               transition: "all 160ms ease",
+                              position: "relative",
                             }}
                           >
-                            <InlineStack
-                              align="space-between"
-                              blockAlign="center"
-                            >
+                            {isSelected && (
                               <div
                                 style={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  gap: "4px",
+                                  position: "absolute",
+                                  top: 0,
+                                  left: 0,
+                                  right: 0,
+                                  height: "2px",
+                                  background:
+                                    "linear-gradient(90deg, rgba(1, 100, 100, 0.85), rgba(1, 100, 100, 0.35))",
                                 }}
-                              >
-                                <p
-                                  style={{ fontSize: "20px", fontWeight: 700 }}
-                                >
-                                  {model.label}
-                                </p>
-                                <p
-                                  style={{ fontSize: "13px", color: "#5F6368" }}
-                                >
-                                  {model.description}
-                                </p>
-                              </div>
-                              {isSelected ? (
-                                <Badge tone="success">Selected</Badge>
-                              ) : null}
-                            </InlineStack>
+                              />
+                            )}
 
                             <div
                               style={{
-                                display: "grid",
-                                gridTemplateColumns:
-                                  "repeat(2, minmax(0, 1fr))",
-                                gap: "10px",
+                                display: "flex",
+                                gap: "14px",
+                                alignItems: "flex-start",
                               }}
                             >
                               <div
                                 style={{
-                                  background: "#ffffff",
-                                  border: "1px solid #dbe4ec",
-                                  borderRadius: "14px",
-                                  padding: "12px",
+                                  width: "62px",
+                                  height: "62px",
+                                  borderRadius: "12px",
+                                  backgroundColor: "#EEF3F6",
+                                  border: "1px solid #D6DEE3",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  overflow: "hidden",
+                                  flexShrink: 0,
+                                  boxShadow: isSelected
+                                    ? "0 0 0 2px rgba(1, 100, 100, 0.22)"
+                                    : "inset 0 0 0 1px rgba(255,255,255,0.45)",
                                 }}
                               >
-                                <p
+                                <img
+                                  src={preview.image}
+                                  alt={`${model.label} preview`}
                                   style={{
-                                    fontSize: "12px",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.08em",
-                                    color: "#7b8691",
-                                    fontWeight: 700,
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "contain",
+                                    objectPosition: "center",
                                   }}
-                                >
-                                  Customer flow
-                                </p>
-                                <p
-                                  style={{
-                                    fontSize: "14px",
-                                    fontWeight: 600,
-                                    marginTop: "6px",
-                                  }}
-                                >
-                                  {model.key === "simple"
-                                    ? "Build by choosing options"
-                                    : "Start from ready presets"}
-                                </p>
+                                />
                               </div>
+
                               <div
                                 style={{
-                                  background: "#ffffff",
-                                  border: "1px solid #dbe4ec",
-                                  borderRadius: "14px",
-                                  padding: "12px",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: "6px",
+                                  flex: 1,
+                                  minWidth: 0,
                                 }}
                               >
-                                <p
+                                <div
                                   style={{
-                                    fontSize: "12px",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.08em",
-                                    color: "#7b8691",
-                                    fontWeight: 700,
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    gap: "8px",
+                                    alignItems: "center",
                                   }}
                                 >
-                                  Best fit
-                                </p>
+                                  <p
+                                    style={{
+                                      fontSize: "17px",
+                                      fontWeight: 700,
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                    }}
+                                  >
+                                    {model.label}
+                                  </p>
+                                  <InlineStack gap="100" blockAlign="center">
+                                    <Badge tone="info">{preview.tag}</Badge>
+                                    {isSelected && (
+                                      <span
+                                        style={{
+                                          display: "flex",
+                                          width: "fit-content",
+                                          background:
+                                            "rgba(1, 100, 100, 0.14)",
+                                          color: "rgba(1, 100, 100, 0.9)",
+                                          fontSize: "10px",
+                                          borderRadius: "20px",
+                                          padding: "1px 7px",
+                                          height: "fit-content",
+                                          flexShrink: 0,
+                                        }}
+                                      >
+                                        selected
+                                      </span>
+                                    )}
+                                  </InlineStack>
+                                </div>
+
                                 <p
                                   style={{
+                                    color: "#5F6368",
                                     fontSize: "14px",
-                                    fontWeight: 600,
-                                    marginTop: "6px",
+                                    marginTop: "1px",
                                   }}
                                 >
-                                  {model.key === "simple"
-                                    ? "Open option catalogs"
-                                    : "Structured product experiences"}
+                                  {model.description}
                                 </p>
                               </div>
                             </div>
@@ -2468,6 +2554,7 @@ export default function ConfigurationEdit() {
                                 display: "flex",
                                 flexDirection: "column",
                                 gap: "10px",
+                                marginTop: "4px",
                               }}
                             >
                               {bulletPoints.map((bullet) => (

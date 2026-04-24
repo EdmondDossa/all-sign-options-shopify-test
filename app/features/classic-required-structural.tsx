@@ -1,4 +1,4 @@
-import { Box, Button, Card, Icon, IndexTable, InlineStack, Text } from "@shopify/polaris";
+import { Box, Button, Card, Divider, Icon, IndexTable, InlineStack, Text, TextField } from "@shopify/polaris";
 import { DeleteIcon, DragHandleIcon, EditIcon, PlusIcon } from "@shopify/polaris-icons";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
@@ -6,8 +6,12 @@ import { ToggleButton } from "~/components/buttons";
 import ClassicFixingMethodForm from "~/components/layouts/ClassicFixingMethodForm";
 import ClassicShapeForm from "~/components/layouts/ClassicShapeForm";
 import ClassicBorderForm from "~/components/layouts/ClassicBorderForm";
+import { FileInput } from "~/components/inputs/FileInput";
+import { TextColorField } from "~/components/inputs/TextColorField";
 import useHandleFlashMessage from "~/hooks/useHandleFlashMessage";
 import {
+  defaultBorderSettings,
+  getBorderSettingsState,
   getBordersState,
   getFixingMethodsState,
   getManagedBorderOptions,
@@ -16,6 +20,7 @@ import {
   getShapesState,
   getSizeOptions,
   parseConfigData,
+  type RequiredBorderSettings,
   type RequiredBorderItem,
   type RequiredFixingMethodItem,
   type RequiredShapeItem,
@@ -115,6 +120,9 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
   const [editingFixingMethod, setEditingFixingMethod] = useState<RequiredFixingMethodItem>(emptyFixingMethod());
   const [editingShape, setEditingShape] = useState<RequiredShapeItem>(emptyShape());
   const [editingBorder, setEditingBorder] = useState<RequiredBorderItem>(emptyBorder());
+  const [borderSettings, setBorderSettings] = useState<RequiredBorderSettings>(() =>
+    getBorderSettingsState(data),
+  );
 
   const isSubmitting = navigation.state === "submitting";
 
@@ -167,6 +175,11 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
   useEffect(() => {
     setDisplayItems(items);
   }, [items]);
+
+  useEffect(() => {
+    if (section !== "borders") return;
+    setBorderSettings(getBorderSettingsState(data));
+  }, [data, section]);
 
   useEffect(() => {
     if (!isSortableSection || !tableWrapperRef.current || showForm || displayItems.length <= 1) return;
@@ -304,6 +317,37 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
       },
       { method: "POST" },
     );
+  };
+
+  const saveBorderSettings = () => {
+    submit(
+      {
+        operation: "save-border-settings",
+        settings: JSON.stringify(borderSettings),
+      },
+      { method: "POST" },
+    );
+  };
+
+  const addBorderColor = () => {
+    setBorderSettings((current) => ({
+      ...current,
+      colors: [
+        ...current.colors,
+        {
+          name: "",
+          codeHex: "#FFFFFF",
+          additionalPrice: 0,
+        },
+      ],
+    }));
+  };
+
+  const deleteBorderColor = (colorIndex: number) => {
+    setBorderSettings((current) => ({
+      ...current,
+      colors: current.colors.filter((_color, index) => index !== colorIndex),
+    }));
   };
 
   if (showForm) {
@@ -482,6 +526,183 @@ export function ClassicRequiredStructuralScreen({ section }: Props) {
           </div>
         </Box>
       </Card>
+
+      {section === "borders" ? (
+        <Card>
+          <Box padding="300">
+            <div style={{ display: "grid", gap: 16 }}>
+              <div>
+                <Text as="h3" variant="headingMd">
+                  Border Settings
+                </Text>
+                <Text as="p" tone="subdued">
+                  Control border width support and the border color palette shown in the configurator.
+                </Text>
+              </div>
+
+              <InlineStack gap="600" wrap>
+                <InlineStack gap="200" blockAlign="center">
+                  <Text as="span">Enable border width</Text>
+                  <ToggleButton
+                    type="checkbox"
+                    name="enable-border-width"
+                    value="yes"
+                    checked={Boolean(borderSettings.enableBorderWidth)}
+                    onChange={() =>
+                      setBorderSettings((current) => ({
+                        ...current,
+                        enableBorderWidth: !current.enableBorderWidth,
+                      }))
+                    }
+                  />
+                </InlineStack>
+                <InlineStack gap="200" blockAlign="center">
+                  <Text as="span">Enable border color</Text>
+                  <ToggleButton
+                    type="checkbox"
+                    name="enable-border-color"
+                    value="yes"
+                    checked={Boolean(borderSettings.enableBorderColor)}
+                    onChange={() =>
+                      setBorderSettings((current) => ({
+                        ...current,
+                        enableBorderColor: !current.enableBorderColor,
+                      }))
+                    }
+                  />
+                </InlineStack>
+              </InlineStack>
+
+              {borderSettings.enableBorderColor ? (
+                <>
+                  <TextField
+                    label="Border colors label"
+                    autoComplete="off"
+                    value={borderSettings.borderColorsLabel}
+                    onChange={(value) =>
+                      setBorderSettings((current) => ({
+                        ...current,
+                        borderColorsLabel: value,
+                      }))
+                    }
+                  />
+
+                  <FileInput
+                    title="Custom color preview image"
+                    buttonTitle="Upload image"
+                    path={borderSettings.customColorsPrevImg}
+                    handlePath={(value: string) =>
+                      setBorderSettings((current) => ({
+                        ...current,
+                        customColorsPrevImg: String(value || ""),
+                      }))
+                    }
+                  />
+
+                  <Divider />
+
+                  <div style={{ display: "grid", gap: 12 }}>
+                    <InlineStack align="space-between" blockAlign="center">
+                      <Text as="h4" variant="headingSm">
+                        Border Colors
+                      </Text>
+                      <Button onClick={addBorderColor}>Add color</Button>
+                    </InlineStack>
+
+                    {borderSettings.colors.length === 0 ? (
+                      <Text as="p" tone="subdued">
+                        No border colors configured.
+                      </Text>
+                    ) : null}
+
+                    {borderSettings.colors.map((color, colorIndex) => (
+                      <Card key={`border-color-${colorIndex}`}>
+                        <Box padding="300">
+                          <div style={{ display: "grid", gap: 12 }}>
+                            <TextField
+                              label="Name"
+                              autoComplete="off"
+                              value={String(color.name || "")}
+                              onChange={(value) =>
+                                setBorderSettings((current) => ({
+                                  ...current,
+                                  colors: current.colors.map((entry, index) =>
+                                    index === colorIndex
+                                      ? { ...entry, name: value }
+                                      : entry,
+                                  ),
+                                }))
+                              }
+                            />
+
+                            <TextColorField
+                              label="Color"
+                              color={String(color.codeHex || "#FFFFFF")}
+                              setColor={(value: string) =>
+                                setBorderSettings((current) => ({
+                                  ...current,
+                                  colors: current.colors.map((entry, index) =>
+                                    index === colorIndex
+                                      ? { ...entry, codeHex: String(value || "#FFFFFF") }
+                                      : entry,
+                                  ),
+                                }))
+                              }
+                            />
+
+                            <TextField
+                              label="Additional price"
+                              type="number"
+                              autoComplete="off"
+                              value={String(color.additionalPrice ?? 0)}
+                              onChange={(value) =>
+                                setBorderSettings((current) => ({
+                                  ...current,
+                                  colors: current.colors.map((entry, index) =>
+                                    index === colorIndex
+                                      ? { ...entry, additionalPrice: value }
+                                      : entry,
+                                  ),
+                                }))
+                              }
+                              onBlur={() =>
+                                setBorderSettings((current) => ({
+                                  ...current,
+                                  colors: current.colors.map((entry, index) =>
+                                    index === colorIndex
+                                      ? {
+                                          ...entry,
+                                          additionalPrice:
+                                            Number(entry.additionalPrice || 0) || 0,
+                                        }
+                                      : entry,
+                                  ),
+                                }))
+                              }
+                            />
+
+                            <InlineStack align="end">
+                              <Button tone="critical" onClick={() => deleteBorderColor(colorIndex)}>
+                                Delete color
+                              </Button>
+                            </InlineStack>
+                          </div>
+                        </Box>
+                      </Card>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              <InlineStack align="end">
+                <Button variant="primary" onClick={saveBorderSettings} loading={isSubmitting}>
+                  Save settings
+                </Button>
+              </InlineStack>
+            </div>
+          </Box>
+        </Card>
+      ) : null}
     </div>
   );
 }

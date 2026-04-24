@@ -4,6 +4,33 @@ import { ensureClassicSimplifiedBuilderData } from "~/utils/simplified-builder-d
 
 const cloneObject = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
+const extractScalarText = (value: unknown): string => {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value).trim();
+  }
+  if (Array.isArray(value)) {
+    return extractScalarText(value[0]);
+  }
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const candidates = [
+      record.value,
+      record.label,
+      record.name,
+      record.key,
+      record.type,
+      record.id,
+      record.slug,
+    ];
+    for (const candidate of candidates) {
+      const normalized = extractScalarText(candidate);
+      if (normalized) return normalized;
+    }
+  }
+  return "";
+};
+
 const initialData = {
   settings: {
     generals: {
@@ -1114,7 +1141,7 @@ const advanceMaterials: any = [
 const normalizeNcpcProductType = (
   value?: string | null,
 ): "neon" | "channel" | null => {
-  const normalized = String(value || "")
+  const normalized = extractScalarText(value)
     .trim()
     .toLowerCase();
 
@@ -1126,7 +1153,7 @@ const normalizeNcpcProductType = (
 };
 
 const normalizeNcpcPricingMode = (value?: string | null) => {
-  const normalized = String(value || "")
+  const normalized = extractScalarText(value)
     .trim()
     .toLowerCase();
 
@@ -1217,23 +1244,26 @@ const withReadAndPersistConfiguration = async (
     String(rawData?.configuratorMeta?.structure || "")
       .trim()
       .toLowerCase() === "modular-classic" ||
-    Boolean(String(rawData?.materialType || "").trim()) ||
-    (Boolean(String(rawData?.productType || "").trim()) &&
+    Boolean(extractScalarText(rawData?.materialType)) ||
+    (Boolean(extractScalarText(rawData?.productType)) &&
       !["neon", "channel"].includes(
-        String(rawData?.productType || "")
-          .trim()
-          .toLowerCase(),
+        extractScalarText(rawData?.productType).toLowerCase(),
       ));
 
   if (hasClassicModularShape) {
     const normalizedData = ensureClassicSimplifiedBuilderData({
       data: rawData || {},
-      materialType: rawData?.materialType || configuration?.materialType,
-      productType: rawData?.productType || configuration?.productType,
+      materialType:
+        extractScalarText(rawData?.materialType) ||
+        extractScalarText(configuration?.materialType),
+      productType:
+        extractScalarText(rawData?.productType) ||
+        extractScalarText(configuration?.productType),
       pricingMode: "frame-fit",
     });
     const normalizedProductType =
-      String(rawData?.productType || configuration?.productType || "").trim() ||
+      extractScalarText(rawData?.productType) ||
+      extractScalarText(configuration?.productType) ||
       null;
 
     const needsPersistence =
@@ -1280,8 +1310,8 @@ const withReadAndPersistConfiguration = async (
 
   const normalizedData = ensureClassicSimplifiedBuilderData({
     data: rawData || {},
-    materialType: configuration?.materialType,
-    productType: configuration?.productType,
+    materialType: extractScalarText(configuration?.materialType),
+    productType: extractScalarText(configuration?.productType),
     pricingMode: configuration?.pricingMode || "frame-fit",
   });
 
@@ -1459,9 +1489,9 @@ export default class ConfigurationService {
           }
         : ensureClassicSimplifiedBuilderData({
             data: getObjectData((configData as any).data) || {},
-            materialType: materialType as any,
+            materialType: extractScalarText(materialType),
             productFamily: productFamily as any,
-            productType: productType as any,
+            productType: extractScalarText(productType),
             pricingMode: "frame-fit",
           });
 
@@ -1488,8 +1518,8 @@ export default class ConfigurationService {
           popupImg: String((configData as any)?.popupImg ?? ""),
           data: normalizedData,
           product: products, // Save products array in DB field 'product' (legacy column name)
-          materialType: materialType, // Explicitly preserve materialType
-          productType: normalizedNcpcProductType || productType, // Explicitly preserve productType
+          materialType: extractScalarText(materialType), // Explicitly preserve materialType
+          productType: normalizedNcpcProductType || extractScalarText(productType), // Explicitly preserve productType
           pricingMode: normalizedPricingMode,
         },
       });
@@ -1565,9 +1595,9 @@ export default class ConfigurationService {
           data: getObjectData((configData as any).data) || {
             settings: cloneObject(initialData.settings),
           },
-          materialType: materialType as any,
+          materialType: extractScalarText(materialType),
           productFamily: productFamily as any,
-          productType: productType as any,
+          productType: extractScalarText(productType),
           pricingMode: "frame-fit",
         });
       }
@@ -1578,8 +1608,8 @@ export default class ConfigurationService {
           icon: String((configData as any)?.icon ?? ""),
           popupImg: String((configData as any)?.popupImg ?? ""),
           product: products, // Save products array in DB field 'product' (legacy column name)
-          materialType: materialType, // Save materialType
-          productType: normalizedNcpcProductType || productType, // Save productType
+          materialType: extractScalarText(materialType), // Save materialType
+          productType: normalizedNcpcProductType || extractScalarText(productType), // Save productType
           pricingMode: normalizedPricingMode,
           sessionId: sessionId,
           data: dataForCreate,

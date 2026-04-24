@@ -1,5 +1,6 @@
 import { Box, Card, InlineStack, Select, Text } from "@shopify/polaris";
 import { SaveButton, ToggleButton } from "~/components/buttons";
+import CollapsibleSectionCard from "~/components/settings/CollapsibleSectionCard";
 
 export type ModeSettingsValue = {
   type: "simple" | "multi";
@@ -75,117 +76,108 @@ export default function ModeSettingsSection({
   onSave: () => void;
 }) {
   return (
-    <Card>
-      <Box padding="300">
-        <Text as="h3" variant="headingMd">
-          {title}
-        </Text>
-        <Box paddingBlockStart="100">
-          <Text as="p" tone="subdued">
-            {description}
-          </Text>
-        </Box>
+    <CollapsibleSectionCard
+      id="ncpc-settings-mode"
+      title={title}
+      description={description}
+    >
+      <div style={{ display: "grid", gap: 12 }}>
+        {supportsMultiMode ? (
+          <Select
+            label="Mode"
+            helpText="Choose whether customers can apply multiple fonts or colors within one design."
+            options={[
+              { label: "Simple", value: "simple" },
+              { label: "Multi", value: "multi" },
+            ]}
+            value={value.type || "simple"}
+            onChange={(type) =>
+              onChange({
+                ...value,
+                type: type === "multi" ? "multi" : "simple",
+              })
+            }
+          />
+        ) : null}
 
-        <Box paddingBlockStart="300">
+        {supportsMultiMode && value.type === "multi" ? (
           <div style={{ display: "grid", gap: 12 }}>
-            {supportsMultiMode ? (
-              <Select
-                label="Mode"
-                helpText="Choose whether customers can apply multiple fonts or colors within one design."
-                options={[
-                  { label: "Simple", value: "simple" },
-                  { label: "Multi", value: "multi" },
-                ]}
-                value={value.type || "simple"}
-                onChange={(type) =>
-                  onChange({
-                    ...value,
-                    type: type === "multi" ? "multi" : "simple",
-                  })
-                }
-              />
-            ) : null}
-
-            {supportsMultiMode && value.type === "multi" ? (
-              <div style={{ display: "grid", gap: 12 }}>
-                <ToggleField
-                  label="Allow Multi Fonts"
-                  description="Allow customers to apply different fonts to different parts of their text."
-                  checked={Boolean(value.allowMultiFonts)}
-                  onChange={(checked) => onChange({ ...value, allowMultiFonts: checked })}
-                />
-                <ToggleField
-                  label="Allow Multi Colors"
-                  description="Allow customers to apply different colors to different parts of their text."
-                  checked={Boolean(value.allowMultiColors)}
-                  onChange={(checked) => onChange({ ...value, allowMultiColors: checked })}
-                />
-              </div>
-            ) : null}
-
             <ToggleField
-              label="Allow Share"
-              description="Let customers share the configured sign."
-              checked={Boolean(value?.shareAndSave?.allowShare)}
-              onChange={(checked) =>
-                onChange({
-                  ...value,
-                  shareAndSave: {
-                    ...(value.shareAndSave || {}),
-                    allowShare: checked,
-                  },
-                })
-              }
+              label="Allow Multi Fonts"
+              description="Allow customers to apply different fonts to different parts of their text."
+              checked={Boolean(value.allowMultiFonts)}
+              onChange={(checked) => onChange({ ...value, allowMultiFonts: checked })}
             />
-
             <ToggleField
-              label="Allow Save"
-              description="Let customers save their configuration for later."
-              checked={Boolean(value?.shareAndSave?.allowSave)}
-              onChange={(checked) =>
-                onChange({
-                  ...value,
-                  shareAndSave: {
-                    ...(value.shareAndSave || {}),
-                    allowSave: checked,
-                  },
-                })
-              }
-            />
-
-            <Select
-              label="Share Sign Location"
-              options={[
-                { label: "Options + Review", value: "options_review" },
-                { label: "Review only", value: "review_only" },
-              ]}
-              value={
-                value?.shareAndSave?.shareSignLocation === "review_only"
-                  ? "review_only"
-                  : "options_review"
-              }
-              onChange={(shareSignLocation) =>
-                onChange({
-                  ...value,
-                  shareAndSave: {
-                    ...(value.shareAndSave || {}),
-                    shareSignLocation:
-                      shareSignLocation === "review_only" ? "review_only" : "options_review",
-                  },
-                })
-              }
+              label="Allow Multi Colors"
+              description="Allow customers to apply different colors to different parts of their text."
+              checked={Boolean(value.allowMultiColors)}
+              onChange={(checked) => onChange({ ...value, allowMultiColors: checked })}
             />
           </div>
-        </Box>
+        ) : null}
 
-        <Box paddingBlockStart="300">
-          <InlineStack align="end">
-            <SaveButton loading={saving} onClick={onSave}>
-              Save Mode
-            </SaveButton>
-          </InlineStack>
-        </Box>
+        <ToggleField
+          label="Allow Share"
+          description="Let customers share the configured sign."
+          checked={Boolean(value?.shareAndSave?.allowShare)}
+          onChange={(checked) =>
+            onChange({
+              ...value,
+              shareAndSave: {
+                ...(value.shareAndSave || {}),
+                allowShare: checked,
+              },
+            })
+          }
+        />
+
+        <ToggleField
+          label="Allow Save"
+          description="Let customers save their configuration for later."
+          checked={Boolean(value?.shareAndSave?.allowSave)}
+          onChange={(checked) =>
+            onChange({
+              ...value,
+              shareAndSave: {
+                ...(value.shareAndSave || {}),
+                allowSave: checked,
+              },
+            })
+          }
+        />
+
+        <Select
+          label="Share Sign Location"
+          options={[
+            { label: "Options + Review", value: "options_review" },
+            { label: "Review only", value: "review_only" },
+          ]}
+          value={
+            value?.shareAndSave?.shareSignLocation === "review_only"
+              ? "review_only"
+              : "options_review"
+          }
+          onChange={(shareSignLocation) =>
+            onChange({
+              ...value,
+              shareAndSave: {
+                ...(value.shareAndSave || {}),
+                shareSignLocation:
+                  shareSignLocation === "review_only" ? "review_only" : "options_review",
+              },
+            })
+          }
+        />
+      </div>
+
+      <Box paddingBlockStart="300">
+        <InlineStack align="end">
+          <SaveButton loading={saving} onClick={onSave}>
+            Save Mode
+          </SaveButton>
+        </InlineStack>
       </Box>
-    </Card>
+    </CollapsibleSectionCard>
   );
 }

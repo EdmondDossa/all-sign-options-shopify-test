@@ -250,13 +250,13 @@ const HeaderTopMenu = () => {
     navigate(`/app/configuration/${id}/preview?returnTo=${returnTo}`);
   };
 
-
-
+  if (!configId) {
+    return null;
+  }
   return (
     <div>
       <div className="topbar-aso" >
-        {
-          configId && <>
+        <>
             <div onClick={()=> navigate(`/app/configuration${location.search || ""}`)} style={{
               display: 'flex',
               justifyContent: "center",
@@ -312,8 +312,7 @@ const HeaderTopMenu = () => {
 
             
             </div>
-          </>
-        }
+        </>
         {/* <img className="aso-logo"
           src={'/aso_logo.png'}
           alt={"All Signs Customizer"}

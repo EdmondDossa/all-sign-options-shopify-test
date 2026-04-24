@@ -18,6 +18,7 @@ import { jFlashMessage } from "~/utils/message-flash";
 import RequestQuoteSettingsSection from "~/components/settings/RequestQuoteSettingsSection";
 import ModeSettingsSection from "~/components/settings/ModeSettingsSection";
 import ProductSettingsSection from "~/components/settings/ProductSettingsSection";
+import CollapsibleSectionCard from "~/components/settings/CollapsibleSectionCard";
 
 type YesNo = "true" | "false";
 
@@ -207,30 +208,20 @@ function SectionShell({
   saving: boolean;
 }) {
   return (
-    <Box paddingBlockStart="300">
-      <Card>
-        <Box padding="300">
-          <Text as="h3" variant="headingMd">
-            {title}
-          </Text>
-          <Box paddingBlockStart="100">
-            <Text as="p" tone="subdued">
-              {description}
-            </Text>
-          </Box>
-
-          <Box paddingBlockStart="300">{children}</Box>
-
-          <Box paddingBlockStart="300">
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button variant="primary" loading={saving} onClick={onSave}>
-                Save {title}
-              </Button>
-            </div>
-          </Box>
-        </Box>
-      </Card>
-    </Box>
+    <CollapsibleSectionCard
+      id={`ncpc-settings-${title.toLowerCase().replace(/\s+/g, "-")}`}
+      title={title}
+      description={description}
+    >
+      {children}
+      <Box paddingBlockStart="300">
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button variant="primary" loading={saving} onClick={onSave}>
+            Save {title}
+          </Button>
+        </div>
+      </Box>
+    </CollapsibleSectionCard>
   );
 }
 

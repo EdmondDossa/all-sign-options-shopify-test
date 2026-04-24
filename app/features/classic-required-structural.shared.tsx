@@ -61,6 +61,18 @@ export type RequiredBorderItem = {
   isDefault: boolean;
 };
 
+export type RequiredBorderSettings = {
+  colors: Array<{
+    name: string;
+    codeHex: string;
+    additionalPrice: number | string;
+  }>;
+  enableBorderWidth: boolean;
+  enableBorderColor: boolean;
+  borderColorsLabel: string;
+  customColorsPrevImg: string;
+};
+
 export const parseConfigData = (rawData: any) => {
   if (!rawData) return null;
   if (typeof rawData === "string") {
@@ -133,6 +145,14 @@ export const ensureOneDefault = <T extends { isDefault?: boolean }>(
     isDefault: index === targetIndex,
   }));
 };
+
+export const defaultBorderSettings = (): RequiredBorderSettings => ({
+  colors: [],
+  enableBorderWidth: true,
+  enableBorderColor: true,
+  borderColorsLabel: "Borders Colors",
+  customColorsPrevImg: "",
+});
 
 export const getSizeOptions = (data: any): RequiredSizeOption[] => {
   const requiredSizes = Array.isArray(data?.requiredOptions?.sizes?.items)
@@ -537,10 +557,50 @@ export const getBordersState = (
   return ensureOneDefault(Array.from(borderMap.values()));
 };
 
+export const getBorderSettingsState = (data: any): RequiredBorderSettings => {
+  const requiredSettings = data?.requiredOptions?.borders?.settings;
+  if (requiredSettings && typeof requiredSettings === "object") {
+    return {
+      ...defaultBorderSettings(),
+      ...requiredSettings,
+      colors: Array.isArray(requiredSettings?.colors)
+        ? requiredSettings.colors.map((color: any) => ({
+            name: String(color?.name || ""),
+            codeHex: String(color?.codeHex || "#FFFFFF"),
+            additionalPrice: Number(color?.additionalPrice || 0),
+          }))
+        : [],
+    };
+  }
+
+  const legacyMaterials = Array.isArray(data?.materials) ? data.materials : [];
+  const legacySettings = legacyMaterials.find((material: any) => material?.data?.borders?.settings)
+    ?.data?.borders?.settings;
+
+  if (legacySettings && typeof legacySettings === "object") {
+    return {
+      ...defaultBorderSettings(),
+      ...legacySettings,
+      colors: Array.isArray(legacySettings?.colors)
+        ? legacySettings.colors.map((color: any) => ({
+            name: String(color?.name || ""),
+            codeHex: String(color?.codeHex || "#FFFFFF"),
+            additionalPrice: Number(color?.additionalPrice || 0),
+          }))
+        : [],
+    };
+  }
+
+  return defaultBorderSettings();
+};
+
 export const syncStructuralIntoData = (
   data: any,
   section: StructuralSectionKey,
   items: RequiredFixingMethodItem[] | RequiredShapeItem[] | RequiredBorderItem[],
+  options?: {
+    borderSettings?: RequiredBorderSettings;
+  },
 ) => {
   const safeData = data && typeof data === "object" ? { ...data } : {};
   safeData.requiredOptions = safeData.requiredOptions || {};
@@ -599,6 +659,21 @@ export const syncStructuralIntoData = (
         excludeShapes: Array.isArray(item.excludeShapes) ? item.excludeShapes.map(String) : [],
         isDefault: Boolean(item.isDefault),
       })),
+      settings: {
+        ...defaultBorderSettings(),
+        ...(options?.borderSettings || getBorderSettingsState(safeData)),
+        colors: Array.isArray(options?.borderSettings?.colors)
+          ? options!.borderSettings!.colors.map((color) => ({
+              name: String(color?.name || ""),
+              codeHex: String(color?.codeHex || "#FFFFFF"),
+              additionalPrice: Number(color?.additionalPrice || 0),
+            }))
+          : getBorderSettingsState(safeData).colors.map((color) => ({
+              name: String(color?.name || ""),
+              codeHex: String(color?.codeHex || "#FFFFFF"),
+              additionalPrice: Number(color?.additionalPrice || 0),
+            })),
+      },
     };
   }
 

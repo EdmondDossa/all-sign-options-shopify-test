@@ -4,6 +4,358 @@ var urlParams = new URLSearchParams(window.location.search);
 var paramAsoConfigurationId = urlParams.get('aso-config-id');
 var asoTemplateId = urlParams.get('aso-template-id');
 
+function asoLogConfiguratorDebug(label, payload) {
+  try {
+    console.groupCollapsed(`[ASO Configurator] ${label}`);
+    console.log(payload);
+    console.groupEnd();
+  } catch (error) {
+    console.log(`[ASO Configurator] ${label}`, payload);
+  }
+}
+
+function asoGetConfiguratorDebugSnapshot(asoData, configuration) {
+  const currentConfig = asoData?.currentConfig || {};
+  const currentData = currentConfig?.data || {};
+  const settings = currentData?.settings || {};
+  const themes = settings?.themes || {};
+  const requiredOptions = currentData?.requiredOptions || {};
+  const additionalOptions = currentData?.additionalOptions || {};
+
+  return {
+    mountNodeFound: !!document.getElementById("aso-frontend-app"),
+    configurationId: configuration?.id || null,
+    configurationName: configuration?.name || configuration?.title || "",
+    productType: currentConfig?.productType || null,
+    pricingMode: currentConfig?.pricingMode || null,
+    skin: asoData?.skin || null,
+    hasCurrentConfig: !!asoData?.currentConfig,
+    hasCurrentConfigData: !!currentData && Object.keys(currentData).length > 0,
+    hasSettings: Object.keys(settings).length > 0,
+    hasThemes: Object.keys(themes).length > 0,
+    themeSkin: themes?.skin || null,
+    hasLanguageImages: !!settings?.languageImages,
+    iconCount: Array.isArray(settings?.languageImages?.icons?.listIcons)
+      ? settings.languageImages.icons.listIcons.length
+      : 0,
+    fontCount: Array.isArray(requiredOptions?.fontOptions?.fonts)
+      ? requiredOptions.fontOptions.fonts.length
+      : 0,
+    sizeCount: Array.isArray(requiredOptions?.sizeOptions?.sizes)
+      ? requiredOptions.sizeOptions.sizes.length
+      : 0,
+    colorCount: Array.isArray(requiredOptions?.colorOptions?.colors)
+      ? requiredOptions.colorOptions.colors.length
+      : 0,
+    priceOptionCount: Array.isArray(requiredOptions?.priceOptions)
+      ? requiredOptions.priceOptions.length
+      : 0,
+    materialCount: Array.isArray(additionalOptions?.materialOptions?.materials)
+      ? additionalOptions.materialOptions.materials.length
+      : 0,
+    mountingCount: Array.isArray(additionalOptions?.mountingOptions?.mountings)
+      ? additionalOptions.mountingOptions.mountings.length
+      : 0,
+    backboardCount: Array.isArray(additionalOptions?.backboardOptions?.backboards)
+      ? additionalOptions.backboardOptions.backboards.length
+      : 0,
+  };
+}
+
+function asoParseJson(value) {
+  if (!value) return null;
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+  return typeof value === "object" ? value : null;
+}
+
+function asoNormalizeText(value, fallback = "") {
+  const normalized = String(value || "").trim();
+  return normalized || fallback;
+}
+
+function asoNormalizeProductType(value) {
+  return asoNormalizeText(value).toLowerCase();
+}
+
+function asoNormalizeNumber(value, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function asoGetStorefrontProxyBase() {
+  const root = String(window.Shopify?.routes?.root || '/');
+  const normalizedRoot = root.endsWith('/') ? root : `${root}/`;
+  return `${window.location.origin}${normalizedRoot}apps/aso-proxy/`;
+}
+
+function asoNormalizeProxyAssetUrl(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return raw;
+
+  const proxyBase = asoGetStorefrontProxyBase();
+  const normalizePath = (path = '', search = '', hash = '') => {
+    const cleanedPath = String(path || '').replace(/^\/+/, '');
+    if (!cleanedPath) return raw;
+
+    if (cleanedPath.startsWith('apps/aso-proxy/')) {
+      return `${proxyBase}${cleanedPath.replace(/^apps\/aso-proxy\//, '')}${search}${hash}`;
+    }
+
+    if (cleanedPath.startsWith('uploads/')) {
+      return `${proxyBase}${cleanedPath}${search}${hash}`;
+    }
+
+    if (cleanedPath.startsWith('aso_default_files/')) {
+      return `${proxyBase}${cleanedPath}${search}${hash}`;
+    }
+
+    return raw;
+  };
+
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const parsed = new URL(raw);
+      return normalizePath(parsed.pathname, parsed.search, parsed.hash);
+    } catch {
+      return raw;
+    }
+  }
+
+  if (/^https?:\/\/[^/]+\/apps\/aso-proxy\//i.test(raw)) {
+    const [, proxyPath = ''] = raw.split(/\/apps\/aso-proxy\//i);
+    return `${proxyBase}${proxyPath.replace(/^\/+/, '')}`;
+  }
+
+  if (raw.startsWith('/apps/aso-proxy/')) {
+    return `${proxyBase}${raw.replace(/^\/apps\/aso-proxy\//, '')}`;
+  }
+
+  if (raw.startsWith('apps/aso-proxy/')) {
+    return `${proxyBase}${raw.replace(/^apps\/aso-proxy\//, '')}`;
+  }
+
+  if (raw.startsWith('/uploads/')) {
+    return `${proxyBase}${raw.replace(/^\/+/, '')}`;
+  }
+
+  if (raw.startsWith('uploads/')) {
+    return `${proxyBase}${raw}`;
+  }
+
+  if (raw.startsWith('/aso_default_files/')) {
+    return `${proxyBase}${raw.replace(/^\/+/, '')}`;
+  }
+
+  if (raw.startsWith('aso_default_files/')) {
+    return `${proxyBase}${raw}`;
+  }
+
+  return normalizePath(raw);
+}
+
+function asoNormalizeProxyAssetTree(input) {
+  if (typeof input === 'string') {
+    return asoNormalizeProxyAssetUrl(input);
+  }
+
+  if (Array.isArray(input)) {
+    return input.map((entry) => asoNormalizeProxyAssetTree(entry));
+  }
+
+  if (input && typeof input === 'object') {
+    return Object.fromEntries(
+      Object.entries(input).map(([key, value]) => [key, asoNormalizeProxyAssetTree(value)]),
+    );
+  }
+
+  return input;
+}
+
+function asoNormalizeNcpcAssets(data) {
+  if (!data || typeof data !== "object") {
+    return {};
+  }
+
+  data = asoNormalizeProxyAssetTree(data);
+
+  if (data.settings?.themeColors && typeof data.settings.themeColors === "object") {
+    data.settings.themeColors.customCss = asoNormalizeText(
+      data.settings.themeColors.customCss || data.settings.themeColors.customCSS,
+      "",
+    );
+    delete data.settings.themeColors.customCSS;
+  }
+
+  const icons = data.settings?.languageImages?.icons?.listIcons;
+  if (Array.isArray(icons)) {
+    data.settings.languageImages.icons.listIcons = icons
+      .filter((icon) => icon && typeof icon === "object")
+      .map((icon) => {
+        const fontUrl = asoNormalizeText(
+          icon.iconFontUrl || icon.fontFile || icon.fontUrl || icon.fileTtf,
+        );
+        const fontFamily = asoNormalizeText(
+          icon.iconFontFamily || icon.fontFamily || icon.familyName,
+        );
+        const glyph = asoNormalizeText(icon.iconGlyph || icon.glyph);
+        const codepoint = asoNormalizeText(icon.iconCodepoint || icon.codepoint);
+
+        return {
+          ...icon,
+          ...(fontUrl
+            ? {
+                iconFontUrl: fontUrl,
+                fontFile: fontUrl,
+                fontUrl,
+                fileTtf: fontUrl,
+              }
+            : {}),
+          ...(fontFamily
+            ? {
+                iconFontFamily: fontFamily,
+                fontFamily,
+              }
+            : {}),
+          ...(glyph
+            ? {
+                iconGlyph: glyph,
+                glyph,
+              }
+            : {}),
+          ...(codepoint
+            ? {
+                iconCodepoint: codepoint,
+                codepoint,
+              }
+            : {}),
+        };
+      });
+  }
+
+  return data;
+}
+
+function asoResolveNcpcConfigurationData(configuration) {
+  const rootData = asoParseJson(configuration?.data) || {};
+  const wrappedNcpcData = asoParseJson(rootData?.ncpc);
+  const resolvedData =
+    wrappedNcpcData && typeof wrappedNcpcData === "object" ? wrappedNcpcData : rootData;
+
+  return asoNormalizeNcpcAssets(structuredClone(resolvedData));
+}
+
+function asoResolveNcpcSkin(data) {
+  return asoNormalizeText(
+    data?.settings?.themes?.skin ||
+      data?.settings?.themes?.colors?.skin ||
+      data?.settings?.themeColors?.skin,
+    "default",
+  ).toLowerCase();
+}
+
+function buildAsoNcpcStorefrontData(configuration) {
+  const currentConfigData = asoResolveNcpcConfigurationData(configuration);
+  const skin = asoResolveNcpcSkin(currentConfigData);
+  const regularPrice = asoNormalizeNumber(asoRegularPrice, 0);
+
+  return {
+    skin,
+    productID: asoNormalizeNumber(asoProductId, 0),
+    product: {
+      id: asoNormalizeNumber(asoProductId, 0),
+      title: asoNormalizeText(
+        configuration?.product?.title || configuration?.name || configuration?.title,
+        "Storefront product",
+      ),
+    },
+    author: "ASO",
+    site_url: encodeURIComponent(window.location.origin),
+    caches: {
+      timestamp: "0",
+      time: "0",
+      seconds_until: 0,
+    },
+    ncpc_product: null,
+    currentConfig: {
+      id: asoNormalizeNumber(configuration?.id),
+      title: asoNormalizeText(configuration?.name || configuration?.title, "Configuration"),
+      productType:
+        asoNormalizeProductType(configuration?.productType) ||
+        asoNormalizeProductType(currentConfigData?.productType),
+      pricingMode:
+        asoNormalizeProductType(configuration?.pricingMode) ||
+        asoNormalizeProductType(currentConfigData?.pricingMode),
+      data: currentConfigData,
+    },
+    regularPrice,
+    wc_rate: 1,
+    thousandSep: asoNormalizeText(asoThousandSep, " "),
+    decimalSep: asoNormalizeText(asoDecimalSep, "."),
+    decimals: 2,
+    nbDecimals: 2,
+    currencySymbol: asoNormalizeText(asoCurrency, ""),
+    currency_pos: asoNormalizeText(asoCurrency_pos, "right"),
+    variations: [],
+    wpApiSettings: {
+      root: "",
+      nonce: "",
+      user: 0,
+    },
+  };
+}
+
+function ensureAsoFrontendRoot() {
+  const appRoot = document.getElementById("app");
+  const asoRoot = document.getElementById("aso-frontend-app");
+
+  if (asoRoot) {
+    return asoRoot;
+  }
+
+  if (appRoot) {
+    appRoot.id = "aso-frontend-app";
+    return appRoot;
+  }
+
+  return null;
+}
+
+async function asoPrepareNcpcConfiguratorData(configuration) {
+  const asoData = buildAsoNcpcStorefrontData(configuration);
+  window.asoData = asoData;
+  window.asoNcpcData = asoData;
+  ensureAsoFrontendRoot();
+  asoLogConfiguratorDebug("Prepared storefront data", {
+    snapshot: asoGetConfiguratorDebugSnapshot(asoData, configuration),
+    asoData,
+    configuration,
+  });
+  return asoData;
+}
+
+if (!window.__asoConfiguratorDebugListenersAttached) {
+  window.__asoConfiguratorDebugListenersAttached = true;
+  window.addEventListener("error", (event) => {
+    console.error("[ASO Configurator] window error", {
+      message: event.message,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+      error: event.error,
+    });
+  });
+  window.addEventListener("unhandledrejection", (event) => {
+    console.error("[ASO Configurator] unhandled rejection", event.reason);
+  });
+}
+
 function getAsoProxyAbsoluteUrl(path = '') {
   const normalizedPath = String(path || '').replace(/^\/+/, '');
   return `${window.Shopify?.routes?.root || '/'}apps/aso-proxy/api/${normalizedPath}`;
@@ -52,7 +404,7 @@ async function getAsoConfiguration(configurationId) {
       throw new Error(`ASO Proxy configuration fetch failed with status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = asoNormalizeProxyAssetTree(await response.json());
     return data;
   } catch (error) {
     console.error('Error fetching ASO Proxy configuration:', error);
@@ -75,7 +427,7 @@ async function getAsoTemplateById(templateId) {
       throw new Error(`ASO Proxy template fetch failed with status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = asoNormalizeProxyAssetTree(await response.json());
     return data;
   } catch (error) {
     console.error('Error fetching ASO Proxy template:', error);
@@ -102,7 +454,7 @@ async function getAsoManagesData() {
       throw new Error(`ASO Proxy configuration fetch failed with status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = asoNormalizeProxyAssetTree(await response.json());
     return data;
   } catch (error) {
     console.error('Error fetching ASO Proxy configuration:', error);

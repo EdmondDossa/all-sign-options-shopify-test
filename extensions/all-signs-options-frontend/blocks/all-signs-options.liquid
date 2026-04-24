@@ -102,8 +102,8 @@
         fabric: "{{ 'fabric.min.js' | asset_url }}",
       };
       const ncpcAssets = {
-        css: "{{ 'nc-configurator.css' | asset_url }}",
-        js: "{{ 'nc-configurator.js' | asset_url }}",
+        css: "{{ 'aso-configurator.css' | asset_url }}",
+        js: "{{ 'aso-configurator.js' | asset_url }}",
       };
 
       function appendStylesheet(href) {
@@ -122,6 +122,20 @@
         script.dataset.asoAsset = src;
         if (options?.type) script.type = options.type;
         if (options?.defer) script.defer = true;
+        script.onload = () => {
+          console.log("[ASO Configurator] asset loaded", {
+            src,
+            type: options?.type || "classic",
+            mountNodeFound: !!document.getElementById("aso-frontend-app"),
+            hasAsoData: !!window.asoData,
+            skin: window.asoData?.skin || null,
+            productType: window.asoData?.currentConfig?.productType || null,
+            pricingMode: window.asoData?.currentConfig?.pricingMode || null,
+          });
+        };
+        script.onerror = () => {
+          console.error("[ASO Configurator] asset failed to load", { src });
+        };
         document.body.appendChild(script);
       }
 
@@ -145,6 +159,18 @@
       }
 
       function loadNcpcConfigurator() {
+        const appRoot = document.getElementById("app");
+        if (appRoot && appRoot.id !== "aso-frontend-app") {
+          appRoot.id = "aso-frontend-app";
+        }
+        console.log("[ASO Configurator] loading neon/channel bundle", {
+          mountNodeFound: !!document.getElementById("aso-frontend-app"),
+          hasAsoData: !!window.asoData,
+          skin: window.asoData?.skin || null,
+          productType: window.asoData?.currentConfig?.productType || null,
+          pricingMode: window.asoData?.currentConfig?.pricingMode || null,
+          currentConfigKeys: Object.keys(window.asoData?.currentConfig?.data || {}),
+        });
         appendStylesheet(ncpcAssets.css);
         appendScript(ncpcAssets.js, { type: "module" });
       }
@@ -160,8 +186,16 @@
         try {
           const configuration = await window.getAsoConfiguration(configId);
           const productType = resolveProductType(configuration);
+          console.log("[ASO Configurator] resolved configuration", {
+            configId,
+            productType,
+            configuration,
+          });
 
           if (productType === "neon" || productType === "channel") {
+            if (typeof window.asoPrepareNcpcConfiguratorData === "function") {
+              await window.asoPrepareNcpcConfiguratorData(configuration);
+            }
             loadNcpcConfigurator();
             return;
           }

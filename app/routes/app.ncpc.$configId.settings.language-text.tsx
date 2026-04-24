@@ -28,6 +28,7 @@ import { FileUploader } from "~/routes/app.upload";
 import { fileUrl, getShopPath } from "~/utils/fileUrl";
 import { ToggleButton } from "~/components/buttons";
 import { convertSvgUrlToSinglePath } from "~/utils/svgUtils";
+import CollapsibleSectionCard from "~/components/settings/CollapsibleSectionCard";
 
 type YesNo = "true" | "false";
 
@@ -38,7 +39,7 @@ const boolOptions = [
 
 const DEFAULT_SCENE_IMAGES = Array.from(
   { length: 7 },
-  (_item, index) => `/aso_default_files/scenes/${index + 1}.jpg`,
+  (_item, index) => `/aso_default_files/scenes/${index + 1}.webp`,
 );
 
 const normalizeSceneImages = (value: unknown): string[] => {
@@ -53,7 +54,7 @@ const shouldFallbackToDefaultScenes = (images: string[]) => {
   return images.every((img) => {
     const lower = img.toLowerCase();
     return (
-      lower.includes("/images/include-imgs/") ||
+      lower.includes("/assets/images/ncpc-include-imgs/") ||
       lower.includes("ncpc_assets_url")
     );
   });
@@ -491,30 +492,20 @@ function SectionShell({
   saving: boolean;
 }) {
   return (
-    <Box paddingBlockStart="300">
-      <Card>
-        <Box padding="300">
-          <Text as="h3" variant="headingMd">
-            {title}
-          </Text>
-          <Box paddingBlockStart="100">
-            <Text as="p" tone="subdued">
-              {description}
-            </Text>
-          </Box>
-
-          <Box paddingBlockStart="300">{children}</Box>
-
-          <Box paddingBlockStart="300">
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button variant="primary" loading={saving} onClick={onSave}>
-                Save {title}
-              </Button>
-            </div>
-          </Box>
-        </Box>
-      </Card>
-    </Box>
+    <CollapsibleSectionCard
+      id={`ncpc-language-${title.toLowerCase().replace(/\s+/g, "-")}`}
+      title={title}
+      description={description}
+    >
+      {children}
+      <Box paddingBlockStart="300">
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button variant="primary" loading={saving} onClick={onSave}>
+            Save {title}
+          </Button>
+        </div>
+      </Box>
+    </CollapsibleSectionCard>
   );
 }
 
@@ -1678,11 +1669,7 @@ export default function ConfigSettingsLanguageImages() {
               </Box>
             </InlineStack>
           </Box>
-          <Box paddingBlockStart="200">
-            <Text as="p" tone="subdued">
-              Default scenes path: <code>/public/aso_default_files/scenes</code>
-            </Text>
-          </Box>
+
           <Box paddingBlockStart="150">
             <div
               style={{

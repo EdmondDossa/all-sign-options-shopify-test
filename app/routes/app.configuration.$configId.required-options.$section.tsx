@@ -31,6 +31,8 @@ import {
   syncFontsIntoData,
 } from "~/features/classic-required-fonts.shared";
 import {
+  defaultBorderSettings,
+  getBorderSettingsState,
   ensureOneDefault as ensureOneDefaultStructural,
   getBordersState,
   getFixingMethodsState,
@@ -679,6 +681,7 @@ export const action = async (args: ActionFunctionArgs) => {
         sizeOptions,
         shapeItems,
       );
+      const currentSettings = getBorderSettingsState(data);
       if (operation === "add-borders" || operation === "update-borders") {
         const payload = parseJsonValue(formData.get("item"));
         if (!payload || typeof payload !== "object") {
@@ -700,13 +703,40 @@ export const action = async (args: ActionFunctionArgs) => {
           data,
           "borders",
           ensureOneDefaultStructural(nextItems, normalized.isDefault ? (operation === "add-borders" ? nextItems.length - 1 : index) : undefined),
+          { borderSettings: currentSettings },
         );
         await ConfigurationService.updateConfiguration({ ...(configuration as any), products: Array.isArray((configuration as any)?.product) ? (configuration as any).product : Array.isArray((configuration as any)?.products) ? (configuration as any).products : [], data: nextData }, session.id);
         return json(jFlashMessage("Borders updated successfully"));
       }
+      if (operation === "save-border-settings") {
+        const payload = parseJsonValue(formData.get("settings"));
+        if (!payload || typeof payload !== "object") {
+          return json(jFlashMessage("Invalid border settings payload", "error"), { status: 400 });
+        }
+
+        const nextSettings = {
+          ...defaultBorderSettings(),
+          ...payload,
+          colors: Array.isArray((payload as any)?.colors)
+            ? (payload as any).colors.map((color: any) => ({
+                name: String(color?.name || ""),
+                codeHex: String(color?.codeHex || "#FFFFFF"),
+                additionalPrice: Number(color?.additionalPrice || 0),
+              }))
+            : currentSettings.colors,
+        };
+
+        const nextData = syncStructuralIntoData(data, "borders", currentItems, {
+          borderSettings: nextSettings,
+        });
+        await ConfigurationService.updateConfiguration({ ...(configuration as any), products: Array.isArray((configuration as any)?.product) ? (configuration as any).product : Array.isArray((configuration as any)?.products) ? (configuration as any).products : [], data: nextData }, session.id);
+        return json(jFlashMessage("Border settings updated successfully"));
+      }
       if (operation === "delete-borders") {
         const nextItems = ensureOneDefaultStructural(currentItems.filter((_item, currentIndex) => currentIndex !== index));
-        const nextData = syncStructuralIntoData(data, "borders", nextItems);
+        const nextData = syncStructuralIntoData(data, "borders", nextItems, {
+          borderSettings: currentSettings,
+        });
         await ConfigurationService.updateConfiguration({ ...(configuration as any), products: Array.isArray((configuration as any)?.product) ? (configuration as any).product : Array.isArray((configuration as any)?.products) ? (configuration as any).products : [], data: nextData }, session.id);
         return json(jFlashMessage("Border deleted successfully"));
       }
@@ -716,7 +746,9 @@ export const action = async (args: ActionFunctionArgs) => {
           return json(jFlashMessage("Invalid border selection", "error"), { status: 400 });
         }
         const nextItems = ensureOneDefaultStructural(currentItems, index);
-        const nextData = syncStructuralIntoData(data, "borders", nextItems);
+        const nextData = syncStructuralIntoData(data, "borders", nextItems, {
+          borderSettings: currentSettings,
+        });
         await ConfigurationService.updateConfiguration({ ...(configuration as any), products: Array.isArray((configuration as any)?.product) ? (configuration as any).product : Array.isArray((configuration as any)?.products) ? (configuration as any).products : [], data: nextData }, session.id);
         return json(jFlashMessage("Default border updated successfully"));
       }

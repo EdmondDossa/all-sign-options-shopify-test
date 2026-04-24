@@ -72,7 +72,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
             config = configFilter(config);
         }
 
-        config = await replaceDomainUrl(config, admin);
+        config = await replaceDomainUrl(config, admin, {
+            shopDomain: session?.shop || "",
+        });
 
         const normalizedProductType = String(config?.productType || "")
           .trim()

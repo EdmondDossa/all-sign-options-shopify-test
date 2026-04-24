@@ -21,7 +21,7 @@ const PRESET_NAME_BY_KEY: Record<string, string> = {
 
 const DEFAULT_SCENE_IMAGES = Array.from(
   { length: 7 },
-  (_item, index) => `/aso_default_files/scenes/${index + 1}.jpg`,
+  (_item, index) => `/aso_default_files/scenes/${index + 1}.webp`,
 );
 
 const normalizeDemoFontUrl = (input: unknown, isGoogleFont: boolean) => {
@@ -211,7 +211,7 @@ export const getNcpcPresetConfigurationData = async ({
     normalizedSceneImages.every((img: string) => {
       const lower = img.toLowerCase();
       return (
-        lower.includes("/images/include-imgs/") ||
+        lower.includes("/assets/images/ncpc-include-imgs/") ||
         lower.includes("ncpc_assets_url")
       );
     });
