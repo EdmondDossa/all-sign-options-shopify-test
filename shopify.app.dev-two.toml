@@ -7,7 +7,7 @@ embedded = true
 handle = "all-signs-customizer"
 
 [build]
-automatically_update_urls_on_dev = true
+automatically_update_urls_on_dev = false
 dev_store_url = "ncpc-dev.myshopify.com"
 
 [webhooks]
