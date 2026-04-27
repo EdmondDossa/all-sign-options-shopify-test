@@ -1,0 +1,36 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "044b7336c2c64d382d5bda3bca74eaad"
+name = "all-signs-customizer-staging"
+application_url = "https://all-sign-options-shopify-staging.onrender.com"
+embedded = true
+handle = "all-signs-customizer-staging"
+
+[build]
+automatically_update_urls_on_dev = false
+dev_store_url = "ncpc-dev.myshopify.com"
+
+[webhooks]
+api_version = "2026-04"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+[access_scopes]
+scopes = "read_customers,read_fulfillments,read_orders,read_product_listings,read_products,read_publications,read_themes,write_products,write_publications"
+
+[auth]
+redirect_urls = [
+  "https://all-sign-options-shopify-staging.onrender.com/auth/callback",
+  "https://all-sign-options-shopify-staging.onrender.com/auth/shopify/callback",
+  "https://all-sign-options-shopify-staging.onrender.com/api/auth/callback"
+]
+
+[app_proxy]
+url = "https://all-sign-options-shopify-staging.onrender.com"
+subpath = "aso-proxy"
+prefix = "apps"
+
+[pos]
+embedded = false
