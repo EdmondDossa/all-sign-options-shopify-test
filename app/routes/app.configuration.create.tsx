@@ -56,7 +56,13 @@ import {
   configurationDemoData,
 } from "~/models/demoData";
 import { PRICING_PLANS } from "~/utils/pricing";
-import { SearchIcon } from "@shopify/polaris-icons";
+import {
+  ImageIcon,
+  LayoutColumns3Icon,
+  NoteIcon,
+  SearchIcon,
+  ViewIcon,
+} from "@shopify/polaris-icons";
 import { AppearanceItem } from "./app.configuration.$id.demo";
 import { BackBtn } from "~/components/buttons/BackBtn";
 import { BiSaveBtn } from "~/components/buttons/BiSaveBtn";
@@ -89,6 +95,232 @@ import { getNcpcPresetConfigurationData } from "~/utils/ncpc-config-data.server"
 
 const LETTERING_CATEGORY_TYPE = "lettering";
 const LETTERING_PRODUCT_TYPES = ["neon", "channel"] as const;
+
+const CARD_DEFAULT_BORDER = "1px solid #DDE5EC";
+const CARD_DEFAULT_SHADOW = "0 10px 24px rgba(15, 23, 42, 0.05)";
+const CARD_SELECTED_SHADOW =
+  "0 0 0 2px rgba(148, 163, 184, 0.18), 0 16px 34px rgba(15, 23, 42, 0.10)";
+const CARD_IMAGE_SELECTED_SHADOW =
+  "0 0 0 2px rgba(148, 163, 184, 0.22), inset 0 0 0 1px rgba(255,255,255,0.45)";
+
+function PreviewAction({ onClick }: { onClick: (event: any) => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Open preview"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "28px",
+        height: "28px",
+        borderRadius: "999px",
+        border: "1px solid #D6DEE3",
+        background: "#F8FAFC",
+        color: "#4B5563",
+        cursor: "pointer",
+        padding: 0,
+      }}
+    >
+      <Icon source={ViewIcon} />
+    </button>
+  );
+}
+
+function StepThreeInfoIllustration() {
+  const items = [
+    {
+      title: "Identity",
+      text: "Name the configuration clearly.",
+      icon: NoteIcon,
+      tone: "#E7F0FF",
+    },
+    {
+      title: "Description",
+      text: "Explain what this setup is for.",
+      icon: LayoutColumns3Icon,
+      tone: "#FCEFD8",
+    },
+    {
+      title: "Icon",
+      text: "Add a visual marker for admins.",
+      icon: ImageIcon,
+      tone: "#E7F8F1",
+    },
+    {
+      title: "Products",
+      text: "Attach the Shopify products to use it on.",
+      icon: SearchIcon,
+      tone: "#F3EBFF",
+    },
+  ];
+
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "minmax(0, 1.3fr) minmax(240px, 0.9fr)",
+        gap: "16px",
+        padding: "18px",
+        background:
+          "linear-gradient(135deg, rgba(248,250,252,1) 0%, rgba(239,244,248,1) 100%)",
+        border: "1px solid #DDE5EC",
+        borderRadius: "18px",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <Text as="h3" variant="headingMd">
+          What you define in this step
+        </Text>
+        <Text as="p" tone="subdued">
+          This final screen gives your configuration a clear identity and links
+          it to the products that should use it.
+        </Text>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: "10px",
+          }}
+        >
+          {items.map((item) => (
+            <div
+              key={item.title}
+              style={{
+                display: "flex",
+                gap: "10px",
+                alignItems: "flex-start",
+                padding: "12px",
+                borderRadius: "14px",
+                background: "#FFFFFF",
+                border: "1px solid #E3E8EE",
+              }}
+            >
+              <div
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "10px",
+                  background: item.tone,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Icon source={item.icon} />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontSize: "13px", fontWeight: 700 }}>
+                  {item.title}
+                </p>
+                <p style={{ fontSize: "12px", color: "#5F6368" }}>
+                  {item.text}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div
+        style={{
+          minHeight: "100%",
+          borderRadius: "16px",
+          border: "1px solid #D6DEE3",
+          background:
+            "radial-gradient(circle at top left, rgba(255,255,255,0.95), rgba(231,238,244,0.95))",
+          padding: "16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "12px",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "70%",
+            height: "10px",
+            borderRadius: "999px",
+            background: "#D7E0E8",
+          }}
+        />
+        <div
+          style={{
+            display: "flex",
+            gap: "12px",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              width: "52px",
+              height: "52px",
+              borderRadius: "14px",
+              background: "#DCEBFF",
+              border: "1px solid #C5D7F2",
+            }}
+          />
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div
+              style={{
+                height: "12px",
+                borderRadius: "999px",
+                background: "#A9B6C3",
+                width: "62%",
+              }}
+            />
+            <div
+              style={{
+                height: "10px",
+                borderRadius: "999px",
+                background: "#D7E0E8",
+                width: "85%",
+              }}
+            />
+            <div
+              style={{
+                height: "10px",
+                borderRadius: "999px",
+                background: "#D7E0E8",
+                width: "74%",
+              }}
+            />
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: "8px",
+            marginTop: "4px",
+          }}
+        >
+          {["Product A", "Product B", "Product C"].map((product) => (
+            <div
+              key={product}
+              style={{
+                padding: "8px 10px",
+                borderRadius: "12px",
+                background: "#FFFFFF",
+                border: "1px solid #DCE4EA",
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "#475467",
+                textAlign: "center",
+              }}
+            >
+              {product}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
@@ -1399,12 +1631,10 @@ export default function ConfigurationEdit() {
                         backgroundColor: "#FFFFFF",
                         color: "black",
                         borderRadius: "16px",
-                        border: selected
-                          ? "1.5px solid rgba(15, 139, 141, 0.85)"
-                          : "1px solid #DDE5EC",
+                        border: CARD_DEFAULT_BORDER,
                         boxShadow: selected
-                          ? "0 0 0 3px rgba(15, 139, 141, 0.12), 0 14px 32px rgba(16, 24, 40, 0.08)"
-                          : "0 10px 24px rgba(16, 24, 40, 0.05)",
+                          ? CARD_SELECTED_SHADOW
+                          : CARD_DEFAULT_SHADOW,
                         transition: "all 180ms",
                         overflow: "hidden",
                         minHeight: "100%",
@@ -1414,20 +1644,6 @@ export default function ConfigurationEdit() {
                         flexDirection: "column",
                       }}
                     >
-                      {selected && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: "2px",
-                            background:
-                              "linear-gradient(90deg, rgba(1, 100, 100, 0.85), rgba(1, 100, 100, 0.35))",
-                          }}
-                        />
-                      )}
-
                       <div
                         style={{
                           display: "flex",
@@ -1449,7 +1665,7 @@ export default function ConfigurationEdit() {
                             overflow: "hidden",
                             flexShrink: 0,
                             boxShadow: selected
-                              ? "0 0 0 2px rgba(1, 100, 100, 0.22)"
+                              ? CARD_IMAGE_SELECTED_SHADOW
                               : "inset 0 0 0 1px rgba(255,255,255,0.45)",
                           }}
                         >
@@ -1496,10 +1712,10 @@ export default function ConfigurationEdit() {
                             {selected && (
                               <span
                                 style={{
-                                  display: "flex",
-                                  width: "fit-content",
-                                  background: "rgba(1, 100, 100, 0.14)",
-                                  color: "rgba(1, 100, 100, 0.9)",
+                                      display: "flex",
+                                      width: "fit-content",
+                                  background: "#EEF2F6",
+                                  color: "#475467",
                                   fontSize: "10px",
                                   borderRadius: "20px",
                                   padding: "1px 7px",
@@ -1544,28 +1760,12 @@ export default function ConfigurationEdit() {
                               Click to select
                             </p>
 
-                            <div
+                            <PreviewAction
                               onClick={(event) => {
                                 event.stopPropagation();
                                 setPreviewFamily(family);
                               }}
-                              style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                width: "fit-content",
-                              }}
-                            >
-                              <span
-                                style={{
-                                  color: "rgba(1, 100, 100, 0.8)",
-                                  fontSize: "12px",
-                                  fontWeight: 600,
-                                }}
-                              >
-                                Preview
-                              </span>
-                            </div>
+                            />
                           </div>
                         </div>
                       </div>
@@ -1613,12 +1813,10 @@ export default function ConfigurationEdit() {
                             background: "#FFFFFF",
                             color: "black",
                             borderRadius: "16px",
-                            border: isSelected
-                              ? "1.5px solid rgba(15, 139, 141, 0.85)"
-                              : "1px solid #DDE5EC",
+                            border: CARD_DEFAULT_BORDER,
                             boxShadow: isSelected
-                              ? "0 0 0 3px rgba(15, 139, 141, 0.12), 0 14px 30px rgba(15, 23, 42, 0.08)"
-                              : "0 10px 24px rgba(15, 23, 42, 0.05)",
+                              ? CARD_SELECTED_SHADOW
+                              : CARD_DEFAULT_SHADOW,
                             transition: "all 180ms",
                             padding: "14px",
                             display: "flex",
@@ -1627,20 +1825,6 @@ export default function ConfigurationEdit() {
                             position: "relative",
                           }}
                         >
-                          {isSelected && (
-                            <div
-                              style={{
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                height: "2px",
-                                background:
-                                  "linear-gradient(90deg, rgba(1, 100, 100, 0.85), rgba(1, 100, 100, 0.35))",
-                              }}
-                            />
-                          )}
-
                           <div
                             style={{
                               display: "flex",
@@ -1662,7 +1846,7 @@ export default function ConfigurationEdit() {
                                 overflow: "hidden",
                                 flexShrink: 0,
                                 boxShadow: isSelected
-                                  ? "0 0 0 2px rgba(1, 100, 100, 0.22)"
+                                  ? CARD_IMAGE_SELECTED_SHADOW
                                   : "inset 0 0 0 1px rgba(255,255,255,0.45)",
                               }}
                             >
@@ -1711,8 +1895,8 @@ export default function ConfigurationEdit() {
                                     style={{
                                       display: "flex",
                                       width: "fit-content",
-                                      background: "rgba(1, 100, 100, 0.14)",
-                                      color: "rgba(1, 100, 100, 0.9)",
+                                      background: "#EEF2F6",
+                                      color: "#475467",
                                       fontSize: "10px",
                                       borderRadius: "20px",
                                       padding: "1px 7px",
@@ -1760,28 +1944,12 @@ export default function ConfigurationEdit() {
                                   Click to toggle
                                 </p>
 
-                                <div
+                                <PreviewAction
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     setPreviewMaterial(material);
                                   }}
-                                  style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    cursor: "pointer",
-                                    width: "fit-content",
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      color: "rgba(1, 100, 100, 0.8)",
-                                      fontSize: "12px",
-                                      fontWeight: 600,
-                                    }}
-                                  >
-                                    Preview
-                                  </span>
-                                </div>
+                                />
                               </div>
                             </div>
                           </div>
@@ -1826,12 +1994,10 @@ export default function ConfigurationEdit() {
                             background: "#FFFFFF",
                             color: "black",
                             borderRadius: "16px",
-                            border: isSelected
-                              ? "1.5px solid rgba(15, 139, 141, 0.85)"
-                              : "1px solid #DDE5EC",
+                            border: CARD_DEFAULT_BORDER,
                             boxShadow: isSelected
-                              ? "0 0 0 3px rgba(15, 139, 141, 0.12), 0 14px 30px rgba(15, 23, 42, 0.08)"
-                              : "0 10px 24px rgba(15, 23, 42, 0.05)",
+                              ? CARD_SELECTED_SHADOW
+                              : CARD_DEFAULT_SHADOW,
                             transition: "all 180ms",
                             padding: "14px",
                             minHeight: "100%",
@@ -1841,20 +2007,6 @@ export default function ConfigurationEdit() {
                             flexDirection: "column",
                           }}
                         >
-                          {isSelected && (
-                            <div
-                              style={{
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                height: "2px",
-                                background:
-                                  "linear-gradient(90deg, rgba(1, 100, 100, 0.85), rgba(1, 100, 100, 0.35))",
-                              }}
-                            />
-                          )}
-
                           <div
                             style={{
                               display: "flex",
@@ -1876,7 +2028,7 @@ export default function ConfigurationEdit() {
                                 overflow: "hidden",
                                 flexShrink: 0,
                                 boxShadow: isSelected
-                                  ? "0 0 0 2px rgba(1, 100, 100, 0.22)"
+                                  ? CARD_IMAGE_SELECTED_SHADOW
                                   : "inset 0 0 0 1px rgba(255,255,255,0.45)",
                               }}
                             >
@@ -1933,8 +2085,8 @@ export default function ConfigurationEdit() {
                                       style={{
                                         display: "flex",
                                         width: "fit-content",
-                                        background: "rgba(1, 100, 100, 0.14)",
-                                        color: "rgba(1, 100, 100, 0.9)",
+                                        background: "#EEF2F6",
+                                        color: "#475467",
                                         fontSize: "10px",
                                         borderRadius: "20px",
                                         padding: "1px 7px",
@@ -1980,28 +2132,12 @@ export default function ConfigurationEdit() {
                                   Click to select
                                 </p>
 
-                                <div
+                                <PreviewAction
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setPreviewProduct(product);
                                   }}
-                                  style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    cursor: "pointer",
-                                    width: "fit-content",
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      color: "rgba(1, 100, 100, 0.8)",
-                                      fontSize: "12px",
-                                      fontWeight: 600,
-                                    }}
-                                  >
-                                    Preview
-                                  </span>
-                                </div>
+                                />
                               </div>
                             </div>
                           </div>
@@ -2421,12 +2557,10 @@ export default function ConfigurationEdit() {
                               background: "#FFFFFF",
                               color: "black",
                               borderRadius: "18px",
-                              border: isSelected
-                                ? "1.5px solid rgba(15, 139, 141, 0.85)"
-                                : "1px solid #DDE5EC",
+                              border: CARD_DEFAULT_BORDER,
                               boxShadow: isSelected
-                                ? "0 0 0 3px rgba(15, 139, 141, 0.12), 0 14px 30px rgba(15, 23, 42, 0.08)"
-                                : "0 10px 24px rgba(15, 23, 42, 0.05)",
+                                ? CARD_SELECTED_SHADOW
+                                : CARD_DEFAULT_SHADOW,
                               padding: "18px",
                               minHeight: "100%",
                               display: "flex",
@@ -2436,20 +2570,6 @@ export default function ConfigurationEdit() {
                               position: "relative",
                             }}
                           >
-                            {isSelected && (
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  top: 0,
-                                  left: 0,
-                                  right: 0,
-                                  height: "2px",
-                                  background:
-                                    "linear-gradient(90deg, rgba(1, 100, 100, 0.85), rgba(1, 100, 100, 0.35))",
-                                }}
-                              />
-                            )}
-
                             <div
                               style={{
                                 display: "flex",
@@ -2470,7 +2590,7 @@ export default function ConfigurationEdit() {
                                   overflow: "hidden",
                                   flexShrink: 0,
                                   boxShadow: isSelected
-                                    ? "0 0 0 2px rgba(1, 100, 100, 0.22)"
+                                    ? CARD_IMAGE_SELECTED_SHADOW
                                     : "inset 0 0 0 1px rgba(255,255,255,0.45)",
                                 }}
                               >
@@ -2521,9 +2641,8 @@ export default function ConfigurationEdit() {
                                         style={{
                                           display: "flex",
                                           width: "fit-content",
-                                          background:
-                                            "rgba(1, 100, 100, 0.14)",
-                                          color: "rgba(1, 100, 100, 0.9)",
+                                          background: "#EEF2F6",
+                                          color: "#475467",
                                           fontSize: "10px",
                                           borderRadius: "20px",
                                           padding: "1px 7px",
@@ -2599,7 +2718,10 @@ export default function ConfigurationEdit() {
         );
       case 3:
         return (
-          <div style={{ display: "flex", gap: "10px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <StepThreeInfoIllustration />
+
+            <div style={{ display: "flex", gap: "10px" }}>
             <div
               style={{
                 width: "70%",
@@ -2815,6 +2937,7 @@ export default function ConfigurationEdit() {
                   </p>
                 )}
               </div>
+            </div>
             </div>
           </div>
         );

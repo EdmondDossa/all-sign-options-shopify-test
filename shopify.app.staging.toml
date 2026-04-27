@@ -2,7 +2,7 @@
 
 client_id = "044b7336c2c64d382d5bda3bca74eaad"
 name = "all-signs-customizer-staging"
-application_url = "https://all-sign-options-shopify-staging.onrender.com"
+application_url = "https://all-sign-options-shopify-staging.onrender.com/app"
 embedded = true
 handle = "all-signs-customizer-staging"
 
